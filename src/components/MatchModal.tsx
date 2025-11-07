@@ -9,9 +9,10 @@ interface MatchModalProps {
     name: string;
     image: string;
   } | null;
+  onSendMessage: () => void;
 }
 
-export const MatchModal = ({ isOpen, onClose, matchedProfile }: MatchModalProps) => {
+export const MatchModal = ({ isOpen, onClose, matchedProfile, onSendMessage }: MatchModalProps) => {
   if (!matchedProfile) return null;
 
   return (
@@ -46,7 +47,10 @@ export const MatchModal = ({ isOpen, onClose, matchedProfile }: MatchModalProps)
               <Button
                 size="lg"
                 className="bg-white text-primary hover:bg-white/90 font-semibold"
-                onClick={onClose}
+                onClick={() => {
+                  onClose();
+                  onSendMessage();
+                }}
               >
                 Send Message
               </Button>
