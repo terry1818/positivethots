@@ -31,6 +31,10 @@ export default {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -80,10 +84,25 @@ export default {
             height: "0",
           },
         },
+        "swipe-left": {
+          "0%": { transform: "translateX(0) rotate(0deg)", opacity: "1" },
+          "100%": { transform: "translateX(-150%) rotate(-25deg)", opacity: "0" },
+        },
+        "swipe-right": {
+          "0%": { transform: "translateX(0) rotate(0deg)", opacity: "1" },
+          "100%": { transform: "translateX(150%) rotate(25deg)", opacity: "0" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "scale(0.8)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "swipe-left": "swipe-left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        "swipe-right": "swipe-right 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        "fade-in": "fade-in 0.3s ease-out",
       },
     },
   },
