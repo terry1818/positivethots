@@ -72,9 +72,15 @@ export type Database = {
           age: number
           bio: string | null
           created_at: string
+          gender: string | null
+          gender_preference: string | null
           id: string
+          interests: string[] | null
           location: string | null
+          looking_for: string | null
           name: string
+          onboarding_completed: boolean | null
+          photos: string[] | null
           profile_image: string | null
           updated_at: string
         }
@@ -82,9 +88,15 @@ export type Database = {
           age: number
           bio?: string | null
           created_at?: string
+          gender?: string | null
+          gender_preference?: string | null
           id: string
+          interests?: string[] | null
           location?: string | null
+          looking_for?: string | null
           name: string
+          onboarding_completed?: boolean | null
+          photos?: string[] | null
           profile_image?: string | null
           updated_at?: string
         }
@@ -92,9 +104,15 @@ export type Database = {
           age?: number
           bio?: string | null
           created_at?: string
+          gender?: string | null
+          gender_preference?: string | null
           id?: string
+          interests?: string[] | null
           location?: string | null
+          looking_for?: string | null
           name?: string
+          onboarding_completed?: boolean | null
+          photos?: string[] | null
           profile_image?: string | null
           updated_at?: string
         }

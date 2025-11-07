@@ -40,6 +40,18 @@ const Index = () => {
       return;
     }
 
+    // Check if onboarding is completed
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("onboarding_completed")
+      .eq("id", session.user.id)
+      .single();
+
+    if (!profile?.onboarding_completed) {
+      navigate("/onboarding");
+      return;
+    }
+
     setCurrentUserId(session.user.id);
     await loadProfiles(session.user.id);
   };

@@ -69,7 +69,7 @@ const Auth = () => {
           }
 
           toast.success("Account created successfully!");
-          navigate("/");
+          navigate("/onboarding");
         }
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
