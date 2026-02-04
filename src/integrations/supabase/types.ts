@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      education_modules: {
+        Row: {
+          content: string
+          created_at: string
+          description: string
+          id: string
+          is_required: boolean
+          order_index: number
+          slug: string
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          description: string
+          id?: string
+          is_required?: boolean
+          order_index?: number
+          slug: string
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_required?: boolean
+          order_index?: number
+          slug?: string
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      linked_profiles: {
+        Row: {
+          created_at: string
+          id: string
+          partner_id: string
+          status: string
+          user_id: string
+          visibility: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          partner_id: string
+          status?: string
+          user_id: string
+          visibility?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          partner_id?: string
+          status?: string
+          user_id?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           created_at: string
@@ -71,7 +134,9 @@ export type Database = {
         Row: {
           age: number
           bio: string | null
+          boundaries: string | null
           created_at: string
+          experience_level: string | null
           gender: string | null
           gender_preference: string | null
           id: string
@@ -82,12 +147,19 @@ export type Database = {
           onboarding_completed: boolean | null
           photos: string[] | null
           profile_image: string | null
+          pronouns: string | null
+          relationship_status: string | null
+          relationship_style: string | null
+          sti_last_tested: string | null
+          sti_status: string | null
           updated_at: string
         }
         Insert: {
           age: number
           bio?: string | null
+          boundaries?: string | null
           created_at?: string
+          experience_level?: string | null
           gender?: string | null
           gender_preference?: string | null
           id: string
@@ -98,12 +170,19 @@ export type Database = {
           onboarding_completed?: boolean | null
           photos?: string[] | null
           profile_image?: string | null
+          pronouns?: string | null
+          relationship_status?: string | null
+          relationship_style?: string | null
+          sti_last_tested?: string | null
+          sti_status?: string | null
           updated_at?: string
         }
         Update: {
           age?: number
           bio?: string | null
+          boundaries?: string | null
           created_at?: string
+          experience_level?: string | null
           gender?: string | null
           gender_preference?: string | null
           id?: string
@@ -114,9 +193,49 @@ export type Database = {
           onboarding_completed?: boolean | null
           photos?: string[] | null
           profile_image?: string | null
+          pronouns?: string | null
+          relationship_status?: string | null
+          relationship_style?: string | null
+          sti_last_tested?: string | null
+          sti_status?: string | null
           updated_at?: string
         }
         Relationships: []
+      }
+      quiz_questions: {
+        Row: {
+          correct_answer: number
+          id: string
+          module_id: string
+          options: Json
+          order_index: number
+          question: string
+        }
+        Insert: {
+          correct_answer: number
+          id?: string
+          module_id: string
+          options: Json
+          order_index?: number
+          question: string
+        }
+        Update: {
+          correct_answer?: number
+          id?: string
+          module_id?: string
+          options?: Json
+          order_index?: number
+          question?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "education_modules"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       swipes: {
         Row: {
@@ -141,6 +260,38 @@ export type Database = {
           swiper_id?: string
         }
         Relationships: []
+      }
+      user_badges: {
+        Row: {
+          earned_at: string
+          id: string
+          module_id: string
+          quiz_score: number | null
+          user_id: string
+        }
+        Insert: {
+          earned_at?: string
+          id?: string
+          module_id: string
+          quiz_score?: number | null
+          user_id: string
+        }
+        Update: {
+          earned_at?: string
+          id?: string
+          module_id?: string
+          quiz_score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "education_modules"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
