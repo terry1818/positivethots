@@ -2,108 +2,115 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Positive Thots Design System
+   Colors: Warm coral/peach tones, teal accents
+   Vibe: Sex-positive, inclusive, warm, educational
+   All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 240 10% 15%;
+    --background: 30 30% 98%;
+    --foreground: 220 20% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 15%;
+    --card-foreground: 220 20% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 15%;
+    --popover-foreground: 220 20% 15%;
 
-    --primary: 351 83% 58%;
+    /* Warm coral primary */
+    --primary: 15 85% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 345 90% 65%;
+    /* Teal secondary */
+    --secondary: 175 60% 40%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --muted: 30 15% 94%;
+    --muted-foreground: 220 10% 46%;
 
-    --accent: 351 100% 71%;
+    /* Peach accent */
+    --accent: 25 90% 65%;
     --accent-foreground: 0 0% 100%;
 
-    --success: 142 76% 36%;
+    --success: 160 70% 40%;
     --success-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 351 83% 58%;
+    /* Badge colors for education modules */
+    --badge-consent: 15 85% 60%;
+    --badge-enm: 175 60% 45%;
+    --badge-boundaries: 270 50% 55%;
+    --badge-safer-sex: 340 70% 55%;
+    --badge-emotional: 45 80% 50%;
 
-    --radius: 1rem;
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 15 85% 60%;
+
+    --radius: 0.75rem;
     
-    --gradient-primary: linear-gradient(135deg, hsl(351 83% 58%) 0%, hsl(345 90% 65%) 100%);
-    --gradient-card: linear-gradient(180deg, transparent 0%, hsl(0 0% 0% / 0.6) 100%);
-    --shadow-card: 0 10px 40px -10px hsl(351 83% 58% / 0.3);
-    --shadow-elevated: 0 20px 60px -15px hsl(0 0% 0% / 0.3);
+    --gradient-primary: linear-gradient(135deg, hsl(15 85% 60%) 0%, hsl(25 90% 65%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(175 60% 40%) 0%, hsl(175 50% 50%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(30 40% 96%) 0%, hsl(15 50% 95%) 100%);
+    --shadow-card: 0 4px 20px -4px hsl(15 85% 60% / 0.15);
+    --shadow-elevated: 0 12px 40px -12px hsl(0 0% 0% / 0.2);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    --sidebar-background: 30 30% 98%;
+    --sidebar-foreground: 220 10% 30%;
+    --sidebar-primary: 220 20% 15%;
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 30 20% 94%;
+    --sidebar-accent-foreground: 220 20% 15%;
+    --sidebar-border: 30 15% 90%;
+    --sidebar-ring: 15 85% 60%;
   }
 
   .dark {
-    --background: 240 10% 8%;
-    --foreground: 0 0% 98%;
+    --background: 220 20% 8%;
+    --foreground: 30 20% 95%;
 
-    --card: 240 8% 12%;
-    --card-foreground: 0 0% 98%;
+    --card: 220 18% 12%;
+    --card-foreground: 30 20% 95%;
 
-    --popover: 240 8% 12%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 220 18% 12%;
+    --popover-foreground: 30 20% 95%;
 
-    --primary: 351 83% 58%;
+    --primary: 15 80% 58%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 345 90% 65%;
+    --secondary: 175 55% 45%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 8% 15%;
-    --muted-foreground: 240 5% 64%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 30 10% 60%;
 
-    --accent: 351 100% 71%;
+    --accent: 25 85% 62%;
     --accent-foreground: 0 0% 100%;
 
-    --success: 142 76% 36%;
+    --success: 160 65% 45%;
     --success-foreground: 0 0% 100%;
 
-    --destructive: 0 62% 50%;
+    --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 8% 20%;
-    --input: 240 8% 20%;
-    --ring: 351 83% 58%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --border: 220 15% 22%;
+    --input: 220 15% 22%;
+    --ring: 15 80% 58%;
+
+    --sidebar-background: 220 18% 10%;
+    --sidebar-foreground: 30 15% 90%;
+    --sidebar-primary: 15 80% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 30 15% 90%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 15 80% 58%;
   }
 }
 
@@ -114,5 +121,27 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
   }
+}
+
+/* Custom badge colors for education modules */
+.badge-consent {
+  background: hsl(var(--badge-consent));
+}
+
+.badge-enm {
+  background: hsl(var(--badge-enm));
+}
+
+.badge-boundaries {
+  background: hsl(var(--badge-boundaries));
+}
+
+.badge-safer-sex {
+  background: hsl(var(--badge-safer-sex));
+}
+
+.badge-emotional {
+  background: hsl(var(--badge-emotional));
 }

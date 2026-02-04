@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Flame, User, MessageCircle, ChevronLeft } from "lucide-react";
+import { BottomNav } from "@/components/BottomNav";
+import { MessageCircle, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 
 interface Match {
@@ -154,30 +155,7 @@ const Messages = () => {
         )}
       </main>
 
-      {/* Bottom Navigation */}
-      <nav className="border-t border-border bg-card">
-        <div className="container max-w-md mx-auto px-4 py-3 flex justify-around">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/")}
-            className="text-muted-foreground"
-          >
-            <Flame className="h-6 w-6" />
-          </Button>
-          <Button variant="ghost" size="icon" className="text-primary">
-            <MessageCircle className="h-6 w-6" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/profile")}
-            className="text-muted-foreground"
-          >
-            <User className="h-6 w-6" />
-          </Button>
-        </div>
-      </nav>
+      <BottomNav />
     </div>
   );
 };

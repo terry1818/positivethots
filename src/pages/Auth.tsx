@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Flame } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -13,7 +13,7 @@ const authSchema = z.object({
   email: z.string().email("Invalid email address").max(255, "Email too long"),
   password: z.string().min(6, "Password must be at least 6 characters").max(100, "Password too long"),
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name too long").optional(),
-  age: z.number().min(18, "Must be 18 or older").max(100, "Invalid age").optional(),
+  age: z.number().min(21, "Must be 21 or older").max(100, "Invalid age").optional(),
 });
 
 const Auth = () => {
@@ -102,19 +102,16 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-[var(--shadow-elevated)]">
         <CardHeader className="space-y-1 text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Flame className="h-10 w-10 text-primary" />
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              SwipeMatch
-            </h1>
+          <div className="mb-4">
+            <Logo size="md" />
           </div>
           <CardTitle className="text-2xl">
             {isSignUp ? "Create your account" : "Welcome back"}
           </CardTitle>
           <CardDescription>
             {isSignUp
-              ? "Sign up to start matching with people nearby"
-              : "Sign in to continue swiping"}
+              ? "Join the Positive Thots community"
+              : "Sign in to continue your journey"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -134,7 +131,7 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="age">Age</Label>
+                  <Label htmlFor="age">Age (21+)</Label>
                   <Input
                     id="age"
                     type="number"
@@ -142,7 +139,7 @@ const Auth = () => {
                     value={age}
                     onChange={(e) => setAge(e.target.value)}
                     required
-                    min={18}
+                    min={21}
                     max={100}
                   />
                 </div>
