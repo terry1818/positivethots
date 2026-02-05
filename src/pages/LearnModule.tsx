@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { EducationBadge } from "@/components/EducationBadge";
+ import { AdminPanel } from "@/components/admin/AdminPanel";
+ import { useAntiCheat } from "@/hooks/useAntiCheat";
 import { ChevronLeft, CheckCircle, Award, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 
@@ -39,6 +41,14 @@ const LearnModule = () => {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
+
+  // Anti-cheat protection - enabled only during quiz
+  const { violations, violationCount } = useAntiCheat({
+    enabled: showQuiz && !submitted,
+    onViolation: (type) => {
+      console.log(`Quiz violation detected: ${type}`);
+    },
+  });
 
   useEffect(() => {
     loadModule();
@@ -133,6 +143,10 @@ const LearnModule = () => {
     }
   };
 
+  const handleRefresh = () => {
+    loadModule();
+  };
+
   const renderContent = (content: string) => {
     // Simple markdown-like rendering
     return content.split('\n\n').map((paragraph, i) => {
@@ -193,6 +207,9 @@ const LearnModule = () => {
 
       {/* Content */}
       <main className="flex-1 container max-w-2xl mx-auto px-4 py-6">
+        {/* Admin Panel - only visible to admins */}
+        <AdminPanel module={module} questions={questions} onUpdate={handleRefresh} />
+
         {!showQuiz ? (
           <>
             {/* Video Embed */}
@@ -303,6 +320,11 @@ const LearnModule = () => {
                     Submit Answers
                   </Button>
                 </div>
+                {violationCount > 0 && (
+                  <p className="text-xs text-destructive text-center mt-2">
+                    ⚠️ {violationCount} quiz integrity warning(s) recorded
+                  </p>
+                )}
               </div>
             ) : (
               // Results
