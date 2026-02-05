@@ -15,6 +15,7 @@ interface Module {
   title: string;
   description: string;
   content: string;
+  video_url: string | null;
 }
 
 interface Question {
@@ -194,6 +195,24 @@ const LearnModule = () => {
       <main className="flex-1 container max-w-2xl mx-auto px-4 py-6">
         {!showQuiz ? (
           <>
+            {/* Video Embed */}
+            {module.video_url && (
+              <div className="mb-8">
+                <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+                  <iframe
+                    src={module.video_url}
+                    title={`${module.title} - Video`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground mt-2 text-center">
+                  Watch the video above, then read the material below
+                </p>
+              </div>
+            )}
+
             {/* Reading Content */}
             <div className="prose prose-sm max-w-none mb-8">
               {renderContent(module.content)}
