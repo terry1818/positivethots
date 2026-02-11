@@ -79,10 +79,11 @@ const Index = () => {
 
   const loadUserBadges = async (userId: string) => {
     try {
+      // Only check foundation (required) badges for discovery lock
       const [badgesResult, modulesResult] = await Promise.all([
         supabase
           .from("user_badges")
-          .select("module_id")
+          .select("module_id, education_modules!inner(is_required)")
           .eq("user_id", userId),
         supabase
           .from("education_modules")
@@ -93,7 +94,13 @@ const Index = () => {
       if (badgesResult.error) throw badgesResult.error;
       if (modulesResult.error) throw modulesResult.error;
 
-      setUserBadgeCount(badgesResult.data?.length || 0);
+      // Count only required badge completions for discovery unlock
+      const requiredBadgeIds = new Set(modulesResult.data?.map(m => m.id) || []);
+      const earnedRequiredCount = (badgesResult.data || []).filter(
+        b => requiredBadgeIds.has(b.module_id)
+      ).length;
+
+      setUserBadgeCount(earnedRequiredCount);
       setRequiredBadgeCount(modulesResult.data?.length || 5);
     } catch (error) {
       console.error("Error loading badges:", error);

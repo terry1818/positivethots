@@ -16,35 +16,50 @@ export type Database = {
     Tables: {
       education_modules: {
         Row: {
+          badge_number: number | null
           content: string
           created_at: string
           description: string
+          estimated_minutes: number | null
           id: string
+          is_optional: boolean | null
           is_required: boolean
           order_index: number
+          prerequisite_badges: string[] | null
           slug: string
+          tier: string | null
           title: string
           video_url: string | null
         }
         Insert: {
+          badge_number?: number | null
           content: string
           created_at?: string
           description: string
+          estimated_minutes?: number | null
           id?: string
+          is_optional?: boolean | null
           is_required?: boolean
           order_index?: number
+          prerequisite_badges?: string[] | null
           slug: string
+          tier?: string | null
           title: string
           video_url?: string | null
         }
         Update: {
+          badge_number?: number | null
           content?: string
           created_at?: string
           description?: string
+          estimated_minutes?: number | null
           id?: string
+          is_optional?: boolean | null
           is_required?: boolean
           order_index?: number
+          prerequisite_badges?: string[] | null
           slug?: string
+          tier?: string | null
           title?: string
           video_url?: string | null
         }
@@ -126,6 +141,50 @@ export type Database = {
             columns: ["match_id"]
             isOneToOne: false
             referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      module_sections: {
+        Row: {
+          content_text: string | null
+          content_type: string
+          content_url: string | null
+          created_at: string | null
+          estimated_minutes: number | null
+          id: string
+          module_id: string
+          section_number: number
+          title: string
+        }
+        Insert: {
+          content_text?: string | null
+          content_type?: string
+          content_url?: string | null
+          created_at?: string | null
+          estimated_minutes?: number | null
+          id?: string
+          module_id: string
+          section_number: number
+          title: string
+        }
+        Update: {
+          content_text?: string | null
+          content_type?: string
+          content_url?: string | null
+          created_at?: string | null
+          estimated_minutes?: number | null
+          id?: string
+          module_id?: string
+          section_number?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "module_sections_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "education_modules"
             referencedColumns: ["id"]
           },
         ]
@@ -263,22 +322,28 @@ export type Database = {
       }
       user_badges: {
         Row: {
+          attempt_count: number | null
           earned_at: string
           id: string
+          last_attempt_at: string | null
           module_id: string
           quiz_score: number | null
           user_id: string
         }
         Insert: {
+          attempt_count?: number | null
           earned_at?: string
           id?: string
+          last_attempt_at?: string | null
           module_id: string
           quiz_score?: number | null
           user_id: string
         }
         Update: {
+          attempt_count?: number | null
           earned_at?: string
           id?: string
+          last_attempt_at?: string | null
           module_id?: string
           quiz_score?: number | null
           user_id?: string
@@ -316,6 +381,41 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_section_progress: {
+        Row: {
+          completed: boolean | null
+          id: string
+          last_accessed: string | null
+          section_id: string
+          time_spent_seconds: number | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          id?: string
+          last_accessed?: string | null
+          section_id: string
+          time_spent_seconds?: number | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          id?: string
+          last_accessed?: string | null
+          section_id?: string
+          time_spent_seconds?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_section_progress_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "module_sections"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
