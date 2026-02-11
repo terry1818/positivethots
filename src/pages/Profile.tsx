@@ -125,8 +125,8 @@ const Profile = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             
             {/* Badges */}
-            <div className="absolute top-3 left-3 flex gap-1">
-              {badges.map((badge) => (
+            <div className="absolute top-3 left-3 flex items-center gap-1">
+              {badges.slice(0, 5).map((badge) => (
                 <EducationBadge
                   key={badge.module_id}
                   moduleSlug={(badge.education_modules as any)?.slug || ''}
@@ -135,6 +135,11 @@ const Profile = () => {
                   size="sm"
                 />
               ))}
+              {badges.length > 5 && (
+                <span className="text-xs text-white bg-black/40 rounded-full px-1.5 py-0.5">
+                  +{badges.length - 5}
+                </span>
+              )}
             </div>
 
             {/* Name overlay */}

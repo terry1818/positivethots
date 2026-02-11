@@ -2,13 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
- import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { EducationBadge } from "@/components/EducationBadge";
- import { AdminPanel } from "@/components/admin/AdminPanel";
- import { useAntiCheat } from "@/hooks/useAntiCheat";
-import { ChevronLeft, CheckCircle, Award, BookOpen } from "lucide-react";
+import { AdminPanel } from "@/components/admin/AdminPanel";
+import { SectionContent } from "@/components/education/SectionContent";
+import { SectionNav } from "@/components/education/SectionNav";
+import { useAntiCheat } from "@/hooks/useAntiCheat";
+import { useModuleProgress } from "@/hooks/useModuleProgress";
+import { ChevronLeft, CheckCircle, Award, BookOpen, Lock } from "lucide-react";
 import { toast } from "sonner";
 
 interface Module {
@@ -18,6 +22,7 @@ interface Module {
   description: string;
   content: string;
   video_url: string | null;
+  tier: string | null;
 }
 
 interface Question {
@@ -41,6 +46,20 @@ const LearnModule = () => {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [userId, setUserId] = useState<string | null>(null);
+
+  // Module progress for sections
+  const [moduleId, setModuleId] = useState<string>("");
+  const {
+    sections,
+    progress: sectionProgress,
+    currentSectionIndex,
+    setCurrentSectionIndex,
+    markComplete,
+    isAllComplete: allSectionsComplete,
+    completionPercent,
+    hasSections,
+    reload: reloadProgress,
+  } = useModuleProgress(moduleId);
 
   // Anti-cheat protection - enabled only during quiz
   const { violations, violationCount } = useAntiCheat({
@@ -71,6 +90,7 @@ const LearnModule = () => {
 
       if (moduleError) throw moduleError;
       setModule(moduleData);
+      setModuleId(moduleData.id);
 
       const [questionsResult, badgeResult] = await Promise.all([
         supabase
@@ -88,7 +108,6 @@ const LearnModule = () => {
 
       if (questionsResult.error) throw questionsResult.error;
       
-      // Parse options from JSONB
       const parsedQuestions = (questionsResult.data || []).map(q => ({
         ...q,
         options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options
@@ -108,7 +127,6 @@ const LearnModule = () => {
   const handleSubmitQuiz = async () => {
     if (!module || !userId) return;
 
-    // Calculate score
     let correct = 0;
     questions.forEach(q => {
       if (answers[q.id] === q.correct_answer) {
@@ -120,7 +138,6 @@ const LearnModule = () => {
     setScore(scorePercent);
     setSubmitted(true);
 
-    // Pass threshold is 80%
     if (scorePercent >= 80) {
       try {
         const { error } = await supabase
@@ -145,10 +162,10 @@ const LearnModule = () => {
 
   const handleRefresh = () => {
     loadModule();
+    reloadProgress();
   };
 
   const renderContent = (content: string) => {
-    // Simple markdown-like rendering
     return content.split('\n\n').map((paragraph, i) => {
       if (paragraph.startsWith('## ')) {
         return <h2 key={i} className="text-xl font-bold mt-6 mb-3">{paragraph.slice(3)}</h2>;
@@ -166,9 +183,17 @@ const LearnModule = () => {
           </ul>
         );
       }
-      return <p key={i} className="mb-4 leading-relaxed">{paragraph}</p>;
+      // Handle links
+      const withLinks = paragraph.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-secondary underline hover:text-secondary/80">$1</a>'
+      );
+      return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: withLinks }} />;
     });
   };
+
+  // Can user take quiz? Either no sections, or all sections complete
+  const canTakeQuiz = !hasSections || allSectionsComplete;
 
   if (loading) {
     return (
@@ -192,77 +217,130 @@ const LearnModule = () => {
           >
             <ChevronLeft className="h-6 w-6" />
           </Button>
-          <div className="flex-1">
-            <h1 className="font-bold">{module.title}</h1>
-            <p className="text-sm text-muted-foreground">{module.description}</p>
+          <div className="flex-1 min-w-0">
+            <h1 className="font-bold truncate">{module.title}</h1>
+            <p className="text-sm text-muted-foreground truncate">{module.description}</p>
           </div>
           <EducationBadge
             moduleSlug={module.slug}
             title={module.title}
             isEarned={isAlreadyCompleted || (submitted && score >= 80)}
+            tier={module.tier || 'foundation'}
             size="md"
           />
         </div>
+        {/* Section progress bar */}
+        {hasSections && !showQuiz && (
+          <div className="container max-w-2xl mx-auto px-4 pb-3">
+            <SectionNav
+              sections={sections}
+              progress={sectionProgress}
+              currentIndex={currentSectionIndex}
+              onSelect={setCurrentSectionIndex}
+            />
+          </div>
+        )}
       </header>
 
       {/* Content */}
       <main className="flex-1 container max-w-2xl mx-auto px-4 py-6">
-        {/* Admin Panel - only visible to admins */}
+        {/* Admin Panel */}
         <AdminPanel module={module} questions={questions} onUpdate={handleRefresh} />
 
         {!showQuiz ? (
           <>
-            {/* Video Embed */}
-            {module.video_url && (
-              <div className="mb-8">
-                <div className="aspect-video rounded-lg overflow-hidden bg-muted">
-                  <iframe
-                    src={module.video_url}
-                    title={`${module.title} - Video`}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
-                  />
+            {/* Section-based content */}
+            {hasSections ? (
+              <>
+                {/* Section progress */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between text-sm mb-1">
+                    <span className="text-muted-foreground">Module progress</span>
+                    <span className="font-medium">{completionPercent}%</span>
+                  </div>
+                  <Progress value={completionPercent} className="h-2" />
                 </div>
-                <p className="text-sm text-muted-foreground mt-2 text-center">
-                  Watch the video above, then read the material below
-                </p>
-              </div>
-            )}
 
-            {/* Reading Content */}
-            <div className="prose prose-sm max-w-none mb-8">
-              {renderContent(module.content)}
-            </div>
-
-            {/* Start Quiz Button */}
-            <Card className="bg-gradient-to-br from-primary/10 to-secondary/10 border-0">
-              <CardContent className="pt-6 text-center">
-                {isAlreadyCompleted ? (
-                  <>
-                    <CheckCircle className="h-12 w-12 mx-auto text-success mb-3" />
-                    <h3 className="font-semibold mb-2">Already Completed!</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      You've already earned this badge. Want to review the quiz?
-                    </p>
-                    <Button onClick={() => setShowQuiz(true)} variant="outline">
-                      Review Quiz
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <BookOpen className="h-12 w-12 mx-auto text-primary mb-3" />
-                    <h3 className="font-semibold mb-2">Ready for the Quiz?</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Answer the questions to earn your badge. You need 80% to pass.
-                    </p>
-                    <Button onClick={() => setShowQuiz(true)}>
-                      Take Quiz
-                    </Button>
-                  </>
+                {/* Current section */}
+                {sections[currentSectionIndex] && (
+                  <SectionContent
+                    section={sections[currentSectionIndex]}
+                    isCompleted={sectionProgress.some(
+                      p => p.section_id === sections[currentSectionIndex].id && p.completed
+                    )}
+                    onComplete={() => markComplete(sections[currentSectionIndex].id)}
+                    onNext={() => {
+                      if (currentSectionIndex < sections.length - 1) {
+                        setCurrentSectionIndex(currentSectionIndex + 1);
+                      } else if (canTakeQuiz) {
+                        setShowQuiz(true);
+                      }
+                    }}
+                    onPrev={() => {
+                      if (currentSectionIndex > 0) {
+                        setCurrentSectionIndex(currentSectionIndex - 1);
+                      }
+                    }}
+                    isFirst={currentSectionIndex === 0}
+                    isLast={currentSectionIndex === sections.length - 1}
+                    totalSections={sections.length}
+                  />
                 )}
-              </CardContent>
-            </Card>
+              </>
+            ) : (
+              <>
+                {/* Legacy: single-page content */}
+                {module.video_url && (
+                  <div className="mb-8">
+                    <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+                      <iframe
+                        src={module.video_url}
+                        title={`${module.title} - Video`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full"
+                      />
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-2 text-center">
+                      Watch the video above, then read the material below
+                    </p>
+                  </div>
+                )}
+
+                <div className="prose prose-sm max-w-none mb-8">
+                  {renderContent(module.content)}
+                </div>
+
+                {/* Start Quiz Button */}
+                <Card className="bg-gradient-to-br from-primary/10 to-secondary/10 border-0">
+                  <CardContent className="pt-6 text-center">
+                    {isAlreadyCompleted ? (
+                      <>
+                        <CheckCircle className="h-12 w-12 mx-auto text-success mb-3" />
+                        <h3 className="font-semibold mb-2">Already Completed!</h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          You've already earned this badge. Want to review the quiz?
+                        </p>
+                        <Button onClick={() => setShowQuiz(true)} variant="outline">
+                          Review Quiz
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <BookOpen className="h-12 w-12 mx-auto text-primary mb-3" />
+                        <h3 className="font-semibold mb-2">Ready for the Quiz?</h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          Answer the questions to earn your badge. You need 80% to pass.
+                        </p>
+                        <Button onClick={() => setShowQuiz(true)}>
+                          Take Quiz
+                        </Button>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            )}
           </>
         ) : (
           <>
@@ -271,59 +349,73 @@ const LearnModule = () => {
               <div className="space-y-6">
                 <h2 className="text-xl font-bold">Quiz: {module.title}</h2>
                 
-                {questions.map((question, qIndex) => (
-                  <Card key={question.id}>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base">
-                        {qIndex + 1}. {question.question}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <RadioGroup
-                        value={answers[question.id]?.toString()}
-                        onValueChange={(value) => 
-                          setAnswers(prev => ({ ...prev, [question.id]: parseInt(value) }))
-                        }
-                      >
-                        {question.options.map((option, oIndex) => (
-                          <div key={oIndex} className="flex items-center space-x-2 py-2">
-                            <RadioGroupItem 
-                              value={oIndex.toString()} 
-                              id={`${question.id}-${oIndex}`} 
-                            />
-                            <Label 
-                              htmlFor={`${question.id}-${oIndex}`}
-                              className="flex-1 cursor-pointer"
-                            >
-                              {option}
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
+                {questions.length === 0 ? (
+                  <Card className="border-dashed">
+                    <CardContent className="py-12 text-center">
+                      <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                      <p className="text-muted-foreground">No quiz questions yet. Check back soon!</p>
+                      <Button variant="outline" className="mt-4" onClick={() => setShowQuiz(false)}>
+                        Back to Content
+                      </Button>
                     </CardContent>
                   </Card>
-                ))}
+                ) : (
+                  <>
+                    {questions.map((question, qIndex) => (
+                      <Card key={question.id}>
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-base">
+                            {qIndex + 1}. {question.question}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <RadioGroup
+                            value={answers[question.id]?.toString()}
+                            onValueChange={(value) => 
+                              setAnswers(prev => ({ ...prev, [question.id]: parseInt(value) }))
+                            }
+                          >
+                            {question.options.map((option, oIndex) => (
+                              <div key={oIndex} className="flex items-center space-x-2 py-2">
+                                <RadioGroupItem 
+                                  value={oIndex.toString()} 
+                                  id={`${question.id}-${oIndex}`} 
+                                />
+                                <Label 
+                                  htmlFor={`${question.id}-${oIndex}`}
+                                  className="flex-1 cursor-pointer"
+                                >
+                                  {option}
+                                </Label>
+                              </div>
+                            ))}
+                          </RadioGroup>
+                        </CardContent>
+                      </Card>
+                    ))}
 
-                <div className="flex gap-3">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowQuiz(false)}
-                    className="flex-1"
-                  >
-                    Back to Reading
-                  </Button>
-                  <Button 
-                    onClick={handleSubmitQuiz}
-                    disabled={Object.keys(answers).length !== questions.length}
-                    className="flex-1"
-                  >
-                    Submit Answers
-                  </Button>
-                </div>
-                {violationCount > 0 && (
-                  <p className="text-xs text-destructive text-center mt-2">
-                    ⚠️ {violationCount} quiz integrity warning(s) recorded
-                  </p>
+                    <div className="flex gap-3">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setShowQuiz(false)}
+                        className="flex-1"
+                      >
+                        Back to {hasSections ? "Sections" : "Reading"}
+                      </Button>
+                      <Button 
+                        onClick={handleSubmitQuiz}
+                        disabled={Object.keys(answers).length !== questions.length}
+                        className="flex-1"
+                      >
+                        Submit Answers
+                      </Button>
+                    </div>
+                    {violationCount > 0 && (
+                      <p className="text-xs text-destructive text-center mt-2">
+                        ⚠️ {violationCount} quiz integrity warning(s) recorded
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
             ) : (
@@ -342,6 +434,7 @@ const LearnModule = () => {
                         moduleSlug={module.slug}
                         title={module.title}
                         isEarned={true}
+                        tier={module.tier || 'foundation'}
                         size="lg"
                         showLabel
                       />

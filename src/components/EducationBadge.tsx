@@ -5,16 +5,27 @@ interface EducationBadgeProps {
   moduleSlug: string;
   title: string;
   isEarned: boolean;
+  tier?: string;
   size?: "sm" | "md" | "lg";
   showLabel?: boolean;
 }
 
+// Tier-based colors
+const tierColors: Record<string, string> = {
+  foundation: "bg-primary",
+  sexual_health: "bg-success",
+  identity: "bg-[hsl(270_50%_55%)]",
+  relationships: "bg-[hsl(340_70%_55%)]",
+  advanced: "bg-accent",
+};
+
+// Keep legacy slug-based colors as fallback
 const badgeColors: Record<string, string> = {
-  "consent-fundamentals": "bg-[hsl(15_85%_60%)]",
-  "enm-principles": "bg-[hsl(175_60%_45%)]",
+  "consent-fundamentals": "bg-primary",
+  "enm-principles": "bg-secondary",
   "boundaries-communication": "bg-[hsl(270_50%_55%)]",
   "safer-sex": "bg-[hsl(340_70%_55%)]",
-  "emotional-responsibility": "bg-[hsl(45_80%_50%)]",
+  "emotional-responsibility": "bg-accent",
 };
 
 const badgeIcons: Record<string, string> = {
@@ -23,12 +34,28 @@ const badgeIcons: Record<string, string> = {
   "boundaries-communication": "⬡",
   "safer-sex": "✚",
   "emotional-responsibility": "☀",
+  "understanding-desire": "♥",
+  "sexual-wellness-basics": "⊕",
+  "pleasure-satisfaction": "✧",
+  "common-sexual-concerns": "⚕",
+  "sexual-orientation-spectrum": "🌈",
+  "gender-identity-expression": "⚧",
+  "relationship-orientations": "◇",
+  "intersectionality-intimacy": "∞",
+  "relationship-skills-foundation": "⚘",
+  "navigating-conflict": "⚖",
+  "jealousy-insecurity": "♦",
+  "maintaining-intimacy": "❋",
+  "advanced-enm-practices": "★",
+  "kink-bdsm-basics": "⛓",
+  "relationship-vision": "◉",
 };
 
 export const EducationBadge = ({ 
   moduleSlug, 
   title, 
   isEarned, 
+  tier = "foundation",
   size = "md",
   showLabel = false 
 }: EducationBadgeProps) => {
@@ -38,7 +65,7 @@ export const EducationBadge = ({
     lg: "h-14 w-14 text-xl"
   };
 
-  const color = badgeColors[moduleSlug] || "bg-muted";
+  const color = badgeColors[moduleSlug] || tierColors[tier] || "bg-muted";
   const icon = badgeIcons[moduleSlug] || "★";
 
   return (
