@@ -215,7 +215,7 @@ const Profile = () => {
           <Button
             variant="outline"
             className="w-full justify-start text-left"
-            onClick={() => toast("Edit profile coming soon!")}
+            onClick={() => navigate("/profile/edit")}
           >
             <Settings className="mr-2 h-5 w-5" />
             Edit Profile
