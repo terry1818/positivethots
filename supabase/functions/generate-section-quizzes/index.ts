@@ -58,13 +58,13 @@ serve(async (req) => {
     const results: { sectionId: string; sectionTitle: string; questionsGenerated: number }[] = [];
 
     for (const section of sections) {
-      // Check if section already has 15 questions
+      // Check if section already has 4 questions (target: 4 per section × 5 sections = 20 per module)
       const { count } = await supabase
         .from("quiz_questions")
         .select("id", { count: "exact", head: true })
         .eq("section_id", section.id);
 
-      if ((count || 0) >= 15) {
+      if ((count || 0) >= 4) {
         results.push({
           sectionId: section.id,
           sectionTitle: section.title,
@@ -93,7 +93,7 @@ Section: "${section.title}" (Section ${section.section_number})
 Section Content:
 ${sectionContent.substring(0, 4000)}
 
-Generate exactly 15 multiple-choice quiz questions about this section's specific topics. Each question must:
+Generate exactly 4 multiple-choice quiz questions about this section's specific topics. Each question must:
 - Have exactly 4 answer options
 - Have exactly 1 correct answer
 - Test understanding, not just memorization
@@ -150,7 +150,7 @@ The correct_answer is the 0-based index of the correct option.`;
       }
 
       // Insert questions
-      const inserts = questions.slice(0, 15).map((q: any, idx: number) => ({
+      const inserts = questions.slice(0, 4).map((q: any, idx: number) => ({
         module_id: section.module_id,
         section_id: section.id,
         question: q.question,
