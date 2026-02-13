@@ -145,3 +145,12 @@
 .badge-emotional {
   background: hsl(var(--badge-emotional));
 }
+
+/* Gradient utilities */
+.bg-gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.bg-gradient-warm {
+  background: var(--gradient-warm);
+}
