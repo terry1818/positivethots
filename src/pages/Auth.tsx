@@ -13,7 +13,7 @@ const authSchema = z.object({
   email: z.string().email("Invalid email address").max(255, "Email too long"),
   password: z.string().min(6, "Password must be at least 6 characters").max(100, "Password too long"),
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name too long").optional(),
-  age: z.number().min(21, "Must be 21 or older").max(100, "Invalid age").optional(),
+  age: z.number().min(18, "Must be 18 or older").max(100, "Invalid age").optional(),
 });
 
 const Auth = () => {
@@ -131,7 +131,7 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="age">Age (21+)</Label>
+                  <Label htmlFor="age">Age (18+)</Label>
                   <Input
                     id="age"
                     type="number"
@@ -139,7 +139,7 @@ const Auth = () => {
                     value={age}
                     onChange={(e) => setAge(e.target.value)}
                     required
-                    min={21}
+                    min={18}
                     max={100}
                   />
                 </div>
