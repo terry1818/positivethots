@@ -47,6 +47,24 @@ const renderMarkdown = (content: string) => {
         </ul>
       );
     }
+    // Handle YouTube video embeds [youtube:Title](url)
+    const youtubeMatch = paragraph.match(/\[youtube:(.*?)\]\((https?:\/\/(?:www\.)?youtube\.com\/embed\/[^\)]+)\)/);
+    if (youtubeMatch) {
+      return (
+        <div key={i} className="my-4">
+          <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+            <iframe
+              src={youtubeMatch[2]}
+              title={youtubeMatch[1]}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          </div>
+          <p className="text-sm text-muted-foreground mt-1 text-center">{youtubeMatch[1]}</p>
+        </div>
+      );
+    }
     // Handle links [text](url)
     const withLinks = paragraph.replace(
       /\[([^\]]+)\]\(([^)]+)\)/g,
