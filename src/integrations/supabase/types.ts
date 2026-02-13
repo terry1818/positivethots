@@ -269,6 +269,7 @@ export type Database = {
           options: Json
           order_index: number
           question: string
+          section_id: string | null
         }
         Insert: {
           correct_answer: number
@@ -277,6 +278,7 @@ export type Database = {
           options: Json
           order_index?: number
           question: string
+          section_id?: string | null
         }
         Update: {
           correct_answer?: number
@@ -285,6 +287,7 @@ export type Database = {
           options?: Json
           order_index?: number
           question?: string
+          section_id?: string | null
         }
         Relationships: [
           {
@@ -292,6 +295,13 @@ export type Database = {
             columns: ["module_id"]
             isOneToOne: false
             referencedRelation: "education_modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_questions_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "module_sections"
             referencedColumns: ["id"]
           },
         ]
