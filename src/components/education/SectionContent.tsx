@@ -48,13 +48,19 @@ const renderMarkdown = (content: string) => {
       );
     }
     // Handle YouTube video embeds [youtube:Title](url)
-    const youtubeMatch = paragraph.match(/\[youtube:(.*?)\]\((https?:\/\/(?:www\.)?youtube\.com\/embed\/[^\)]+)\)/);
+    const youtubeMatch = paragraph.match(/\[youtube:(.*?)\]\((https?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/[^\)]+)\)/);
     if (youtubeMatch) {
+      // Use youtube-nocookie.com to bypass age restrictions (all users are 18+)
+      const embedUrl = youtubeMatch[2]
+        .replace('youtube.com/embed/', 'youtube-nocookie.com/embed/')
+        .replace('www.youtube.com/embed/', 'www.youtube-nocookie.com/embed/');
+      const separator = embedUrl.includes('?') ? '&' : '?';
+      const finalUrl = `${embedUrl}${separator}rel=0`;
       return (
         <div key={i} className="my-4">
           <div className="aspect-video rounded-lg overflow-hidden bg-muted">
             <iframe
-              src={youtubeMatch[2]}
+              src={finalUrl}
               title={youtubeMatch[1]}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -104,17 +110,24 @@ export const SectionContent = ({
       <h2 className="text-xl font-bold">{section.title}</h2>
 
       {/* Video content */}
-      {section.content_type === 'video' && section.content_url && (
-        <div className="aspect-video rounded-lg overflow-hidden bg-muted">
-          <iframe
-            src={section.content_url}
-            title={section.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-full h-full"
-          />
-        </div>
-      )}
+      {section.content_type === 'video' && section.content_url && (() => {
+        const videoUrl = section.content_url!
+          .replace('youtube.com/embed/', 'youtube-nocookie.com/embed/')
+          .replace('www.youtube.com/embed/', 'www.youtube-nocookie.com/embed/');
+        const sep = videoUrl.includes('?') ? '&' : '?';
+        const finalVideoUrl = `${videoUrl}${sep}rel=0`;
+        return (
+          <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+            <iframe
+              src={finalVideoUrl}
+              title={section.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          </div>
+        );
+      })()}
 
       {/* Infographic */}
       {section.content_type === 'infographic' && section.content_url && (
