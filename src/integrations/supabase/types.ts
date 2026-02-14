@@ -368,6 +368,39 @@ export type Database = {
           },
         ]
       }
+      user_learning_stats: {
+        Row: {
+          current_level: number
+          current_streak: number
+          last_activity_date: string | null
+          longest_streak: number
+          streak_freeze_available: boolean
+          total_xp: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          current_level?: number
+          current_streak?: number
+          last_activity_date?: string | null
+          longest_streak?: number
+          streak_freeze_available?: boolean
+          total_xp?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          current_level?: number
+          current_streak?: number
+          last_activity_date?: string | null
+          longest_streak?: number
+          streak_freeze_available?: boolean
+          total_xp?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -426,6 +459,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      xp_transactions: {
+        Row: {
+          created_at: string
+          id: string
+          source: string
+          source_id: string | null
+          user_id: string
+          xp_amount: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          source: string
+          source_id?: string | null
+          user_id: string
+          xp_amount: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          source?: string
+          source_id?: string | null
+          user_id?: string
+          xp_amount?: number
+        }
+        Relationships: []
       }
     }
     Views: {

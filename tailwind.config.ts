@@ -96,6 +96,14 @@ export default {
           "0%": { opacity: "0", transform: "scale(0.8)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
+        "xp-float": {
+          "0%": { opacity: "1", transform: "translate(-50%, 0) scale(1)" },
+          "100%": { opacity: "0", transform: "translate(-50%, -80px) scale(1.2)" },
+        },
+        "confetti-fall": {
+          "0%": { transform: "translateY(-10px) rotate(0deg)", opacity: "1" },
+          "100%": { transform: "translateY(400px) rotate(720deg)", opacity: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -103,6 +111,8 @@ export default {
         "swipe-left": "swipe-left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
         "swipe-right": "swipe-right 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
         "fade-in": "fade-in 0.3s ease-out",
+        "xp-float": "xp-float 1.5s ease-out forwards",
+        "confetti-fall": "confetti-fall 2s ease-in forwards",
       },
     },
   },
