@@ -23,7 +23,7 @@ export const Logo = ({ size = "md", showText = true }: LogoProps) => {
       <img src={logoImg} alt="Positive Thots" className={`${imgSizes[size]} w-auto`} />
       {showText && (
         <span 
-          className={`${textSizes[size]} text-secondary`}
+          className={`${textSizes[size]} bg-gradient-to-r from-[hsl(320,70%,55%)] via-[hsl(340,60%,60%)] to-[hsl(320,70%,50%)] bg-clip-text text-transparent`}
           style={{ 
             fontFamily: "'Pacifico', cursive",
             WebkitTextStroke: '1.5px white',
