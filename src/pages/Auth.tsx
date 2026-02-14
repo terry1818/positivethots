@@ -102,8 +102,8 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-[var(--shadow-elevated)]">
         <CardHeader className="space-y-1 text-center">
-          <div className="mb-4">
-            <Logo size="md" />
+          <div className="mb-4 flex justify-center">
+            <Logo size="lg" />
           </div>
           <CardTitle className="text-2xl">
             {isSignUp ? "Create your account" : "Welcome back"}

@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MapPin, Clock, Zap, Users, BookOpen, Shield, Eye, EyeOff } from "lucide-react";
+import { Heart, MapPin, Clock, Users, BookOpen, Shield, Eye, EyeOff } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
+import { Logo } from "@/components/Logo";
 import { MatchModal } from "@/components/MatchModal";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
@@ -264,10 +265,7 @@ const Index = () => {
       <div className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="container max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-bold">Discover</h1>
-            </div>
+            <Logo size="sm" showText={false} />
             
             <div className="flex items-center gap-2">
               <Button

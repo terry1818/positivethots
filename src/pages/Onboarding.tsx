@@ -154,7 +154,7 @@ const Onboarding = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-[var(--shadow-elevated)]">
         <CardHeader className="space-y-1 text-center">
-          <Logo size="md" />
+          <Logo size="lg" />
           <CardTitle className="text-2xl mt-4">Create Your Profile</CardTitle>
           <CardDescription>
             Step {step} of {totalSteps}
