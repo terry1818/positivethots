@@ -1,4 +1,4 @@
-import { CheckCircle, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EducationBadgeProps {
@@ -10,21 +10,21 @@ interface EducationBadgeProps {
   showLabel?: boolean;
 }
 
-// Tier-based colors
+// Tier-based colors — purple family
 const tierColors: Record<string, string> = {
   foundation: "bg-primary",
   sexual_health: "bg-success",
-  identity: "bg-[hsl(270_50%_55%)]",
-  relationships: "bg-[hsl(340_70%_55%)]",
+  identity: "bg-[hsl(285_55%_45%)]",
+  relationships: "bg-[hsl(340_65%_55%)]",
   advanced: "bg-accent",
 };
 
-// Keep legacy slug-based colors as fallback
+// Legacy slug-based colors as fallback
 const badgeColors: Record<string, string> = {
   "consent-fundamentals": "bg-primary",
   "enm-principles": "bg-secondary",
-  "boundaries-communication": "bg-[hsl(270_50%_55%)]",
-  "safer-sex": "bg-[hsl(340_70%_55%)]",
+  "boundaries-communication": "bg-[hsl(285_55%_45%)]",
+  "safer-sex": "bg-[hsl(340_65%_55%)]",
   "emotional-responsibility": "bg-accent",
 };
 

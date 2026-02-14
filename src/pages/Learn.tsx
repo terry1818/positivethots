@@ -36,8 +36,8 @@ interface UserBadge {
 const tierConfig: Record<string, { label: string; color: string; bgClass: string }> = {
   foundation: { label: "Foundation (Required)", color: "text-primary", bgClass: "from-primary/10 to-primary/5" },
   sexual_health: { label: "Sexual Health", color: "text-success", bgClass: "from-success/10 to-success/5" },
-  identity: { label: "Identity & Diversity", color: "text-[hsl(270_50%_55%)]", bgClass: "from-[hsl(270_50%_55%)]/10 to-[hsl(270_50%_55%)]/5" },
-  relationships: { label: "Healthy Relationships", color: "text-[hsl(340_70%_55%)]", bgClass: "from-[hsl(340_70%_55%)]/10 to-[hsl(340_70%_55%)]/5" },
+  identity: { label: "Identity & Diversity", color: "text-[hsl(285_55%_45%)]", bgClass: "from-[hsl(285_55%_45%)]/10 to-[hsl(285_55%_45%)]/5" },
+  relationships: { label: "Healthy Relationships", color: "text-[hsl(340_65%_55%)]", bgClass: "from-[hsl(340_65%_55%)]/10 to-[hsl(340_65%_55%)]/5" },
   advanced: { label: "Advanced Topics", color: "text-accent", bgClass: "from-accent/10 to-accent/5" },
 };
 
