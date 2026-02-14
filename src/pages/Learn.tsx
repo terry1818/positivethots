@@ -34,12 +34,12 @@ interface UserBadge {
   earned_at: string;
 }
 
-const tierConfig: Record<string, { label: string; color: string; bgClass: string }> = {
-  foundation: { label: "Foundation (Required)", color: "text-primary", bgClass: "from-primary/10 to-primary/5" },
-  sexual_health: { label: "Sexual Health", color: "text-success", bgClass: "from-success/10 to-success/5" },
-  identity: { label: "Identity & Diversity", color: "text-[hsl(285_55%_45%)]", bgClass: "from-[hsl(285_55%_45%)]/10 to-[hsl(285_55%_45%)]/5" },
-  relationships: { label: "Healthy Relationships", color: "text-[hsl(340_65%_55%)]", bgClass: "from-[hsl(340_65%_55%)]/10 to-[hsl(340_65%_55%)]/5" },
-  advanced: { label: "Advanced Topics", color: "text-accent", bgClass: "from-accent/10 to-accent/5" },
+const tierConfig: Record<string, { label: string; color: string; bgClass: string; borderColor: string }> = {
+  foundation: { label: "Foundation (Required)", color: "text-primary", bgClass: "from-primary/20 to-primary/10", borderColor: "border-l-primary" },
+  sexual_health: { label: "Sexual Health", color: "text-success", bgClass: "from-success/20 to-success/10", borderColor: "border-l-success" },
+  identity: { label: "Identity & Diversity", color: "text-[hsl(285_55%_45%)]", bgClass: "from-[hsl(285_55%_45%)]/20 to-[hsl(285_55%_45%)]/10", borderColor: "border-l-[hsl(285_55%_45%)]" },
+  relationships: { label: "Healthy Relationships", color: "text-[hsl(340_65%_55%)]", bgClass: "from-[hsl(340_65%_55%)]/20 to-[hsl(340_65%_55%)]/10", borderColor: "border-l-[hsl(340_65%_55%)]" },
+  advanced: { label: "Advanced Topics", color: "text-accent", bgClass: "from-accent/20 to-accent/10", borderColor: "border-l-accent" },
 };
 
 const tierOrder = ["foundation", "sexual_health", "identity", "relationships", "advanced"];
@@ -148,7 +148,7 @@ const Learn = () => {
       {/* Content */}
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
         {/* Progress Section */}
-        <Card className="bg-gradient-to-br from-secondary/10 to-primary/10 border-0">
+        <Card className="bg-gradient-to-br from-secondary/20 to-primary/20 border border-border">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Your Progress</span>
@@ -181,7 +181,7 @@ const Learn = () => {
               <Collapsible key={tier} open={isOpen} onOpenChange={() => toggleTier(tier)}>
                 <CollapsibleTrigger asChild>
                   <button className={cn(
-                    "w-full flex items-center justify-between p-3 rounded-lg bg-gradient-to-r border-0 transition-all",
+                    "w-full flex items-center justify-between p-3 rounded-lg bg-gradient-to-r border border-border transition-all",
                     config.bgClass
                   )}>
                     <div className="flex items-center gap-2">
@@ -199,7 +199,7 @@ const Learn = () => {
                     return (
                       <Card
                         key={module.id}
-                        className={cn("cursor-pointer transition-all", isUnlocked ? "hover:shadow-md" : "opacity-60 cursor-not-allowed")}
+                        className={cn("cursor-pointer transition-all border-l-4", config.borderColor, isUnlocked ? "hover:shadow-md" : "opacity-60 cursor-not-allowed")}
                         onClick={() => isUnlocked && navigate(`/learn/${module.slug}`)}
                       >
                         <CardContent className="p-3 flex items-center gap-3">
@@ -230,7 +230,7 @@ const Learn = () => {
         </div>
 
         {/* Info Section */}
-        <Card className="bg-muted/50 border-0">
+        <Card className="bg-muted/50 border border-border">
           <CardContent className="pt-6">
             <h3 className="font-semibold mb-2">Why Education First?</h3>
             <p className="text-sm text-muted-foreground">

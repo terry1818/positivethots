@@ -35,7 +35,7 @@ export const SectionNav = ({ sections, progress, currentIndex, onSelect }: Secti
               ? "bg-primary text-primary-foreground"
               : isCompleted(section.id)
               ? "bg-success/10 text-success hover:bg-success/20"
-              : "bg-muted text-muted-foreground hover:bg-muted/80"
+              : "bg-muted/80 text-muted-foreground hover:bg-muted border border-border"
           )}
         >
           {isCompleted(section.id) && <CheckCircle className="h-3 w-3 shrink-0" />}
