@@ -98,7 +98,7 @@ const Profile = () => {
       {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
-          <Logo size="sm" showText={false} />
+          <Logo size="md" />
           <Button
             variant="ghost"
             size="icon"

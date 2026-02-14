@@ -98,7 +98,7 @@ const Messages = () => {
           >
             <ChevronLeft className="h-6 w-6" />
           </Button>
-          <Logo size="sm" showText={false} />
+          <Logo size="md" />
           <div className="w-10" />
         </div>
       </header>
