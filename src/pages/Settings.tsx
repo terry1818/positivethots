@@ -18,7 +18,7 @@ const Settings = () => {
           <Button variant="ghost" size="icon" onClick={() => navigate("/profile")}>
             <ChevronLeft className="h-6 w-6" />
           </Button>
-          <Logo size="sm" showText={false} />
+          <Logo size="md" />
           <h1 className="text-xl font-bold">Settings</h1>
         </div>
       </header>
