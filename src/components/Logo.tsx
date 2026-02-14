@@ -26,7 +26,7 @@ export const Logo = ({ size = "md", showText = true }: LogoProps) => {
           className={`${textSizes[size]}`}
           style={{ 
             fontFamily: "'Pacifico', cursive",
-            color: 'hsl(330, 65%, 58%)',
+            color: 'hsl(345, 55%, 52%)',
             WebkitTextStroke: '1.5px white',
             textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
             paintOrder: 'stroke fill',
