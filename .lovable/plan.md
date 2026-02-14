@@ -1,73 +1,46 @@
 
-# Three Changes: AI Profile Photos, Logo Prominence, and Dark/Light Mode Settings
+# Add Abstract Background Visuals to Auth Page
 
-## 1. AI-Generated Profile Images for Test Users
+## Overview
+Add CSS-only abstract decorative elements to the auth/login page using the existing purple/magenta palette. These will be animated gradient orbs and soft bokeh-style blurs that float behind the login card, adding depth and visual interest without any external assets.
 
-Update the `seed-test-users` edge function to use Lovable AI image generation (google/gemini-2.5-flash-image) to create realistic profile photos for each test user instead of DiceBear avatars.
+## What Gets Added
 
-**How it works:**
-- For each test user, the function calls the Lovable AI gateway with a prompt tailored to the user's description (age, gender, vibe from their bio)
-- The generated image is returned as base64, then uploaded to a Lovable Cloud storage bucket
-- The public URL from the bucket is saved as `profile_image` on the profile
+**Decorative background elements in `src/pages/Auth.tsx`:**
+- 3-4 large, blurred gradient circles (orbs) positioned absolutely behind the card
+- Colors pulled from the existing palette: primary purple, secondary magenta, accent violet
+- Subtle CSS animation (slow drift/pulse) so they feel alive but not distracting
+- A faint radial gradient overlay to add depth
 
-**Technical details:**
-- Create a new storage bucket `profile-images` with public access for reading
-- Update `seed-test-users/index.ts` to:
-  1. Call `https://ai.gateway.lovable.dev/v1/chat/completions` with the `google/gemini-2.5-flash-image` model and a prompt like "Professional dating app profile photo of a [age]-year-old [gender] person, [descriptors from bio], warm lighting, natural smile, upper body portrait"
-  2. Decode the base64 image response
-  3. Upload to `profile-images` bucket with the user's ID as filename
-  4. Use the public URL as `profile_image`
-- For existing test users that were already created (skipped), the function will update their `profile_image` field with a newly generated image
+**New CSS keyframes in `src/index.css`:**
+- A slow `float` animation that gently moves the orbs in a looping pattern
+- Each orb gets a different animation delay for organic movement
 
-## 2. Logo Prominence -- Front and Center Everywhere
+## Technical Details
 
-Make the Positive Thots logo the hero element across all key screens:
+### Auth.tsx Changes
+- Wrap the existing content in a `relative overflow-hidden` container
+- Add 3-4 `div` elements with absolute positioning, large dimensions (300-500px), rounded-full, heavy blur (blur-3xl), and low opacity (10-20%)
+- Each orb uses a different gradient from the palette (e.g., `bg-primary`, `bg-secondary`, `bg-accent`)
+- The login card stays on top via `relative z-10`
 
-- **Auth page**: Enlarge the logo to `lg` size and center it prominently above the card
-- **Discover header**: Replace the Zap icon + "Discover" text with the Logo component (sm size, no text)
-- **Learn header**: Add the Logo component alongside the XP bar and streak display
-- **Bottom Nav**: No change needed (icons are standard nav convention), but add the logo to the top of the Profile page header
-- **Onboarding**: The logo is already used -- bump it to `lg` size
-- **Profile page header**: Replace the "My Profile" text with the Logo component
+### index.css Changes
+- Add a `@keyframes blob-float` animation that translates and scales subtly over 15-20 seconds
+- Three animation delay variants so orbs move independently
 
-**Files to modify:**
-- `src/pages/Auth.tsx` -- larger logo placement
-- `src/pages/Index.tsx` -- logo in discover header
-- `src/pages/Learn.tsx` -- logo in learn header
-- `src/pages/Profile.tsx` -- logo in profile header
-- `src/pages/Messages.tsx` -- logo in messages header
+### Example orb structure:
+```text
+div.absolute.-top-20.-left-20.w-96.h-96.rounded-full.bg-primary/15.blur-3xl.animate-blob-float
+div.absolute.-bottom-20.-right-20.w-80.h-80.rounded-full.bg-secondary/20.blur-3xl.animate-blob-float [delay 5s]
+div.absolute.top-1/2.left-1/2.w-72.h-72.rounded-full.bg-accent/10.blur-3xl.animate-blob-float [delay 10s]
+```
 
-## 3. Dark/Light Mode Toggle in Settings
+## Files to Modify
+- `src/pages/Auth.tsx` -- add decorative orb divs behind the card
+- `src/index.css` -- add `blob-float` keyframe animation
+- `tailwind.config.ts` -- register the `blob-float` animation
 
-The project already has `next-themes` installed (used by `sonner.tsx`), but no ThemeProvider is set up. This needs to be wired up properly.
-
-**Changes:**
-
-### a) Add ThemeProvider to the app
-- Wrap the app in `next-themes` `ThemeProvider` in `src/App.tsx`
-- Set `attribute="class"` and `defaultTheme="system"` so Tailwind's `dark:` classes work
-
-### b) Create a Settings page (`src/pages/Settings.tsx`)
-- Accessible from Profile page via the existing Settings button
-- Add a route `/settings` in `App.tsx`
-- Settings page includes:
-  - **Appearance section** with three options using radio buttons or a segmented control:
-    - "Light" -- forces light mode
-    - "Dark" -- forces dark mode  
-    - "System" -- follows device preference (default)
-  - Uses `useTheme()` hook from `next-themes` to read/set the theme
-  - Clean UI with the Logo at the top, back button, and grouped settings cards
-
-### c) Update Profile page
-- Wire the Settings gear button to navigate to `/settings`
-
-**Files to create:**
-- `src/pages/Settings.tsx`
-
-**Files to modify:**
-- `src/App.tsx` -- add ThemeProvider wrapper + Settings route
-- `src/main.tsx` -- no changes needed
-- `src/pages/Profile.tsx` -- wire Settings button to navigate to `/settings`
-
-**Storage setup:**
-- Create `profile-images` storage bucket via database migration
+## What Stays the Same
+- All auth logic, form fields, validation
+- Logo placement and size
+- Card styling and layout
