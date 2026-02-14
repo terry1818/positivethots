@@ -135,10 +135,26 @@ const LikesYou = () => {
               ))}
             </div>
           ) : likers.length === 0 ? (
-            <div className="text-center py-16 text-muted-foreground">
+          <div className="text-center py-16 text-muted-foreground">
               <Heart className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p className="text-lg font-medium">No likes yet</p>
-              <p className="text-sm">Keep swiping — they'll show up here!</p>
+              <p className="text-sm mb-6">Keep swiping — they'll show up here!</p>
+
+              {!isPremium && !subLoading && (
+                <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-left">
+                  <CardContent className="p-4 text-center">
+                    <Crown className="h-8 w-8 text-primary mx-auto mb-2" />
+                    <p className="font-semibold text-foreground mb-1">Unlock Premium</p>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      See who likes you instantly and connect directly — upgrade to Premium for $9.99/mo.
+                    </p>
+                    <Button onClick={() => navigate("/premium")} className="w-full">
+                      <Lock className="h-4 w-4 mr-2" />
+                      Go Premium
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           ) : (
             <>
