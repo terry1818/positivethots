@@ -2,3 +2,9 @@ project_id = "zcsnqvncqzpleqoctzfc"
 
 [functions.seed-test-users]
 verify_jwt = false
+
+[functions.generate-section-quizzes]
+verify_jwt = false
+
+[functions.moderate-photo]
+verify_jwt = false

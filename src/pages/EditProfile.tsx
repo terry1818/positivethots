@@ -8,11 +8,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Save } from "lucide-react";
 import { toast } from "sonner";
+import { PhotoUploadGrid } from "@/components/PhotoUploadGrid";
+import { VerificationCard } from "@/components/VerificationCard";
 
 const EditProfile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [photos, setPhotos] = useState<any[]>([]);
+  const [latestVerification, setLatestVerification] = useState<any>(null);
   const navigate = useNavigate();
 
   // Form state
@@ -35,13 +39,14 @@ const EditProfile = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/auth"); return; }
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .single();
+      const [profileResult, photosResult, verResult] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", session.user.id).single(),
+        supabase.from("user_photos").select("*").eq("user_id", session.user.id),
+        supabase.from("verification_requests").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }).limit(1),
+      ]);
 
-      if (error) throw error;
+      if (profileResult.error) throw profileResult.error;
+      const data = profileResult.data;
       setProfile(data);
       setName(data.name || "");
       setBio(data.bio || "");
@@ -52,12 +57,29 @@ const EditProfile = () => {
       setRelationshipStyle(data.relationship_style || "");
       setRelationshipStatus(data.relationship_status || "");
       setExperienceLevel(data.experience_level || "");
+      setPhotos(photosResult.data || []);
+      setLatestVerification(verResult.data?.[0] || null);
     } catch (error) {
       console.error("Error loading profile:", error);
       toast.error("Failed to load profile");
     } finally {
       setLoading(false);
     }
+  };
+
+  const reloadPhotos = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    const [photosResult, profileResult, verResult] = await Promise.all([
+      supabase.from("user_photos").select("*").eq("user_id", session.user.id),
+      supabase.from("profiles").select("is_verified").eq("id", session.user.id).single(),
+      supabase.from("verification_requests").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }).limit(1),
+    ]);
+    setPhotos(photosResult.data || []);
+    if (profileResult.data) {
+      setProfile((prev: any) => ({ ...prev, is_verified: profileResult.data.is_verified }));
+    }
+    setLatestVerification(verResult.data?.[0] || null);
   };
 
   const handleSave = async () => {
@@ -116,6 +138,15 @@ const EditProfile = () => {
       </header>
 
       <main className="container max-w-md mx-auto px-4 py-6 space-y-4 pb-24">
+        {/* Photos Section */}
+        {profile?.id && (
+          <PhotoUploadGrid
+            userId={profile.id}
+            photos={photos}
+            onPhotosChange={reloadPhotos}
+          />
+        )}
+
         <Card>
           <CardHeader><CardTitle className="text-lg">Basic Info</CardTitle></CardHeader>
           <CardContent className="space-y-4">
@@ -192,6 +223,16 @@ const EditProfile = () => {
             <Textarea id="boundaries" value={boundaries} onChange={(e) => setBoundaries(e.target.value)} rows={3} maxLength={500} placeholder="Share your boundaries and preferences..." />
           </CardContent>
         </Card>
+
+        {/* Verification Section */}
+        {profile?.id && (
+          <VerificationCard
+            userId={profile.id}
+            isVerified={profile.is_verified || false}
+            latestRequest={latestVerification}
+            onVerificationChange={reloadPhotos}
+          />
+        )}
       </main>
     </div>
   );
