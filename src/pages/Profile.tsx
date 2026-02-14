@@ -6,8 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
-import { MessageCircle, LogOut, Settings, MapPin, Users, Heart } from "lucide-react";
+import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap } from "lucide-react";
 import { toast } from "sonner";
+import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 
 interface UserBadge {
   module_id: string;
@@ -31,6 +32,7 @@ const Profile = () => {
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { stats } = useLearningStats();
 
   useEffect(() => {
     loadProfile();
@@ -162,7 +164,25 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          
+
+          {/* Learning Stats */}
+          {stats && (
+            <div className="flex items-center gap-4 px-4 py-3 bg-muted/50 rounded-lg">
+              <div className="flex items-center gap-1">
+                <Zap className="h-4 w-4 text-accent" />
+                <span className="text-sm font-bold">{stats.total_xp} XP</span>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Lv.{stats.current_level} {getLevelName(stats.current_level)}
+              </div>
+              {stats.current_streak > 0 && (
+                <div className="flex items-center gap-1 ml-auto">
+                  <Flame className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-bold">{stats.current_streak}d</span>
+                </div>
+              )}
+            </div>
+          )}
           <CardContent className="p-4 space-y-4">
             {/* Relationship info */}
             <div className="flex flex-wrap gap-2">
