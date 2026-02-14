@@ -23,8 +23,13 @@ export const Logo = ({ size = "md", showText = true }: LogoProps) => {
       <img src={logoImg} alt="Positive Thots" className={`${imgSizes[size]} w-auto`} />
       {showText && (
         <span 
-          className={`${textSizes[size]} text-secondary drop-shadow-sm`}
-          style={{ fontFamily: "'Pacifico', cursive" }}
+          className={`${textSizes[size]} text-secondary`}
+          style={{ 
+            fontFamily: "'Pacifico', cursive",
+            WebkitTextStroke: '1.5px white',
+            textShadow: '2px 2px 4px rgba(0,0,0,0.3), 0 0 10px hsl(320 70% 55% / 0.4)',
+            paintOrder: 'stroke fill',
+          }}
         >
           Positive Thots
         </span>
