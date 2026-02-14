@@ -22,7 +22,10 @@ export const Logo = ({ size = "md", showText = true }: LogoProps) => {
     <div className="flex items-center gap-2">
       <img src={logoImg} alt="Positive Thots" className={`${imgSizes[size]} w-auto`} />
       {showText && (
-        <span className={`${textSizes[size]} font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent`}>
+        <span 
+          className={`${textSizes[size]} text-secondary drop-shadow-sm`}
+          style={{ fontFamily: "'Pacifico', cursive" }}
+        >
           Positive Thots
         </span>
       )}
