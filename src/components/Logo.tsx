@@ -7,15 +7,15 @@ interface LogoProps {
 
 export const Logo = ({ size = "md", showText = true }: LogoProps) => {
   const imgSizes = {
-    sm: "h-8",
-    md: "h-12",
-    lg: "h-20"
+    sm: "h-12",
+    md: "h-16",
+    lg: "h-24"
   };
   
   const textSizes = {
-    sm: "text-lg",
-    md: "text-2xl",
-    lg: "text-4xl"
+    sm: "text-xl",
+    md: "text-3xl",
+    lg: "text-5xl"
   };
 
   return (
