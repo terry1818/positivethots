@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EducationBadge } from "@/components/EducationBadge";
-import { Heart, MapPin, Users } from "lucide-react";
+import { Heart, MapPin, Users, ShieldCheck } from "lucide-react";
 
 interface ProfileBadge {
   moduleSlug: string;
@@ -22,6 +22,7 @@ interface ProfileCardProps {
     looking_for?: string;
     interests?: string[];
     experience_level?: string;
+    is_verified?: boolean;
   };
   badges: ProfileBadge[];
   compatibilityScore?: number;
@@ -95,8 +96,11 @@ export const ProfileCard = ({
 
         {/* Basic info overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-          <h3 className="text-2xl font-bold">
+          <h3 className="text-2xl font-bold flex items-center gap-1.5">
             {profile.name}, {profile.age}
+            {profile.is_verified && (
+              <ShieldCheck className="h-5 w-5 text-green-400" />
+            )}
           </h3>
           <div className="flex items-center gap-2 text-sm opacity-90">
             {profile.pronouns && (

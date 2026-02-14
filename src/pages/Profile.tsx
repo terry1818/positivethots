@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
-import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap } from "lucide-react";
+import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
@@ -148,8 +148,11 @@ const Profile = () => {
 
             {/* Name overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-              <h2 className="text-3xl font-bold">
+              <h2 className="text-3xl font-bold flex items-center gap-2">
                 {profile?.name}, {profile?.age}
+                {profile?.is_verified && (
+                  <ShieldCheck className="h-6 w-6 text-green-400" />
+                )}
               </h2>
               <div className="flex items-center gap-2 text-sm opacity-90">
                 {profile?.pronouns && (

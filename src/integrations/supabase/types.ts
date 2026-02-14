@@ -200,6 +200,7 @@ export type Database = {
           gender_preference: string | null
           id: string
           interests: string[] | null
+          is_verified: boolean
           location: string | null
           looking_for: string | null
           name: string
@@ -223,6 +224,7 @@ export type Database = {
           gender_preference?: string | null
           id: string
           interests?: string[] | null
+          is_verified?: boolean
           location?: string | null
           looking_for?: string | null
           name: string
@@ -246,6 +248,7 @@ export type Database = {
           gender_preference?: string | null
           id?: string
           interests?: string[] | null
+          is_verified?: boolean
           location?: string | null
           looking_for?: string | null
           name?: string
@@ -401,6 +404,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_photos: {
+        Row: {
+          created_at: string
+          id: string
+          moderation_reason: string | null
+          moderation_status: string
+          order_index: number
+          photo_url: string
+          storage_path: string
+          user_id: string
+          visibility: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          moderation_reason?: string | null
+          moderation_status?: string
+          order_index?: number
+          photo_url: string
+          storage_path: string
+          user_id: string
+          visibility?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          moderation_reason?: string | null
+          moderation_status?: string
+          order_index?: number
+          photo_url?: string
+          storage_path?: string
+          user_id?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -459,6 +498,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      verification_requests: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string | null
+          reviewed_at: string | null
+          selfie_path: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reviewed_at?: string | null
+          selfie_path: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reviewed_at?: string | null
+          selfie_path?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       xp_transactions: {
         Row: {
