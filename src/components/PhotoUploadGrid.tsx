@@ -144,12 +144,18 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
 
     setDragIndex(null);
 
-    // Batch update order_index
+    // Batch update order_index and profile image
     try {
       const updates = list.map((photo, i) => 
         supabase.from("user_photos").update({ order_index: i }).eq("id", photo.id)
       );
       await Promise.all(updates);
+
+      // Update profile image to the new first public approved photo
+      if (activeTab === "public" && list[0]?.moderation_status === "approved") {
+        await supabase.from("profiles").update({ profile_image: list[0].photo_url }).eq("id", userId);
+      }
+
       onPhotosChange();
     } catch (error) {
       console.error("Reorder error:", error);
