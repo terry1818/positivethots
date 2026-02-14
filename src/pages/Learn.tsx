@@ -10,7 +10,8 @@ import { XPBar } from "@/components/education/XPBar";
 import { StreakBadge } from "@/components/education/StreakBadge";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { BookOpen, CheckCircle, Lock, ChevronRight, ChevronDown, Award, Zap } from "lucide-react";
+import { BookOpen, CheckCircle, Lock, ChevronRight, ChevronDown, Award } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -123,10 +124,7 @@ const Learn = () => {
       <header className="border-b border-border bg-card">
         <div className="container max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-6 w-6 text-secondary" />
-              <h1 className="text-xl font-bold">Learn</h1>
-            </div>
+            <Logo size="sm" showText={false} />
             <div className="flex items-center gap-3">
               <StreakBadge streak={stats?.current_streak || 0} />
               <div className="flex items-center gap-1.5">

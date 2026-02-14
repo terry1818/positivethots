@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 
@@ -97,11 +98,12 @@ const Profile = () => {
       {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold">My Profile</h1>
+          <Logo size="sm" showText={false} />
           <Button
             variant="ghost"
             size="icon"
             className="text-muted-foreground"
+            onClick={() => navigate("/settings")}
           >
             <Settings className="h-6 w-6" />
           </Button>

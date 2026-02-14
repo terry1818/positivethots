@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BottomNav } from "@/components/BottomNav";
 import { MessageCircle, ChevronLeft } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 
 interface Match {
@@ -97,10 +98,7 @@ const Messages = () => {
           >
             <ChevronLeft className="h-6 w-6" />
           </Button>
-          <div className="flex items-center gap-2">
-            <MessageCircle className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">Messages</h1>
-          </div>
+          <Logo size="sm" showText={false} />
           <div className="w-10" />
         </div>
       </header>
