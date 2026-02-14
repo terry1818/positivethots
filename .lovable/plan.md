@@ -1,67 +1,107 @@
 
 
-# Fix Photo Moderation and Add Drag-to-Reorder
+# Add "Likes You" Section with Paywall
 
-## Problem Summary
+## Overview
 
-Two issues identified:
+Add a new "Likes You" page accessible from the bottom navigation that shows blurred previews of people who have liked you. Tapping to reveal requires an active premium subscription, powered by Stripe.
 
-1. **Photos always rejected**: The `moderate-photo` edge function calls the AI but fails to parse the response correctly. When parsing fails, photos default to `rejected` with no reason. Testing confirms all uploads are rejected with `reason: null`.
+## What You'll See
 
-2. **No drag-to-reorder**: The photo grid was planned to support reordering but only renders a static grid with no drag interaction.
+- A new "Likes" tab in the bottom navigation (between Discover and Learn)
+- A count badge showing how many people have liked you
+- Blurred profile cards of people who liked you
+- A prominent "Unlock" button that takes you to a paywall screen
+- After subscribing, the cards unblur and you can connect or pass on each person
 
-## Solution
+## Implementation Steps
 
-### 1. Fix the Moderation Edge Function
+### 1. Database Changes
 
-**File: `supabase/functions/moderate-photo/index.ts`**
+**New table: `subscriptions`**
+- `id` (uuid, primary key)
+- `user_id` (uuid, not null)
+- `stripe_customer_id` (text)
+- `stripe_subscription_id` (text)
+- `status` (text: active, canceled, past_due, etc.)
+- `plan` (text, default 'premium')
+- `current_period_end` (timestamptz)
+- `created_at` / `updated_at`
+- RLS: users can only read their own subscription
 
-- Add logging to capture the raw AI response for debugging
-- Improve JSON parsing to handle markdown-wrapped responses (e.g., ` ```json {...} ``` `)
-- Default to `approved: true` when the AI response cannot be parsed, rather than silently rejecting. This is safer for user experience -- legitimate content won't be blocked, and actual violations are rare
-- Add a try/catch around the AI fetch call itself so network errors don't silently reject photos
-- After fixing, re-moderate the two existing rejected photos so they show up
+**New RLS policy on `swipes` table**
+- Add a SELECT policy so users can see swipes where `swiped_id = auth.uid()` and `direction = 'right'` -- this lets users know they've been liked (needed for the count badge and the reveal feature)
 
-### 2. Add Drag-to-Reorder to PhotoUploadGrid
+### 2. Enable Stripe
 
-**File: `src/components/PhotoUploadGrid.tsx`**
+- Use the Stripe integration to handle subscription payments
+- Create a "Premium" product with a monthly price
+- Build a checkout flow via a backend function that creates a Stripe Checkout Session
+- Build a webhook handler to update the `subscriptions` table when payment succeeds or subscription changes
 
-- Implement native HTML5 drag-and-drop (no extra library needed) using `draggable`, `onDragStart`, `onDragOver`, `onDrop` handlers
-- When a photo is dropped in a new position, reorder the array and update `order_index` for affected photos in the database
-- Visual feedback: highlight the drop target slot during drag
-- Only allow dragging filled slots (not empty ones)
+### 3. New Pages and Components
 
-### 3. Show Photos on Profile Page
+**`src/pages/LikesYou.tsx`** -- The main "Likes You" page:
+- Fetches swipes where `swiped_id = current_user` and `direction = 'right'`
+- Excludes users already matched with
+- Checks the user's subscription status
+- If not subscribed: shows blurred cards with a lock overlay and "Unlock Premium" CTA
+- If subscribed: shows full profile cards with Connect/Pass buttons
 
-**File: `src/pages/Profile.tsx`**
+**`src/pages/Premium.tsx`** -- The paywall/upgrade page:
+- Shows premium benefits (see who likes you, etc.)
+- Price display
+- "Subscribe" button that initiates Stripe Checkout
+- Success/cancel return handling
 
-- Fetch approved public photos from `user_photos` table alongside the profile data
-- Display them in a horizontal scrollable gallery below the main profile image
-- The main profile image (`profile_image` column) gets auto-set by the edge function when the first public photo is approved
+**`src/hooks/useSubscription.ts`** -- Reusable hook:
+- Queries the `subscriptions` table for the current user
+- Returns `{ isPremium, subscription, loading }`
+
+### 4. Navigation Update
+
+**`src/components/BottomNav.tsx`**:
+- Add a "Likes" tab with a Heart icon between Discover and Learn
+- Show a notification badge with the count of pending likes
+
+**`src/App.tsx`**:
+- Add routes for `/likes` and `/premium`
+
+### 5. Backend Functions
+
+**`supabase/functions/create-checkout/index.ts`**:
+- Creates a Stripe Checkout Session for the premium subscription
+- Returns the checkout URL to redirect the user
+
+**`supabase/functions/stripe-webhook/index.ts`**:
+- Handles Stripe webhook events (checkout.session.completed, customer.subscription.updated/deleted)
+- Updates the `subscriptions` table accordingly
 
 ## Technical Details
 
-### Edge Function Fix (moderate-photo)
+### Swipes RLS Update
 
-The core issue: the AI likely returns JSON wrapped in markdown code fences. The current regex `/{[\s\S]*}/` should match, but the response might have an unexpected format. The fix will:
+```sql
+CREATE POLICY "Users can see who liked them"
+  ON public.swipes FOR SELECT
+  USING (swiped_id = auth.uid() AND direction = 'right');
+```
 
-1. Add `console.log` for the raw AI response
-2. Strip markdown fences before parsing
-3. Handle edge cases (empty response, non-JSON)
-4. Default to approved when AI is unreachable or unparseable (fail-open for better UX)
+### Blurred Card Approach
 
-### Drag-and-Drop Implementation
+Cards for non-premium users will use CSS `filter: blur(20px)` on the profile image and name, with a lock icon overlay and "Upgrade to see" text. The count of likes will always be visible (as a teaser).
 
-Using native browser drag-and-drop API:
-- `onDragStart`: Store the dragged photo's index
-- `onDragOver`: Prevent default to allow drop, add visual indicator
-- `onDrop`: Swap or insert the photo at the new position
-- After drop, batch-update `order_index` values in the database
+### Files Changed/Created
 
-### Files Changed
-
-| File | Change |
+| File | Action |
 |------|--------|
-| `supabase/functions/moderate-photo/index.ts` | Fix AI response parsing, add logging, fail-open |
-| `src/components/PhotoUploadGrid.tsx` | Add drag-and-drop reordering with database sync |
-| `src/pages/Profile.tsx` | Fetch and display approved public photos |
+| `subscriptions` table | Create via migration |
+| `swipes` RLS policy | Add new SELECT policy |
+| `src/pages/LikesYou.tsx` | Create |
+| `src/pages/Premium.tsx` | Create |
+| `src/hooks/useSubscription.ts` | Create |
+| `src/components/BottomNav.tsx` | Update (add Likes tab) |
+| `src/App.tsx` | Update (add routes) |
+| `supabase/functions/create-checkout/index.ts` | Create |
+| `supabase/functions/stripe-webhook/index.ts` | Create |
+
