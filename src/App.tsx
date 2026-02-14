@@ -14,6 +14,8 @@ import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import Settings from "./pages/Settings";
+import LikesYou from "./pages/LikesYou";
+import Premium from "./pages/Premium";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/likes" element={<LikesYou />} />
+            <Route path="/premium" element={<Premium />} />
             <Route path="/learn" element={<Learn />} />
             <Route path="/learn/:slug" element={<LearnModule />} />
             <Route path="/messages" element={<Messages />} />
