@@ -96,8 +96,10 @@ Deno.serve(async (req) => {
 
     const results: string[] = [];
 
+    // First pass: create all auth users and profiles with fallback avatars
+    const userIds: { user: typeof testUsers[0]; userId: string }[] = [];
+
     for (const user of testUsers) {
-      // Create auth user
       const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email: user.email,
         password: user.password,
@@ -106,19 +108,11 @@ Deno.serve(async (req) => {
 
       if (authError) {
         if (authError.message?.includes("already been registered")) {
-          // User exists — generate a new image and update their profile
           const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
           const existingUser = existingUsers?.users?.find((u: any) => u.email === user.email);
           if (existingUser) {
-            const imageUrl = await generateProfileImage(user.imagePrompt, existingUser.id, supabaseAdmin);
-            if (imageUrl) {
-              await supabaseAdmin.from("profiles").update({ profile_image: imageUrl }).eq("id", existingUser.id);
-              results.push(`${user.name}: updated profile image`);
-            } else {
-              results.push(`${user.name}: already exists, image generation failed`);
-            }
-          } else {
-            results.push(`${user.name}: already exists, could not find user`);
+            userIds.push({ user, userId: existingUser.id });
+            results.push(`${user.name}: exists, will regenerate image`);
           }
           continue;
         }
@@ -126,17 +120,14 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      // Generate AI profile image
-      const imageUrl = await generateProfileImage(user.imagePrompt, authData.user.id, supabaseAdmin);
-
-      // Create profile
+      // Create profile with fallback avatar first
       const { error: profileError } = await supabaseAdmin.from("profiles").insert({
         id: authData.user.id,
         name: user.name,
         age: user.age,
         bio: user.bio,
         location: user.location,
-        profile_image: imageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${authData.user.id}`,
+        profile_image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${authData.user.id}`,
         pronouns: user.pronouns,
         gender: user.gender,
         gender_preference: user.gender_preference,
@@ -152,8 +143,27 @@ Deno.serve(async (req) => {
       if (profileError) {
         results.push(`${user.name}: profile error - ${profileError.message}`);
       } else {
-        results.push(`${user.name}: created successfully${imageUrl ? ' with AI photo' : ' with fallback avatar'}`);
+        userIds.push({ user, userId: authData.user.id });
+        results.push(`${user.name}: profile created`);
       }
+    }
+
+    // Second pass: generate AI images in parallel (batches of 4)
+    for (let i = 0; i < userIds.length; i += 4) {
+      const batch = userIds.slice(i, i + 4);
+      const imageResults = await Promise.allSettled(
+        batch.map(async ({ user, userId }) => {
+          const imageUrl = await generateProfileImage(user.imagePrompt, userId, supabaseAdmin);
+          if (imageUrl) {
+            await supabaseAdmin.from("profiles").update({ profile_image: imageUrl }).eq("id", userId);
+            return `${user.name}: AI photo updated`;
+          }
+          return `${user.name}: image generation failed`;
+        })
+      );
+      imageResults.forEach((r) => {
+        results.push(r.status === "fulfilled" ? r.value : `image error: ${r.reason}`);
+      });
     }
 
     return new Response(JSON.stringify({ results }), {
