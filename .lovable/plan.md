@@ -1,46 +1,52 @@
 
-# Add Abstract Background Visuals to Auth Page
 
-## Overview
-Add CSS-only abstract decorative elements to the auth/login page using the existing purple/magenta palette. These will be animated gradient orbs and soft bokeh-style blurs that float behind the login card, adding depth and visual interest without any external assets.
+# Improve Education Section Contrast
 
-## What Gets Added
+## Problem
+In dark mode, the module cards, tier headers, and text all blend into the background because:
+- Background lightness is 8% and card lightness is 12% -- only 4% difference
+- Tier header gradients use very low opacity (10-15%) making them nearly invisible
+- Muted foreground text at 60% lightness is too dim against the dark background
+- The progress card and info card have no visible borders and near-invisible gradient tints
 
-**Decorative background elements in `src/pages/Auth.tsx`:**
-- 3-4 large, blurred gradient circles (orbs) positioned absolutely behind the card
-- Colors pulled from the existing palette: primary purple, secondary magenta, accent violet
-- Subtle CSS animation (slow drift/pulse) so they feel alive but not distracting
-- A faint radial gradient overlay to add depth
+## Changes
 
-**New CSS keyframes in `src/index.css`:**
-- A slow `float` animation that gently moves the orbs in a looping pattern
-- Each orb gets a different animation delay for organic movement
+### 1. `src/index.css` -- Increase dark mode contrast
+- Bump card lightness from 12% to 15% (more visible separation from 8% background)
+- Increase border lightness from 22% to 28% so card edges are visible
+- Bump muted-foreground from 60% to 68% for better text readability
+
+### 2. `src/pages/Learn.tsx` -- Stronger visual differentiation for cards and tiers
+- **Tier header buttons**: Increase gradient opacity from `/10` and `/5` to `/20` and `/10`, and add a subtle border
+- **Module cards**: Add a left border accent color matching the tier, making each card visually pop
+- **Progress card**: Add a visible border and increase gradient opacity from `/10` to `/20`
+- **Info card ("Why Education First?")**: Add a border and slightly stronger background
+
+### 3. `src/components/education/SectionContent.tsx` -- Better section content contrast
+- Ensure section header text uses `text-foreground` instead of `text-muted-foreground` for key labels
+- Add a card wrapper around the section content area so it stands out from the page background
+
+### 4. `src/components/education/SectionNav.tsx` -- Stronger nav pill contrast
+- Increase the inactive pill background opacity so they're more visible in dark mode
 
 ## Technical Details
 
-### Auth.tsx Changes
-- Wrap the existing content in a `relative overflow-hidden` container
-- Add 3-4 `div` elements with absolute positioning, large dimensions (300-500px), rounded-full, heavy blur (blur-3xl), and low opacity (10-20%)
-- Each orb uses a different gradient from the palette (e.g., `bg-primary`, `bg-secondary`, `bg-accent`)
-- The login card stays on top via `relative z-10`
+### CSS variable changes (dark mode only):
+| Variable | Current | New |
+|----------|---------|-----|
+| `--card` | `270 20% 12%` | `270 20% 15%` |
+| `--border` | `270 15% 22%` | `270 15% 28%` |
+| `--input` | `270 15% 22%` | `270 15% 28%` |
+| `--muted` | `270 15% 18%` | `270 15% 20%` |
+| `--muted-foreground` | `270 10% 60%` | `270 10% 68%` |
 
-### index.css Changes
-- Add a `@keyframes blob-float` animation that translates and scales subtly over 15-20 seconds
-- Three animation delay variants so orbs move independently
+### Learn.tsx tier config changes:
+- `bgClass` values go from `from-X/10 to-X/5` to `from-X/20 to-X/10`
+- Module cards get `border-l-4 border-l-[tier-color]` for visual anchoring
+- Progress card changes from `border-0` to explicit border with gradient
 
-### Example orb structure:
-```text
-div.absolute.-top-20.-left-20.w-96.h-96.rounded-full.bg-primary/15.blur-3xl.animate-blob-float
-div.absolute.-bottom-20.-right-20.w-80.h-80.rounded-full.bg-secondary/20.blur-3xl.animate-blob-float [delay 5s]
-div.absolute.top-1/2.left-1/2.w-72.h-72.rounded-full.bg-accent/10.blur-3xl.animate-blob-float [delay 10s]
-```
+### What stays the same:
+- All functionality, routing, data loading
+- Light mode theme (no changes needed -- it already has good contrast)
+- Logo, badges, animations
 
-## Files to Modify
-- `src/pages/Auth.tsx` -- add decorative orb divs behind the card
-- `src/index.css` -- add `blob-float` keyframe animation
-- `tailwind.config.ts` -- register the `blob-float` animation
-
-## What Stays the Same
-- All auth logic, form fields, validation
-- Logo placement and size
-- Card styling and layout
