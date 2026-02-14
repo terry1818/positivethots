@@ -1,76 +1,73 @@
 
+# Three Changes: AI Profile Photos, Logo Prominence, and Dark/Light Mode Settings
 
-# Rebrand: Purple/Magenta Theme Aligned with Positive Thots Branding
+## 1. AI-Generated Profile Images for Test Users
 
-## Overview
-Shift the entire app from the current warm coral/teal palette to a deep purple and magenta scheme that matches your branding assets. The new palette draws from color psychology: purple conveys sensuality, mystery, and creativity, while magenta/pink accents add warmth and energy -- perfect for an adult-oriented, sex-positive platform.
+Update the `seed-test-users` edge function to use Lovable AI image generation (google/gemini-2.5-flash-image) to create realistic profile photos for each test user instead of DiceBear avatars.
 
-## New Color Palette
+**How it works:**
+- For each test user, the function calls the Lovable AI gateway with a prompt tailored to the user's description (age, gender, vibe from their bio)
+- The generated image is returned as base64, then uploaded to a Lovable Cloud storage bucket
+- The public URL from the bucket is saved as `profile_image` on the profile
 
-| Role | Current | New (HSL) | Visual |
-|------|---------|-----------|--------|
-| Primary | Warm coral (15 85% 60%) | Rich purple (270 60% 50%) | Deep violet |
-| Secondary | Teal (175 60% 40%) | Hot magenta (320 70% 55%) | Vibrant pink-magenta |
-| Accent | Peach (25 90% 65%) | Electric violet (280 80% 65%) | Bright purple glow |
-| Background (light) | Warm cream (30 30% 98%) | Cool near-white (270 15% 98%) | Subtle lavender tint |
-| Background (dark) | Dark blue (220 20% 8%) | Deep purple-black (270 25% 8%) | Nightclub dark |
-| Muted | Warm gray (30 15% 94%) | Lavender gray (270 10% 94%) | Soft purple-gray |
-| Success | Green (160 70% 40%) | Keep green (160 70% 40%) | Stays for clarity |
-| Destructive | Red (0 70% 55%) | Keep red (0 70% 55%) | Stays for clarity |
+**Technical details:**
+- Create a new storage bucket `profile-images` with public access for reading
+- Update `seed-test-users/index.ts` to:
+  1. Call `https://ai.gateway.lovable.dev/v1/chat/completions` with the `google/gemini-2.5-flash-image` model and a prompt like "Professional dating app profile photo of a [age]-year-old [gender] person, [descriptors from bio], warm lighting, natural smile, upper body portrait"
+  2. Decode the base64 image response
+  3. Upload to `profile-images` bucket with the user's ID as filename
+  4. Use the public URL as `profile_image`
+- For existing test users that were already created (skipped), the function will update their `profile_image` field with a newly generated image
 
-## Color Psychology Rationale
-- **Purple**: Associated with luxury, sensuality, and creativity. Creates an exclusive, premium feel that keeps users engaged.
-- **Magenta/Pink**: Energetic, passionate, and playful. Drives action and emotional connection.
-- **Dark mode emphasis**: The bokeh-style branding looks best against dark backgrounds, making dark mode the star of the show.
-- **Contrast with competitors**: Most dating apps use red/pink (Tinder) or yellow (Bumble). Purple is distinctive and ownable.
+## 2. Logo Prominence -- Front and Center Everywhere
 
-## Logo Update
-- Replace the current dual-heart Lucide icon logo with the actual "Positive Thots" pinup logo image from the uploaded assets
-- Use the transparent version (`positivethotspinup-Recovered.png`) as the in-app logo
-- Copy the logo to `src/assets/` and import it in the Logo component
+Make the Positive Thots logo the hero element across all key screens:
 
-## Files to Change
+- **Auth page**: Enlarge the logo to `lg` size and center it prominently above the card
+- **Discover header**: Replace the Zap icon + "Discover" text with the Logo component (sm size, no text)
+- **Learn header**: Add the Logo component alongside the XP bar and streak display
+- **Bottom Nav**: No change needed (icons are standard nav convention), but add the logo to the top of the Profile page header
+- **Onboarding**: The logo is already used -- bump it to `lg` size
+- **Profile page header**: Replace the "My Profile" text with the Logo component
 
-### Core Theme
-- **`src/index.css`** -- Update all CSS custom properties (both light and dark mode) to the new purple/magenta palette. Update gradient variables and shadow colors.
-- **`tailwind.config.ts`** -- No structural changes needed (it reads from CSS variables), but update any hardcoded color references if present.
+**Files to modify:**
+- `src/pages/Auth.tsx` -- larger logo placement
+- `src/pages/Index.tsx` -- logo in discover header
+- `src/pages/Learn.tsx` -- logo in learn header
+- `src/pages/Profile.tsx` -- logo in profile header
+- `src/pages/Messages.tsx` -- logo in messages header
 
-### Logo
-- **`src/components/Logo.tsx`** -- Replace Lucide hearts with the actual brand logo image. Keep size variants (sm/md/lg).
-- Copy `positivethotspinup-Recovered.png` to `src/assets/logo.png`
+## 3. Dark/Light Mode Toggle in Settings
 
-### Pages (gradient and color class updates)
-- **`src/pages/Auth.tsx`** -- Update gradient background from coral/teal tints to purple/magenta tints
-- **`src/pages/Index.tsx`** -- Update `bg-gradient-warm`, stat card accent colors
-- **`src/pages/Learn.tsx`** -- Update tier config colors to work within purple palette, update gradient on progress card
-- **`src/pages/Onboarding.tsx`** -- Update gradient background
-- **`src/pages/Profile.tsx`** -- Update profile header gradient
-- **`src/pages/Messages.tsx`** and **`src/pages/Chat.tsx`** -- Update any hardcoded color references
+The project already has `next-themes` installed (used by `sonner.tsx`), but no ThemeProvider is set up. This needs to be wired up properly.
 
-### Components
-- **`src/components/MatchModal.tsx`** -- Update gradient from `from-primary to-secondary` (works automatically via CSS vars)
-- **`src/components/education/LearningPath.tsx`** -- Colors reference CSS vars, will update automatically
-- **`src/components/EducationBadge.tsx`** -- Update badge color scheme to fit purple palette
-- **`src/components/BottomNav.tsx`** -- Uses `text-primary`, will update automatically
+**Changes:**
 
-### Education Badge Colors
-Update the badge tier colors to stay within the purple family:
-- Consent: Purple (270 60% 50%)
-- ENM: Magenta (320 70% 55%)
-- Boundaries: Deep violet (285 55% 45%)
-- Safer Sex: Rose (340 65% 55%)
-- Emotional: Lavender (260 50% 65%)
+### a) Add ThemeProvider to the app
+- Wrap the app in `next-themes` `ThemeProvider` in `src/App.tsx`
+- Set `attribute="class"` and `defaultTheme="system"` so Tailwind's `dark:` classes work
 
-## What Stays the Same
-- All functionality, routing, database logic
-- Component structure and layouts
-- Success (green) and destructive (red) semantic colors -- these are universal
-- Dark mode toggle infrastructure
+### b) Create a Settings page (`src/pages/Settings.tsx`)
+- Accessible from Profile page via the existing Settings button
+- Add a route `/settings` in `App.tsx`
+- Settings page includes:
+  - **Appearance section** with three options using radio buttons or a segmented control:
+    - "Light" -- forces light mode
+    - "Dark" -- forces dark mode  
+    - "System" -- follows device preference (default)
+  - Uses `useTheme()` hook from `next-themes` to read/set the theme
+  - Clean UI with the Logo at the top, back button, and grouped settings cards
 
-## Summary of Work
-1. Copy brand logo to project assets
-2. Rewrite CSS custom properties in `src/index.css` (both light and dark)
-3. Update `Logo.tsx` to use the brand image
-4. Update gradient class references in page components
-5. Adjust education tier colors in `Learn.tsx`
+### c) Update Profile page
+- Wire the Settings gear button to navigate to `/settings`
 
+**Files to create:**
+- `src/pages/Settings.tsx`
+
+**Files to modify:**
+- `src/App.tsx` -- add ThemeProvider wrapper + Settings route
+- `src/main.tsx` -- no changes needed
+- `src/pages/Profile.tsx` -- wire Settings button to navigate to `/settings`
+
+**Storage setup:**
+- Create `profile-images` storage bucket via database migration
