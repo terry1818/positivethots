@@ -104,6 +104,12 @@ export default {
           "0%": { transform: "translateY(-10px) rotate(0deg)", opacity: "1" },
           "100%": { transform: "translateY(400px) rotate(720deg)", opacity: "0" },
         },
+        "blob-float": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1)" },
+          "25%": { transform: "translate(30px, -20px) scale(1.05)" },
+          "50%": { transform: "translate(-20px, 20px) scale(0.95)" },
+          "75%": { transform: "translate(20px, 10px) scale(1.02)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -113,6 +119,7 @@ export default {
         "fade-in": "fade-in 0.3s ease-out",
         "xp-float": "xp-float 1.5s ease-out forwards",
         "confetti-fall": "confetti-fall 2s ease-in forwards",
+        "blob-float": "blob-float 18s ease-in-out infinite",
       },
     },
   },
