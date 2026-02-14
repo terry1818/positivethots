@@ -31,6 +31,7 @@ const relationshipStyleLabels: Record<string, string> = {
 const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [badges, setBadges] = useState<UserBadge[]>([]);
+  const [userPhotos, setUserPhotos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { stats } = useLearningStats();
@@ -47,7 +48,7 @@ const Profile = () => {
         return;
       }
 
-      const [profileResult, badgesResult] = await Promise.all([
+      const [profileResult, badgesResult, photosResult] = await Promise.all([
         supabase
           .from("profiles")
           .select("*")
@@ -59,12 +60,20 @@ const Profile = () => {
             module_id,
             education_modules (slug, title)
           `)
+          .eq("user_id", session.user.id),
+        supabase
+          .from("user_photos")
+          .select("*")
           .eq("user_id", session.user.id)
+          .eq("visibility", "public")
+          .eq("moderation_status", "approved")
+          .order("order_index", { ascending: true })
       ]);
 
       if (profileResult.error) throw profileResult.error;
       setProfile(profileResult.data);
       setBadges(badgesResult.data || []);
+      setUserPhotos(photosResult.data || []);
     } catch (error: any) {
       console.error("Error loading profile:", error);
       toast.error("Failed to load profile");
@@ -167,7 +176,23 @@ const Profile = () => {
                   </span>
                 )}
               </div>
+          </div>
+
+          {/* Photo Gallery */}
+          {userPhotos.length > 1 && (
+            <div className="px-4 py-3 border-t border-border">
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {userPhotos.map((photo) => (
+                  <img
+                    key={photo.id}
+                    src={photo.photo_url}
+                    alt="Profile photo"
+                    className="h-16 w-16 rounded-lg object-cover flex-shrink-0 border border-border"
+                  />
+                ))}
+              </div>
             </div>
+          )}
           </div>
 
           {/* Learning Stats */}

@@ -2,8 +2,6 @@ import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -30,6 +28,8 @@ const MAX_PHOTOS = 8;
 export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadGridProps) => {
   const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState("public");
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const publicPhotos = photos.filter((p) => p.visibility === "public").sort((a, b) => a.order_index - b.order_index);
@@ -80,11 +80,9 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
         .single();
       if (insertError) throw insertError;
 
-      // Trigger moderation
       supabase.functions.invoke("moderate-photo", {
         body: { photo_id: photoRecord.id, mode: "moderation" },
       }).then(() => {
-        // Refresh after moderation completes
         onPhotosChange();
       });
 
@@ -109,6 +107,59 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
       console.error("Delete error:", error);
       toast.error("Failed to delete photo");
     }
+  };
+
+  const handleDragStart = (index: number) => {
+    setDragIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    setDragOverIndex(index);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    setDragOverIndex(null);
+
+    if (dragIndex === null || dragIndex === dropIndex) {
+      setDragIndex(null);
+      return;
+    }
+
+    const list = [...currentPhotos];
+    const draggedPhoto = list[dragIndex];
+    if (!draggedPhoto || !list[dropIndex]) {
+      setDragIndex(null);
+      return;
+    }
+
+    // Reorder: remove dragged item and insert at drop position
+    list.splice(dragIndex, 1);
+    list.splice(dropIndex, 0, draggedPhoto);
+
+    setDragIndex(null);
+
+    // Batch update order_index
+    try {
+      const updates = list.map((photo, i) => 
+        supabase.from("user_photos").update({ order_index: i }).eq("id", photo.id)
+      );
+      await Promise.all(updates);
+      onPhotosChange();
+    } catch (error) {
+      console.error("Reorder error:", error);
+      toast.error("Failed to reorder photos");
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDragIndex(null);
+    setDragOverIndex(null);
   };
 
   const statusIcon = (status: string) => {
@@ -136,7 +187,15 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
         {slots.map((photo, i) => (
           <div
             key={photo?.id || `empty-${i}`}
-            className="relative aspect-square rounded-lg overflow-hidden border border-border bg-muted/30"
+            className={`relative aspect-square rounded-lg overflow-hidden border bg-muted/30 transition-all ${
+              dragOverIndex === i && photo ? "border-primary border-2 scale-105" : "border-border"
+            } ${dragIndex === i ? "opacity-40" : ""}`}
+            draggable={!!photo}
+            onDragStart={() => photo && handleDragStart(i)}
+            onDragOver={(e) => photo && handleDragOver(e, i)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => photo && handleDrop(e, i)}
+            onDragEnd={handleDragEnd}
           >
             {photo ? (
               <>
@@ -144,19 +203,17 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
                   src={photo.photo_url}
                   alt={`Photo ${i + 1}`}
                   className={`w-full h-full object-cover ${photo.moderation_status === "rejected" ? "opacity-40" : ""}`}
+                  draggable={false}
                 />
-                {/* Status badge */}
                 <div className={`absolute top-1 left-1 rounded-full p-0.5 text-white ${statusColor(photo.moderation_status)}`}>
                   {statusIcon(photo.moderation_status)}
                 </div>
-                {/* Delete button */}
                 <button
                   onClick={() => handleDelete(photo)}
                   className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 hover:bg-black/80 transition-colors"
                 >
                   <Trash2 className="h-3 w-3" />
                 </button>
-                {/* Rejection reason tooltip */}
                 {photo.moderation_status === "rejected" && photo.moderation_reason && (
                   <div className="absolute bottom-0 left-0 right-0 bg-destructive/90 text-destructive-foreground text-[10px] px-1 py-0.5 truncate">
                     {photo.moderation_reason}
@@ -202,11 +259,11 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
             <TabsTrigger value="private" className="flex-1">Private</TabsTrigger>
           </TabsList>
           <TabsContent value="public">
-            <p className="text-xs text-muted-foreground mb-2">Visible to everyone. First photo is your main profile image.</p>
+            <p className="text-xs text-muted-foreground mb-2">Visible to everyone. First photo is your main profile image. Drag to reorder.</p>
             {renderGrid(publicPhotos)}
           </TabsContent>
           <TabsContent value="private">
-            <p className="text-xs text-muted-foreground mb-2">Only shared with your matches.</p>
+            <p className="text-xs text-muted-foreground mb-2">Only shared with your matches. Drag to reorder.</p>
             {renderGrid(privatePhotos)}
           </TabsContent>
         </Tabs>
