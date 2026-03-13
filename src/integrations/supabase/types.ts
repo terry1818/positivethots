@@ -195,12 +195,17 @@ export type Database = {
           bio: string | null
           boundaries: string | null
           created_at: string
+          desires: string[] | null
+          display_name: string | null
           experience_level: string | null
           gender: string | null
           gender_preference: string | null
+          height_cm: number | null
           id: string
           interests: string[] | null
           is_verified: boolean
+          languages: string[] | null
+          lifestyle: Json | null
           location: string | null
           looking_for: string | null
           name: string
@@ -210,21 +215,28 @@ export type Database = {
           pronouns: string | null
           relationship_status: string | null
           relationship_style: string | null
+          sexuality: string | null
           sti_last_tested: string | null
           sti_status: string | null
           updated_at: string
+          zodiac_sign: string | null
         }
         Insert: {
           age: number
           bio?: string | null
           boundaries?: string | null
           created_at?: string
+          desires?: string[] | null
+          display_name?: string | null
           experience_level?: string | null
           gender?: string | null
           gender_preference?: string | null
+          height_cm?: number | null
           id: string
           interests?: string[] | null
           is_verified?: boolean
+          languages?: string[] | null
+          lifestyle?: Json | null
           location?: string | null
           looking_for?: string | null
           name: string
@@ -234,21 +246,28 @@ export type Database = {
           pronouns?: string | null
           relationship_status?: string | null
           relationship_style?: string | null
+          sexuality?: string | null
           sti_last_tested?: string | null
           sti_status?: string | null
           updated_at?: string
+          zodiac_sign?: string | null
         }
         Update: {
           age?: number
           bio?: string | null
           boundaries?: string | null
           created_at?: string
+          desires?: string[] | null
+          display_name?: string | null
           experience_level?: string | null
           gender?: string | null
           gender_preference?: string | null
+          height_cm?: number | null
           id?: string
           interests?: string[] | null
           is_verified?: boolean
+          languages?: string[] | null
+          lifestyle?: Json | null
           location?: string | null
           looking_for?: string | null
           name?: string
@@ -258,9 +277,11 @@ export type Database = {
           pronouns?: string | null
           relationship_status?: string | null
           relationship_style?: string | null
+          sexuality?: string | null
           sti_last_tested?: string | null
           sti_status?: string | null
           updated_at?: string
+          zodiac_sign?: string | null
         }
         Relationships: []
       }
