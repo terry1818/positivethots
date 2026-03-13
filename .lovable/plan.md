@@ -1,83 +1,107 @@
 
 
-# Revamped Onboarding Flow — Polished, Fluid, Feature-Rich
+# Add "Likes You" Section with Paywall
 
 ## Overview
 
-Completely rebuild the onboarding into a smooth, animated multi-step experience that combines the best profile fields from Tinder, Bumble, Feeld, and 3fun. The flow will feel modern and app-like with transitions, progress indicators, and rich selection UIs.
+Add a new "Likes You" page accessible from the bottom navigation that shows blurred previews of people who have liked you. Tapping to reveal requires an active premium subscription, powered by Stripe.
 
-## Current State
+## What You'll See
 
-The existing onboarding has 8 steps collecting: pronouns, gender, relationship style, relationship status, looking for, experience level, location, interests, bio, and boundaries. It works but feels basic — plain radio buttons, no animations, limited options, no photos, no sexuality, no desires, no height, no lifestyle badges.
+- A new "Likes" tab in the bottom navigation (between Discover and Learn)
+- A count badge showing how many people have liked you
+- Blurred profile cards of people who liked you
+- A prominent "Unlock" button that takes you to a paywall screen
+- After subscribing, the cards unblur and you can connect or pass on each person
 
-## New Onboarding Steps (12 steps, grouped into phases)
+## Implementation Steps
 
-### Phase 1 — Identity (Steps 1-3)
-1. **Welcome + Name confirmation** — Animated welcome screen with the user's name, sets the tone
-2. **Gender identity** — Expanded list: Woman, Man, Non-binary, Trans Woman, Trans Man, Genderqueer, Genderfluid, Agender, Two-Spirit, Intersex, Other (inspired by Feeld's 15+ genders)
-3. **Pronouns** — Quick-select chips (she/her, he/him, they/them, she/they, he/they, any pronouns) + custom text input
+### 1. Database Changes
 
-### Phase 2 — Sexuality & Desires (Steps 4-5)
-4. **Sexuality** — Multi-option selection: Straight, Gay, Lesbian, Bisexual, Pansexual, Queer, Bicurious, Demisexual, Asexual, Heteroflexible, Homoflexible, Fluid, Questioning, Other (Feeld-inspired)
-5. **Desires** — Tag-style multi-select (up to 10): Dates, Casual, FWB, Friendship, Kink, BDSM, Couples, ENM, Poly, Group, Sensual, Connection, Cuddling, Foreplay, Dom, Sub, GGG, Threeway, Watching (Feeld desires list)
+**New table: `subscriptions`**
+- `id` (uuid, primary key)
+- `user_id` (uuid, not null)
+- `stripe_customer_id` (text)
+- `stripe_subscription_id` (text)
+- `status` (text: active, canceled, past_due, etc.)
+- `plan` (text, default 'premium')
+- `current_period_end` (timestamptz)
+- `created_at` / `updated_at`
+- RLS: users can only read their own subscription
 
-### Phase 3 — Relationship Context (Steps 6-7)
-6. **Relationship style** — Keep existing options + add "Hierarchical Poly", "Solo Poly" 
-7. **Relationship status** — Keep existing + add "Dating", "Nesting partner", "Separated"
+**New RLS policy on `swipes` table**
+- Add a SELECT policy so users can see swipes where `swiped_id = auth.uid()` and `direction = 'right'` -- this lets users know they've been liked (needed for the count badge and the reveal feature)
 
-### Phase 4 — About You (Steps 8-10)
-8. **Height, Zodiac, Languages** — Height slider (Tinder/Bumble), zodiac sign picker, languages spoken (Bumble badges)
-9. **Lifestyle badges** — Multi-select chips for: Smoking, Drinking, Cannabis, Exercise, Diet, Pets, Kids (Bumble/Tinder lifestyle badges)
-10. **Interests** — Expanded interest tags (30+ options across categories: Activities, Creative, Social, Wellness, etc.) with animated selection
+### 2. Enable Stripe
 
-### Phase 5 — Your Story (Steps 11-12)
-11. **Bio + Boundaries** — Rich text areas with character count, placeholder prompts, writing tips
-12. **Photos + Location** — Photo upload grid (reuse existing PhotoUploadGrid), location input, and a profile preview before finishing
+- Use the Stripe integration to handle subscription payments
+- Create a "Premium" product with a monthly price
+- Build a checkout flow via a backend function that creates a Stripe Checkout Session
+- Build a webhook handler to update the `subscriptions` table when payment succeeds or subscription changes
 
-## Database Changes
+### 3. New Pages and Components
 
-New columns on `profiles` table via migration:
-- `sexuality` (text, nullable)
-- `desires` (text[], nullable) 
-- `height_cm` (integer, nullable)
-- `zodiac_sign` (text, nullable)
-- `languages` (text[], nullable)
-- `lifestyle` (jsonb, nullable) — stores smoking/drinking/exercise/diet/pets/kids preferences
-- `display_name` (text, nullable) — optional display name different from real name
+**`src/pages/LikesYou.tsx`** -- The main "Likes You" page:
+- Fetches swipes where `swiped_id = current_user` and `direction = 'right'`
+- Excludes users already matched with
+- Checks the user's subscription status
+- If not subscribed: shows blurred cards with a lock overlay and "Unlock Premium" CTA
+- If subscribed: shows full profile cards with Connect/Pass buttons
 
-## UI/UX Enhancements
+**`src/pages/Premium.tsx`** -- The paywall/upgrade page:
+- Shows premium benefits (see who likes you, etc.)
+- Price display
+- "Subscribe" button that initiates Stripe Checkout
+- Success/cancel return handling
 
-- **Animated transitions** between steps using CSS transitions (slide left/right based on direction)
-- **Phase headers** showing which section you're in (Identity → Sexuality → Relationship → About You → Your Story)
-- **Skip buttons** on optional steps (height, zodiac, lifestyle, desires)
-- **Smart progress bar** showing phase completion, not just step count
-- **Contextual help tooltips** — tap-and-hold on terms like "ENM", "GGG", "Solo Poly" to see definitions (Feeld glossary style)
-- **Profile preview card** at the final step so users see how their profile will appear to others before submitting
-- **Mobile-first** card layout with smooth gesture-friendly design
+**`src/hooks/useSubscription.ts`** -- Reusable hook:
+- Queries the `subscriptions` table for the current user
+- Returns `{ isPremium, subscription, loading }`
 
-## Files Changed/Created
+### 4. Navigation Update
+
+**`src/components/BottomNav.tsx`**:
+- Add a "Likes" tab with a Heart icon between Discover and Learn
+- Show a notification badge with the count of pending likes
+
+**`src/App.tsx`**:
+- Add routes for `/likes` and `/premium`
+
+### 5. Backend Functions
+
+**`supabase/functions/create-checkout/index.ts`**:
+- Creates a Stripe Checkout Session for the premium subscription
+- Returns the checkout URL to redirect the user
+
+**`supabase/functions/stripe-webhook/index.ts`**:
+- Handles Stripe webhook events (checkout.session.completed, customer.subscription.updated/deleted)
+- Updates the `subscriptions` table accordingly
+
+## Technical Details
+
+### Swipes RLS Update
+
+```sql
+CREATE POLICY "Users can see who liked them"
+  ON public.swipes FOR SELECT
+  USING (swiped_id = auth.uid() AND direction = 'right');
+```
+
+### Blurred Card Approach
+
+Cards for non-premium users will use CSS `filter: blur(20px)` on the profile image and name, with a lock icon overlay and "Upgrade to see" text. The count of likes will always be visible (as a teaser).
+
+### Files Changed/Created
 
 | File | Action |
 |------|--------|
-| DB migration | Add sexuality, desires, height_cm, zodiac_sign, languages, lifestyle columns |
-| `src/pages/Onboarding.tsx` | Complete rewrite with 12-step animated flow |
-| `src/components/onboarding/StepTransition.tsx` | Create — animated step wrapper |
-| `src/components/onboarding/GlossaryTooltip.tsx` | Create — tap-hold term definitions |
-| `src/components/onboarding/ProfilePreview.tsx` | Create — preview card at final step |
-| `src/components/onboarding/ChipSelector.tsx` | Create — reusable animated chip/tag selector |
-| `src/components/onboarding/HeightSlider.tsx` | Create — height picker with ft/cm toggle |
-| `src/pages/EditProfile.tsx` | Update to include all new fields |
-| `src/components/ProfileCard.tsx` | Update to display new fields (sexuality, desires, height, zodiac) |
-
-## Build Error Fix
-
-Will also fix the existing `NodeJS.Timeout` type error in `Chat.tsx` by replacing with `ReturnType<typeof setTimeout>`.
-
-## Technical Notes
-
-- All new profile columns are nullable with no defaults so existing users are unaffected
-- The onboarding completion flag (`onboarding_completed`) remains the gate — no change to routing logic
-- Photo upload during onboarding reuses the existing `PhotoUploadGrid` component
-- Desires are stored as a text array (like interests), enabling future filtering/matching
-- Lifestyle is stored as JSONB for flexible key-value pairs (e.g., `{ smoking: "never", drinking: "socially", exercise: "active" }`)
+| `subscriptions` table | Create via migration |
+| `swipes` RLS policy | Add new SELECT policy |
+| `src/pages/LikesYou.tsx` | Create |
+| `src/pages/Premium.tsx` | Create |
+| `src/hooks/useSubscription.ts` | Create |
+| `src/components/BottomNav.tsx` | Update (add Likes tab) |
+| `src/App.tsx` | Update (add routes) |
+| `supabase/functions/create-checkout/index.ts` | Create |
+| `supabase/functions/stripe-webhook/index.ts` | Create |
 
