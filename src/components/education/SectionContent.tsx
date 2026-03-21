@@ -37,7 +37,8 @@ const extractTakeaway = (content: string): string => {
   const boldMatch = content.match(/\*\*(.{20,120})\*\*/);
   if (boldMatch) return boldMatch[1];
   const paragraphs = content.split('\n\n').filter(p => p.length > 20 && !p.startsWith('#') && !p.startsWith('['));
-  return paragraphs[paragraphs.length - 1]?.slice(0, 150) || "";
+  const raw = paragraphs[paragraphs.length - 1]?.slice(0, 150) || "";
+  return raw.replace(/\*\*/g, '');
 };
 
 const renderMarkdown = (content: string) => {
