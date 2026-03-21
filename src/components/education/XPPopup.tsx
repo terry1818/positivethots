@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface XPPopupProps {
   amount: number;
@@ -66,6 +67,3 @@ export const XPPopup = ({ amount, show, onDone }: XPPopupProps) => {
     </>
   );
 };
-
-// Need cn import
-import { cn } from "@/lib/utils";
