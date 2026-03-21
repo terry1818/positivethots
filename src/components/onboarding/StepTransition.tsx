@@ -17,12 +17,12 @@ export const StepTransition = ({ children, stepKey, direction }: StepTransitionP
 
   return (
     <div
-      className={`transition-all duration-300 ease-out ${
+      className={`transition-all duration-400 ease-out ${
         isVisible
-          ? "opacity-100 translate-x-0"
+          ? "opacity-100 translate-x-0 scale-100"
           : direction === "forward"
-          ? "opacity-0 translate-x-8"
-          : "opacity-0 -translate-x-8"
+          ? "opacity-0 translate-x-8 scale-[0.98]"
+          : "opacity-0 -translate-x-8 scale-[0.98]"
       }`}
     >
       {children}
