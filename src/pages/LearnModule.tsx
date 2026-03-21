@@ -405,7 +405,7 @@ const LearnModule = () => {
                       </CardHeader>
                       <CardContent>
                         <RadioGroup
-                          value={answers[currentQuestion.id]?.toString()}
+                          value={answers[currentQuestion.id] !== undefined ? answers[currentQuestion.id].toString() : ""}
                           onValueChange={(value) => handleAnswerQuestion(currentQuestion.id, parseInt(value))}
                           disabled={answeredQuestions.has(currentQuestion.id)}
                         >
