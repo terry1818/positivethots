@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_challenges: {
+        Row: {
+          challenge_date: string
+          challenge_type: string
+          completed: boolean
+          created_at: string
+          current_progress: number
+          id: string
+          target_value: number
+          user_id: string
+          xp_reward: number
+        }
+        Insert: {
+          challenge_date?: string
+          challenge_type: string
+          completed?: boolean
+          created_at?: string
+          current_progress?: number
+          id?: string
+          target_value?: number
+          user_id: string
+          xp_reward?: number
+        }
+        Update: {
+          challenge_date?: string
+          challenge_type?: string
+          completed?: boolean
+          created_at?: string
+          current_progress?: number
+          id?: string
+          target_value?: number
+          user_id?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       education_modules: {
         Row: {
           badge_number: number | null
@@ -435,6 +471,7 @@ export type Database = {
           last_activity_date: string | null
           longest_streak: number
           streak_freeze_available: boolean
+          streak_recovered_at: string | null
           total_xp: number
           updated_at: string
           user_id: string
@@ -445,6 +482,7 @@ export type Database = {
           last_activity_date?: string | null
           longest_streak?: number
           streak_freeze_available?: boolean
+          streak_recovered_at?: string | null
           total_xp?: number
           updated_at?: string
           user_id: string
@@ -455,6 +493,7 @@ export type Database = {
           last_activity_date?: string | null
           longest_streak?: number
           streak_freeze_available?: boolean
+          streak_recovered_at?: string | null
           total_xp?: number
           updated_at?: string
           user_id?: string

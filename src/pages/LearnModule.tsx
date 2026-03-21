@@ -12,11 +12,14 @@ import { SectionContent } from "@/components/education/SectionContent";
 import { LearningPath } from "@/components/education/LearningPath";
 import { XPPopup } from "@/components/education/XPPopup";
 import { CelebrationModal } from "@/components/education/CelebrationModal";
+import { ReadingProgress } from "@/components/education/ReadingProgress";
+import { QuizCombo } from "@/components/education/QuizCombo";
 import { useAntiCheat } from "@/hooks/useAntiCheat";
 import { useModuleProgress } from "@/hooks/useModuleProgress";
 import { useLearningStats } from "@/hooks/useLearningStats";
 import { ChevronLeft, CheckCircle, Award, BookOpen, Lock, Zap, Flame } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface Module {
   id: string;
@@ -61,10 +64,11 @@ const LearnModule = () => {
   const { stats, awardXP } = useLearningStats();
   const [xpPopup, setXpPopup] = useState<{ show: boolean; amount: number }>({ show: false, amount: 0 });
   const [celebration, setCelebration] = useState<{
-    type: "level_up" | "streak_milestone" | "badge_earned" | null;
+    type: "level_up" | "streak_milestone" | "badge_earned" | "tier_complete" | null;
     level?: number;
     streak?: number;
     badgeTitle?: string;
+    tierName?: string;
   }>({ type: null });
 
   // Module progress for sections
@@ -127,7 +131,7 @@ const LearnModule = () => {
   const handleSectionComplete = useCallback(async (sectionId: string) => {
     await markComplete(sectionId);
     const result = await awardXP(10, "section_complete", sectionId);
-    setXpPopup({ show: true, amount: 10 });
+    setXpPopup({ show: true, amount: result.newXP });
 
     if (result.leveledUp) {
       setTimeout(() => setCelebration({ type: "level_up", level: stats?.current_level ? stats.current_level + 1 : 2 }), 1600);
@@ -183,13 +187,12 @@ const LearnModule = () => {
         });
         if (error && !error.message.includes("duplicate")) throw error;
 
-        // Award XP
         const quizXP = 50;
         const perfectBonus = scorePercent === 100 ? 25 : 0;
         const totalXP = quizXP + perfectBonus;
         
         const result = await awardXP(totalXP, scorePercent === 100 ? "quiz_perfect" : "quiz_pass", module.id);
-        setXpPopup({ show: true, amount: totalXP });
+        setXpPopup({ show: true, amount: result.newXP });
 
         setTimeout(() => {
           setCelebration({ type: "badge_earned", badgeTitle: module.title });
@@ -235,9 +238,13 @@ const LearnModule = () => {
   if (!module) return null;
 
   const currentQuestion = questions[currentQuestionIndex];
+  const almostPassing = !submitted && answeredQuestions.size === questions.length - 1 && questions.length > 0;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* Reading progress bar */}
+      {!showQuiz && <ReadingProgress />}
+
       {/* XP Popup */}
       <XPPopup amount={xpPopup.amount} show={xpPopup.show} onDone={() => setXpPopup({ show: false, amount: 0 })} />
       {/* Celebration Modal */}
@@ -246,6 +253,7 @@ const LearnModule = () => {
         level={celebration.level}
         streak={celebration.streak}
         badgeTitle={celebration.badgeTitle}
+        tierName={celebration.tierName}
         onClose={() => setCelebration({ type: null })}
       />
 
@@ -284,7 +292,7 @@ const LearnModule = () => {
                   <Progress value={completionPercent} className="h-2" />
                 </div>
 
-                {/* Learning Path */}
+                {/* Learning Path - horizontal Duolingo-style */}
                 <LearningPath
                   sections={sections}
                   progress={sectionProgress}
@@ -353,12 +361,7 @@ const LearnModule = () => {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <h2 className="text-xl font-bold">Quiz: {module.title}</h2>
-                    {comboCount >= 2 && (
-                      <div className="flex items-center gap-1 text-accent font-bold animate-bounce">
-                        <Flame className="h-4 w-4" />
-                        <span>{comboCount} in a row!</span>
-                      </div>
-                    )}
+                    <QuizCombo combo={comboCount} maxCombo={maxCombo} />
                   </div>
                   {questions.length > 0 && (
                     <div className="space-y-1">
@@ -371,6 +374,13 @@ const LearnModule = () => {
                   )}
                 </div>
 
+                {/* Almost there encouragement */}
+                {almostPassing && (
+                  <div className="bg-accent/10 border border-accent/30 rounded-lg p-3 text-center animate-bounce-in">
+                    <p className="text-sm font-bold text-accent">🎯 Almost there! One more question!</p>
+                  </div>
+                )}
+
                 {questions.length === 0 ? (
                   <Card className="border-dashed">
                     <CardContent className="py-12 text-center">
@@ -382,11 +392,12 @@ const LearnModule = () => {
                 ) : currentQuestion ? (
                   <>
                     {/* Single question view */}
-                    <Card className={
-                      questionFeedback === "correct" ? "border-success bg-success/5 transition-colors" :
-                      questionFeedback === "wrong" ? "border-destructive bg-destructive/5 transition-colors" :
+                    <Card className={cn(
+                      "transition-all",
+                      questionFeedback === "correct" ? "border-success bg-success/5" :
+                      questionFeedback === "wrong" ? "border-destructive bg-destructive/5 animate-shake-wrong" :
                       ""
-                    }>
+                    )}>
                       <CardHeader className="pb-3">
                         <CardTitle className="text-base">
                           {currentQuestionIndex + 1}. {currentQuestion.question}
@@ -398,29 +409,45 @@ const LearnModule = () => {
                           onValueChange={(value) => handleAnswerQuestion(currentQuestion.id, parseInt(value))}
                           disabled={answeredQuestions.has(currentQuestion.id)}
                         >
-                          {currentQuestion.options.map((option: string, oIndex: number) => (
-                            <div key={oIndex} className="flex items-center space-x-2 py-2">
-                              <RadioGroupItem value={oIndex.toString()} id={`${currentQuestion.id}-${oIndex}`} />
-                              <Label htmlFor={`${currentQuestion.id}-${oIndex}`} className="flex-1 cursor-pointer">{option}</Label>
-                            </div>
-                          ))}
+                          {currentQuestion.options.map((option: string, oIndex: number) => {
+                            const isAnswered = answeredQuestions.has(currentQuestion.id);
+                            const isSelected = answers[currentQuestion.id] === oIndex;
+                            const isCorrectOption = oIndex === currentQuestion.correct_answer;
+                            return (
+                              <div key={oIndex} className={cn(
+                                "flex items-center space-x-2 py-2 px-2 rounded-md transition-colors",
+                                isAnswered && isCorrectOption && "bg-success/10",
+                                isAnswered && isSelected && !isCorrectOption && "bg-destructive/10"
+                              )}>
+                                <RadioGroupItem value={oIndex.toString()} id={`${currentQuestion.id}-${oIndex}`} />
+                                <Label htmlFor={`${currentQuestion.id}-${oIndex}`} className="flex-1 cursor-pointer">{option}</Label>
+                                {isAnswered && isCorrectOption && <CheckCircle className="h-4 w-4 text-success" />}
+                              </div>
+                            );
+                          })}
                         </RadioGroup>
                       </CardContent>
                     </Card>
 
-                    {/* Navigation dots */}
+                    {/* Navigation dots with fire trail */}
                     <div className="flex justify-center gap-1.5 flex-wrap">
-                      {questions.map((q, i) => (
-                        <button
-                          key={q.id}
-                          onClick={() => setCurrentQuestionIndex(i)}
-                          className={`w-3 h-3 rounded-full transition-all ${
-                            i === currentQuestionIndex ? "bg-primary scale-125" :
-                            answeredQuestions.has(q.id) ? "bg-success" :
-                            "bg-muted"
-                          }`}
-                        />
-                      ))}
+                      {questions.map((q, i) => {
+                        const isAnswered = answeredQuestions.has(q.id);
+                        const isCorrect = isAnswered && answers[q.id] === q.correct_answer;
+                        return (
+                          <button
+                            key={q.id}
+                            onClick={() => setCurrentQuestionIndex(i)}
+                            className={cn(
+                              "w-3 h-3 rounded-full transition-all",
+                              i === currentQuestionIndex ? "bg-primary scale-125" :
+                              isCorrect ? "bg-success shadow-sm shadow-success/50" :
+                              isAnswered ? "bg-destructive" :
+                              "bg-muted"
+                            )}
+                          />
+                        );
+                      })}
                     </div>
 
                     <div className="flex gap-3">
@@ -447,7 +474,7 @@ const LearnModule = () => {
                 <CardContent className="pt-6 text-center">
                   {score >= 80 ? (
                     <>
-                      <Award className="h-16 w-16 mx-auto text-success mb-4" />
+                      <Award className="h-16 w-16 mx-auto text-success mb-4 animate-bounce-in" />
                       <h2 className="text-2xl font-bold mb-2">Congratulations! 🎉</h2>
                       <p className="text-lg mb-2">You scored {score}%</p>
 

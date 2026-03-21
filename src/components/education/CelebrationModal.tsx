@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { getLevelName } from "@/hooks/useLearningStats";
-import { Flame, Zap, Star } from "lucide-react";
+import { Flame, Zap, Star, Trophy } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface CelebrationModalProps {
-  type: "level_up" | "streak_milestone" | "badge_earned" | null;
+  type: "level_up" | "streak_milestone" | "badge_earned" | "tier_complete" | null;
   level?: number;
   streak?: number;
   badgeTitle?: string;
+  tierName?: string;
   onClose: () => void;
 }
 
@@ -20,18 +22,19 @@ const streakMessages: Record<number, string> = {
   100: "100 DAYS! Absolute legend! 👑",
 };
 
-export const CelebrationModal = ({ type, level, streak, badgeTitle, onClose }: CelebrationModalProps) => {
-  const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string }>>([]);
+export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, onClose }: CelebrationModalProps) => {
+  const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string; size: number }>>([]);
 
   useEffect(() => {
     if (type) {
-      const colors = ["hsl(15 85% 60%)", "hsl(175 60% 40%)", "hsl(25 90% 65%)", "hsl(45 80% 50%)", "hsl(270 50% 55%)"];
+      const colors = ["hsl(15 85% 60%)", "hsl(175 60% 40%)", "hsl(25 90% 65%)", "hsl(45 80% 50%)", "hsl(270 50% 55%)", "hsl(340 65% 55%)"];
       setConfetti(
-        Array.from({ length: 30 }, (_, i) => ({
+        Array.from({ length: 50 }, (_, i) => ({
           id: i,
           x: Math.random() * 100,
-          delay: Math.random() * 0.5,
+          delay: Math.random() * 0.8,
           color: colors[i % colors.length],
+          size: 4 + Math.random() * 6,
         }))
       );
     }
@@ -42,16 +45,18 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, onClose }: C
   return (
     <Dialog open={!!type} onOpenChange={() => onClose()}>
       <DialogContent className="sm:max-w-sm text-center overflow-hidden">
-        {/* Confetti */}
+        {/* Enhanced confetti */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {confetti.map((c) => (
             <div
               key={c.id}
-              className="absolute w-2 h-2 rounded-full animate-confetti-fall"
+              className="absolute rounded-full animate-confetti-fall"
               style={{
                 left: `${c.x}%`,
                 animationDelay: `${c.delay}s`,
                 backgroundColor: c.color,
+                width: c.size,
+                height: c.size,
               }}
             />
           ))}
@@ -60,7 +65,10 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, onClose }: C
         <div className="relative z-10 py-4">
           {type === "level_up" && (
             <>
-              <Star className="h-16 w-16 mx-auto text-accent mb-4 animate-bounce" />
+              <div className="relative mx-auto w-20 h-20 mb-4">
+                <Star className="h-16 w-16 mx-auto text-accent animate-bounce" />
+                <div className="absolute inset-0 rounded-full animate-ripple-complete bg-accent/30" />
+              </div>
               <h2 className="text-2xl font-bold mb-2">Level Up! 🎉</h2>
               <p className="text-lg text-muted-foreground">
                 You're now a <span className="font-bold text-foreground">{getLevelName(level || 1)}</span>
@@ -70,7 +78,10 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, onClose }: C
           )}
           {type === "streak_milestone" && (
             <>
-              <Flame className="h-16 w-16 mx-auto text-primary mb-4 animate-bounce" />
+              <div className="relative mx-auto w-20 h-20 mb-4">
+                <Flame className="h-16 w-16 mx-auto text-primary animate-bounce" />
+                <div className="absolute inset-0 rounded-full animate-streak-glow" />
+              </div>
               <h2 className="text-2xl font-bold mb-2">{streak}-Day Streak! 🔥</h2>
               <p className="text-muted-foreground">
                 {streakMessages[streak || 0] || `${streak} days of learning! Amazing!`}
@@ -83,6 +94,15 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, onClose }: C
               <h2 className="text-2xl font-bold mb-2">Badge Earned! 🏅</h2>
               <p className="text-muted-foreground">
                 You completed <span className="font-bold text-foreground">{badgeTitle}</span>!
+              </p>
+            </>
+          )}
+          {type === "tier_complete" && (
+            <>
+              <Trophy className="h-16 w-16 mx-auto text-accent mb-4 animate-bounce" />
+              <h2 className="text-2xl font-bold mb-2">Tier Complete! 🏆</h2>
+              <p className="text-muted-foreground">
+                You've mastered <span className="font-bold text-foreground">{tierName}</span>!
               </p>
             </>
           )}
