@@ -272,6 +272,61 @@
   border-color: hsl(var(--primary));
 }
 
+/* Screen flash overlay on XP awards */
+@keyframes screen-flash {
+  0% { opacity: 0.6; }
+  100% { opacity: 0; }
+}
+
+/* Shake on wrong answer */
+@keyframes shake-wrong {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+
+/* Ripple from completed node */
+@keyframes ripple-complete {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Heartbeat for urgent warnings */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.1); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.1); }
+}
+
+/* Fire trail gradient sweep */
+@keyframes fire-trail {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Crown spin */
+@keyframes crown-spin {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+/* Streak glow pulse */
+@keyframes streak-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.3)); }
+  50% { filter: drop-shadow(0 0 16px hsl(var(--primary) / 0.7)); }
+}
+
+/* Section complete banner slide */
+@keyframes banner-slide {
+  0% { transform: translateY(-100%); opacity: 0; }
+  20% { transform: translateY(0); opacity: 1; }
+  80% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-100%); opacity: 0; }
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-emoji-burst,
