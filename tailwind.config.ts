@@ -69,20 +69,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
         "swipe-left": {
           "0%": { transform: "translateX(0) rotate(0deg)", opacity: "1" },
@@ -110,6 +102,34 @@ export default {
           "50%": { transform: "translate(-20px, 20px) scale(0.95)" },
           "75%": { transform: "translate(20px, 10px) scale(1.02)" },
         },
+        "emoji-burst": {
+          "0%": { opacity: "1", transform: "translateY(0) scale(1)" },
+          "50%": { opacity: "1", transform: "translateY(-60px) scale(1.3)" },
+          "100%": { opacity: "0", transform: "translateY(-120px) scale(0.8)" },
+        },
+        "bounce-in": {
+          "0%": { opacity: "0", transform: "scale(0.3)" },
+          "50%": { opacity: "1", transform: "scale(1.1)" },
+          "70%": { transform: "scale(0.95)" },
+          "100%": { transform: "scale(1)" },
+        },
+        "slide-up": {
+          "0%": { opacity: "0", transform: "translate(-50%, 20px)" },
+          "100%": { opacity: "1", transform: "translate(-50%, 0)" },
+        },
+        "pulse-glow": {
+          "0%, 100%": { filter: "drop-shadow(0 0 0 transparent)" },
+          "50%": { filter: "drop-shadow(0 0 12px hsl(270 60% 50% / 0.5))" },
+        },
+        "chip-select": {
+          "0%": { transform: "scale(1)" },
+          "40%": { transform: "scale(1.08)" },
+          "100%": { transform: "scale(1.02)" },
+        },
+        "stagger-fade": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -120,6 +140,14 @@ export default {
         "xp-float": "xp-float 1.5s ease-out forwards",
         "confetti-fall": "confetti-fall 2s ease-in forwards",
         "blob-float": "blob-float 18s ease-in-out infinite",
+        "emoji-burst": "emoji-burst 1s ease-out forwards",
+        "bounce-in": "bounce-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "slide-up": "slide-up 0.4s ease-out forwards",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "chip-select": "chip-select 0.25s ease-out",
+        "stagger-1": "stagger-fade 0.4s ease-out 0.1s both",
+        "stagger-2": "stagger-fade 0.4s ease-out 0.2s both",
+        "stagger-3": "stagger-fade 0.4s ease-out 0.3s both",
       },
     },
   },
