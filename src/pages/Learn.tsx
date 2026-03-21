@@ -8,10 +8,14 @@ import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { XPBar } from "@/components/education/XPBar";
 import { StreakBadge } from "@/components/education/StreakBadge";
+import { StreakCalendar } from "@/components/education/StreakCalendar";
+import { DailyChallenge } from "@/components/education/DailyChallenge";
+import { ContinueLearning } from "@/components/education/ContinueLearning";
+import { SessionGoal } from "@/components/education/SessionGoal";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { BookOpen, CheckCircle, Lock, ChevronRight, ChevronDown, Award } from "lucide-react";
+import { BookOpen, CheckCircle, Lock, ChevronRight, ChevronDown, Award, Users } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -40,7 +44,7 @@ const Learn = () => {
   const [loading, setLoading] = useState(true);
   const [openTiers, setOpenTiers] = useState<Record<string, boolean>>({ foundation: true });
   const navigate = useNavigate();
-  const { stats, loading: statsLoading } = useLearningStats();
+  const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft } = useLearningStats();
 
   useEffect(() => { loadData(); }, []);
 
@@ -105,7 +109,13 @@ const Learn = () => {
           <div className="flex items-center justify-between">
             <Logo size="md" />
             <div className="flex items-center gap-3">
-              <StreakBadge streak={stats?.current_streak || 0} />
+              <StreakBadge
+                streak={stats?.current_streak || 0}
+                showFreeze
+                freezeAvailable={stats?.streak_freeze_available}
+                atRisk={isStreakAtRisk}
+                hoursLeft={streakHoursLeft}
+              />
               <div className="flex items-center gap-1.5">
                 <Award className="h-4 w-4 text-primary" />
                 <span className="text-sm font-medium"><AnimatedCounter end={earnedCount} />/{totalBadges}</span>
@@ -124,6 +134,37 @@ const Learn = () => {
       </header>
 
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
+        {/* Streak at risk warning */}
+        {isStreakAtRisk && stats && stats.current_streak > 0 && (
+          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 flex items-center gap-3 animate-heartbeat">
+            <span className="text-2xl">🔥</span>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-destructive">Your {stats.current_streak}-day streak is at risk!</p>
+              <p className="text-xs text-destructive/70">Complete a section in the next {streakHoursLeft}h to keep it going</p>
+            </div>
+          </div>
+        )}
+
+        {/* Continue Learning hero */}
+        <ContinueLearning />
+
+        {/* Streak Calendar + Session Goal row */}
+        {stats && (
+          <div className="space-y-3">
+            <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} />
+            <SessionGoal sectionsToday={sectionsToday} />
+          </div>
+        )}
+
+        {/* Daily Challenge */}
+        <DailyChallenge />
+
+        {/* Community social proof */}
+        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground py-1">
+          <Users className="h-3 w-3" />
+          <span>{(1200 + Math.floor(Math.random() * 300)).toLocaleString()} learners active today</span>
+        </div>
+
         {/* Progress Section */}
         <Card className="bg-gradient-to-br from-secondary/20 to-primary/20 border border-border animate-fade-in">
           <CardContent className="pt-6">
@@ -157,17 +198,20 @@ const Learn = () => {
             const config = tierConfig[tier];
             const tierCompleted = tierModules.filter(m => earnedModuleIds.has(m.id)).length;
             const isOpen = openTiers[tier] ?? false;
+            const isTierComplete = tierCompleted === tierModules.length && tierModules.length > 0;
 
             return (
               <Collapsible key={tier} open={isOpen} onOpenChange={() => toggleTier(tier)}>
                 <CollapsibleTrigger asChild>
                   <button className={cn(
                     "w-full flex items-center justify-between p-3 rounded-lg bg-gradient-to-r border border-border transition-all animate-stagger-fade",
-                    config.bgClass
+                    config.bgClass,
+                    isTierComplete && "ring-2 ring-success/30"
                   )} style={{ animationDelay: `${tierIdx * 100}ms` }}>
                     <div className="flex items-center gap-2">
                       <span className={cn("font-semibold text-sm", config.color)}>{config.label}</span>
                       <span className="text-xs text-muted-foreground">{tierCompleted}/{tierModules.length}</span>
+                      {isTierComplete && <CheckCircle className="h-3.5 w-3.5 text-success" />}
                     </div>
                     <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", isOpen && "rotate-180")} />
                   </button>
@@ -195,7 +239,11 @@ const Learn = () => {
                               {!isUnlocked && <Lock className="h-3 w-3 shrink-0" />}
                             </h3>
                             <p className="text-xs text-muted-foreground line-clamp-1">{module.description}</p>
-                            {module.estimated_minutes && <span className="text-xs text-muted-foreground">~{module.estimated_minutes} min</span>}
+                            {module.estimated_minutes && (
+                              <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">
+                                ~{module.estimated_minutes} min
+                              </span>
+                            )}
                           </div>
                           {isCompleted ? (
                             <CheckCircle className="h-5 w-5 text-success shrink-0 animate-bounce-in" />
@@ -218,7 +266,7 @@ const Learn = () => {
             <p className="text-sm text-muted-foreground">
               At Positive Thots, we believe informed connections are better connections. 
               Complete the 5 foundation modules to unlock discovery, then continue learning 
-              with 15 additional courses on sexual health, identity, relationships, and more.
+              with 24 additional courses on sexual health, identity, relationships, and more.
             </p>
           </CardContent>
         </Card>

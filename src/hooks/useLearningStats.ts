@@ -9,6 +9,7 @@ export interface LearningStats {
   longest_streak: number;
   last_activity_date: string | null;
   streak_freeze_available: boolean;
+  streak_recovered_at: string | null;
 }
 
 const LEVEL_THRESHOLDS = [0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500];
@@ -39,6 +40,9 @@ export const useLearningStats = () => {
   const [stats, setStats] = useState<LearningStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [sectionsToday, setSectionsToday] = useState(0);
+  const [isStreakAtRisk, setIsStreakAtRisk] = useState(false);
+  const [streakHoursLeft, setStreakHoursLeft] = useState(24);
 
   const loadStats = useCallback(async () => {
     try {
@@ -56,8 +60,8 @@ export const useLearningStats = () => {
 
       if (data) {
         setStats(data as LearningStats);
+        checkStreakRisk(data as LearningStats);
       } else {
-        // Create initial stats
         const initial: LearningStats = {
           user_id: session.user.id,
           total_xp: 0,
@@ -66,16 +70,43 @@ export const useLearningStats = () => {
           longest_streak: 0,
           last_activity_date: null,
           streak_freeze_available: false,
+          streak_recovered_at: null,
         };
         await supabase.from("user_learning_stats").insert(initial);
         setStats(initial);
       }
+
+      // Count sections completed today
+      const today = new Date().toISOString().split("T")[0];
+      const { count } = await supabase
+        .from("user_section_progress")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", session.user.id)
+        .eq("completed", true)
+        .gte("last_accessed", `${today}T00:00:00`);
+      setSectionsToday(count || 0);
     } catch (err) {
       console.error("Error loading learning stats:", err);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  const checkStreakRisk = (s: LearningStats) => {
+    if (s.current_streak <= 0) return;
+    const today = new Date().toISOString().split("T")[0];
+    if (s.last_activity_date === today) {
+      setIsStreakAtRisk(false);
+      return;
+    }
+    // Streak is at risk if they haven't done anything today
+    const now = new Date();
+    const endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+    const hours = Math.floor((endOfDay.getTime() - now.getTime()) / 3600000);
+    setStreakHoursLeft(hours);
+    setIsStreakAtRisk(true);
+  };
 
   useEffect(() => {
     loadStats();
@@ -86,6 +117,10 @@ export const useLearningStats = () => {
 
     const today = new Date().toISOString().split("T")[0];
     const lastDate = stats.last_activity_date;
+
+    // Daily bonus: first XP of the day gets +5
+    let bonusXP = 0;
+    if (lastDate !== today) bonusXP = 5;
 
     let newStreak = stats.current_streak;
     let streakMilestone = false;
@@ -100,7 +135,6 @@ export const useLearningStats = () => {
       } else if (!lastDate) {
         newStreak = 1;
       } else if (stats.streak_freeze_available && lastDate) {
-        // Use streak freeze
         newStreak = stats.current_streak;
       } else {
         newStreak = 1;
@@ -108,7 +142,8 @@ export const useLearningStats = () => {
       streakMilestone = isStreakMilestone(newStreak);
     }
 
-    const newTotalXP = stats.total_xp + amount;
+    const totalAmount = amount + bonusXP;
+    const newTotalXP = stats.total_xp + totalAmount;
     const newLevel = calculateLevel(newTotalXP);
     const leveledUp = newLevel > stats.current_level;
     const newLongest = Math.max(stats.longest_streak, newStreak);
@@ -124,10 +159,9 @@ export const useLearningStats = () => {
       streak_freeze_available: lastDate !== today ? (stats.streak_freeze_available && lastDate && lastDate !== new Date(Date.now() - 86400000).toISOString().split("T")[0] ? false : freezeAvailable) : stats.streak_freeze_available,
     };
 
-    // Optimistic update
     setStats(updatedStats);
+    setIsStreakAtRisk(false);
 
-    // Persist
     await Promise.all([
       supabase.from("user_learning_stats").update({
         total_xp: newTotalXP,
@@ -139,14 +173,44 @@ export const useLearningStats = () => {
       }).eq("user_id", userId),
       supabase.from("xp_transactions").insert({
         user_id: userId,
-        xp_amount: amount,
+        xp_amount: totalAmount,
         source,
         source_id: sourceId || null,
       }),
     ]);
 
-    return { newXP: amount, leveledUp, newStreak, streakMilestone };
+    // Update daily challenge progress
+    const challengeTypeMap: Record<string, string> = {
+      section_complete: "sections",
+      quiz_pass: "xp",
+      quiz_perfect: "xp",
+    };
+    const challengeType = challengeTypeMap[source];
+    if (challengeType) {
+      const { data: challenge } = await supabase
+        .from("daily_challenges")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("challenge_date", today)
+        .maybeSingle();
+
+      if (challenge && !challenge.completed && challenge.challenge_type === challengeType) {
+        const newProgress = challenge.current_progress + (challengeType === "xp" ? totalAmount : 1);
+        const completed = newProgress >= challenge.target_value;
+        await supabase.from("daily_challenges").update({
+          current_progress: newProgress,
+          completed,
+        }).eq("id", challenge.id);
+      }
+    }
+
+    // Update sections today count
+    if (source === "section_complete") {
+      setSectionsToday(prev => prev + 1);
+    }
+
+    return { newXP: totalAmount, leveledUp, newStreak, streakMilestone };
   }, [stats, userId]);
 
-  return { stats, loading, awardXP, reload: loadStats };
+  return { stats, loading, awardXP, reload: loadStats, sectionsToday, isStreakAtRisk, streakHoursLeft };
 };
