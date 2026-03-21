@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,9 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/Logo";
-import { ChevronRight, ChevronLeft, Sparkles, SkipForward } from "lucide-react";
+import { ChevronRight, ChevronLeft, SkipForward } from "lucide-react";
 import { toast } from "sonner";
 import { StepTransition } from "@/components/onboarding/StepTransition";
 import { ChipSelector } from "@/components/onboarding/ChipSelector";
@@ -16,6 +15,11 @@ import { HeightSlider } from "@/components/onboarding/HeightSlider";
 import { GlossaryTooltip } from "@/components/onboarding/GlossaryTooltip";
 import { ProfilePreview } from "@/components/onboarding/ProfilePreview";
 import { PhotoUploadGrid } from "@/components/PhotoUploadGrid";
+import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
+import { PhaseInterstitial } from "@/components/onboarding/PhaseInterstitial";
+import { ProgressRing } from "@/components/onboarding/ProgressRing";
+import { MiniProfilePreview } from "@/components/onboarding/MiniProfilePreview";
+import { StepHeader } from "@/components/onboarding/StepHeader";
 
 // ── Option Data ──
 
@@ -56,13 +60,6 @@ const RELATIONSHIP_STATUS_OPTIONS = [
   "Nesting partner", "Separated", "It's complicated",
 ];
 
-const EXPERIENCE_LEVEL_OPTIONS = [
-  { value: "curious", label: "Curious", description: "Just learning about ENM" },
-  { value: "new", label: "New", description: "< 1 year of experience" },
-  { value: "experienced", label: "Experienced", description: "1-5 years" },
-  { value: "veteran", label: "Veteran", description: "5+ years" },
-];
-
 const ZODIAC_OPTIONS = [
   "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
   "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
@@ -75,13 +72,13 @@ const LANGUAGE_OPTIONS = [
 ].map(l => ({ value: l.toLowerCase(), label: l }));
 
 const LIFESTYLE_CATEGORIES = [
-  { key: "smoking", label: "Smoking", options: ["Never", "Socially", "Regularly"] },
-  { key: "drinking", label: "Drinking", options: ["Never", "Socially", "Regularly"] },
-  { key: "cannabis", label: "Cannabis", options: ["Never", "Socially", "Regularly"] },
-  { key: "exercise", label: "Exercise", options: ["Never", "Sometimes", "Active", "Daily"] },
-  { key: "diet", label: "Diet", options: ["No preference", "Vegetarian", "Vegan", "Keto", "Other"] },
-  { key: "pets", label: "Pets", options: ["None", "Cat", "Dog", "Both", "Other"] },
-  { key: "kids", label: "Kids", options: ["Don't have", "Have kids", "Want someday", "Don't want"] },
+  { key: "smoking", label: "🚬 Smoking", options: ["Never", "Socially", "Regularly"] },
+  { key: "drinking", label: "🍷 Drinking", options: ["Never", "Socially", "Regularly"] },
+  { key: "cannabis", label: "🌿 Cannabis", options: ["Never", "Socially", "Regularly"] },
+  { key: "exercise", label: "💪 Exercise", options: ["Never", "Sometimes", "Active", "Daily"] },
+  { key: "diet", label: "🥗 Diet", options: ["No preference", "Vegetarian", "Vegan", "Keto", "Other"] },
+  { key: "pets", label: "🐾 Pets", options: ["None", "Cat", "Dog", "Both", "Other"] },
+  { key: "kids", label: "👶 Kids", options: ["Don't have", "Have kids", "Want someday", "Don't want"] },
 ];
 
 const INTERESTS_OPTIONS = [
@@ -94,11 +91,32 @@ const INTERESTS_OPTIONS = [
 ];
 
 const PHASES = [
-  { label: "Identity", steps: [1, 2, 3] },
-  { label: "Sexuality", steps: [4, 5] },
-  { label: "Relationship", steps: [6, 7] },
-  { label: "About You", steps: [8, 9, 10] },
-  { label: "Your Story", steps: [11, 12] },
+  { label: "Identity", steps: [1, 2, 3], emoji: "🌈" },
+  { label: "Sexuality", steps: [4, 5], emoji: "🔥" },
+  { label: "Relationship", steps: [6, 7], emoji: "🔗" },
+  { label: "About You", steps: [8, 9, 10], emoji: "✨" },
+  { label: "Your Story", steps: [11, 12], emoji: "📖" },
+];
+
+const STEP_EMOJIS: Record<number, string> = {
+  1: "👋", 2: "🌈", 3: "💬", 4: "🔥", 5: "⭐",
+  6: "🔗", 7: "💜", 8: "📏", 9: "🌿", 10: "🎨",
+  11: "✍️", 12: "📸",
+};
+
+const PHASE_GRADIENTS: Record<number, string> = {
+  0: "from-primary/10 via-background to-accent/10",
+  1: "from-secondary/10 via-background to-primary/10",
+  2: "from-accent/10 via-background to-secondary/10",
+  3: "from-primary/10 via-accent/5 to-secondary/10",
+  4: "from-secondary/10 via-primary/5 to-accent/10",
+};
+
+const PHASE_INTERSTITIALS = [
+  { emoji: "🔥", message: "Identity locked in!", nextPhase: "Now let's explore your desires..." },
+  { emoji: "💜", message: "Looking good so far!", nextPhase: "Tell us about your relationships..." },
+  { emoji: "⭐", message: "Almost there!", nextPhase: "A few more things about you..." },
+  { emoji: "📖", message: "The fun part!", nextPhase: "Share your story..." },
 ];
 
 const TOTAL_STEPS = 12;
@@ -114,6 +132,10 @@ const Onboarding = () => {
   const [photos, setPhotos] = useState<any[]>([]);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [celebrationTrigger, setCelebrationTrigger] = useState(0);
+  const [showInterstitial, setShowInterstitial] = useState(false);
+  const [interstitialData, setInterstitialData] = useState({ emoji: "", message: "", nextPhase: "" });
+
   const [formData, setFormData] = useState({
     gender: "",
     pronouns: "",
@@ -171,8 +193,31 @@ const Onboarding = () => {
     }));
   };
 
+  // Check if advancing to next step crosses a phase boundary
+  const isPhaseTransition = useCallback((currentStep: number): number | null => {
+    const currentPhaseIdx = PHASES.findIndex(p => p.steps.includes(currentStep));
+    const nextPhaseIdx = PHASES.findIndex(p => p.steps.includes(currentStep + 1));
+    if (currentPhaseIdx !== -1 && nextPhaseIdx !== -1 && currentPhaseIdx !== nextPhaseIdx) {
+      return currentPhaseIdx; // returns the index of the interstitial to show
+    }
+    return null;
+  }, []);
+
   const goNext = () => {
     if (!validateStep()) return;
+    setCelebrationTrigger(t => t + 1);
+    
+    const phaseTransition = isPhaseTransition(step);
+    if (phaseTransition !== null && phaseTransition < PHASE_INTERSTITIALS.length) {
+      const data = PHASE_INTERSTITIALS[phaseTransition];
+      setInterstitialData(data);
+      setShowInterstitial(true);
+    } else {
+      advanceStep();
+    }
+  };
+
+  const advanceStep = () => {
     setDirection("forward");
     setStep(s => Math.min(s + 1, TOTAL_STEPS));
   };
@@ -249,57 +294,92 @@ const Onboarding = () => {
     }
   };
 
-  const currentPhase = PHASES.find(p => p.steps.includes(step));
   const phaseIndex = PHASES.findIndex(p => p.steps.includes(step));
-
+  const currentPhase = PHASES[phaseIndex];
+  const progress = Math.round((step / TOTAL_STEPS) * 100);
   const isOptionalStep = [4, 5, 8, 9].includes(step);
+  const showMiniPreview = step >= 8 && step < 12;
+
+  // Mini-preview fields
+  const miniFields = [
+    { label: "Gender", value: GENDER_OPTIONS.find(g => g.value === formData.gender)?.label || "" },
+    { label: "Sexuality", value: SEXUALITY_OPTIONS.find(s => s.value === formData.sexuality)?.label || "" },
+    { label: "Style", value: RELATIONSHIP_STYLE_OPTIONS.find(r => r.value === formData.relationshipStyle)?.label || "" },
+    { label: "Location", value: formData.location },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Phase indicator */}
-        <div className="mb-4 flex items-center justify-center gap-1">
-          {PHASES.map((phase, i) => (
-            <div key={phase.label} className="flex items-center">
-              <span className={`text-xs font-medium px-2 py-0.5 rounded-full transition-colors ${
-                i === phaseIndex ? "bg-primary text-primary-foreground" : i < phaseIndex ? "bg-primary/20 text-primary" : "text-muted-foreground"
-              }`}>
-                {phase.label}
-              </span>
-              {i < PHASES.length - 1 && <div className="w-2" />}
-            </div>
-          ))}
-        </div>
+    <div className={`min-h-screen bg-gradient-to-br ${PHASE_GRADIENTS[phaseIndex] || PHASE_GRADIENTS[0]} transition-all duration-700 flex flex-col items-center justify-center p-4 relative overflow-hidden`}>
+      {/* Background orbs */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-primary/5 blur-3xl animate-blob-float" />
+        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/5 blur-3xl animate-blob-float" style={{ animationDelay: "-6s" }} />
+        <div className="absolute top-1/3 right-0 w-56 h-56 rounded-full bg-accent/5 blur-3xl animate-blob-float" style={{ animationDelay: "-12s" }} />
+      </div>
 
-        {/* Progress bar */}
-        <div className="flex gap-0.5 mb-6">
-          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-            <div
-              key={i}
-              className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                i < step ? "bg-primary" : i === step ? "bg-primary/40" : "bg-muted"
-              }`}
+      <MicroCelebration trigger={celebrationTrigger} />
+      <PhaseInterstitial
+        show={showInterstitial}
+        emoji={interstitialData.emoji}
+        message={interstitialData.message}
+        nextPhase={interstitialData.nextPhase}
+        onComplete={() => { setShowInterstitial(false); advanceStep(); }}
+      />
+
+      <div className="w-full max-w-md relative z-10">
+        {/* Progress ring + phase label */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <ProgressRing
+              progress={progress}
+              phaseEmoji={currentPhase?.emoji || "👋"}
             />
-          ))}
+            <div>
+              <p className="text-xs font-semibold text-primary uppercase tracking-wider">
+                {currentPhase?.label || "Welcome"}
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                Step {step} of {TOTAL_STEPS}
+              </p>
+            </div>
+          </div>
+          {/* Phase dots */}
+          <div className="flex gap-1.5">
+            {PHASES.map((phase, i) => (
+              <div
+                key={phase.label}
+                className={`h-2 rounded-full transition-all duration-500 ${
+                  i === phaseIndex
+                    ? "w-6 bg-primary"
+                    : i < phaseIndex
+                    ? "w-2 bg-primary/40"
+                    : "w-2 bg-muted"
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
-        <Card className="shadow-[var(--shadow-elevated)] overflow-hidden">
+        <Card className="shadow-[var(--shadow-elevated)] overflow-hidden border-border/50 backdrop-blur-sm bg-card/95">
           <CardContent className="p-6">
             <StepTransition stepKey={step} direction={direction}>
               {/* Step 1: Welcome */}
               {step === 1 && (
                 <div className="text-center space-y-6 py-4">
+                  <span className="text-6xl block animate-bounce-in">👋</span>
                   <Logo size="lg" />
-                  <div className="space-y-2">
+                  <div className="space-y-2 animate-stagger-1">
                     <h1 className="text-3xl font-bold text-foreground">
-                      Hey, {userName}! <Sparkles className="inline h-7 w-7 text-primary" />
+                      Hey, {userName}!
                     </h1>
                     <p className="text-muted-foreground text-lg">
-                      Let's set up your profile so you can start making meaningful connections.
+                      Let's build your profile and start making meaningful connections.
                     </p>
                   </div>
-                  <p className="text-sm text-muted-foreground">This takes about 3 minutes</p>
-                  <Button onClick={goNext} className="w-full text-lg h-12">
+                  <p className="text-sm text-muted-foreground animate-stagger-2">
+                    ⏱ Takes about 3 minutes
+                  </p>
+                  <Button onClick={goNext} className="w-full text-lg h-12 animate-stagger-3">
                     Let's Go <ChevronRight className="h-5 w-5 ml-1" />
                   </Button>
                 </div>
@@ -308,28 +388,24 @@ const Onboarding = () => {
               {/* Step 2: Gender */}
               {step === 2 && (
                 <div className="space-y-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">How do you identify?</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Select what fits you best</p>
+                  <StepHeader emoji="🌈" title="How do you identify?" subtitle="Select what fits you best" />
+                  <div className="animate-stagger-2">
+                    <ChipSelector
+                      options={GENDER_OPTIONS}
+                      selected={formData.gender ? [formData.gender] : []}
+                      onToggle={(v) => updateField("gender", formData.gender === v ? "" : v)}
+                      max={1}
+                      columns={2}
+                    />
                   </div>
-                  <ChipSelector
-                    options={GENDER_OPTIONS}
-                    selected={formData.gender ? [formData.gender] : []}
-                    onToggle={(v) => updateField("gender", formData.gender === v ? "" : v)}
-                    max={1}
-                    columns={2}
-                  />
                 </div>
               )}
 
               {/* Step 3: Pronouns */}
               {step === 3 && (
                 <div className="space-y-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">Your pronouns</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Displayed on your profile</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
+                  <StepHeader emoji="💬" title="Your pronouns" subtitle="Displayed on your profile" />
+                  <div className="flex flex-wrap gap-2 animate-stagger-2">
                     {PRONOUN_PRESETS.map(p => (
                       <button
                         key={p}
@@ -337,15 +413,15 @@ const Onboarding = () => {
                         onClick={() => { updateField("pronouns", formData.pronouns === p ? "" : p); updateField("customPronouns", ""); }}
                         className={`rounded-full px-4 py-2 text-sm font-medium border transition-all duration-200
                           ${formData.pronouns === p
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-card text-foreground border-border hover:border-primary/50"
+                            ? "bg-primary text-primary-foreground border-primary animate-chip-select"
+                            : "bg-card text-foreground border-border hover:border-primary/50 active:scale-95"
                           }`}
                       >
                         {p}
                       </button>
                     ))}
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1 animate-stagger-3">
                     <Label className="text-xs text-muted-foreground">Or type your own</Label>
                     <Input
                       placeholder="e.g., ze/zir"
@@ -360,38 +436,36 @@ const Onboarding = () => {
               {/* Step 4: Sexuality */}
               {step === 4 && (
                 <div className="space-y-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">Your sexuality</h2>
-                    <p className="text-sm text-muted-foreground mt-1">This is shown on your profile</p>
+                  <StepHeader emoji="🔥" title="Your sexuality" subtitle="This is shown on your profile" />
+                  <div className="animate-stagger-2">
+                    <ChipSelector
+                      options={SEXUALITY_OPTIONS}
+                      selected={formData.sexuality ? [formData.sexuality] : []}
+                      onToggle={(v) => updateField("sexuality", formData.sexuality === v ? "" : v)}
+                      max={1}
+                      columns={2}
+                    />
                   </div>
-                  <ChipSelector
-                    options={SEXUALITY_OPTIONS}
-                    selected={formData.sexuality ? [formData.sexuality] : []}
-                    onToggle={(v) => updateField("sexuality", formData.sexuality === v ? "" : v)}
-                    max={1}
-                    columns={2}
-                  />
                 </div>
               )}
 
               {/* Step 5: Desires */}
               {step === 5 && (
                 <div className="space-y-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">What are you looking for?</h2>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Select up to 10 — be honest!
-                      <GlossaryTooltip term="ENM" />
-                      <GlossaryTooltip term="GGG" />
-                      <GlossaryTooltip term="FWB" />
-                    </p>
+                  <StepHeader emoji="⭐" title="What are you looking for?" subtitle="Select up to 10 — be honest!" />
+                  <div className="flex gap-1 mb-2 animate-stagger-1">
+                    <GlossaryTooltip term="ENM" />
+                    <GlossaryTooltip term="GGG" />
+                    <GlossaryTooltip term="FWB" />
                   </div>
-                  <ChipSelector
-                    options={DESIRE_OPTIONS}
-                    selected={formData.desires}
-                    onToggle={(v) => toggleArray("desires", v)}
-                    max={10}
-                  />
+                  <div className="animate-stagger-2">
+                    <ChipSelector
+                      options={DESIRE_OPTIONS}
+                      selected={formData.desires}
+                      onToggle={(v) => toggleArray("desires", v)}
+                      max={10}
+                    />
+                  </div>
                   <p className="text-xs text-muted-foreground text-center">{formData.desires.length}/10 selected</p>
                 </div>
               )}
@@ -399,15 +473,12 @@ const Onboarding = () => {
               {/* Step 6: Relationship Style */}
               {step === 6 && (
                 <div className="space-y-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">Relationship style</h2>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      How do you approach relationships?
-                      <GlossaryTooltip term="Solo Poly" />
-                      <GlossaryTooltip term="Relationship Anarchy" />
-                    </p>
+                  <StepHeader emoji="🔗" title="Relationship style" subtitle="How do you approach relationships?" />
+                  <div className="flex gap-1 mb-1 animate-stagger-1">
+                    <GlossaryTooltip term="Solo Poly" />
+                    <GlossaryTooltip term="Relationship Anarchy" />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 animate-stagger-2">
                     {RELATIONSHIP_STYLE_OPTIONS.map(opt => (
                       <button
                         key={opt.value}
@@ -415,8 +486,8 @@ const Onboarding = () => {
                         onClick={() => updateField("relationshipStyle", opt.value)}
                         className={`w-full text-left rounded-xl px-4 py-3 border transition-all duration-200
                           ${formData.relationshipStyle === opt.value
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-card text-foreground border-border hover:border-primary/50"
+                            ? "bg-primary text-primary-foreground border-primary shadow-md"
+                            : "bg-card text-foreground border-border hover:border-primary/50 active:scale-[0.98]"
                           }`}
                       >
                         <span className="font-medium">{opt.label}</span>
@@ -432,15 +503,12 @@ const Onboarding = () => {
               {/* Step 7: Relationship Status */}
               {step === 7 && (
                 <div className="space-y-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">Current status</h2>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Where are you right now?
-                      <GlossaryTooltip term="Nesting Partner" />
-                      <GlossaryTooltip term="Polycule" />
-                    </p>
+                  <StepHeader emoji="💜" title="Current status" subtitle="Where are you right now?" />
+                  <div className="flex gap-1 mb-1 animate-stagger-1">
+                    <GlossaryTooltip term="Nesting Partner" />
+                    <GlossaryTooltip term="Polycule" />
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2 animate-stagger-2">
                     {RELATIONSHIP_STATUS_OPTIONS.map(status => (
                       <button
                         key={status}
@@ -448,8 +516,8 @@ const Onboarding = () => {
                         onClick={() => updateField("relationshipStatus", status.toLowerCase())}
                         className={`rounded-xl px-3 py-3 text-sm font-medium border transition-all duration-200
                           ${formData.relationshipStatus === status.toLowerCase()
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-card text-foreground border-border hover:border-primary/50"
+                            ? "bg-primary text-primary-foreground border-primary shadow-md"
+                            : "bg-card text-foreground border-border hover:border-primary/50 active:scale-95"
                           }`}
                       >
                         {status}
@@ -462,18 +530,15 @@ const Onboarding = () => {
               {/* Step 8: Height, Zodiac, Languages */}
               {step === 8 && (
                 <div className="space-y-6">
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">A bit more about you</h2>
-                    <p className="text-sm text-muted-foreground mt-1">All optional — share what you like</p>
-                  </div>
+                  <StepHeader emoji="📏" title="A bit more about you" subtitle="All optional — share what you like" />
 
-                  <div className="space-y-2">
+                  <div className="space-y-2 animate-stagger-1">
                     <Label className="text-sm font-medium">Height</Label>
                     <HeightSlider value={formData.heightCm} onChange={(v) => updateField("heightCm", v)} />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Zodiac Sign</Label>
+                  <div className="space-y-2 animate-stagger-2">
+                    <Label className="text-sm font-medium">♈ Zodiac Sign</Label>
                     <div className="flex flex-wrap gap-1.5">
                       {ZODIAC_OPTIONS.map(z => (
                         <button
@@ -482,7 +547,7 @@ const Onboarding = () => {
                           onClick={() => updateField("zodiacSign", formData.zodiacSign === z ? "" : z)}
                           className={`rounded-full px-3 py-1.5 text-xs font-medium border transition-all
                             ${formData.zodiacSign === z
-                              ? "bg-primary text-primary-foreground border-primary"
+                              ? "bg-primary text-primary-foreground border-primary animate-chip-select"
                               : "bg-card text-foreground border-border hover:border-primary/50"
                             }`}
                         >
@@ -492,8 +557,8 @@ const Onboarding = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Languages</Label>
+                  <div className="space-y-2 animate-stagger-3">
+                    <Label className="text-sm font-medium">🌍 Languages</Label>
                     <ChipSelector
                       options={LANGUAGE_OPTIONS}
                       selected={formData.languages}
@@ -507,12 +572,9 @@ const Onboarding = () => {
               {/* Step 9: Lifestyle */}
               {step === 9 && (
                 <div className="space-y-5">
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">Lifestyle</h2>
-                    <p className="text-sm text-muted-foreground mt-1">These appear as badges on your profile</p>
-                  </div>
-                  {LIFESTYLE_CATEGORIES.map(cat => (
-                    <div key={cat.key} className="space-y-1.5">
+                  <StepHeader emoji="🌿" title="Lifestyle" subtitle="These appear as badges on your profile" />
+                  {LIFESTYLE_CATEGORIES.map((cat, catIdx) => (
+                    <div key={cat.key} className="space-y-1.5" style={{ animationDelay: `${catIdx * 0.05}s` }}>
                       <Label className="text-sm font-medium">{cat.label}</Label>
                       <div className="flex flex-wrap gap-1.5">
                         {cat.options.map(opt => {
@@ -527,7 +589,7 @@ const Onboarding = () => {
                               })}
                               className={`rounded-full px-3 py-1.5 text-xs font-medium border transition-all
                                 ${selected
-                                  ? "bg-primary text-primary-foreground border-primary"
+                                  ? "bg-primary text-primary-foreground border-primary animate-chip-select"
                                   : "bg-card text-foreground border-border hover:border-primary/50"
                                 }`}
                             >
@@ -544,11 +606,8 @@ const Onboarding = () => {
               {/* Step 10: Interests */}
               {step === 10 && (
                 <div className="space-y-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">Your interests</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Select at least 3</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
+                  <StepHeader emoji="🎨" title="Your interests" subtitle="Select at least 3" />
+                  <div className="flex flex-wrap gap-2 animate-stagger-2">
                     {INTERESTS_OPTIONS.map(interest => {
                       const sel = formData.interests.includes(interest);
                       return (
@@ -558,8 +617,8 @@ const Onboarding = () => {
                           onClick={() => toggleArray("interests", interest)}
                           className={`rounded-full px-3 py-1.5 text-sm font-medium border transition-all duration-200
                             ${sel
-                              ? "bg-primary text-primary-foreground border-primary scale-105"
-                              : "bg-card text-foreground border-border hover:border-primary/50"
+                              ? "bg-primary text-primary-foreground border-primary scale-105 animate-chip-select"
+                              : "bg-card text-foreground border-border hover:border-primary/50 active:scale-95"
                             }`}
                         >
                           {interest}
@@ -574,11 +633,9 @@ const Onboarding = () => {
               {/* Step 11: Bio, Boundaries, Location */}
               {step === 11 && (
                 <div className="space-y-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">Tell your story</h2>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Location (City-level)</Label>
+                  <StepHeader emoji="✍️" title="Tell your story" />
+                  <div className="space-y-2 animate-stagger-1">
+                    <Label htmlFor="location">📍 Location (City-level)</Label>
                     <Input
                       id="location"
                       placeholder="e.g., Portland, OR"
@@ -587,7 +644,7 @@ const Onboarding = () => {
                       maxLength={100}
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 animate-stagger-2">
                     <Label htmlFor="bio">About You</Label>
                     <Textarea
                       id="bio"
@@ -599,8 +656,8 @@ const Onboarding = () => {
                     />
                     <p className="text-xs text-muted-foreground text-right">{formData.bio.length}/500</p>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="boundaries">Boundaries & Preferences (Optional)</Label>
+                  <div className="space-y-2 animate-stagger-3">
+                    <Label htmlFor="boundaries">🛡️ Boundaries & Preferences (Optional)</Label>
                     <Textarea
                       id="boundaries"
                       placeholder="Any important boundaries potential connections should know..."
@@ -616,21 +673,20 @@ const Onboarding = () => {
               {/* Step 12: Photos & Preview */}
               {step === 12 && (
                 <div className="space-y-6">
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">Photos & Preview</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Add photos and see how your profile looks</p>
-                  </div>
+                  <StepHeader emoji="📸" title="Photos & Preview" subtitle="Add photos and see how your profile looks" />
 
                   {userId && (
-                    <PhotoUploadGrid
-                      userId={userId}
-                      photos={photos}
-                      onPhotosChange={reloadPhotos}
-                    />
+                    <div className="animate-stagger-1">
+                      <PhotoUploadGrid
+                        userId={userId}
+                        photos={photos}
+                        onPhotosChange={reloadPhotos}
+                      />
+                    </div>
                   )}
 
-                  <div className="pt-4 border-t border-border">
-                    <p className="text-sm font-medium text-foreground mb-3">Profile Preview</p>
+                  <div className="pt-4 border-t border-border animate-stagger-2">
+                    <p className="text-sm font-medium text-foreground mb-3">✨ Profile Preview</p>
                     <ProfilePreview
                       name={userName}
                       age={userAge}
@@ -660,7 +716,7 @@ const Onboarding = () => {
                 {step < TOTAL_STEPS ? (
                   <>
                     {isOptionalStep && (
-                      <Button onClick={goNext} variant="ghost" className="px-3">
+                      <Button onClick={goNext} variant="ghost" className="px-3" title="Skip this step">
                         <SkipForward className="h-4 w-4" />
                       </Button>
                     )}
@@ -678,6 +734,13 @@ const Onboarding = () => {
           </CardContent>
         </Card>
       </div>
+
+      <MiniProfilePreview
+        name={userName}
+        profileImage={profileImage}
+        fields={miniFields}
+        visible={showMiniPreview}
+      />
     </div>
   );
 };
