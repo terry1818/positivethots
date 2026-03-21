@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { CheckCircle, PlayCircle, FileText, Image, BookOpen, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { KeyTakeaway } from "./KeyTakeaway";
+import { Textarea } from "@/components/ui/textarea";
 
 interface SectionContentProps {
   section: {
@@ -27,6 +30,14 @@ const contentTypeIcons: Record<string, React.ReactNode> = {
   infographic: <Image className="h-4 w-4" />,
   study: <BookOpen className="h-4 w-4" />,
   interactive: <Sparkles className="h-4 w-4" />,
+};
+
+// Extract a "key takeaway" from content (first bold sentence or first line of last paragraph)
+const extractTakeaway = (content: string): string => {
+  const boldMatch = content.match(/\*\*(.{20,120})\*\*/);
+  if (boldMatch) return boldMatch[1];
+  const paragraphs = content.split('\n\n').filter(p => p.length > 20 && !p.startsWith('#') && !p.startsWith('['));
+  return paragraphs[paragraphs.length - 1]?.slice(0, 150) || "";
 };
 
 const renderMarkdown = (content: string) => {
@@ -89,14 +100,32 @@ export const SectionContent = ({
   isLast,
   totalSections,
 }: SectionContentProps) => {
+  const [showBanner, setShowBanner] = useState(false);
+  const [reflection, setReflection] = useState("");
 
   const handleMarkComplete = () => {
-    if (!isCompleted) onComplete();
+    if (!isCompleted) {
+      onComplete();
+      setShowBanner(true);
+      setTimeout(() => setShowBanner(false), 2500);
+    }
     onNext();
   };
 
+  const takeaway = section.content_text ? extractTakeaway(section.content_text) : "";
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Section complete banner */}
+      {showBanner && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-banner-slide">
+          <div className="bg-success text-success-foreground px-6 py-2 rounded-full font-bold text-sm shadow-lg flex items-center gap-2">
+            <CheckCircle className="h-4 w-4" />
+            Section Complete! +10 XP ⚡
+          </div>
+        </div>
+      )}
+
       {/* Section header */}
       <div className="flex items-center gap-2 text-sm text-foreground/70">
         {contentTypeIcons[section.content_type] || contentTypeIcons.article}
@@ -106,7 +135,7 @@ export const SectionContent = ({
         {section.estimated_minutes && (
           <>
             <span>•</span>
-            <span>{section.estimated_minutes} min</span>
+            <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{section.estimated_minutes} min</span>
           </>
         )}
         {isCompleted && <CheckCircle className="h-4 w-4 text-success ml-auto" />}
@@ -145,6 +174,25 @@ export const SectionContent = ({
       {section.content_text && (
         <div className="prose prose-sm max-w-none">
           {renderMarkdown(section.content_text)}
+        </div>
+      )}
+
+      {/* Key Takeaway */}
+      {takeaway && (
+        <KeyTakeaway takeaway={takeaway} sectionTitle={section.title} />
+      )}
+
+      {/* Reflection prompt (between sections) */}
+      {!isLast && !isCompleted && (
+        <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+          <p className="text-sm font-medium">💭 Quick Reflection</p>
+          <p className="text-xs text-muted-foreground">What's one thing you'll apply from this section?</p>
+          <Textarea
+            value={reflection}
+            onChange={(e) => setReflection(e.target.value)}
+            placeholder="Type your thoughts..."
+            className="text-sm min-h-[60px] resize-none"
+          />
         </div>
       )}
 
