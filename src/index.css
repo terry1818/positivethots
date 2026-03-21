@@ -346,7 +346,15 @@
   .animate-glow-ring,
   .animate-typing-wave,
   .animate-tap-bounce,
-  .animate-confetti-heart {
+  .animate-confetti-heart,
+  .animate-screen-flash,
+  .animate-shake-wrong,
+  .animate-ripple-complete,
+  .animate-heartbeat,
+  .animate-fire-trail,
+  .animate-crown-spin,
+  .animate-streak-glow,
+  .animate-banner-slide {
     animation: none !important;
   }
   .animate-stagger-fade {
