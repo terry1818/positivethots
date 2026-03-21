@@ -49,6 +49,15 @@ const badgeIcons: Record<string, string> = {
   "advanced-enm-practices": "★",
   "kink-bdsm-basics": "⛓",
   "relationship-vision": "◉",
+  "trauma-informed-relating": "🫂",
+  "digital-consent-boundaries": "📱",
+  "decolonizing-relationships": "🌍",
+  "mental-health-first-aid": "🧠",
+  "reproductive-autonomy": "⚕",
+  "addiction-compulsivity": "🔄",
+  "neurodivergence-intimacy": "🧩",
+  "financial-intimacy": "💰",
+  "grief-relationship-transitions": "🕊",
 };
 
 export const EducationBadge = ({ 
