@@ -1,135 +1,86 @@
 
 
-# Apply Engagement Principles Across the Entire App
+# Add 9 New Education Modules — Full Build-Out
 
-## What We're Doing
+## What's Being Built
 
-Taking the same research-backed principles that made onboarding engaging (micro-rewards, animated transitions, visual variety, emotional design, live feedback) and applying them to every page in the app: Discovery, Messages, Chat, Profile, Learn, Likes, Premium, Settings, and the BottomNav.
+9 new courses (excluding parenthood as requested), each with 5 rich content sections following the existing format: markdown articles with stats, research citations, practical exercises, and 2 YouTube video embeds per section. Then AI-generated quizzes for each section.
 
-## Changes by Page
+## The 9 Modules (already in DB)
 
-### 1. BottomNav — Animated & Alive
-- Active tab gets a scale-bounce + gradient underline indicator (not just color change)
-- Tap triggers a subtle haptic-feel scale animation on the icon
-- Unread count badges pulse with a glow animation on Messages and Likes tabs
-- Smooth icon transitions when switching tabs
+| # | Module | Tier |
+|---|--------|------|
+| 1 | Trauma-Informed Relating | Relationships |
+| 2 | Digital Consent & Boundaries | Sexual Health |
+| 3 | Decolonizing Relationships | Identity |
+| 4 | Mental Health First Aid for Partners | Relationships |
+| 5 | Reproductive Autonomy & Justice | Sexual Health |
+| 6 | Addiction & Compulsivity in Relationships | Advanced |
+| 7 | Neurodivergence in Intimacy | Identity |
+| 8 | Financial Intimacy | Advanced |
+| 9 | Grief, Loss & Relationship Transitions | Relationships |
 
-### 2. Discovery (Index) — Card Entrance Animations + Match Celebration
-- Profile cards enter with staggered fade-in animations as they load (waterfall reveal)
-- Stats bar numbers animate up (count-up effect) when the page loads
-- Connect button pulses with a subtle glow to draw attention
-- Pass/Connect actions trigger micro emoji bursts (reuse `MicroCelebration`)
-- Empty state gets an animated illustration (floating hearts)
-- Loading state: pulsing gradient skeleton cards instead of a plain spinner
+## Implementation Steps
 
-### 3. Match Modal — Confetti Explosion
-- Add confetti particle animation (hearts + sparkles falling from top)
-- Profile photo entrance: scale-up bounce with glow ring
-- "It's a Match!" text uses a typewriter-style reveal
-- Pulsing gradient background instead of static gradient
+### Step 1: Insert 45 Content Sections (5 per module)
 
-### 4. Messages — Lively List
-- Match cards slide in with staggered delays on load
-- Online indicator pulses green
-- Empty state: animated floating message bubbles instead of static icon
-- New message indicator glows/pulses
+Each module gets 5 sections following the established pattern of alternating articles and videos, with ~2000-2500 chars of markdown content per section including:
+- Research citations and statistics
+- Practical exercises and reflection questions
+- 2 embedded YouTube videos per section via `[youtube:Title](url)` format
+- ENM/relationship context where relevant
 
-### 5. Chat — Immersive Messaging
-- Sent messages animate in with a slide-up + fade
-- Received messages slide in from left
-- Typing indicator dots get a smoother wave animation
-- Send button pulses when there's text in the input
-- Message delivered/read checkmarks animate in
+**Section structures per module:**
 
-### 6. Profile — Dynamic & Visual
-- Profile card image has a subtle parallax-like gradient overlay that shifts
-- Badges section: earned badges have a shimmer/glow effect
-- Stats (XP, level, streak) animate with count-up on load
-- Interest tags enter with stagger animation
-- Edit and Sign Out buttons have hover lift effects
+**Trauma-Informed Relating**: Understanding Trauma & Attachment → Recognizing Trauma Responses → Creating Safety in Intimate Spaces → Navigating Triggers Together → Healing Together: Resources & Practices
 
-### 7. Learn — Gamified Progress
-- Progress bar fills with an animated gradient sweep
-- Module cards pulse briefly when they become unlocked
-- Tier headers have a subtle shimmer on the gradient background
-- Completed modules get a satisfying checkmark bounce animation
-- "Discovery unlocked!" message gets a celebration animation
+**Digital Consent & Boundaries**: Consent in the Digital Age → Sexting, Nudes & Photo Sharing → Online Harassment & Stalking → Digital Boundaries in Relationships → Building a Healthy Digital Life
 
-### 8. Likes You — Reveal Animation
-- Blurred cards have a teasing "peek" animation (slight unblur pulse)
-- Premium CTA card has a shimmering gold border animation
-- When premium users connect, trigger confetti micro-celebration
-- Cards enter with stagger animation
+**Decolonizing Relationships**: Relationship Norms Through History → Colonialism & Relationship Structures → Dismantling Heteronormativity & Amatonormativity → Cultural Diversity in Love & Family → Building Your Own Relationship Framework
 
-### 9. Premium — Sell the Dream
-- Benefits list items enter with stagger animation
-- Price card has a pulsing gradient border
-- Crown icon rotates/glows
-- Subscribe button has a shimmer sweep effect (like a shiny CTA)
-- Background: subtle floating orbs like auth page
+**Mental Health First Aid for Partners**: Understanding Mental Health Basics → Recognizing Crisis Signs → How to Support Without Fixing → Setting Boundaries as a Supporter → Resources & Professional Help Navigation
 
-### 10. Settings — Polish
-- Theme option cards animate selection with a smooth border color transition
-- Active theme gets a subtle glow effect
+**Reproductive Autonomy & Justice**: Bodily Autonomy as a Human Right → Contraception & Informed Choice → Reproductive Justice vs. Reproductive Rights → Access Equity & Systemic Barriers → Advocating for Reproductive Freedom
 
-### 11. Auth — Already Good, Minor Tweaks
-- Form fields focus state: border glows purple
-- Submit button gets the shimmer sweep effect
-- Toggle between sign-up/sign-in animates the form height change
+**Addiction & Compulsivity in Relationships**: Understanding Love Addiction & Codependency → Recognizing Compulsive Patterns → Love Bombing, Trauma Bonds & Toxic Cycles → Recovery & Breaking Patterns → Building Healthy Relationship Habits
 
-### 12. Edit Profile — Smoother
-- Sections enter with stagger animation on load
-- Save button pulses when there are unsaved changes
-- Photo upload area has a dashed border pulse animation
+**Neurodivergence in Intimacy**: Understanding Neurodivergence → Sensory Needs & Physical Intimacy → Communication Differences → Executive Function & Relationship Maintenance → Creating Neurodivergent-Affirming Relationships
 
-## New Shared Components/Utilities
+**Financial Intimacy**: Why Money Kills Relationships → Financial Communication Skills → Shared Resource Models → Financial Boundaries & Autonomy → Building Financial Partnership
 
-| Component | Purpose |
-|-----------|---------|
-| `src/components/AnimatedCounter.tsx` | Count-up number animation for stats |
-| `src/components/ShimmerButton.tsx` | CTA button with sweeping shine effect |
-| `src/components/StaggerChildren.tsx` | Wrapper that staggers child entrance animations |
-| `src/components/PulseGlow.tsx` | Wrapper that adds pulse-glow to any element |
-| `src/components/AnimatedSkeleton.tsx` | Gradient-sweep skeleton loader |
+**Grief & Relationship Transitions**: Understanding Relationship Grief → The Art of Conscious Uncoupling → Grief in Non-Monogamous Structures → Staying Connected Through Change → Post-Relationship Growth
 
-## New CSS Animations (index.css + tailwind.config.ts)
+### Step 2: Generate Quiz Questions
 
-- `shimmer-sweep` — light sweep across buttons/cards
-- `count-up` — for AnimatedCounter (JS-driven, not CSS)
-- `slide-in-left` / `slide-in-right` — for chat messages
-- `pulse-border` — pulsing border for Premium CTA
-- `peek-unblur` — teasing blur reduction for locked Likes cards
-- `wiggle` — subtle attention-grabbing wiggle for CTAs
-- `glow-ring` — glowing ring effect for match modal photo
+Call the `generate-section-quizzes` edge function for each of the 9 new module slugs to auto-generate 4 quiz questions per section (20 per module, 180 total).
 
-## Technical Approach
+### Step 3: Update EducationBadge Component
 
-- All animations are CSS keyframes + Tailwind utilities — no animation libraries
-- `StaggerChildren` uses CSS `animation-delay` calculated from child index
-- `AnimatedCounter` uses `requestAnimationFrame` for smooth counting
-- `ShimmerButton` uses a CSS `::after` pseudo-element with a moving gradient
-- All animations respect `prefers-reduced-motion`
-- Reuse existing `MicroCelebration` component for connect/match moments across pages
+Add 9 new entries to the `badgeIcons` map in `src/components/EducationBadge.tsx`:
+
+| Slug | Icon |
+|------|------|
+| `trauma-informed-relating` | 🫂 |
+| `digital-consent-boundaries` | 📱 |
+| `decolonizing-relationships` | 🌍 |
+| `mental-health-first-aid` | 🧠 |
+| `reproductive-autonomy` | ⚕ |
+| `addiction-compulsivity` | 🔄 |
+| `neurodivergence-intimacy` | 🧩 |
+| `financial-intimacy` | 💰 |
+| `grief-relationship-transitions` | 🕊 |
 
 ## Files Changed
 
 | File | Action |
 |------|--------|
-| `src/index.css` | Add new keyframes (shimmer, slide-in, pulse-border, peek, wiggle, glow-ring) |
-| `tailwind.config.ts` | Register new animation utilities |
-| `src/components/AnimatedCounter.tsx` | Create |
-| `src/components/ShimmerButton.tsx` | Create |
-| `src/components/StaggerChildren.tsx` | Create |
-| `src/components/BottomNav.tsx` | Animated active indicator, tap animations, badge pulses |
-| `src/pages/Index.tsx` | Staggered cards, animated stats, micro-celebrations, skeleton loaders |
-| `src/components/MatchModal.tsx` | Confetti, bounce photo, pulsing bg |
-| `src/pages/Messages.tsx` | Staggered list, animated empty state |
-| `src/pages/Chat.tsx` | Message entrance animations, send button pulse |
-| `src/pages/Profile.tsx` | Badge shimmer, stat animations, stagger tags |
-| `src/pages/Learn.tsx` | Animated progress, module pulse, tier shimmer |
-| `src/pages/LikesYou.tsx` | Peek animation, stagger cards, connect celebration |
-| `src/pages/Premium.tsx` | Shimmer CTA, floating orbs, stagger benefits, pulsing price |
-| `src/pages/Settings.tsx` | Selection glow transitions |
-| `src/pages/Auth.tsx` | Form focus glow, shimmer submit, animated toggle |
-| `src/pages/EditProfile.tsx` | Section stagger, save pulse, photo area animation |
+| Database: `module_sections` | Insert 45 rows (5 sections × 9 modules) |
+| Database: `quiz_questions` | Auto-generated via edge function |
+| `src/components/EducationBadge.tsx` | Add 9 new badge icons |
+
+## Technical Notes
+- Content inserted via psql `INSERT` statements (data operation, no migration needed)
+- Each section has ~2000-2500 chars of rich markdown with YouTube embeds
+- Quiz generation uses the existing `generate-section-quizzes` edge function with the Lovable AI gateway
+- No schema changes needed — all tables already support this
 
