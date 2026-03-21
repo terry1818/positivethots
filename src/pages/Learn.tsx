@@ -8,6 +8,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { XPBar } from "@/components/education/XPBar";
 import { StreakBadge } from "@/components/education/StreakBadge";
+import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { BookOpen, CheckCircle, Lock, ChevronRight, ChevronDown, Award } from "lucide-react";
@@ -16,23 +17,12 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 interface Module {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  order_index: number;
-  is_required: boolean;
-  tier: string | null;
-  badge_number: number | null;
-  estimated_minutes: number | null;
-  prerequisite_badges: string[] | null;
-  is_optional: boolean | null;
+  id: string; slug: string; title: string; description: string; order_index: number;
+  is_required: boolean; tier: string | null; badge_number: number | null;
+  estimated_minutes: number | null; prerequisite_badges: string[] | null; is_optional: boolean | null;
 }
 
-interface UserBadge {
-  module_id: string;
-  earned_at: string;
-}
+interface UserBadge { module_id: string; earned_at: string; }
 
 const tierConfig: Record<string, { label: string; color: string; bgClass: string; borderColor: string }> = {
   foundation: { label: "Foundation (Required)", color: "text-primary", bgClass: "from-primary/20 to-primary/10", borderColor: "border-l-primary" },
@@ -52,26 +42,18 @@ const Learn = () => {
   const navigate = useNavigate();
   const { stats, loading: statsLoading } = useLearningStats();
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
-
+      if (!session) { navigate("/auth"); return; }
       const [modulesResult, badgesResult] = await Promise.all([
         supabase.from("education_modules").select("*").order("order_index"),
         supabase.from("user_badges").select("module_id, earned_at").eq("user_id", session.user.id)
       ]);
-
       if (modulesResult.error) throw modulesResult.error;
       if (badgesResult.error) throw badgesResult.error;
-
       setModules(modulesResult.data || []);
       setUserBadges(badgesResult.data || []);
     } catch (error: any) {
@@ -106,9 +88,7 @@ const Learn = () => {
     return acc;
   }, {} as Record<string, Module[]>);
 
-  const toggleTier = (tier: string) => {
-    setOpenTiers(prev => ({ ...prev, [tier]: !prev[tier] }));
-  };
+  const toggleTier = (tier: string) => { setOpenTiers(prev => ({ ...prev, [tier]: !prev[tier] })); };
 
   if (loading) {
     return (
@@ -120,7 +100,6 @@ const Learn = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="container max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -129,11 +108,10 @@ const Learn = () => {
               <StreakBadge streak={stats?.current_streak || 0} />
               <div className="flex items-center gap-1.5">
                 <Award className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium">{earnedCount}/{totalBadges}</span>
+                <span className="text-sm font-medium"><AnimatedCounter end={earnedCount} />/{totalBadges}</span>
               </div>
             </div>
           </div>
-          {/* XP Bar */}
           {stats && (
             <div className="mt-3">
               <div className="flex items-center justify-between mb-1">
@@ -145,20 +123,23 @@ const Learn = () => {
         </div>
       </header>
 
-      {/* Content */}
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
         {/* Progress Section */}
-        <Card className="bg-gradient-to-br from-secondary/20 to-primary/20 border border-border">
+        <Card className="bg-gradient-to-br from-secondary/20 to-primary/20 border border-border animate-fade-in">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Your Progress</span>
-              <span className="text-sm text-muted-foreground">{earnedCount}/{totalBadges} badges</span>
+              <span className="text-sm text-muted-foreground"><AnimatedCounter end={earnedCount} />/{totalBadges} badges</span>
             </div>
-            <Progress value={progressPercent} className="h-3" />
+            <div className="relative overflow-hidden rounded-full h-3 bg-muted">
+              <div
+                className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-1000 ease-out"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
             {requiredEarned === requiredModules.length && requiredModules.length > 0 ? (
-              <p className="text-sm text-success mt-2 flex items-center gap-1">
-                <CheckCircle className="h-4 w-4" />
-                Discovery unlocked! Keep learning for more badges.
+              <p className="text-sm text-success mt-2 flex items-center gap-1 animate-bounce-in">
+                <CheckCircle className="h-4 w-4" />Discovery unlocked! Keep learning for more badges.
               </p>
             ) : (
               <p className="text-sm text-muted-foreground mt-2">
@@ -170,7 +151,7 @@ const Learn = () => {
 
         {/* Tiered Modules */}
         <div className="space-y-3">
-          {tierOrder.map(tier => {
+          {tierOrder.map((tier, tierIdx) => {
             const tierModules = modulesByTier[tier];
             if (!tierModules || tierModules.length === 0) return null;
             const config = tierConfig[tier];
@@ -181,9 +162,9 @@ const Learn = () => {
               <Collapsible key={tier} open={isOpen} onOpenChange={() => toggleTier(tier)}>
                 <CollapsibleTrigger asChild>
                   <button className={cn(
-                    "w-full flex items-center justify-between p-3 rounded-lg bg-gradient-to-r border border-border transition-all",
+                    "w-full flex items-center justify-between p-3 rounded-lg bg-gradient-to-r border border-border transition-all animate-stagger-fade",
                     config.bgClass
-                  )}>
+                  )} style={{ animationDelay: `${tierIdx * 100}ms` }}>
                     <div className="flex items-center gap-2">
                       <span className={cn("font-semibold text-sm", config.color)}>{config.label}</span>
                       <span className="text-xs text-muted-foreground">{tierCompleted}/{tierModules.length}</span>
@@ -192,14 +173,18 @@ const Learn = () => {
                   </button>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="space-y-2 pt-2">
-                  {tierModules.map((module) => {
+                  {tierModules.map((module, moduleIdx) => {
                     const isCompleted = earnedModuleIds.has(module.id);
                     const isUnlocked = isModuleUnlocked(module);
-
                     return (
                       <Card
                         key={module.id}
-                        className={cn("cursor-pointer transition-all border-l-4", config.borderColor, isUnlocked ? "hover:shadow-md" : "opacity-60 cursor-not-allowed")}
+                        className={cn(
+                          "cursor-pointer transition-all border-l-4 animate-stagger-fade",
+                          config.borderColor,
+                          isUnlocked ? "hover:shadow-md hover:-translate-y-0.5" : "opacity-60 cursor-not-allowed"
+                        )}
+                        style={{ animationDelay: `${moduleIdx * 60}ms` }}
                         onClick={() => isUnlocked && navigate(`/learn/${module.slug}`)}
                       >
                         <CardContent className="p-3 flex items-center gap-3">
@@ -210,12 +195,10 @@ const Learn = () => {
                               {!isUnlocked && <Lock className="h-3 w-3 shrink-0" />}
                             </h3>
                             <p className="text-xs text-muted-foreground line-clamp-1">{module.description}</p>
-                            {module.estimated_minutes && (
-                              <span className="text-xs text-muted-foreground">~{module.estimated_minutes} min</span>
-                            )}
+                            {module.estimated_minutes && <span className="text-xs text-muted-foreground">~{module.estimated_minutes} min</span>}
                           </div>
                           {isCompleted ? (
-                            <CheckCircle className="h-5 w-5 text-success shrink-0" />
+                            <CheckCircle className="h-5 w-5 text-success shrink-0 animate-bounce-in" />
                           ) : isUnlocked ? (
                             <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
                           ) : null}
@@ -229,7 +212,6 @@ const Learn = () => {
           })}
         </div>
 
-        {/* Info Section */}
         <Card className="bg-muted/50 border border-border">
           <CardContent className="pt-6">
             <h3 className="font-semibold mb-2">Why Education First?</h3>
