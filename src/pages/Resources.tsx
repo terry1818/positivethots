@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Headphones, Globe, Wrench, Smartphone, ExternalLink, Loader2 } from "lucide-react";
+import { BookOpen, Headphones, Globe, Wrench, Smartphone, ExternalLink, Loader2, Film, Tv } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Resource {
