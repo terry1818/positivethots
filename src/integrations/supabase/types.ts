@@ -420,6 +420,30 @@ export type Database = {
           },
         ]
       }
+      profile_boosts: {
+        Row: {
+          activated_at: string
+          created_at: string
+          expires_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          activated_at?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          activated_at?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age: number
@@ -666,6 +690,48 @@ export type Database = {
           stripe_subscription_id?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      super_like_balance: {
+        Row: {
+          balance: number
+          last_daily_refresh: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          last_daily_refresh?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          last_daily_refresh?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      super_likes: {
+        Row: {
+          created_at: string
+          id: string
+          receiver_id: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          receiver_id: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          receiver_id?: string
+          sender_id?: string
         }
         Relationships: []
       }
@@ -1117,6 +1183,10 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      refresh_daily_super_likes: {
+        Args: { _daily_limit?: number; _user_id: string }
+        Returns: number
       }
       revoke_role: {
         Args: {
