@@ -791,6 +791,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_locations: {
+        Row: {
+          expires_at: string
+          id: string
+          is_sharing: boolean
+          latitude: number
+          longitude: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          expires_at?: string
+          id?: string
+          is_sharing?: boolean
+          latitude: number
+          longitude: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          expires_at?: string
+          id?: string
+          is_sharing?: boolean
+          latitude?: number
+          longitude?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_photos: {
         Row: {
           created_at: string
