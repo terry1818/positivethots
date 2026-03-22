@@ -24,7 +24,7 @@ const Settings = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
-  const { isPremium, loading: subLoading, subscriptionEnd } = useSubscription();
+  const { isPremium, tier, loading: subLoading, subscriptionEnd } = useSubscription();
   const { isUnlocked: locationUnlocked, isSharing, toggleSharing, error: locationError, loading: locationLoading } = useLocationSharing();
 
   // Password change
@@ -176,7 +176,7 @@ const Settings = () => {
               <>
                 <div className="flex items-center gap-2">
                   <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-                    <Crown className="h-3.5 w-3.5" /> Premium Active
+                    <Crown className="h-3.5 w-3.5" /> {tier.charAt(0).toUpperCase() + tier.slice(1)} Active
                   </span>
                 </div>
                 {subscriptionEnd && (
@@ -198,7 +198,7 @@ const Settings = () => {
               <>
                 <p className="text-sm text-muted-foreground">You're on the free plan.</p>
                 <Button className="w-full" onClick={() => navigate("/premium")}>
-                  <Crown className="h-4 w-4 mr-2" /> Upgrade to Premium
+                  <Crown className="h-4 w-4 mr-2" /> Choose a Plan
                 </Button>
               </>
             )}

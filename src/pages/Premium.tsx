@@ -3,45 +3,73 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShimmerButton } from "@/components/ShimmerButton";
 import { StaggerChildren } from "@/components/StaggerChildren";
-import { Crown, Heart, Eye, Zap, ArrowLeft, Loader2 } from "lucide-react";
+import {
+  Crown,
+  Heart,
+  Eye,
+  Zap,
+  ArrowLeft,
+  Loader2,
+  Check,
+  X,
+  Star,
+  Shield,
+} from "lucide-react";
+import {
+  SUBSCRIPTION_TIERS,
+  ALL_FEATURES,
+  FEATURE_LABELS,
+  type FeatureKey,
+} from "@/lib/subscriptionTiers";
+import { cn } from "@/lib/utils";
 
-const benefits = [
-  { icon: Eye, title: "See Who Likes You", desc: "Instantly reveal everyone who's interested" },
-  { icon: Heart, title: "Connect Directly", desc: "Match with people who already like you" },
-  { icon: Zap, title: "Priority Visibility", desc: "Get seen by more people in Discover" },
-];
+const tierIcons = {
+  plus: Zap,
+  premium: Crown,
+  vip: Star,
+};
 
 const Premium = () => {
   const navigate = useNavigate();
-  const { isPremium } = useSubscription();
-  const [loading, setLoading] = useState(false);
+  const { isPremium, tier: currentTier } = useSubscription();
+  const [loading, setLoading] = useState<string | null>(null);
 
-  const handleSubscribe = async () => {
-    setLoading(true);
+  const handleSubscribe = async (priceId: string) => {
+    setLoading(priceId);
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout");
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { price_id: priceId },
+      });
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
     } catch (err) {
       console.error("Checkout error:", err);
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
 
   if (isPremium) {
+    const currentConfig = SUBSCRIPTION_TIERS.find((t) => t.tier === currentTier);
+    const TierIcon = tierIcons[currentTier as keyof typeof tierIcons] ?? Crown;
+
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative overflow-hidden">
         <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-blob-float" />
         <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl animate-blob-float [animation-delay:5s]" />
-        <div className="animate-bounce-in relative z-10">
-          <Crown className="h-16 w-16 text-primary mb-4 mx-auto animate-pulse-glow" />
-          <h1 className="text-2xl font-bold mb-2 text-center">You're Premium!</h1>
-          <p className="text-muted-foreground mb-6 text-center">You have full access to all premium features.</p>
-          <Button onClick={() => navigate("/likes")}>View Your Likes</Button>
+        <div className="animate-bounce-in relative z-10 text-center">
+          <TierIcon className="h-16 w-16 text-primary mb-4 mx-auto animate-pulse-glow" />
+          <h1 className="text-2xl font-bold mb-2">You're {currentConfig?.name ?? "Premium"}!</h1>
+          <p className="text-muted-foreground mb-6">You have full access to your plan's features.</p>
+          <div className="flex gap-3">
+            <Button onClick={() => navigate("/likes")}>View Your Likes</Button>
+            <Button variant="outline" onClick={() => navigate("/settings")}>
+              Manage Plan
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -49,12 +77,10 @@ const Premium = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background orbs */}
       <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-blob-float" />
       <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl animate-blob-float [animation-delay:5s]" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-accent/8 blur-3xl animate-blob-float [animation-delay:10s]" />
 
-      <div className="container max-w-md mx-auto px-4 py-6 relative z-10">
+      <div className="container max-w-4xl mx-auto px-4 py-6 relative z-10">
         <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" /> Back
         </Button>
@@ -63,40 +89,81 @@ const Premium = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
             <Crown className="h-8 w-8 text-primary animate-wiggle" />
           </div>
-          <h1 className="text-3xl font-bold mb-2">Go Premium</h1>
+          <h1 className="text-3xl font-bold mb-2">Choose Your Plan</h1>
           <p className="text-muted-foreground">Unlock the full experience</p>
         </div>
 
-        <StaggerChildren className="space-y-3 mb-8" stagger={100}>
-          {benefits.map(({ icon: Icon, title, desc }) => (
-            <Card key={title} className="hover:shadow-md transition-all hover:-translate-y-0.5">
-              <CardContent className="flex items-center gap-4 p-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Icon className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-semibold">{title}</p>
-                  <p className="text-sm text-muted-foreground">{desc}</p>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+        <StaggerChildren className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8" stagger={100}>
+          {SUBSCRIPTION_TIERS.map((config) => {
+            const Icon = tierIcons[config.tier as keyof typeof tierIcons];
+            const isHighlighted = config.highlight;
+
+            return (
+              <Card
+                key={config.tier}
+                className={cn(
+                  "relative transition-all hover:-translate-y-1",
+                  isHighlighted && "border-primary shadow-lg ring-2 ring-primary/20"
+                )}
+              >
+                {isHighlighted && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
+                    Most Popular
+                  </div>
+                )}
+                <CardHeader className="text-center pb-2">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mx-auto mb-2">
+                    <Icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-lg">{config.name}</CardTitle>
+                  <div className="mt-2">
+                    <span className="text-3xl font-bold">${config.price}</span>
+                    <span className="text-muted-foreground text-sm">/mo</span>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <ul className="space-y-2 mb-6">
+                    {ALL_FEATURES.map((feature) => {
+                      const has = config.features.includes(feature);
+                      return (
+                        <li key={feature} className="flex items-center gap-2 text-sm">
+                          {has ? (
+                            <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                          ) : (
+                            <X className="h-4 w-4 text-muted-foreground/40 flex-shrink-0" />
+                          )}
+                          <span className={cn(!has && "text-muted-foreground/40")}>
+                            {FEATURE_LABELS[feature]}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <ShimmerButton
+                    className={cn(
+                      "w-full",
+                      isHighlighted
+                        ? "bg-gradient-to-r from-primary to-secondary"
+                        : "bg-primary"
+                    )}
+                    onClick={() => handleSubscribe(config.priceId)}
+                    disabled={loading !== null}
+                  >
+                    {loading === config.priceId ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      `Get ${config.name}`
+                    )}
+                  </ShimmerButton>
+                </CardContent>
+              </Card>
+            );
+          })}
         </StaggerChildren>
 
-        <Card className="animate-pulse-border border-primary">
-          <CardContent className="p-6 text-center">
-            <p className="text-sm text-muted-foreground mb-1">Monthly</p>
-            <p className="text-4xl font-bold mb-1">$9.99</p>
-            <p className="text-sm text-muted-foreground mb-4">per month • cancel anytime</p>
-            <ShimmerButton
-              className="w-full text-lg h-12 bg-gradient-to-r from-primary to-secondary"
-              onClick={handleSubscribe}
-              disabled={loading}
-            >
-              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Subscribe Now"}
-            </ShimmerButton>
-          </CardContent>
-        </Card>
+        <p className="text-center text-xs text-muted-foreground">
+          Cancel anytime · Billed monthly · Secure checkout via Stripe
+        </p>
       </div>
     </div>
   );
