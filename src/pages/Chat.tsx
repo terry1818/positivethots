@@ -231,7 +231,7 @@ const Chat = () => {
         <div className="container max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")}>
+              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")} aria-label="Go back">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div className="flex items-center gap-3 flex-1 min-w-0">
