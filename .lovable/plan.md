@@ -1,23 +1,67 @@
 
 
-## Update Resources Categories
+## Location Sharing Feature (Unlocked via Foundation Badges)
 
-The Resources page and database already support categories via a `category` text column on the `recommended_resources` table. The change is straightforward:
+Users who complete the 5 Foundation education modules unlock the ability to share their live GPS location at events, so nearby users can find each other.
 
-### What changes
+### How it works
 
-1. **Add new categories** to the Resources page: add "Movies" and "TV Shows" (or "Film & TV") alongside existing Books, Apps, Podcasts, Websites, Services
-2. **Add corresponding icons** using Lucide icons (`Film` for Movies, `Tv` for TV Shows)
-3. **Update the category icons map** and the categories array in `src/pages/Resources.tsx`
+1. **Unlock gate**: Location sharing toggle only appears for users who have earned all 5 Foundation badges (same check used to gate Discovery access)
+2. **Opt-in toggle**: Users enable/disable location sharing from Settings or a floating button on the Discovery/Events page
+3. **Real-time GPS**: When enabled, the browser's Geolocation API captures lat/lng and writes it to a `user_locations` table
+4. **Nearby users**: Other opted-in users within a configurable radius (e.g. 500m) appear on a "Nearby" card or map view
+5. **Auto-expire**: Locations auto-expire after a set period (e.g. 2 hours) for privacy — enforced via a `expires_at` column
 
-No database migration needed -- the `category` column is a plain text field, so any new category value (e.g. "Movies", "TV Shows") just works.
+### Database
 
-### File: `src/pages/Resources.tsx`
-- Add `Film`, `Tv` imports from lucide-react
-- Add entries to `categoryIcons`: `Movies: <Film />`, `"TV Shows": <Tv />`
-- Update `categories` array to: `["All", "Books", "Movies", "TV Shows", "Podcasts", "Apps", "Websites", "Services"]`
+New `user_locations` table:
 
-### Technical detail
-- The `recommended_resources` table stores category as free-text, so adding "Movies" or "TV Shows" rows via the admin panel or direct insert will immediately appear under the new tabs
-- No RLS or schema changes required
+```text
+user_locations
+├── id (uuid, PK)
+├── user_id (uuid, NOT NULL)
+├── latitude (double precision, NOT NULL)
+├── longitude (double precision, NOT NULL)
+├── is_sharing (boolean, default false)
+├── updated_at (timestamptz, default now())
+└── expires_at (timestamptz, default now() + 2 hours)
+```
+
+RLS policies:
+- Users can upsert/read their own row
+- Authenticated users can SELECT other users' rows WHERE `is_sharing = true AND expires_at > now()`
+- Enable realtime on the table for live updates
+
+### New files
+
+| File | Purpose |
+|------|---------|
+| `src/hooks/useLocationSharing.ts` | Hook: checks Foundation badge unlock, manages Geolocation API, upserts to `user_locations`, handles toggle state |
+| `src/components/NearbyUsers.tsx` | Card/list showing opted-in nearby users with distance, subscribes to realtime changes |
+
+### Changes to existing files
+
+| File | Change |
+|------|--------|
+| `src/pages/Settings.tsx` | Add "Location Sharing" card with toggle (grayed out with "Complete Foundation courses to unlock" message if not unlocked) |
+| `src/pages/Index.tsx` | Add a "Nearby" section/button that links to or expands the NearbyUsers component when location sharing is active |
+
+### Distance calculation
+
+Use the Haversine formula client-side to compute distances from the current user's coordinates to other sharing users. For the MVP this is sufficient; a PostGIS RPC can be added later for server-side filtering.
+
+### Privacy safeguards
+
+- Location is never stored permanently — rows expire after 2 hours
+- Users must explicitly opt in each session (no persistent background tracking)
+- Toggle clearly communicates what sharing means
+- Only users who have also completed Foundation courses can see nearby users
+
+### Steps
+
+1. Create `user_locations` table with RLS policies and realtime via migration
+2. Create `useLocationSharing` hook
+3. Create `NearbyUsers` component
+4. Add Location Sharing card to Settings page
+5. Add Nearby section to Discovery page
 
