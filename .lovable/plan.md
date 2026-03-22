@@ -1,27 +1,23 @@
 
 
-## Deploy Edge Functions
+## Update Resources Categories
 
-All four Stripe-related edge functions need to be deployed to production. They already exist in the codebase and are configured in `supabase/config.toml` with `verify_jwt = false`.
+The Resources page and database already support categories via a `category` text column on the `recommended_resources` table. The change is straightforward:
 
-### What will be deployed
+### What changes
 
-| Function | Purpose |
-|----------|---------|
-| `stripe-webhook` | Receives Stripe events and syncs subscription status to the database |
-| `create-checkout` | Creates Stripe checkout sessions for premium subscriptions |
-| `check-subscription` | Verifies a user's active subscription status via Stripe |
-| `customer-portal` | Generates Stripe billing portal sessions for subscription management |
+1. **Add new categories** to the Resources page: add "Movies" and "TV Shows" (or "Film & TV") alongside existing Books, Apps, Podcasts, Websites, Services
+2. **Add corresponding icons** using Lucide icons (`Film` for Movies, `Tv` for TV Shows)
+3. **Update the category icons map** and the categories array in `src/pages/Resources.tsx`
 
-### Steps
+No database migration needed -- the `category` column is a plain text field, so any new category value (e.g. "Movies", "TV Shows") just works.
 
-1. Deploy all four functions using the deployment tool in a single action
-2. Verify deployment succeeded (check for any errors)
+### File: `src/pages/Resources.tsx`
+- Add `Film`, `Tv` imports from lucide-react
+- Add entries to `categoryIcons`: `Movies: <Film />`, `"TV Shows": <Tv />`
+- Update `categories` array to: `["All", "Books", "Movies", "TV Shows", "Podcasts", "Apps", "Websites", "Services"]`
 
-### Prerequisites (already met)
-- `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` secrets are configured
-- All function files exist under `supabase/functions/`
-- `config.toml` has all four functions listed with `verify_jwt = false`
-
-No code changes are needed — this is purely a deployment operation.
+### Technical detail
+- The `recommended_resources` table stores category as free-text, so adding "Movies" or "TV Shows" rows via the admin panel or direct insert will immediately appear under the new tabs
+- No RLS or schema changes required
 
