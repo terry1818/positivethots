@@ -89,7 +89,7 @@ const Profile = () => {
         <Card className="overflow-hidden animate-fade-in">
           <div className="relative h-64 bg-gradient-to-br from-primary/20 to-secondary/20">
             {profile?.profile_image ? (
-              <img src={profile.profile_image} alt={profile?.name} className="absolute inset-0 w-full h-full object-cover" />
+              <img src={profile.profile_image} alt={profile?.name} className="absolute inset-0 w-full h-full object-cover" loading="eager" decoding="async" />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
                 <Heart className="h-16 w-16 text-primary/30" />
