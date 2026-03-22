@@ -103,7 +103,7 @@ const Settings = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border bg-card">
         <div className="container max-w-md mx-auto px-4 py-4 flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/profile")}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} aria-label="Go back">
             <ChevronLeft className="h-6 w-6" />
           </Button>
           <Logo size="md" />

@@ -263,7 +263,7 @@ const LearnModule = () => {
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/learn")}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("/learn")} aria-label="Go back">
             <ChevronLeft className="h-6 w-6" />
           </Button>
           <div className="flex-1 min-w-0">

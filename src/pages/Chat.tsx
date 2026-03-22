@@ -389,7 +389,7 @@ const Chat = () => {
                 <Send className="h-5 w-5" />
               </Button>
             ) : (
-              <Button variant="ghost" size="icon" className="h-10 w-10"><Mic className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Voice message"><Mic className="h-5 w-5" /></Button>
             )}
           </div>
           {newMessage.length > 800 && (
