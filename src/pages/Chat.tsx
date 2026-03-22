@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Database } from "@/integrations/supabase/types";
+import { PageSkeleton } from "@/components/PageSkeleton";
 
 type Message = Database['public']['Tables']['messages']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -212,11 +213,7 @@ const Chat = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <PageSkeleton variant="chat" />;
   }
 
   if (!otherUser) {
@@ -234,7 +231,7 @@ const Chat = () => {
         <div className="container max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")}>
+              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")} aria-label="Go back">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -259,10 +256,10 @@ const Chat = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="hidden sm:flex"><Phone className="h-5 w-5" /></Button>
-              <Button variant="ghost" size="icon" className="hidden sm:flex"><Video className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Voice call"><Phone className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Video call"><Video className="h-5 w-5" /></Button>
               <DropdownMenu>
-                <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreVertical className="h-5 w-5" /></Button></DropdownMenuTrigger>
+                <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" aria-label="More options"><MoreVertical className="h-5 w-5" /></Button></DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuItem className="sm:hidden"><Phone className="h-4 w-4 mr-2" />Voice Call</DropdownMenuItem>
                   <DropdownMenuItem className="sm:hidden"><Video className="h-4 w-4 mr-2" />Video Call</DropdownMenuItem>
@@ -367,8 +364,8 @@ const Chat = () => {
         <div className="container max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-end gap-2">
             <div className="flex gap-1">
-              <Button variant="ghost" size="icon" className="h-10 w-10"><ImageIcon className="h-5 w-5" /></Button>
-              <Button variant="ghost" size="icon" className="h-10 w-10 hidden sm:flex"><Gift className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Attach image"><ImageIcon className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" className="h-10 w-10 hidden sm:flex" aria-label="Send gift"><Gift className="h-5 w-5" /></Button>
             </div>
             <div className="flex-1 relative">
               <Input
@@ -379,20 +376,20 @@ const Chat = () => {
                 className="pr-10 focus-glow"
                 maxLength={1000}
               />
-              <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
+              <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8" aria-label="Emoji picker">
                 <Smile className="h-4 w-4" />
               </Button>
             </div>
             {newMessage.trim() ? (
               <Button
-                size="icon"
+                size="icon" aria-label="Send message"
                 onClick={handleSendMessage}
                 className={cn("h-10 w-10 bg-gradient-primary text-primary-foreground transition-all", newMessage.trim() && "animate-pulse-glow")}
               >
                 <Send className="h-5 w-5" />
               </Button>
             ) : (
-              <Button variant="ghost" size="icon" className="h-10 w-10"><Mic className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Voice message"><Mic className="h-5 w-5" /></Button>
             )}
           </div>
           {newMessage.length > 800 && (

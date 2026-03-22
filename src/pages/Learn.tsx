@@ -12,6 +12,7 @@ import { StreakCalendar } from "@/components/education/StreakCalendar";
 import { DailyChallenge } from "@/components/education/DailyChallenge";
 import { ContinueLearning } from "@/components/education/ContinueLearning";
 import { SessionGoal } from "@/components/education/SessionGoal";
+import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -95,11 +96,7 @@ const Learn = () => {
   const toggleTier = (tier: string) => { setOpenTiers(prev => ({ ...prev, [tier]: !prev[tier] })); };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
-      </div>
-    );
+    return <PageSkeleton variant="learn" />;
   }
 
   return (

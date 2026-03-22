@@ -9,6 +9,8 @@
 - [x] `granted_by` constraint on user_roles INSERT
 - [x] `search_path` set on all database functions
 - [x] Leaked password protection enabled
+- [x] Profiles SELECT restricted to own-profile; discovery via secure RPCs
+- [x] Role grant/revoke via SECURITY DEFINER RPCs (no direct table access)
 
 ## ✅ COMPLETED — Phase 2: Legal & Compliance
 - [x] Privacy Policy & Terms of Service pages
@@ -27,14 +29,19 @@
 - [x] Blocked users filtered from messages (Messages.tsx)
 - [x] Account deletion cleans up reports & blocked_users
 
+## ✅ COMPLETED — Phase 4: UX Polish
+- [x] Code splitting with React.lazy for all 15 route pages
+- [x] Branded PageLoader with logo animation for Suspense fallback
+- [x] Consistent PageSkeleton components (profile, chat, learn, list variants)
+- [x] All 5 pages with spinner-only loading upgraded to contextual skeletons
+- [x] Accessibility: aria-labels on all icon-only buttons across 8 pages
+- [x] Accessibility: navigation landmark on BottomNav
+- [x] Accessibility: skip-to-content link for keyboard users
+- [x] Accessibility: semantic color tokens replacing hardcoded colors
+
 ---
 
 ## 🔲 REMAINING — Still Needed Before Launch
-
-### Phase 4: UX Polish
-- [ ] Code splitting with React.lazy
-- [ ] Consistent loading states across all pages
-- [ ] Accessibility audit
 
 ### Phase 5: Operational
 - [ ] Stripe webhook handler

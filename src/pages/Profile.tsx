@@ -11,6 +11,7 @@ import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, Shie
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
+import { PageSkeleton } from "@/components/PageSkeleton";
 
 interface UserBadge {
   module_id: string;
@@ -66,11 +67,7 @@ const Profile = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
-      </div>
-    );
+    return <PageSkeleton variant="profile" />;
   }
 
   return (
@@ -78,7 +75,7 @@ const Profile = () => {
       <header className="border-b border-border bg-card">
         <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
           <Logo size="md" />
-          <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => navigate("/settings")}>
+          <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => navigate("/settings")} aria-label="Settings">
             <Settings className="h-6 w-6" />
           </Button>
         </div>
@@ -113,10 +110,10 @@ const Profile = () => {
               )}
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+            <div className="absolute bottom-0 left-0 right-0 p-4 text-primary-foreground">
               <h2 className="text-3xl font-bold flex items-center gap-2">
                 {profile?.name}, {profile?.age}
-                {profile?.is_verified && <ShieldCheck className="h-6 w-6 text-green-400" />}
+                {profile?.is_verified && <ShieldCheck className="h-6 w-6 text-accent" />}
               </h2>
               <div className="flex items-center gap-2 text-sm opacity-90">
                 {profile?.pronouns && <span className="bg-white/20 px-2 py-0.5 rounded">{profile.pronouns}</span>}

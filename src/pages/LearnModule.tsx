@@ -20,6 +20,7 @@ import { useLearningStats } from "@/hooks/useLearningStats";
 import { ChevronLeft, CheckCircle, Award, BookOpen, Lock, Zap, Flame } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { PageSkeleton } from "@/components/PageSkeleton";
 
 interface Module {
   id: string;
@@ -235,11 +236,7 @@ const LearnModule = () => {
   const canTakeQuiz = !hasSections || allSectionsComplete;
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
-      </div>
-    );
+    return <PageSkeleton variant="learn" />;
   }
   if (!module) return null;
 
@@ -266,7 +263,7 @@ const LearnModule = () => {
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/learn")}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("/learn")} aria-label="Go back">
             <ChevronLeft className="h-6 w-6" />
           </Button>
           <div className="flex-1 min-w-0">
