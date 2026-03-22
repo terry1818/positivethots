@@ -256,7 +256,7 @@ const Chat = () => {
                   <DropdownMenuItem className="sm:hidden"><Phone className="h-4 w-4 mr-2" />Voice Call</DropdownMenuItem>
                   <DropdownMenuItem className="sm:hidden"><Video className="h-4 w-4 mr-2" />Video Call</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleReport}><Flag className="h-4 w-4 mr-2" />Report</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowReportDialog(true)}><Flag className="h-4 w-4 mr-2" />Report</DropdownMenuItem>
                   <DropdownMenuItem onClick={handleBlock} className="text-destructive focus:text-destructive"><UserX className="h-4 w-4 mr-2" />Block User</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
