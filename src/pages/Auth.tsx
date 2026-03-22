@@ -33,7 +33,7 @@ const Auth = () => {
     setLoading(true);
     try {
       const data = isSignUp
-        ? { email: email.trim(), password, name: name.trim(), age: parseInt(age) }
+        ? { email: email.trim(), password, name: name.trim(), age: parseInt(age), agreedToTerms: agreedToTerms as true }
         : { email: email.trim(), password };
       authSchema.parse(data);
 
