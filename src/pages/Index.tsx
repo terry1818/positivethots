@@ -11,6 +11,8 @@ import { Logo } from "@/components/Logo";
 import { MatchModal } from "@/components/MatchModal";
 import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
+import { NearbyUsers } from "@/components/NearbyUsers";
+import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
