@@ -12,9 +12,11 @@ import { StreakCalendar } from "@/components/education/StreakCalendar";
 import { DailyChallenge } from "@/components/education/DailyChallenge";
 import { ContinueLearning } from "@/components/education/ContinueLearning";
 import { SessionGoal } from "@/components/education/SessionGoal";
+import { TierRoadmap } from "@/components/education/TierRoadmap";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
+import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { BookOpen, CheckCircle, Lock, ChevronRight, ChevronDown, Award, Users } from "lucide-react";
 import { Logo } from "@/components/Logo";
@@ -46,6 +48,7 @@ const Learn = () => {
   const [openTiers, setOpenTiers] = useState<Record<string, boolean>>({ foundation: true });
   const navigate = useNavigate();
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft } = useLearningStats();
+  const { tiers, loading: tiersLoading } = useFeatureUnlocks();
 
   useEffect(() => { loadData(); }, []);
 
@@ -186,6 +189,9 @@ const Learn = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Tier Roadmap — Feature Unlocks */}
+        {tiers.length > 0 && <TierRoadmap tiers={tiers} />}
 
         {/* Tiered Modules */}
         <div className="space-y-3">

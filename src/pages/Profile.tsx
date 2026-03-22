@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,10 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen } from "lucide-react";
+import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
+import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { PageSkeleton } from "@/components/PageSkeleton";
 
 interface UserBadge {
@@ -30,6 +32,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { stats } = useLearningStats();
+  const { tiers } = useFeatureUnlocks();
 
   useEffect(() => { loadProfile(); }, []);
 
@@ -179,6 +182,40 @@ const Profile = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Feature Unlocks */}
+        {tiers.length > 0 && (
+          <Card className="animate-fade-in">
+            <CardContent className="p-4">
+              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                🔓 Unlocked Features
+              </h3>
+              <div className="grid grid-cols-2 gap-2">
+                {tiers.flatMap((tier) =>
+                  tier.features.map((f) => (
+                    <div
+                      key={f.key}
+                      className={cn(
+                        "flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border transition-all",
+                        f.isUnlocked
+                          ? "bg-primary/5 border-primary/20 text-foreground"
+                          : "bg-muted/50 border-muted text-muted-foreground"
+                      )}
+                    >
+                      <span>{f.icon}</span>
+                      <span className="truncate">{f.label}</span>
+                      {f.isUnlocked ? (
+                        <CheckCircle className="h-3 w-3 text-success shrink-0 ml-auto" />
+                      ) : (
+                        <Lock className="h-3 w-3 shrink-0 ml-auto" />
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Actions */}
         <div className="space-y-3">
