@@ -140,15 +140,20 @@ const LearnModule = () => {
     }
   }, [markComplete, awardXP, stats]);
 
-  // Quiz: answer a question with immediate feedback
-  const handleAnswerQuestion = (questionId: string, answerIndex: number) => {
+  // Quiz: answer a question with server-side validation
+  const handleAnswerQuestion = async (questionId: string, answerIndex: number) => {
     const question = questions.find(q => q.id === questionId);
     if (!question || answeredQuestions.has(questionId)) return;
 
     setAnswers(prev => ({ ...prev, [questionId]: answerIndex }));
     setAnsweredQuestions(prev => new Set(prev).add(questionId));
 
-    const isCorrect = answerIndex === question.correct_answer;
+    // Validate answer server-side
+    const { data: isCorrect } = await supabase.rpc("validate_quiz_answer", {
+      _question_id: questionId,
+      _selected_answer: answerIndex,
+    });
+
     setQuestionFeedback(isCorrect ? "correct" : "wrong");
 
     if (isCorrect) {
