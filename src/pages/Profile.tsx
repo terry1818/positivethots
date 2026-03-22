@@ -68,6 +68,62 @@ const Profile = () => {
     }
   };
 
+  const checkActiveBoost = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    const { data } = await supabase
+      .from("profile_boosts")
+      .select("id")
+      .eq("user_id", session.user.id)
+      .gt("expires_at", new Date().toISOString())
+      .limit(1);
+    setHasActiveBoost((data?.length || 0) > 0);
+  };
+
+  const handleActivateBoost = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.from("profile_boosts").insert({ user_id: session.user.id });
+      setHasActiveBoost(true);
+      toast.success("Profile Boosted! 🚀", { description: "You'll appear at the top of discovery for 24 hours." });
+    } catch (err) {
+      console.error("Boost activation error:", err);
+    }
+  };
+
+  const handleBoostProfile = async () => {
+    // VIP gets one free boost/month — check if they already used it this month
+    if (hasFeature("profile_boost")) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+      const { data: monthBoosts } = await supabase
+        .from("profile_boosts")
+        .select("id")
+        .eq("user_id", session.user.id)
+        .gte("created_at", startOfMonth.toISOString());
+      if (!monthBoosts || monthBoosts.length === 0) {
+        await handleActivateBoost();
+        return;
+      }
+    }
+    // Otherwise pay via Stripe
+    setBoostLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-boost-payment");
+      if (error) throw error;
+      if (data?.url) window.open(data.url, "_blank");
+    } catch (err) {
+      console.error("Boost payment error:", err);
+      toast.error("Failed to start boost purchase");
+    } finally {
+      setBoostLoading(false);
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
