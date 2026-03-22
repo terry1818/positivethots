@@ -1,53 +1,121 @@
 
 
-## Multi-Tier Subscription System
+## Implementation Plan: Profile Boosts, Super Likes, and Capacitor Setup
 
-Transform the single $9.99/mo Premium plan into a 3-tier subscription model to capture more revenue across different user segments.
+This is a large multi-feature request covering three distinct areas. Here is the full plan.
 
-### Tier Structure
+---
 
-| | Plus ($4.99/mo) | Premium ($9.99/mo) | VIP ($19.99/mo) |
-|---|---|---|---|
-| See Who Likes You | Yes | Yes | Yes |
-| 5 Super Likes/day | Yes | Yes | Yes |
-| Priority Visibility | — | Yes | Yes |
-| Advanced Filters | — | Yes | Yes |
-| 1 Profile Boost/mo | — | — | Yes |
-| Unlimited Super Likes | — | — | Yes |
-| Mentor Badge | — | — | Yes |
+### 1. Profile Boosts
 
-### Steps
+**Database**: New `profile_boosts` table tracking active boosts per user.
 
-1. **Create Stripe products and prices** — Use Stripe tools to create "Plus" ($4.99/mo recurring), keep existing "Premium" ($9.99/mo), and create "VIP" ($19.99/mo recurring)
+```text
+profile_boosts
+├── id (uuid, PK)
+├── user_id (uuid, FK)
+├── activated_at (timestamptz, default now())
+├── expires_at (timestamptz, default now() + 24h)
+├── created_at (timestamptz)
+```
 
-2. **Update `check-subscription` edge function** — Return the `product_id` so the frontend knows which tier the user is on (it already partially does this but the hook doesn't use it)
+RLS: Users can read/insert their own boosts. No update/delete.
 
-3. **Update `create-checkout` edge function** — Accept a `price_id` parameter from the frontend so users can select which tier to purchase
+**Stripe**: Create a one-time "Profile Boost" product ($2.99) via Stripe tools.
 
-4. **Update `useSubscription` hook** — Track `tier` (plus/premium/vip) in addition to `isPremium`, expose helper like `hasFeature(feature)` for gating
+**Edge Function**: `create-boost-payment` — one-time Stripe checkout (`mode: "payment"`) that creates a boost row on success. Use the success URL with a query param to trigger boost activation.
 
-5. **Redesign Premium page** — Replace single-price card with a 3-column comparison table showing features per tier, with a "Subscribe" button on each column. Highlight Premium as "Most Popular"
+**Discovery Feed Logic**: Modify `get_discovery_profiles` RPC (or the frontend sorting) to prioritize users with an active boost (where `expires_at > now()`). Boosted profiles appear first in the grid.
 
-6. **Update `stripe-webhook`** — Store the plan tier in the `subscriptions` table `plan` column (currently hardcoded to "premium")
+**UI**: Add a "Boost" button on the Profile page (for VIP subscribers it's free once/month, others pay). Show a "Boosted" badge on DiscoveryCard for boosted profiles.
 
-7. **Update Settings page** — Show current tier name and allow upgrade/downgrade via customer portal
+**Files changed**:
+- Migration: create `profile_boosts` table + RLS
+- `supabase/functions/create-boost-payment/index.ts` (new)
+- `src/pages/Profile.tsx` — add Boost button
+- `src/pages/Index.tsx` — sort boosted profiles first
+- `src/components/discovery/DiscoveryCard.tsx` — show Boosted badge
 
-### Technical Details
+---
 
-- Store a `SUBSCRIPTION_TIERS` constant mapping Stripe product IDs to tier names, features, and prices
-- The `subscriptions.plan` column already exists and will store "plus", "premium", or "vip"
-- No new DB tables needed — the existing `subscriptions` table handles everything
-- Customer portal (already implemented) handles upgrades/downgrades/cancellations
+### 2. Super Likes
 
-### Files changed
+**Database**: Two new tables.
 
-| File | Change |
-|------|--------|
-| `src/lib/subscriptionTiers.ts` | **New** — tier config mapping product IDs to features |
-| `src/hooks/useSubscription.ts` | Add `tier` state and `hasFeature()` helper |
-| `src/pages/Premium.tsx` | Redesign with 3-tier comparison layout |
-| `src/pages/Settings.tsx` | Show tier name instead of just "Premium" |
-| `supabase/functions/create-checkout/index.ts` | Accept `price_id` body param |
-| `supabase/functions/check-subscription/index.ts` | Return `product_id` (minor tweak) |
-| `supabase/functions/stripe-webhook/index.ts` | Map product ID to plan name |
+```text
+super_likes
+├── id (uuid, PK)
+├── sender_id (uuid)
+├── receiver_id (uuid)
+├── created_at (timestamptz)
+
+super_like_balance
+├── user_id (uuid, PK)
+├── balance (int, default 0)
+├── last_daily_refresh (date)
+├── updated_at (timestamptz)
+```
+
+RLS: Users can read/insert their own super likes. Balance readable/updatable by own user.
+
+**Daily Allocation Logic**: A database function `refresh_daily_super_likes` checks `last_daily_refresh`; if it's before today, resets balance to 5 (or unlimited for VIP). Called when loading the discovery page.
+
+**Stripe**: Create a "Super Like Pack (10)" product ($1.99 one-time) for purchasing extra super likes.
+
+**Edge Function**: `create-superlike-payment/index.ts` — one-time payment, on success adds 10 to balance.
+
+**Discovery Feed Integration**:
+- Add a "Super Like" button (star icon) to DiscoveryCard alongside Connect/Pass
+- Super Like decrements balance, inserts into `super_likes`, and inserts a `direction: 'super'` swipe
+- Receiver sees a special highlight on the LikesYou page for super likes
+
+**Files changed**:
+- Migration: create `super_likes`, `super_like_balance` tables + RLS + `refresh_daily_super_likes` function
+- `supabase/functions/create-superlike-payment/index.ts` (new)
+- `src/hooks/useSuperLikes.ts` (new) — manages balance, daily refresh, sending
+- `src/components/discovery/DiscoveryCard.tsx` — add Super Like button
+- `src/pages/Index.tsx` — wire up super like handler
+- `src/pages/LikesYou.tsx` — highlight super likes
+
+---
+
+### 3. Capacitor Setup
+
+**Dependencies**: Install `@capacitor/core`, `@capacitor/cli` (dev), `@capacitor/ios`, `@capacitor/android`, `@capacitor/camera`, `@capacitor/push-notifications`.
+
+**Configuration**: Create `capacitor.config.ts`:
+```typescript
+const config = {
+  appId: 'app.positivethots',
+  appName: 'Positive Thots',
+  webDir: 'dist',
+  server: {
+    url: 'https://positivethots.lovable.app?forceHideBadge=true',
+    cleartext: true
+  }
+};
+```
+
+**Files changed**:
+- `package.json` — add Capacitor dependencies
+- `capacitor.config.ts` (new)
+
+After setup, the user will need to:
+1. Export to GitHub and clone locally
+2. Run `npm install`
+3. Run `npx cap add ios` and/or `npx cap add android`
+4. Run `npx cap sync` then `npx cap run ios` or `npx cap run android`
+
+---
+
+### Execution Order
+
+| Step | What |
+|------|------|
+| 1 | Create Stripe products (Boost $2.99, Super Like Pack $1.99) |
+| 2 | Database migration: `profile_boosts`, `super_likes`, `super_like_balance` tables + RLS + functions |
+| 3 | Edge functions: `create-boost-payment`, `create-superlike-payment` |
+| 4 | Frontend hooks: `useSuperLikes`, boost activation logic |
+| 5 | UI updates: DiscoveryCard (super like + boosted badge), Profile (boost button), LikesYou (super like highlight) |
+| 6 | Install Capacitor dependencies and create config |
 
