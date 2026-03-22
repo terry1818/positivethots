@@ -389,6 +389,40 @@ const Chat = () => {
           )}
         </div>
       </div>
+
+      {/* Report Dialog */}
+      <AlertDialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Report {otherUser?.name}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Select a reason for your report. Our team will review it within 24 hours.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-2 py-2">
+            {REPORT_REASONS.map((reason) => (
+              <Button
+                key={reason}
+                variant={reportReason === reason ? "default" : "outline"}
+                className="w-full justify-start"
+                onClick={() => setReportReason(reason)}
+              >
+                {reason}
+              </Button>
+            ))}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setReportReason(""); }}>Cancel</AlertDialogCancel>
+            <Button
+              disabled={!reportReason}
+              onClick={() => handleReport(reportReason)}
+              variant="destructive"
+            >
+              Submit Report
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
