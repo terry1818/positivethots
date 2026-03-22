@@ -186,6 +186,7 @@ const Index = () => {
     });
     if (swipeError) { console.error("Swipe error:", swipeError); return; }
 
+    trackEvent("swipe", { direction: "right", swiped_id: otherUserId });
     setCelebrationTrigger(prev => prev + 1);
 
     const { data: matchData, error: matchError } = await supabase
@@ -193,6 +194,7 @@ const Index = () => {
     if (matchError) { console.error("Match check error:", matchError); return; }
 
     if (matchData) {
+      trackEvent("match", { matched_user_id: otherUserId });
       const matchedProfile = suggestions.find(s => s.id === otherUserId);
       if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
       toast.success("It's a Match! 💕", { description: "You can now start chatting!" });
