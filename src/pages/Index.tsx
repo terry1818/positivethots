@@ -144,7 +144,7 @@ const Index = () => {
     setSuggestions(enhancedProfiles);
   };
 
-  const calculateCompatibility = (user: Profile, other: Profile, otherBadges: number, userBadges: number): number => {
+  const calculateCompatibility = (user: Profile, other: DiscoveryProfile, otherBadges: number, userBadges: number): number => {
     let score = 0;
     const userInterests = new Set(user.interests || []);
     const otherInterests = new Set(other.interests || []);
