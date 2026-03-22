@@ -1,38 +1,27 @@
 
 
-# Add Sexual Health & Wellness Products to Shopify Store
+## Deploy Edge Functions
 
-## Overview
+All four Stripe-related edge functions need to be deployed to production. They already exist in the codebase and are configured in `supabase/config.toml` with `verify_jwt = false`.
 
-Create real products in your Shopify store so they appear on the Shop page. These are actual listings that customers can purchase through Shopify checkout. You'll need to handle fulfillment (sourcing, inventory, shipping) separately.
+### What will be deployed
 
-## Products to Create
+| Function | Purpose |
+|----------|---------|
+| `stripe-webhook` | Receives Stripe events and syncs subscription status to the database |
+| `create-checkout` | Creates Stripe checkout sessions for premium subscriptions |
+| `check-subscription` | Verifies a user's active subscription status via Stripe |
+| `customer-portal` | Generates Stripe billing portal sessions for subscription management |
 
-Using the Shopify product creation tool, I'll add these products:
+### Steps
 
-1. **At-Home STD Test Kit — Complete Panel** — Comprehensive screening, discreet packaging. Two variants: Complete Panel ($89.99) and Basic Panel ($49.99).
+1. Deploy all four functions using the deployment tool in a single action
+2. Verify deployment succeeded (check for any errors)
 
-2. **At-Home STD Test Kit — Individual** — Single-test option for targeted screening. Variants by test type ($29.99 each).
+### Prerequisites (already met)
+- `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` secrets are configured
+- All function files exist under `supabase/functions/`
+- `config.toml` has all four functions listed with `verify_jwt = false`
 
-3. **Premium Personal Lubricant** — Water-based, body-safe formula. Variants by size: Travel 2oz ($9.99), Regular 4oz ($14.99), Value 8oz ($22.99).
-
-4. **Luxury Vibrator — Beginner Friendly** — Body-safe silicone, rechargeable. One variant ($49.99).
-
-5. **Couples Intimacy Kit** — Curated bundle with lubricant, massage oil, and accessories ($59.99).
-
-6. **Massage Oil — Sensual Blend** — Natural ingredients, skin-safe. Variants: 4oz ($12.99), 8oz ($19.99).
-
-## Technical Details
-
-- Products created via Shopify Admin API tools — they'll automatically appear on the Shop page via the existing Storefront API integration
-- No code changes needed — the Shop page already fetches and displays all products
-- Each product gets a handle for the `/product/:handle` detail page
-- All products tagged with relevant categories for future filtering
-
-## Important Note
-
-These listings will be live in your Shopify store. To actually fulfill orders, you'll need to:
-- Source products from suppliers (wholesale or dropship)
-- Configure shipping rates in Shopify admin
-- Set up payment processing in Shopify
+No code changes are needed — this is purely a deployment operation.
 
