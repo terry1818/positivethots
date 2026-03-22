@@ -1,67 +1,53 @@
 
 
-## Location Sharing Feature (Unlocked via Foundation Badges)
+## Multi-Tier Subscription System
 
-Users who complete the 5 Foundation education modules unlock the ability to share their live GPS location at events, so nearby users can find each other.
+Transform the single $9.99/mo Premium plan into a 3-tier subscription model to capture more revenue across different user segments.
 
-### How it works
+### Tier Structure
 
-1. **Unlock gate**: Location sharing toggle only appears for users who have earned all 5 Foundation badges (same check used to gate Discovery access)
-2. **Opt-in toggle**: Users enable/disable location sharing from Settings or a floating button on the Discovery/Events page
-3. **Real-time GPS**: When enabled, the browser's Geolocation API captures lat/lng and writes it to a `user_locations` table
-4. **Nearby users**: Other opted-in users within a configurable radius (e.g. 500m) appear on a "Nearby" card or map view
-5. **Auto-expire**: Locations auto-expire after a set period (e.g. 2 hours) for privacy — enforced via a `expires_at` column
-
-### Database
-
-New `user_locations` table:
-
-```text
-user_locations
-├── id (uuid, PK)
-├── user_id (uuid, NOT NULL)
-├── latitude (double precision, NOT NULL)
-├── longitude (double precision, NOT NULL)
-├── is_sharing (boolean, default false)
-├── updated_at (timestamptz, default now())
-└── expires_at (timestamptz, default now() + 2 hours)
-```
-
-RLS policies:
-- Users can upsert/read their own row
-- Authenticated users can SELECT other users' rows WHERE `is_sharing = true AND expires_at > now()`
-- Enable realtime on the table for live updates
-
-### New files
-
-| File | Purpose |
-|------|---------|
-| `src/hooks/useLocationSharing.ts` | Hook: checks Foundation badge unlock, manages Geolocation API, upserts to `user_locations`, handles toggle state |
-| `src/components/NearbyUsers.tsx` | Card/list showing opted-in nearby users with distance, subscribes to realtime changes |
-
-### Changes to existing files
-
-| File | Change |
-|------|--------|
-| `src/pages/Settings.tsx` | Add "Location Sharing" card with toggle (grayed out with "Complete Foundation courses to unlock" message if not unlocked) |
-| `src/pages/Index.tsx` | Add a "Nearby" section/button that links to or expands the NearbyUsers component when location sharing is active |
-
-### Distance calculation
-
-Use the Haversine formula client-side to compute distances from the current user's coordinates to other sharing users. For the MVP this is sufficient; a PostGIS RPC can be added later for server-side filtering.
-
-### Privacy safeguards
-
-- Location is never stored permanently — rows expire after 2 hours
-- Users must explicitly opt in each session (no persistent background tracking)
-- Toggle clearly communicates what sharing means
-- Only users who have also completed Foundation courses can see nearby users
+| | Plus ($4.99/mo) | Premium ($9.99/mo) | VIP ($19.99/mo) |
+|---|---|---|---|
+| See Who Likes You | Yes | Yes | Yes |
+| 5 Super Likes/day | Yes | Yes | Yes |
+| Priority Visibility | — | Yes | Yes |
+| Advanced Filters | — | Yes | Yes |
+| 1 Profile Boost/mo | — | — | Yes |
+| Unlimited Super Likes | — | — | Yes |
+| Mentor Badge | — | — | Yes |
 
 ### Steps
 
-1. Create `user_locations` table with RLS policies and realtime via migration
-2. Create `useLocationSharing` hook
-3. Create `NearbyUsers` component
-4. Add Location Sharing card to Settings page
-5. Add Nearby section to Discovery page
+1. **Create Stripe products and prices** — Use Stripe tools to create "Plus" ($4.99/mo recurring), keep existing "Premium" ($9.99/mo), and create "VIP" ($19.99/mo recurring)
+
+2. **Update `check-subscription` edge function** — Return the `product_id` so the frontend knows which tier the user is on (it already partially does this but the hook doesn't use it)
+
+3. **Update `create-checkout` edge function** — Accept a `price_id` parameter from the frontend so users can select which tier to purchase
+
+4. **Update `useSubscription` hook** — Track `tier` (plus/premium/vip) in addition to `isPremium`, expose helper like `hasFeature(feature)` for gating
+
+5. **Redesign Premium page** — Replace single-price card with a 3-column comparison table showing features per tier, with a "Subscribe" button on each column. Highlight Premium as "Most Popular"
+
+6. **Update `stripe-webhook`** — Store the plan tier in the `subscriptions` table `plan` column (currently hardcoded to "premium")
+
+7. **Update Settings page** — Show current tier name and allow upgrade/downgrade via customer portal
+
+### Technical Details
+
+- Store a `SUBSCRIPTION_TIERS` constant mapping Stripe product IDs to tier names, features, and prices
+- The `subscriptions.plan` column already exists and will store "plus", "premium", or "vip"
+- No new DB tables needed — the existing `subscriptions` table handles everything
+- Customer portal (already implemented) handles upgrades/downgrades/cancellations
+
+### Files changed
+
+| File | Change |
+|------|--------|
+| `src/lib/subscriptionTiers.ts` | **New** — tier config mapping product IDs to features |
+| `src/hooks/useSubscription.ts` | Add `tier` state and `hasFeature()` helper |
+| `src/pages/Premium.tsx` | Redesign with 3-tier comparison layout |
+| `src/pages/Settings.tsx` | Show tier name instead of just "Premium" |
+| `supabase/functions/create-checkout/index.ts` | Accept `price_id` body param |
+| `supabase/functions/check-subscription/index.ts` | Return `product_id` (minor tweak) |
+| `supabase/functions/stripe-webhook/index.ts` | Map product ID to plan name |
 
