@@ -382,7 +382,7 @@ const Chat = () => {
             </div>
             {newMessage.trim() ? (
               <Button
-                size="icon"
+                size="icon" aria-label="Send message"
                 onClick={handleSendMessage}
                 className={cn("h-10 w-10 bg-gradient-primary text-primary-foreground transition-all", newMessage.trim() && "animate-pulse-glow")}
               >
