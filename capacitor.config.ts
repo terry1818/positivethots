@@ -20,7 +20,19 @@ const config: CapacitorConfig = {
       launchShowDuration: 2000,
       backgroundColor: '#6633CC',
       showSpinner: false,
+      launchAutoHide: false, // We hide manually after app is ready
     },
+  },
+  // Performance: allow mixed content for faster local asset loading
+  android: {
+    allowMixedContent: true,
+    captureInput: true,
+    webContentsDebuggingEnabled: false,
+  },
+  ios: {
+    contentInset: 'automatic',
+    allowsLinkPreview: false,
+    scrollEnabled: false,
   },
 };
 
