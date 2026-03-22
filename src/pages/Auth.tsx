@@ -97,6 +97,23 @@ const Auth = () => {
                 </div>
               </>
             )}
+            {isSignUp && (
+              <div className="flex items-start space-x-2 animate-stagger-fade" style={{ animationDelay: "160ms" }}>
+                <input
+                  type="checkbox"
+                  id="terms"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                />
+                <Label htmlFor="terms" className="text-sm text-muted-foreground leading-snug cursor-pointer">
+                  I am at least 18 years old and agree to the{" "}
+                  <a href="/terms" target="_blank" className="text-primary hover:underline">Terms of Service</a>{" "}
+                  and{" "}
+                  <a href="/privacy" target="_blank" className="text-primary hover:underline">Privacy Policy</a>
+                </Label>
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={255} className="focus-glow" />
