@@ -177,7 +177,7 @@ export const VerificationCard = ({
             </div>
           </div>
         ) : (
-          <Button onClick={startCamera} variant="outline" className="w-full">
+          <Button onClick={isNative() ? captureAndSubmit : startCamera} variant="outline" className="w-full">
             <Camera className="h-4 w-4 mr-2" />
             Start Verification
           </Button>
