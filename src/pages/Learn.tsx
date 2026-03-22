@@ -190,6 +190,9 @@ const Learn = () => {
           </CardContent>
         </Card>
 
+        {/* Tier Roadmap — Feature Unlocks */}
+        {tiers.length > 0 && <TierRoadmap tiers={tiers} />}
+
         {/* Tiered Modules */}
         <div className="space-y-3">
           {tierOrder.map((tier, tierIdx) => {
