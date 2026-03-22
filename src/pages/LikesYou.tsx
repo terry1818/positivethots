@@ -5,14 +5,16 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { BottomNav } from "@/components/BottomNav";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
-import { Lock, Heart, Crown, Check, X } from "lucide-react";
+import { Lock, Heart, Crown, Check, X, Star } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 interface LikerProfile {
   id: string; name: string; age: number; profile_image?: string; location?: string; bio?: string;
+  is_super_like?: boolean;
 }
 
 const LikesYou = () => {
@@ -27,20 +29,30 @@ const LikesYou = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { navigate("/auth"); return; }
 
-      const { data: swipes } = await supabase.from("swipes").select("swiper_id").eq("swiped_id", user.id).eq("direction", "right");
+      const [swipesResult, superLikesResult, matchesResult] = await Promise.all([
+        supabase.from("swipes").select("swiper_id").eq("swiped_id", user.id).eq("direction", "right"),
+        supabase.from("super_likes").select("sender_id").eq("receiver_id", user.id),
+        supabase.from("matches").select("user1_id, user2_id").or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`),
+      ]);
+      const swipes = swipesResult.data;
       if (!swipes || swipes.length === 0) { setLikers([]); setLoading(false); return; }
 
-      const { data: matches } = await supabase.from("matches").select("user1_id, user2_id").or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
-      const matchedIds = new Set((matches || []).flatMap(m => [m.user1_id, m.user2_id].filter(id => id !== user.id)));
+      const matchedIds = new Set((matchesResult.data || []).flatMap(m => [m.user1_id, m.user2_id].filter(id => id !== user.id)));
+      const superLikerIds = new Set((superLikesResult.data || []).map(sl => sl.sender_id));
       const likerIds = swipes.map(s => s.swiper_id).filter(id => !matchedIds.has(id));
 
       if (likerIds.length === 0) { setLikers([]); setLoading(false); return; }
 
-      const likerProfiles: LikerProfile[] = [];
-      for (const likerId of likerIds) {
-        const { data } = await supabase.rpc("get_public_profile", { _user_id: likerId });
-        if (data?.[0]) likerProfiles.push(data[0] as LikerProfile);
-      }
+      const profilePromises = likerIds.map(likerId =>
+        supabase.rpc("get_public_profile", { _user_id: likerId })
+      );
+      const profileResults = await Promise.all(profilePromises);
+      const likerProfiles: LikerProfile[] = profileResults
+        .map(r => r.data?.[0])
+        .filter(Boolean)
+        .map(p => ({ ...p, is_super_like: superLikerIds.has(p.id) } as LikerProfile));
+      // Sort super likes first
+      likerProfiles.sort((a, b) => (b.is_super_like ? 1 : 0) - (a.is_super_like ? 1 : 0));
       setLikers(likerProfiles);
       setLoading(false);
     };
@@ -120,7 +132,12 @@ const LikesYou = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 {likers.map((liker, idx) => (
-                  <Card key={liker.id} className="overflow-hidden relative animate-stagger-fade" style={{ animationDelay: `${idx * 80}ms` }}>
+                  <Card key={liker.id} className={cn("overflow-hidden relative animate-stagger-fade", liker.is_super_like && "ring-2 ring-amber-500/50")} style={{ animationDelay: `${idx * 80}ms` }}>
+                    {liker.is_super_like && (
+                      <Badge className="absolute top-2 right-2 z-10 bg-amber-500 text-white">
+                        <Star className="h-3 w-3 mr-1 fill-current" />Super Like
+                      </Badge>
+                    )}
                     <div className="relative h-44 bg-gradient-to-br from-primary/20 to-secondary/20">
                       {liker.profile_image ? (
                         <img

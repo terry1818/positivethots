@@ -1,11 +1,11 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, BookOpen, Shield, Eye, EyeOff } from "lucide-react";
+import { Heart, BookOpen, Shield, Eye, EyeOff, Star } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { MatchModal } from "@/components/MatchModal";
@@ -14,6 +14,7 @@ import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { NearbyUsers } from "@/components/NearbyUsers";
 import { DiscoveryCard } from "@/components/discovery/DiscoveryCard";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
+import { useSuperLikes } from "@/hooks/useSuperLikes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
@@ -48,6 +49,7 @@ interface EnhancedProfile extends DiscoveryProfile {
   last_active?: string;
   verified?: boolean;
   distance?: number;
+  is_boosted?: boolean;
 }
 
 const LAST_ACTIVE_OPTIONS = ["Just now", "5 min ago", "30 min ago", "1 hour ago", "2 hours ago", "Today"];
@@ -82,7 +84,9 @@ const calculateCompatibility = (user: Profile, other: DiscoveryProfile, otherBad
 
 const Index = () => {
   const { isSharing, nearbyUsers } = useLocationSharing();
+  const { balance: superLikeBalance, canSuperLike, sendSuperLike, isUnlimited } = useSuperLikes();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
   const [suggestions, setSuggestions] = useState<EnhancedProfile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,6 +96,13 @@ const Index = () => {
   const [userBadgeCount, setUserBadgeCount] = useState(0);
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
 
+  // Handle super like purchase redirect
+  useEffect(() => {
+    if (searchParams.get("superlikes") === "purchased") {
+      toast.success("Super Likes purchased! 🌟", { description: "10 Super Likes added to your balance." });
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     checkAuthAndSetup();
   }, []);
@@ -100,7 +111,6 @@ const Index = () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { navigate("/auth"); return; }
 
-    // Parallel: profile + badges + foundation modules
     const [profileResult, badgesResult, foundationResult] = await Promise.all([
       supabase.from("profiles").select("*").eq("id", session.user.id).single(),
       supabase.from("user_badges").select("module_id").eq("user_id", session.user.id),
@@ -130,7 +140,6 @@ const Index = () => {
   };
 
   const loadSuggestions = async (userId: string, profile: Profile) => {
-    // Parallel: matches + blocked users
     const [matchesResult, blockedResult] = await Promise.all([
       supabase.from("matches").select("user1_id, user2_id")
         .or(`user1_id.eq.${userId},user2_id.eq.${userId}`),
@@ -149,10 +158,10 @@ const Index = () => {
 
     const excludeIds = [userId, ...Array.from(matchedUserIds), ...Array.from(blockedUserIds)];
 
-    // Parallel: discovery profiles + all badges for scoring
-    const [profilesResult, allBadgesResult] = await Promise.all([
+    const [profilesResult, allBadgesResult, boostsResult] = await Promise.all([
       supabase.rpc("get_discovery_profiles", { _exclude_ids: excludeIds }),
       supabase.from("user_badges").select("user_id, module_id"),
+      supabase.from("profile_boosts").select("user_id").gt("expires_at", new Date().toISOString()),
     ]);
 
     if (!profilesResult.data) return;
@@ -162,6 +171,8 @@ const Index = () => {
       badgeCounts.set(badge.user_id, (badgeCounts.get(badge.user_id) || 0) + 1);
     });
 
+    const boostedUserIds = new Set(boostsResult.data?.map(b => b.user_id) || []);
+
     const enhancedProfiles: EnhancedProfile[] = profilesResult.data
       .map(p => ({
         ...p,
@@ -170,8 +181,14 @@ const Index = () => {
         last_active: LAST_ACTIVE_OPTIONS[Math.floor(Math.random() * LAST_ACTIVE_OPTIONS.length)],
         verified: (badgeCounts.get(p.id) || 0) >= 3,
         distance: Math.floor(Math.random() * 20) + 1,
+        is_boosted: boostedUserIds.has(p.id),
       }))
-      .sort((a, b) => (b.compatibility_score || 0) - (a.compatibility_score || 0))
+      .sort((a, b) => {
+        // Boosted profiles first, then by compatibility
+        if (a.is_boosted && !b.is_boosted) return -1;
+        if (!a.is_boosted && b.is_boosted) return 1;
+        return (b.compatibility_score || 0) - (a.compatibility_score || 0);
+      })
       .slice(0, 12);
 
     setSuggestions(enhancedProfiles);
@@ -211,6 +228,31 @@ const Index = () => {
     setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
   }, [currentUser]);
 
+  const handleSuperLike = useCallback(async (otherUserId: string) => {
+    if (!currentUser) return;
+    const success = await sendSuperLike(otherUserId);
+    if (!success) {
+      toast.error("No Super Likes left", { description: "Purchase more or wait until tomorrow." });
+      return;
+    }
+
+    trackEvent("super_like", { swiped_id: otherUserId });
+    setCelebrationTrigger(prev => prev + 1);
+
+    const { data: matchData } = await supabase
+      .rpc("check_match", { user1: currentUser.id, user2: otherUserId });
+
+    if (matchData) {
+      trackEvent("match", { matched_user_id: otherUserId });
+      const matchedProfile = suggestions.find(s => s.id === otherUserId);
+      if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
+      toast.success("It's a Match! 💕", { description: "Your Super Like worked!" });
+    } else {
+      toast.success("Super Like Sent! ⭐", { description: "They'll see you stand out!" });
+    }
+    setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
+  }, [currentUser, suggestions, sendSuperLike]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background pb-20">
@@ -243,6 +285,12 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <Logo size="md" />
             <div className="flex items-center gap-2">
+              {canSuperLike && (
+                <Badge variant="outline" className="text-amber-500 border-amber-500/30">
+                  <Star className="h-3 w-3 mr-1 fill-current" />
+                  {isUnlimited ? "∞" : superLikeBalance}
+                </Badge>
+              )}
               <Button
                 variant={incognitoMode ? "default" : "outline"} size="sm"
                 onClick={() => setIncognitoMode(!incognitoMode)}
@@ -329,6 +377,9 @@ const Index = () => {
                 index={idx}
                 onConnect={handleConnect}
                 onPass={handlePass}
+                onSuperLike={handleSuperLike}
+                canSuperLike={canSuperLike}
+                superLikeBalance={isUnlimited ? 999 : superLikeBalance}
               />
             ))}
           </div>

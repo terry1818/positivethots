@@ -89,3 +89,19 @@ export function tierHasFeature(tier: SubscriptionTier, feature: FeatureKey): boo
   const config = getTierConfig(tier);
   return config?.features.includes(feature) ?? false;
 }
+
+// One-time purchase product IDs
+export const ONE_TIME_PRODUCTS = {
+  profile_boost: {
+    productId: "prod_UC8rptUQyJjuTX",
+    priceId: "price_1TDkZwAEIVQtquY2bChArXyZ",
+    price: 2.99,
+    name: "Profile Boost",
+  },
+  super_like_pack: {
+    productId: "prod_UC8stYS4Xx9hot",
+    priceId: "price_1TDkaqAEIVQtquY2l8yO6Xf3",
+    price: 1.99,
+    name: "Super Like Pack (10)",
+  },
+} as const;
