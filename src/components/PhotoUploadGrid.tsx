@@ -257,7 +257,7 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
               </>
             ) : (
               <button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={handleAddPhoto}
                 disabled={uploading}
                 className="w-full h-full flex flex-col items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
               >
