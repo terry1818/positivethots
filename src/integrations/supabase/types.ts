@@ -711,6 +711,78 @@ export type Database = {
       }
     }
     Views: {
+      profiles_public: {
+        Row: {
+          age: number | null
+          bio: string | null
+          created_at: string | null
+          display_name: string | null
+          experience_level: string | null
+          gender: string | null
+          height_cm: number | null
+          id: string | null
+          interests: string[] | null
+          is_verified: boolean | null
+          languages: string[] | null
+          location: string | null
+          looking_for: string | null
+          name: string | null
+          onboarding_completed: boolean | null
+          photos: string[] | null
+          profile_image: string | null
+          pronouns: string | null
+          relationship_status: string | null
+          relationship_style: string | null
+          zodiac_sign: string | null
+        }
+        Insert: {
+          age?: number | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          experience_level?: string | null
+          gender?: string | null
+          height_cm?: number | null
+          id?: string | null
+          interests?: string[] | null
+          is_verified?: boolean | null
+          languages?: string[] | null
+          location?: string | null
+          looking_for?: string | null
+          name?: string | null
+          onboarding_completed?: boolean | null
+          photos?: string[] | null
+          profile_image?: string | null
+          pronouns?: string | null
+          relationship_status?: string | null
+          relationship_style?: string | null
+          zodiac_sign?: string | null
+        }
+        Update: {
+          age?: number | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          experience_level?: string | null
+          gender?: string | null
+          height_cm?: number | null
+          id?: string | null
+          interests?: string[] | null
+          is_verified?: boolean | null
+          languages?: string[] | null
+          location?: string | null
+          looking_for?: string | null
+          name?: string | null
+          onboarding_completed?: boolean | null
+          photos?: string[] | null
+          profile_image?: string | null
+          pronouns?: string | null
+          relationship_status?: string | null
+          relationship_style?: string | null
+          zodiac_sign?: string | null
+        }
+        Relationships: []
+      }
       quiz_questions_public: {
         Row: {
           id: string | null
@@ -765,6 +837,62 @@ export type Database = {
         Returns: Json
       }
       check_match: { Args: { user1: string; user2: string }; Returns: string }
+      get_discovery_profiles: {
+        Args: { _exclude_ids: string[] }
+        Returns: {
+          age: number
+          bio: string
+          display_name: string
+          experience_level: string
+          gender: string
+          height_cm: number
+          id: string
+          interests: string[]
+          is_verified: boolean
+          languages: string[]
+          location: string
+          looking_for: string
+          name: string
+          photos: string[]
+          profile_image: string
+          pronouns: string
+          relationship_status: string
+          relationship_style: string
+          zodiac_sign: string
+        }[]
+      }
+      get_public_profile: {
+        Args: { _user_id: string }
+        Returns: {
+          age: number
+          bio: string
+          display_name: string
+          experience_level: string
+          gender: string
+          height_cm: number
+          id: string
+          interests: string[]
+          is_verified: boolean
+          languages: string[]
+          location: string
+          looking_for: string
+          name: string
+          onboarding_completed: boolean
+          photos: string[]
+          profile_image: string
+          pronouns: string
+          relationship_status: string
+          relationship_style: string
+          zodiac_sign: string
+        }[]
+      }
+      grant_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _target_user_id: string
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -773,6 +901,13 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      revoke_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _target_user_id: string
+        }
+        Returns: undefined
+      }
       validate_quiz_answer: {
         Args: { _question_id: string; _selected_answer: number }
         Returns: boolean
