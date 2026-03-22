@@ -35,7 +35,6 @@ interface Question {
   id: string;
   question: string;
   options: string[];
-  correct_answer: number;
   order_index: number;
 }
 
