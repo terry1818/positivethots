@@ -9,13 +9,13 @@
  import { Edit, Save, Plus, Trash2, HelpCircle } from "lucide-react";
  import { toast } from "sonner";
  
- interface Question {
-   id: string;
-   question: string;
-   options: string[];
-   correct_answer: number;
-   order_index: number;
- }
+interface Question {
+  id: string;
+  question: string;
+  options: string[];
+  correct_answer?: number;
+  order_index: number;
+}
  
  interface QuizEditorProps {
    moduleId: string;
