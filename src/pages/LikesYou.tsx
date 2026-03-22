@@ -36,8 +36,12 @@ const LikesYou = () => {
 
       if (likerIds.length === 0) { setLikers([]); setLoading(false); return; }
 
-      const { data: profiles } = await supabase.from("profiles").select("id, name, age, profile_image, location, bio").in("id", likerIds);
-      setLikers(profiles || []);
+      const likerProfiles: LikerProfile[] = [];
+      for (const likerId of likerIds) {
+        const { data } = await supabase.rpc("get_public_profile", { _user_id: likerId });
+        if (data?.[0]) likerProfiles.push(data[0] as LikerProfile);
+      }
+      setLikers(likerProfiles);
       setLoading(false);
     };
     fetchLikers();
