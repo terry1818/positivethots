@@ -418,12 +418,13 @@ const LearnModule = () => {
                           {currentQuestion.options.map((option: string, oIndex: number) => {
                             const isAnswered = answeredQuestions.has(currentQuestion.id);
                             const isSelected = answers[currentQuestion.id] === oIndex;
-                            const isCorrectOption = oIndex === currentQuestion.correct_answer;
+                            const isCorrectOption = isAnswered && correctAnswers.has(currentQuestion.id) && isSelected;
+                            const isWrongOption = isAnswered && isSelected && !correctAnswers.has(currentQuestion.id);
                             return (
                               <div key={oIndex} className={cn(
                                 "flex items-center space-x-2 py-2 px-2 rounded-md transition-colors",
-                                isAnswered && isCorrectOption && "bg-success/10",
-                                isAnswered && isSelected && !isCorrectOption && "bg-destructive/10"
+                                isCorrectOption && "bg-success/10",
+                                isWrongOption && "bg-destructive/10"
                               )}>
                                 <RadioGroupItem value={oIndex.toString()} id={`${currentQuestion.id}-${oIndex}`} />
                                 <Label htmlFor={`${currentQuestion.id}-${oIndex}`} className="flex-1 cursor-pointer">{option}</Label>
