@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { isNative, pickNativePhoto } from "@/lib/capacitor";
 
 interface UserPhoto {
   id: string;
@@ -36,30 +37,50 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
   const privatePhotos = photos.filter((p) => p.visibility === "private").sort((a, b) => a.order_index - b.order_index);
   const currentPhotos = activeTab === "public" ? publicPhotos : privatePhotos;
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleUpload = async (e?: React.ChangeEvent<HTMLInputElement>) => {
     if (currentPhotos.length >= MAX_PHOTOS) {
       toast.error(`Maximum ${MAX_PHOTOS} ${activeTab} photos allowed`);
-      return;
-    }
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image must be under 5MB");
       return;
     }
 
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
+      let blob: Blob | null = null;
+      let ext = "jpg";
+
+      // Try native camera/gallery first
+      if (isNative()) {
+        blob = await pickNativePhoto();
+        if (!blob) {
+          setUploading(false);
+          return;
+        }
+      } else {
+        // Web file input
+        const file = e?.target?.files?.[0];
+        if (!file) {
+          setUploading(false);
+          return;
+        }
+        if (!file.type.startsWith("image/")) {
+          toast.error("Please select an image file");
+          setUploading(false);
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error("Image must be under 5MB");
+          setUploading(false);
+          return;
+        }
+        blob = file;
+        ext = file.name.split(".").pop() || "jpg";
+      }
+
       const path = `${userId}/${activeTab}/${crypto.randomUUID()}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
         .from("user-photos")
-        .upload(path, file);
+        .upload(path, blob);
       if (uploadError) throw uploadError;
 
       const { data: urlData } = supabase.storage
@@ -94,6 +115,14 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleAddPhoto = () => {
+    if (isNative()) {
+      handleUpload();
+    } else {
+      fileInputRef.current?.click();
     }
   };
 
@@ -228,7 +257,7 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
               </>
             ) : (
               <button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={handleAddPhoto}
                 disabled={uploading}
                 className="w-full h-full flex flex-col items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
               >

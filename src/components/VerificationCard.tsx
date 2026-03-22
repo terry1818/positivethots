@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, Camera, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
+import { isNative, takeNativePhoto } from "@/lib/capacitor";
 
 interface VerificationCardProps {
   userId: string;
@@ -46,20 +47,34 @@ export const VerificationCard = ({
   }, []);
 
   const captureAndSubmit = async () => {
-    if (!videoRef.current) return;
     setSubmitting(true);
 
     try {
-      const canvas = document.createElement("canvas");
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      canvas.getContext("2d")!.drawImage(videoRef.current, 0, 0);
+      let blob: Blob;
 
-      const blob = await new Promise<Blob>((resolve) =>
-        canvas.toBlob((b) => resolve(b!), "image/jpeg", 0.85)
-      );
+      if (isNative()) {
+        const nativeBlob = await takeNativePhoto();
+        if (!nativeBlob) {
+          setSubmitting(false);
+          return;
+        }
+        blob = nativeBlob;
+      } else {
+        if (!videoRef.current) {
+          setSubmitting(false);
+          return;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = videoRef.current.videoWidth;
+        canvas.height = videoRef.current.videoHeight;
+        canvas.getContext("2d")!.drawImage(videoRef.current, 0, 0);
 
-      stopCamera();
+        blob = await new Promise<Blob>((resolve) =>
+          canvas.toBlob((b) => resolve(b!), "image/jpeg", 0.85)
+        );
+
+        stopCamera();
+      }
 
       const path = `${userId}/verification/${crypto.randomUUID()}.jpg`;
       const { error: uploadErr } = await supabase.storage
@@ -162,7 +177,7 @@ export const VerificationCard = ({
             </div>
           </div>
         ) : (
-          <Button onClick={startCamera} variant="outline" className="w-full">
+          <Button onClick={isNative() ? captureAndSubmit : startCamera} variant="outline" className="w-full">
             <Camera className="h-4 w-4 mr-2" />
             Start Verification
           </Button>
