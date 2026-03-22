@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,11 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock } from "lucide-react";
+import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock, Rocket } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
+import { useSubscription } from "@/hooks/useSubscription";
 import { PageSkeleton } from "@/components/PageSkeleton";
 
 interface UserBadge {
