@@ -180,10 +180,7 @@ const LearnModule = () => {
   const handleSubmitQuiz = async () => {
     if (!module || !userId) return;
 
-    let correct = 0;
-    questions.forEach(q => {
-      if (answers[q.id] === q.correct_answer) correct++;
-    });
+    const correct = correctAnswers.size;
 
     const scorePercent = Math.round((correct / questions.length) * 100);
     setScore(scorePercent);
