@@ -50,6 +50,7 @@ interface EnhancedProfile extends DiscoveryProfile {
 }
 
 const Index = () => {
+  const { isSharing, nearbyUsers } = useLocationSharing();
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
   const [suggestions, setSuggestions] = useState<EnhancedProfile[]>([]);
