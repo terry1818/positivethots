@@ -1,4 +1,5 @@
 import { Capacitor } from '@capacitor/core';
+import { supabase } from '@/integrations/supabase/client';
 
 export const isNative = () => Capacitor.isNativePlatform();
 export const getPlatform = () => Capacitor.getPlatform();
@@ -119,6 +120,7 @@ function base64ToBlob(base64: string, format: string): Blob {
 
 /**
  * Register for push notifications on native platforms.
+ * Stores the device token in the database for the current user.
  * Returns the device token or null.
  */
 export async function registerPushNotifications(): Promise<string | null> {
@@ -131,7 +133,21 @@ export async function registerPushNotifications(): Promise<string | null> {
     if (permResult.receive !== 'granted') return null;
 
     return new Promise((resolve) => {
-      PushNotifications.addListener('registration', (token) => {
+      PushNotifications.addListener('registration', async (token) => {
+        // Store token in database
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            await supabase.from('device_tokens' as any).upsert({
+              user_id: session.user.id,
+              token: token.value,
+              platform: getPlatform(),
+              updated_at: new Date().toISOString(),
+            }, { onConflict: 'user_id,token' });
+          }
+        } catch (e) {
+          console.error('Failed to store device token:', e);
+        }
         resolve(token.value);
       });
 
