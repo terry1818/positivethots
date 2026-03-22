@@ -256,10 +256,10 @@ const Chat = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="hidden sm:flex"><Phone className="h-5 w-5" /></Button>
-              <Button variant="ghost" size="icon" className="hidden sm:flex"><Video className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Voice call"><Phone className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Video call"><Video className="h-5 w-5" /></Button>
               <DropdownMenu>
-                <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreVertical className="h-5 w-5" /></Button></DropdownMenuTrigger>
+                <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" aria-label="More options"><MoreVertical className="h-5 w-5" /></Button></DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuItem className="sm:hidden"><Phone className="h-4 w-4 mr-2" />Voice Call</DropdownMenuItem>
                   <DropdownMenuItem className="sm:hidden"><Video className="h-4 w-4 mr-2" />Video Call</DropdownMenuItem>
