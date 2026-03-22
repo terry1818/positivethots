@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck } from "lucide-react";
+import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
@@ -188,6 +188,13 @@ const Profile = () => {
             onClick={() => navigate("/profile/edit")}
           >
             <Settings className="mr-2 h-5 w-5" />Edit Profile
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full justify-start text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
+            onClick={() => navigate("/resources")}
+          >
+            <BookOpen className="mr-2 h-5 w-5" />Recommended Resources
           </Button>
           <Button
             variant="outline"

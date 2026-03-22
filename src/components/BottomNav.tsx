@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, BookOpen, MessageCircle, User } from "lucide-react";
+import { Heart, Sparkles, BookOpen, MessageCircle, User, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -8,7 +8,8 @@ const navItems = [
   { path: "/", icon: Heart, label: "Discover" },
   { path: "/likes", icon: Sparkles, label: "Likes" },
   { path: "/learn", icon: BookOpen, label: "Learn" },
-  { path: "/messages", icon: MessageCircle, label: "Messages" },
+  { path: "/shop", icon: ShoppingBag, label: "Shop" },
+  { path: "/messages", icon: MessageCircle, label: "Chat" },
   { path: "/profile", icon: User, label: "Profile" },
 ];
 
@@ -36,13 +37,13 @@ export const BottomNav = () => {
               size="sm"
               onClick={() => handleTap(path)}
               className={cn(
-                "flex flex-col items-center gap-1 h-auto py-2 px-3 relative transition-all duration-200",
+                "flex flex-col items-center gap-0.5 h-auto py-2 px-2 relative transition-all duration-200",
                 isActive ? "text-primary" : "text-muted-foreground",
                 isTapped && "animate-tap-bounce"
               )}
             >
-              <Icon className={cn("h-5 w-5 transition-transform duration-200", isActive && "scale-110")} />
-              <span className="text-[10px] font-medium">{label}</span>
+              <Icon className={cn("h-[18px] w-[18px] transition-transform duration-200", isActive && "scale-110")} />
+              <span className="text-[9px] font-medium">{label}</span>
               {isActive && (
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-gradient-to-r from-primary to-secondary" />
               )}
