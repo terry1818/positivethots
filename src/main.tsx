@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { reportError } from "./lib/errorReporting";
+import { initCapacitor } from "./lib/capacitor";
 
 window.addEventListener("error", (event) => {
   if (event.error instanceof Error) {
