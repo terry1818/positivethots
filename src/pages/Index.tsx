@@ -209,6 +209,7 @@ const Index = () => {
     await supabase.from("swipes").insert({
       swiper_id: currentUser.id, swiped_id: otherUserId, direction: "left",
     });
+    trackEvent("swipe", { direction: "left", swiped_id: otherUserId });
     setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
   };
 
