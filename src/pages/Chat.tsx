@@ -13,12 +13,26 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Database } from "@/integrations/supabase/types";
 
 type Message = Database['public']['Tables']['messages']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
+
+interface PublicProfile {
+  id: string;
+  name: string;
+  age: number;
+  bio: string | null;
+  profile_image: string | null;
+  pronouns: string | null;
+  [key: string]: any;
+}
 
 interface EnhancedMessage extends Message {
   read?: boolean;
@@ -31,7 +45,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<EnhancedMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
-  const [otherUser, setOtherUser] = useState<Profile | null>(null);
+  const [otherUser, setOtherUser] = useState<PublicProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
   const [onlineStatus, setOnlineStatus] = useState<"online" | "away" | "offline">("offline");
@@ -65,7 +79,8 @@ const Chat = () => {
     if (!match) { toast.error("Match not found"); navigate("/messages"); return; }
 
     const otherUserId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
-    const { data: otherProfile } = await supabase.from("profiles").select("*").eq("id", otherUserId).single();
+    const { data: otherProfileData } = await supabase.rpc("get_public_profile", { _user_id: otherUserId });
+    const otherProfile = otherProfileData?.[0] || null;
 
     if (otherProfile) {
       setOtherUser(otherProfile);
@@ -132,16 +147,31 @@ const Chat = () => {
     }
   };
 
-  const handleReport = async () => {
+  const [reportReason, setReportReason] = useState("");
+  const [showReportDialog, setShowReportDialog] = useState(false);
+
+  const REPORT_REASONS = [
+    "Harassment or bullying",
+    "Inappropriate or explicit content",
+    "Spam or scam",
+    "Fake profile or impersonation",
+    "Threatening behavior",
+    "Underage user",
+    "Other",
+  ];
+
+  const handleReport = async (reason: string, details?: string) => {
     if (!currentUser || !otherUser) return;
     try {
       const { error } = await supabase.from("reports").insert({
         reporter_id: currentUser.id,
         reported_user_id: otherUser.id,
-        reason: "Reported from chat",
+        reason,
+        details: details || null,
       });
       if (error) throw error;
-      toast.success("Report Submitted", { description: "Our team will review this conversation." });
+      toast.success("Report Submitted", { description: "Our team will review this. Thank you for keeping the community safe." });
+      setShowReportDialog(false);
     } catch (err: any) {
       toast.error(err.message || "Failed to submit report");
     }
@@ -237,7 +267,7 @@ const Chat = () => {
                   <DropdownMenuItem className="sm:hidden"><Phone className="h-4 w-4 mr-2" />Voice Call</DropdownMenuItem>
                   <DropdownMenuItem className="sm:hidden"><Video className="h-4 w-4 mr-2" />Video Call</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleReport}><Flag className="h-4 w-4 mr-2" />Report</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowReportDialog(true)}><Flag className="h-4 w-4 mr-2" />Report</DropdownMenuItem>
                   <DropdownMenuItem onClick={handleBlock} className="text-destructive focus:text-destructive"><UserX className="h-4 w-4 mr-2" />Block User</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -370,6 +400,40 @@ const Chat = () => {
           )}
         </div>
       </div>
+
+      {/* Report Dialog */}
+      <AlertDialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Report {otherUser?.name}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Select a reason for your report. Our team will review it within 24 hours.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-2 py-2">
+            {REPORT_REASONS.map((reason) => (
+              <Button
+                key={reason}
+                variant={reportReason === reason ? "default" : "outline"}
+                className="w-full justify-start"
+                onClick={() => setReportReason(reason)}
+              >
+                {reason}
+              </Button>
+            ))}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => { setReportReason(""); }}>Cancel</AlertDialogCancel>
+            <Button
+              disabled={!reportReason}
+              onClick={() => handleReport(reportReason)}
+              variant="destructive"
+            >
+              Submit Report
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

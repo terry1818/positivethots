@@ -16,7 +16,29 @@ import type { Database } from "@/integrations/supabase/types";
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
-interface EnhancedProfile extends Profile {
+interface DiscoveryProfile {
+  id: string;
+  name: string;
+  age: number;
+  bio: string | null;
+  location: string | null;
+  profile_image: string | null;
+  gender: string | null;
+  pronouns: string | null;
+  relationship_style: string | null;
+  relationship_status: string | null;
+  experience_level: string | null;
+  interests: string[] | null;
+  photos: string[] | null;
+  display_name: string | null;
+  is_verified: boolean;
+  looking_for: string | null;
+  zodiac_sign: string | null;
+  languages: string[] | null;
+  height_cm: number | null;
+}
+
+interface EnhancedProfile extends DiscoveryProfile {
   badge_count?: number;
   compatibility_score?: number;
   last_active?: string;
@@ -94,8 +116,9 @@ const Index = () => {
       else blockedUserIds.add(row.blocker_id);
     });
 
+    const excludeIds = [userId, ...Array.from(matchedUserIds), ...Array.from(blockedUserIds)];
     const { data: profiles } = await supabase
-      .from("profiles").select("*").neq("id", userId).eq("onboarding_completed", true);
+      .rpc("get_discovery_profiles", { _exclude_ids: excludeIds });
 
     if (!profiles) return;
 
@@ -107,7 +130,6 @@ const Index = () => {
     });
 
     const enhancedProfiles: EnhancedProfile[] = profiles
-      .filter(p => !matchedUserIds.has(p.id) && !blockedUserIds.has(p.id))
       .map(p => ({
         ...p,
         badge_count: badgeCounts.get(p.id) || 0,
@@ -122,7 +144,7 @@ const Index = () => {
     setSuggestions(enhancedProfiles);
   };
 
-  const calculateCompatibility = (user: Profile, other: Profile, otherBadges: number, userBadges: number): number => {
+  const calculateCompatibility = (user: Profile, other: DiscoveryProfile, otherBadges: number, userBadges: number): number => {
     let score = 0;
     const userInterests = new Set(user.interests || []);
     const otherInterests = new Set(other.interests || []);

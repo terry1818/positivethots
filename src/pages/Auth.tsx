@@ -15,6 +15,7 @@ const authSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters").max(100, "Password too long"),
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name too long").optional(),
   age: z.number().min(18, "Must be 18 or older").max(100, "Invalid age").optional(),
+  agreedToTerms: z.literal(true, { errorMap: () => ({ message: "You must agree to the Terms and Privacy Policy" }) }).optional(),
 });
 
 const Auth = () => {
@@ -24,6 +25,7 @@ const Auth = () => {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [loading, setLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const navigate = useNavigate();
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -31,7 +33,7 @@ const Auth = () => {
     setLoading(true);
     try {
       const data = isSignUp
-        ? { email: email.trim(), password, name: name.trim(), age: parseInt(age) }
+        ? { email: email.trim(), password, name: name.trim(), age: parseInt(age), agreedToTerms: agreedToTerms as true }
         : { email: email.trim(), password };
       authSchema.parse(data);
 
@@ -94,6 +96,23 @@ const Auth = () => {
                   <Input id="age" type="number" placeholder="Your age" value={age} onChange={(e) => setAge(e.target.value)} required min={18} max={100} className="focus-glow" />
                 </div>
               </>
+            )}
+            {isSignUp && (
+              <div className="flex items-start space-x-2 animate-stagger-fade" style={{ animationDelay: "160ms" }}>
+                <input
+                  type="checkbox"
+                  id="terms"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                />
+                <Label htmlFor="terms" className="text-sm text-muted-foreground leading-snug cursor-pointer">
+                  I am at least 18 years old and agree to the{" "}
+                  <a href="/terms" target="_blank" className="text-primary hover:underline">Terms of Service</a>{" "}
+                  and{" "}
+                  <a href="/privacy" target="_blank" className="text-primary hover:underline">Privacy Policy</a>
+                </Label>
+              </div>
             )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
