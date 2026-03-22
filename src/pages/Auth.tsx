@@ -15,6 +15,7 @@ const authSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters").max(100, "Password too long"),
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name too long").optional(),
   age: z.number().min(18, "Must be 18 or older").max(100, "Invalid age").optional(),
+  agreedToTerms: z.literal(true, { errorMap: () => ({ message: "You must agree to the Terms and Privacy Policy" }) }).optional(),
 });
 
 const Auth = () => {
