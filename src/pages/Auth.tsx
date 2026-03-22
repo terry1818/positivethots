@@ -25,6 +25,7 @@ const Auth = () => {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [loading, setLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const navigate = useNavigate();
 
   const handleAuth = async (e: React.FormEvent) => {
