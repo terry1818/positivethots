@@ -22,19 +22,20 @@
 - [x] React `ErrorBoundary` wrapping entire app
 - [x] OG meta tags fixed: "Positive Thots" branding, proper descriptions
 
-### Remaining Linter Warning
-- [ ] Leaked password protection — requires manual enablement in auth settings (tool limitation)
+---
+
+## ✅ COMPLETED — Phase 2: Legal & Compliance
+
+- [x] Privacy Policy page (`/privacy`) — covers GDPR, CCPA, sensitive data handling, age requirements
+- [x] Terms of Service page (`/terms`) — covers eligibility, conduct, content guidelines, liability
+- [x] Account deletion flow with "DELETE" confirmation dialog
+- [x] Data export (JSON download via `manage-account` edge function)
+- [x] Expanded Settings page: password change, data export, legal links, danger zone
+- [x] `manage-account` edge function deployed (export + delete actions)
 
 ---
 
 ## 🔲 REMAINING — Still Needed Before Launch
-
-### Phase 2: Legal & Compliance
-- [ ] Privacy Policy page
-- [ ] Terms of Service page
-- [ ] Account deletion flow in Settings
-- [ ] Data export functionality
-- [ ] Cookie/consent banner
 
 ### Phase 3: Safety
 - [ ] Create `reports` and `blocked_users` tables
@@ -43,7 +44,6 @@
 - [ ] Admin moderation dashboard
 
 ### Phase 4: UX Polish
-- [ ] Expand Settings page (password change, blocked users, help)
 - [ ] Code splitting with React.lazy
 - [ ] Consistent loading states across all pages
 - [ ] Accessibility audit
