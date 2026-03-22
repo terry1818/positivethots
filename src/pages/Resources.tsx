@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BookOpen, Headphones, Globe, Wrench, Smartphone, ExternalLink, Loader2 } from "lucide-react";
+import { BookOpen, Headphones, Globe, Wrench, Smartphone, ExternalLink, Loader2, Film, Tv } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Resource {
@@ -23,13 +23,15 @@ interface Resource {
 
 const categoryIcons: Record<string, React.ReactNode> = {
   Books: <BookOpen className="h-4 w-4" />,
+  Movies: <Film className="h-4 w-4" />,
+  "TV Shows": <Tv className="h-4 w-4" />,
   Podcasts: <Headphones className="h-4 w-4" />,
   Websites: <Globe className="h-4 w-4" />,
   Services: <Wrench className="h-4 w-4" />,
   Apps: <Smartphone className="h-4 w-4" />,
 };
 
-const categories = ["All", "Books", "Apps", "Podcasts", "Websites", "Services"];
+const categories = ["All", "Books", "Movies", "TV Shows", "Podcasts", "Apps", "Websites", "Services"];
 
 const Resources = () => {
   const [resources, setResources] = useState<Resource[]>([]);
