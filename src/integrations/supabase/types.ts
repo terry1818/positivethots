@@ -1095,6 +1095,7 @@ export type Database = {
         Returns: Json
       }
       check_match: { Args: { user1: string; user2: string }; Returns: string }
+      decrement_super_like: { Args: { _user_id: string }; Returns: number }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean

@@ -108,7 +108,7 @@ const LearnModule = () => {
       setModuleId(moduleData.id);
 
       const [questionsResult, badgeResult] = await Promise.all([
-        supabase.from("quiz_questions").select("*").eq("module_id", moduleData.id).order("order_index"),
+        supabase.from("quiz_questions_public").select("*").eq("module_id", moduleData.id).order("order_index"),
         supabase.from("user_badges").select("id").eq("user_id", session.user.id).eq("module_id", moduleData.id).maybeSingle()
       ]);
       if (questionsResult.error) throw questionsResult.error;
