@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { PhotoUploadGrid } from "@/components/PhotoUploadGrid";
 import { VerificationCard } from "@/components/VerificationCard";
 import { cn } from "@/lib/utils";
+import { PageSkeleton } from "@/components/PageSkeleton";
 
 const EditProfile = () => {
   const [profile, setProfile] = useState<any>(null);

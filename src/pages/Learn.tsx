@@ -12,6 +12,7 @@ import { StreakCalendar } from "@/components/education/StreakCalendar";
 import { DailyChallenge } from "@/components/education/DailyChallenge";
 import { ContinueLearning } from "@/components/education/ContinueLearning";
 import { SessionGoal } from "@/components/education/SessionGoal";
+import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";

@@ -20,6 +20,7 @@ import { useLearningStats } from "@/hooks/useLearningStats";
 import { ChevronLeft, CheckCircle, Award, BookOpen, Lock, Zap, Flame } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { PageSkeleton } from "@/components/PageSkeleton";
 
 interface Module {
   id: string;

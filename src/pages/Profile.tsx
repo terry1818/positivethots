@@ -11,6 +11,7 @@ import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, Shie
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
+import { PageSkeleton } from "@/components/PageSkeleton";
 
 interface UserBadge {
   module_id: string;

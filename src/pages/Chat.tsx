@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Database } from "@/integrations/supabase/types";
+import { PageSkeleton } from "@/components/PageSkeleton";
 
 type Message = Database['public']['Tables']['messages']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
