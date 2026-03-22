@@ -11,6 +11,8 @@ import { Logo } from "@/components/Logo";
 import { MatchModal } from "@/components/MatchModal";
 import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
+import { NearbyUsers } from "@/components/NearbyUsers";
+import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
@@ -48,6 +50,7 @@ interface EnhancedProfile extends DiscoveryProfile {
 }
 
 const Index = () => {
+  const { isSharing, nearbyUsers } = useLocationSharing();
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
   const [suggestions, setSuggestions] = useState<EnhancedProfile[]>([]);
@@ -299,6 +302,13 @@ const Index = () => {
               <Button size="sm" onClick={() => navigate("/learn")}>Learn</Button>
             </div>
           </Card>
+        </div>
+      )}
+
+      {/* Nearby Users */}
+      {isSharing && (
+        <div className="container max-w-7xl mx-auto px-4 mb-4">
+          <NearbyUsers nearbyUsers={nearbyUsers} isSharing={isSharing} />
         </div>
       )}
 

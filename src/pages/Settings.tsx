@@ -4,17 +4,19 @@ import { useTheme } from "next-themes";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Logo } from "@/components/Logo";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2 } from "lucide-react";
+import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2, MapPin, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -23,6 +25,7 @@ const Settings = () => {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const { isPremium, loading: subLoading, subscriptionEnd } = useSubscription();
+  const { isUnlocked: locationUnlocked, isSharing, toggleSharing, error: locationError, loading: locationLoading } = useLocationSharing();
 
   // Password change
   const [currentPassword, setCurrentPassword] = useState("");
@@ -197,6 +200,55 @@ const Settings = () => {
                 <Button className="w-full" onClick={() => navigate("/premium")}>
                   <Crown className="h-4 w-4 mr-2" /> Upgrade to Premium
                 </Button>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Location Sharing */}
+        <Card className="animate-fade-in" style={{ animationDelay: "90ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <MapPin className="h-5 w-5" /> Location Sharing
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {locationLoading ? (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Checking status…
+              </div>
+            ) : !locationUnlocked ? (
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                <Lock className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Locked</p>
+                  <p className="text-xs text-muted-foreground">
+                    Complete all 5 Foundation courses to unlock location sharing at events.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">Share My Location</p>
+                    <p className="text-xs text-muted-foreground">
+                      {isSharing 
+                        ? "Your location is visible to nearby users (auto-expires in 2 hours)"
+                        : "Let nearby users find you at events"}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={isSharing}
+                    onCheckedChange={toggleSharing}
+                  />
+                </div>
+                {locationError && (
+                  <p className="text-xs text-destructive">{locationError}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Your location is never stored permanently and expires automatically after 2 hours.
+                </p>
               </>
             )}
           </CardContent>
