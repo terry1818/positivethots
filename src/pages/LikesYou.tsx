@@ -5,14 +5,16 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { BottomNav } from "@/components/BottomNav";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
-import { Lock, Heart, Crown, Check, X } from "lucide-react";
+import { Lock, Heart, Crown, Check, X, Star } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 interface LikerProfile {
   id: string; name: string; age: number; profile_image?: string; location?: string; bio?: string;
+  is_super_like?: boolean;
 }
 
 const LikesYou = () => {
