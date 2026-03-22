@@ -45,11 +45,11 @@ const Resources = () => {
         return;
       }
       const { data, error } = await supabase
-        .from("recommended_resources")
+        .from("recommended_resources" as any)
         .select("*")
         .order("order_index", { ascending: true });
 
-      if (!error && data) setResources(data);
+      if (!error && data) setResources(data as unknown as Resource[]);
       setLoading(false);
     };
     loadResources();

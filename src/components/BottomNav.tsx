@@ -8,7 +8,8 @@ const navItems = [
   { path: "/", icon: Heart, label: "Discover" },
   { path: "/likes", icon: Sparkles, label: "Likes" },
   { path: "/learn", icon: BookOpen, label: "Learn" },
-  { path: "/messages", icon: MessageCircle, label: "Messages" },
+  { path: "/shop", icon: ShoppingBag, label: "Shop" },
+  { path: "/messages", icon: MessageCircle, label: "Chat" },
   { path: "/profile", icon: User, label: "Profile" },
 ];
 
