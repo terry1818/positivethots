@@ -1,22 +1,103 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Logo } from "@/components/Logo";
-import { ChevronLeft, Sun, Moon, Monitor } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const Settings = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
+  const { user, signOut } = useAuth();
+
+  // Password change
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
+
+  // Account actions
+  const [exporting, setExporting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   const themeOptions = [
     { value: "light", label: "Light", desc: "Always use light mode", icon: Sun },
     { value: "dark", label: "Dark", desc: "Always use dark mode", icon: Moon },
     { value: "system", label: "System", desc: "Follow your device settings", icon: Monitor },
   ];
+
+  const handleChangePassword = async () => {
+    if (newPassword.length < 6) {
+      toast.error("New password must be at least 6 characters");
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast.success("Password updated successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update password");
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
+  const handleExportData = async () => {
+    setExporting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("manage-account", {
+        body: { action: "export" },
+      });
+      if (error) throw error;
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `positive-thots-data-${new Date().toISOString().split("T")[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success("Your data has been exported!");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to export data");
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const { error } = await supabase.functions.invoke("manage-account", {
+        body: { action: "delete" },
+      });
+      if (error) throw error;
+      toast.success("Your account has been deleted. Goodbye!");
+      await signOut();
+      navigate("/auth");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to delete account");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -31,6 +112,7 @@ const Settings = () => {
       </header>
 
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
+        {/* Appearance */}
         <Card className="animate-fade-in">
           <CardHeader>
             <CardTitle className="text-lg">Appearance</CardTitle>
@@ -58,6 +140,129 @@ const Settings = () => {
             </RadioGroup>
           </CardContent>
         </Card>
+
+        {/* Change Password */}
+        <Card className="animate-fade-in" style={{ animationDelay: "100ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <KeyRound className="h-5 w-5" /> Change Password
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-2">
+              <Label htmlFor="new-password">New Password</Label>
+              <Input
+                id="new-password"
+                type="password"
+                placeholder="••••••••"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                minLength={6}
+                maxLength={100}
+              />
+            </div>
+            <Button
+              onClick={handleChangePassword}
+              disabled={changingPassword || newPassword.length < 6}
+              className="w-full"
+            >
+              {changingPassword ? "Updating..." : "Update Password"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Data & Privacy */}
+        <Card className="animate-fade-in" style={{ animationDelay: "200ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Shield className="h-5 w-5" /> Data & Privacy
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={handleExportData}
+              disabled={exporting}
+            >
+              <Download className="h-4 w-4" />
+              {exporting ? "Exporting..." : "Export My Data"}
+            </Button>
+
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={() => navigate("/privacy")}
+            >
+              <FileText className="h-4 w-4" />
+              Privacy Policy
+            </Button>
+
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={() => navigate("/terms")}
+            >
+              <FileText className="h-4 w-4" />
+              Terms of Service
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Danger Zone */}
+        <Card className="animate-fade-in border-destructive/30" style={{ animationDelay: "300ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg text-destructive flex items-center gap-2">
+              <Trash2 className="h-5 w-5" /> Danger Zone
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" className="w-full">
+                  Delete My Account
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription className="space-y-2">
+                    <p>This action cannot be undone. This will permanently delete your account and remove all your data including:</p>
+                    <ul className="list-disc list-inside text-sm space-y-1">
+                      <li>Your profile and photos</li>
+                      <li>All matches and messages</li>
+                      <li>Education progress, badges, and XP</li>
+                      <li>Subscription (if active)</li>
+                    </ul>
+                    <p className="font-medium mt-3">Type "DELETE" to confirm:</p>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <Input
+                  placeholder='Type "DELETE"'
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                />
+                <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setDeleteConfirmText("")}>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDeleteAccount}
+                    disabled={deleteConfirmText !== "DELETE" || deleting}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    {deleting ? "Deleting..." : "Delete Forever"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <p className="text-xs text-muted-foreground mt-2 text-center">
+              We recommend exporting your data before deletion.
+            </p>
+          </CardContent>
+        </Card>
+
+        <p className="text-xs text-muted-foreground text-center py-4">
+          Positive Thots v1.0 • Made with ❤️
+        </p>
       </main>
     </div>
   );
