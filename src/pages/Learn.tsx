@@ -48,6 +48,7 @@ const Learn = () => {
   const [openTiers, setOpenTiers] = useState<Record<string, boolean>>({ foundation: true });
   const navigate = useNavigate();
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft } = useLearningStats();
+  const { tiers, loading: tiersLoading } = useFeatureUnlocks();
 
   useEffect(() => { loadData(); }, []);
 
