@@ -128,9 +128,32 @@ const Chat = () => {
     if (channelRef.current) {
       channelRef.current.send({ type: 'broadcast', event: 'typing', payload: { userId: currentUser.id, isTyping: false } });
     }
+
+    // Moderate message before sending
+    try {
+      const { data: modResult } = await supabase.functions.invoke('moderate-message', {
+        body: { content: messageContent, sender_id: currentUser.id, match_id: matchId },
+      });
+      if (modResult?.verdict === 'flagged') {
+        // Store flagged message for admin review
+        await supabase.from("flagged_messages").insert({
+          match_id: matchId,
+          sender_id: currentUser.id,
+          content: messageContent,
+          reason: modResult.reason || 'Flagged by content filter',
+        });
+        toast.error("Message blocked", { description: "Your message was flagged by our content filter. Please keep conversations respectful." });
+        return;
+      }
+    } catch (e) {
+      // Fail open — if moderation errors, allow the message
+      console.error("Moderation check failed:", e);
+    }
+
     const { error } = await supabase.from("messages").insert({ match_id: matchId, sender_id: currentUser.id, content: messageContent });
     if (error) { console.error("Error sending message:", error); toast.error("Failed to send message"); setNewMessage(messageContent); }
     else {
+      trackEvent("message_sent", { match_id: matchId });
       setTimeout(() => {
         setMessages(prev => prev.map(msg => msg.sender_id === currentUser.id && !msg.read ? { ...msg, read: true } : msg));
       }, 2000 + Math.random() * 3000);
