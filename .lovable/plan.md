@@ -1,59 +1,65 @@
 
-# Launch Readiness Audit — Progress Tracker
 
-## ✅ COMPLETED — Phase 1: Security & Core Fixes
-- [x] RLS policies hardened (profiles, roles, badges, XP, quiz answers)
-- [x] Server-side `validate_quiz_answer()` and `award_xp()` RPCs
-- [x] Global AuthProvider, password reset, error boundary, OG tags
-- [x] Quiz questions SELECT restricted to admins (users use public view)
-- [x] `granted_by` constraint on user_roles INSERT
-- [x] `search_path` set on all database functions
-- [x] Leaked password protection enabled
-- [x] Profiles SELECT restricted to own-profile; discovery via secure RPCs
-- [x] Role grant/revoke via SECURITY DEFINER RPCs (no direct table access)
+# Phase 6: Operational Readiness
 
-## ✅ COMPLETED — Phase 2: Legal & Compliance
-- [x] Privacy Policy & Terms of Service pages
-- [x] Account deletion & data export via `manage-account` edge function
-- [x] Expanded Settings page
-- [x] ToS/Privacy consent checkbox at signup
-- [x] Cookie consent banner (GDPR)
-- [x] Age attestation integrated into signup consent
-
-## ✅ COMPLETED — Phase 3: Safety
-- [x] `reports` table with RLS (users create, admins view/update)
-- [x] `blocked_users` table with RLS (users manage own blocks)
-- [x] Chat report/block buttons now persist to database
-- [x] Report reason selector with 7 categories
-- [x] Blocked users filtered from discovery (Index.tsx)
-- [x] Blocked users filtered from messages (Messages.tsx)
-- [x] Account deletion cleans up reports & blocked_users
-
-## ✅ COMPLETED — Phase 4: UX Polish
-- [x] Code splitting with React.lazy for all 15 route pages
-- [x] Branded PageLoader with logo animation for Suspense fallback
-- [x] Consistent PageSkeleton components (profile, chat, learn, list variants)
-- [x] All 5 pages with spinner-only loading upgraded to contextual skeletons
-- [x] Accessibility: aria-labels on all icon-only buttons across 8 pages
-- [x] Accessibility: navigation landmark on BottomNav
-- [x] Accessibility: skip-to-content link for keyboard users
-- [x] Accessibility: semantic color tokens replacing hardcoded colors
+Phase 6 covers the four remaining items before launch: error monitoring, analytics, custom email templates, and chat content moderation.
 
 ---
 
-## ✅ COMPLETED — Phase 5: Stripe Webhook & Subscription Management
-- [x] `stripe-webhook` edge function handles subscription lifecycle events
-- [x] `customer-portal` edge function for self-service subscription management
-- [x] Subscription card in Settings page (status, manage, upgrade)
-- [x] `STRIPE_WEBHOOK_SECRET` secret configured
-- [x] Subscriptions table unique constraint on user_id for upsert
+## 1. Error Monitoring Integration
+
+**What**: A lightweight error logging system that captures client-side errors to a database table for admin review.
+
+- Create an `error_logs` table (columns: `id`, `user_id`, `error_message`, `error_stack`, `page_url`, `created_at`) with RLS allowing authenticated users to insert their own errors and admins to read all.
+- Create a global `reportError()` utility that inserts errors into the table.
+- Enhance `ErrorBoundary.componentDidCatch` to call `reportError()`.
+- Add a `window.onerror` / `window.onunhandledrejection` listener in `main.tsx` for uncaught errors.
+- Add an **Error Logs** tab to the existing AdminPanel so admins can browse recent errors.
+
+## 2. Analytics Integration
+
+**What**: Track key user events (signups, swipes, matches, messages sent, module completions) to an `analytics_events` table for admin dashboards.
+
+- Create an `analytics_events` table (columns: `id`, `user_id`, `event_name`, `event_data` jsonb, `created_at`) with RLS for insert-own and admin-read.
+- Create a `trackEvent(eventName, data)` utility function.
+- Instrument key actions: swipe, match, message sent, module completed, subscription started.
+- Add an **Analytics** tab to AdminPanel with summary stats (daily active events, top events, user counts).
+
+## 3. Custom Email Templates
+
+**What**: Set up branded email templates for authentication emails (signup confirmation, password reset) using the email infrastructure tools.
+
+- Use the `email_domain` tool group to scaffold auth email templates with app branding (logo, colors, footer links to Privacy/Terms).
+- Templates for: email confirmation, password reset, magic link (if applicable).
+
+## 4. Chat Content Moderation
+
+**What**: Automated screening of chat messages for harmful content before delivery.
+
+- Create a `moderate-message` edge function that uses Lovable AI (gemini-2.5-flash-lite) to classify messages as safe/flagged.
+- On message send in `Chat.tsx`, call the moderation function. If flagged, block the message and warn the sender.
+- Store flagged messages in a `flagged_messages` table for admin review.
+- Add a **Moderation Queue** tab to AdminPanel showing flagged messages with approve/dismiss actions.
 
 ---
 
-## 🔲 REMAINING — Still Needed Before Launch
+## Technical Details
 
-### Phase 6: Operational
-- [ ] Error monitoring integration
-- [ ] Analytics integration
-- [ ] Custom email templates
-- [ ] Chat content moderation
+**Database migrations** (single migration):
+- `error_logs` table with RLS (insert own, admin select)
+- `analytics_events` table with RLS (insert own, admin select)
+- `flagged_messages` table with RLS (admin only)
+
+**Edge functions**:
+- `moderate-message` — accepts message text, calls Lovable AI for classification, returns safe/flagged verdict
+
+**Files modified**:
+- `src/components/ErrorBoundary.tsx` — add error reporting
+- `src/main.tsx` — add global error handlers
+- `src/pages/Chat.tsx` — add moderation check before sending
+- `src/components/admin/AdminPanel.tsx` — add Error Logs, Analytics, Moderation tabs
+- New: `src/lib/errorReporting.ts`, `src/lib/analytics.ts`
+- New: `supabase/functions/moderate-message/index.ts`
+
+**Email templates**: Scaffolded via email infrastructure tooling with project branding.
+
