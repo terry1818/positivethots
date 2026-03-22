@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/analytics";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -186,6 +187,7 @@ const Index = () => {
     });
     if (swipeError) { console.error("Swipe error:", swipeError); return; }
 
+    trackEvent("swipe", { direction: "right", swiped_id: otherUserId });
     setCelebrationTrigger(prev => prev + 1);
 
     const { data: matchData, error: matchError } = await supabase
@@ -193,6 +195,7 @@ const Index = () => {
     if (matchError) { console.error("Match check error:", matchError); return; }
 
     if (matchData) {
+      trackEvent("match", { matched_user_id: otherUserId });
       const matchedProfile = suggestions.find(s => s.id === otherUserId);
       if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
       toast.success("It's a Match! 💕", { description: "You can now start chatting!" });
@@ -207,6 +210,7 @@ const Index = () => {
     await supabase.from("swipes").insert({
       swiper_id: currentUser.id, swiped_id: otherUserId, direction: "left",
     });
+    trackEvent("swipe", { direction: "left", swiped_id: otherUserId });
     setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
   };
 
