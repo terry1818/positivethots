@@ -33,6 +33,7 @@ const Settings = () => {
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [managingPortal, setManagingPortal] = useState(false);
 
   const themeOptions = [
     { value: "light", label: "Light", desc: "Always use light mode", icon: Sun },
