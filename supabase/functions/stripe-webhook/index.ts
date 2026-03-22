@@ -7,10 +7,21 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const PRODUCT_TO_PLAN: Record<string, string> = {
+  "prod_UC8hgE8GHk3Jz2": "plus",
+  "prod_TyazHeNgEAjKEg": "premium",
+  "prod_UC8igDQOTInDei": "vip",
+};
+
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
 };
+
+function getPlanFromSubscription(subscription: Stripe.Subscription): string {
+  const productId = subscription.items.data[0]?.price?.product as string;
+  return PRODUCT_TO_PLAN[productId] ?? "premium";
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -43,7 +54,7 @@ serve(async (req) => {
       logStep("Webhook signature verified", { type: event.type });
     } else {
       event = JSON.parse(body) as Stripe.Event;
-      logStep("WARNING: No webhook secret configured, skipping signature verification", { type: event.type });
+      logStep("WARNING: No webhook secret configured", { type: event.type });
     }
 
     const relevantEvents = [
@@ -54,7 +65,6 @@ serve(async (req) => {
     ];
 
     if (!relevantEvents.includes(event.type)) {
-      logStep("Ignoring irrelevant event", { type: event.type });
       return new Response(JSON.stringify({ received: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -64,7 +74,6 @@ serve(async (req) => {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
       if (session.mode !== "subscription") {
-        logStep("Ignoring non-subscription checkout");
         return new Response(JSON.stringify({ received: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
@@ -73,7 +82,6 @@ serve(async (req) => {
 
       const customerEmail = session.customer_details?.email;
       if (!customerEmail) {
-        logStep("No customer email in checkout session");
         return new Response(JSON.stringify({ received: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
@@ -85,7 +93,7 @@ serve(async (req) => {
 
       const user = users.users.find((u) => u.email === customerEmail);
       if (!user) {
-        logStep("No matching user found for email", { email: customerEmail });
+        logStep("No matching user found", { email: customerEmail });
         return new Response(JSON.stringify({ received: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
@@ -94,16 +102,14 @@ serve(async (req) => {
 
       const subscriptionId = session.subscription as string;
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-
       await upsertSubscription(supabase, user.id, subscription);
-      logStep("Checkout session processed", { userId: user.id, subscriptionId });
+      logStep("Checkout processed", { userId: user.id });
     } else {
       const subscription = event.data.object as Stripe.Subscription;
       const customerId = subscription.customer as string;
       const customer = await stripe.customers.retrieve(customerId);
-      
+
       if ((customer as any).deleted) {
-        logStep("Customer deleted, skipping");
         return new Response(JSON.stringify({ received: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
@@ -112,7 +118,6 @@ serve(async (req) => {
 
       const email = (customer as Stripe.Customer).email;
       if (!email) {
-        logStep("No email on customer", { customerId });
         return new Response(JSON.stringify({ received: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
@@ -122,7 +127,6 @@ serve(async (req) => {
       const { data: users } = await supabase.auth.admin.listUsers();
       const user = users?.users.find((u) => u.email === email);
       if (!user) {
-        logStep("No matching user for email", { email });
         return new Response(JSON.stringify({ received: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
@@ -130,7 +134,7 @@ serve(async (req) => {
       }
 
       await upsertSubscription(supabase, user.id, subscription);
-      logStep(`Subscription ${event.type} processed`, { userId: user.id });
+      logStep(`${event.type} processed`, { userId: user.id });
     }
 
     return new Response(JSON.stringify({ received: true }), {
@@ -160,6 +164,8 @@ async function upsertSubscription(
     ? new Date(subscription.current_period_end * 1000).toISOString()
     : null;
 
+  const plan = getPlanFromSubscription(subscription);
+
   const { error } = await supabase
     .from("subscriptions")
     .upsert(
@@ -168,7 +174,7 @@ async function upsertSubscription(
         stripe_subscription_id: subscription.id,
         stripe_customer_id: subscription.customer as string,
         status,
-        plan: "premium",
+        plan,
         current_period_end: periodEnd,
         updated_at: new Date().toISOString(),
       },
@@ -180,5 +186,5 @@ async function upsertSubscription(
     throw error;
   }
 
-  logStep("Subscription upserted", { userId, status, periodEnd });
+  logStep("Subscription upserted", { userId, status, plan, periodEnd });
 }

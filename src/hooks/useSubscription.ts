@@ -1,16 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  type SubscriptionTier,
+  type FeatureKey,
+  getTierByProductId,
+  tierHasFeature,
+} from "@/lib/subscriptionTiers";
 
 export const useSubscription = () => {
   const [isPremium, setIsPremium] = useState(false);
+  const [tier, setTier] = useState<SubscriptionTier>("free");
   const [loading, setLoading] = useState(true);
   const [subscriptionEnd, setSubscriptionEnd] = useState<string | null>(null);
 
-  const checkSubscription = async () => {
+  const checkSubscription = useCallback(async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         setIsPremium(false);
+        setTier("free");
         setLoading(false);
         return;
       }
@@ -18,23 +26,34 @@ export const useSubscription = () => {
       const { data, error } = await supabase.functions.invoke("check-subscription");
       if (error) throw error;
 
-      setIsPremium(data?.subscribed ?? false);
+      const subscribed = data?.subscribed ?? false;
+      setIsPremium(subscribed);
       setSubscriptionEnd(data?.subscription_end ?? null);
+
+      if (subscribed && data?.product_id) {
+        setTier(getTierByProductId(data.product_id));
+      } else {
+        setTier("free");
+      }
     } catch (err) {
       console.error("Error checking subscription:", err);
       setIsPremium(false);
+      setTier("free");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  const hasFeature = useCallback(
+    (feature: FeatureKey) => tierHasFeature(tier, feature),
+    [tier]
+  );
 
   useEffect(() => {
     checkSubscription();
-
-    // Re-check every 60 seconds
     const interval = setInterval(checkSubscription, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [checkSubscription]);
 
-  return { isPremium, loading, subscriptionEnd, refetch: checkSubscription };
+  return { isPremium, tier, loading, subscriptionEnd, hasFeature, refetch: checkSubscription };
 };
