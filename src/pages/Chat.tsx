@@ -132,16 +132,31 @@ const Chat = () => {
     }
   };
 
-  const handleReport = async () => {
+  const [reportReason, setReportReason] = useState("");
+  const [showReportDialog, setShowReportDialog] = useState(false);
+
+  const REPORT_REASONS = [
+    "Harassment or bullying",
+    "Inappropriate or explicit content",
+    "Spam or scam",
+    "Fake profile or impersonation",
+    "Threatening behavior",
+    "Underage user",
+    "Other",
+  ];
+
+  const handleReport = async (reason: string, details?: string) => {
     if (!currentUser || !otherUser) return;
     try {
       const { error } = await supabase.from("reports").insert({
         reporter_id: currentUser.id,
         reported_user_id: otherUser.id,
-        reason: "Reported from chat",
+        reason,
+        details: details || null,
       });
       if (error) throw error;
-      toast.success("Report Submitted", { description: "Our team will review this conversation." });
+      toast.success("Report Submitted", { description: "Our team will review this. Thank you for keeping the community safe." });
+      setShowReportDialog(false);
     } catch (err: any) {
       toast.error(err.message || "Failed to submit report");
     }
