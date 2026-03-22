@@ -16,7 +16,29 @@ import type { Database } from "@/integrations/supabase/types";
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
-interface EnhancedProfile extends Profile {
+interface DiscoveryProfile {
+  id: string;
+  name: string;
+  age: number;
+  bio: string | null;
+  location: string | null;
+  profile_image: string | null;
+  gender: string | null;
+  pronouns: string | null;
+  relationship_style: string | null;
+  relationship_status: string | null;
+  experience_level: string | null;
+  interests: string[] | null;
+  photos: string[] | null;
+  display_name: string | null;
+  is_verified: boolean;
+  looking_for: string | null;
+  zodiac_sign: string | null;
+  languages: string[] | null;
+  height_cm: number | null;
+}
+
+interface EnhancedProfile extends DiscoveryProfile {
   badge_count?: number;
   compatibility_score?: number;
   last_active?: string;
