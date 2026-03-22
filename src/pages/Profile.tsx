@@ -89,7 +89,7 @@ const Profile = () => {
         <Card className="overflow-hidden animate-fade-in">
           <div className="relative h-64 bg-gradient-to-br from-primary/20 to-secondary/20">
             {profile?.profile_image ? (
-              <img src={profile.profile_image} alt={profile?.name} className="absolute inset-0 w-full h-full object-cover" />
+              <img src={profile.profile_image} alt={profile?.name} className="absolute inset-0 w-full h-full object-cover" loading="eager" decoding="async" />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
                 <Heart className="h-16 w-16 text-primary/30" />
@@ -129,7 +129,8 @@ const Profile = () => {
                 <div className="flex gap-2 overflow-x-auto pb-1">
                   {userPhotos.map((photo) => (
                     <img key={photo.id} src={photo.photo_url} alt="Profile photo"
-                      className="h-16 w-16 rounded-lg object-cover flex-shrink-0 border border-border" />
+                      className="h-16 w-16 rounded-lg object-cover flex-shrink-0 border border-border"
+                      loading="lazy" decoding="async" />
                   ))}
                 </div>
               </div>

@@ -51,8 +51,18 @@ export const useSubscription = () => {
 
   useEffect(() => {
     checkSubscription();
-    const interval = setInterval(checkSubscription, 60000);
-    return () => clearInterval(interval);
+
+    // Use realtime instead of polling for subscription changes
+    const channel = supabase
+      .channel('subscription-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'subscriptions' },
+        () => { checkSubscription(); }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [checkSubscription]);
 
   return { isPremium, tier, loading, subscriptionEnd, hasFeature, refetch: checkSubscription };

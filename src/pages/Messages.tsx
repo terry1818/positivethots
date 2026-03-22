@@ -133,6 +133,8 @@ const Messages = () => {
                     <img
                       src={match.profile.profile_image} alt={match.profile.name}
                       className="h-16 w-16 rounded-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                     {/* Simulated online dot */}
                     {idx < 2 && (

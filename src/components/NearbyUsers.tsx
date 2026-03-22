@@ -52,25 +52,27 @@ export const NearbyUsers = ({ nearbyUsers, isSharing }: NearbyUsersProps) => {
 
     const loadProfiles = async () => {
       setLoading(true);
-      const userIds = nearbyUsers.map((u) => u.user_id);
 
-      // Use RPC to get public profiles safely
-      const results: NearbyProfile[] = [];
-      for (const nu of nearbyUsers) {
-        const { data } = await supabase.rpc("get_public_profile", { _user_id: nu.user_id });
-        if (data && data.length > 0) {
-          const p = data[0];
-          results.push({
-            user_id: nu.user_id,
-            name: p.display_name || p.name,
-            profile_image: p.profile_image,
-            display_name: p.display_name,
-            distance: nu.distance,
-            lastSeen: nu.updated_at,
-          });
-        }
-      }
-      setProfiles(results);
+      // Batch all RPC calls in parallel instead of sequential loop
+      const results = await Promise.all(
+        nearbyUsers.map(async (nu) => {
+          const { data } = await supabase.rpc("get_public_profile", { _user_id: nu.user_id });
+          if (data && data.length > 0) {
+            const p = data[0];
+            return {
+              user_id: nu.user_id,
+              name: p.display_name || p.name,
+              profile_image: p.profile_image,
+              display_name: p.display_name,
+              distance: nu.distance,
+              lastSeen: nu.updated_at,
+            } as NearbyProfile;
+          }
+          return null;
+        })
+      );
+
+      setProfiles(results.filter((r): r is NearbyProfile => r !== null));
       setLoading(false);
     };
 
@@ -116,7 +118,7 @@ export const NearbyUsers = ({ nearbyUsers, isSharing }: NearbyUsersProps) => {
                 style={{ animationDelay: `${idx * 80}ms` }}
               >
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={p.profile_image || undefined} alt={p.name} />
+                  <AvatarImage src={p.profile_image || undefined} alt={p.name} loading="lazy" />
                   <AvatarFallback className="bg-primary/10 text-primary">
                     {p.name.charAt(0).toUpperCase()}
                   </AvatarFallback>
