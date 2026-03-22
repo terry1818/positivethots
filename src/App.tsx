@@ -32,7 +32,18 @@ const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Resources = lazy(() => import("./pages/Resources"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Aggressive caching for native — data stays fresh longer
+      staleTime: 5 * 60 * 1000, // 5 min
+      gcTime: 30 * 60 * 1000,   // 30 min garbage collection
+      refetchOnWindowFocus: false, // Native apps don't have window focus events the same way
+      retry: 2,
+      networkMode: 'offlineFirst', // Use cache first, fetch in background
+    },
+  },
+});
 
 const AppContent = () => {
   useCartSync();

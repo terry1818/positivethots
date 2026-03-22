@@ -1,23 +1,58 @@
 import { Capacitor } from '@capacitor/core';
 
 export const isNative = () => Capacitor.isNativePlatform();
+export const getPlatform = () => Capacitor.getPlatform();
 
+/**
+ * Initialize native plugins immediately after app renders.
+ * Called once from main.tsx — configures StatusBar, hides splash screen,
+ * and sets up keyboard/safe-area behavior.
+ */
 export async function initCapacitor() {
   if (!isNative()) return;
 
+  // Run StatusBar + SplashScreen in parallel for fastest startup
+  await Promise.allSettled([
+    configureStatusBar(),
+    configureSplashScreen(),
+    configureKeyboard(),
+  ]);
+}
+
+async function configureStatusBar() {
   try {
     const { StatusBar, Style } = await import('@capacitor/status-bar');
-    await StatusBar.setBackgroundColor({ color: '#6633CC' });
-    await StatusBar.setStyle({ style: Style.Dark });
-  } catch (e) {
-    console.warn('StatusBar plugin not available:', e);
+    await Promise.all([
+      StatusBar.setBackgroundColor({ color: '#6633CC' }),
+      StatusBar.setStyle({ style: Style.Dark }),
+      StatusBar.setOverlaysWebView({ overlay: false }),
+    ]);
+  } catch {
+    // Plugin not available on this platform
   }
+}
 
+async function configureSplashScreen() {
   try {
     const { SplashScreen } = await import('@capacitor/splash-screen');
-    await SplashScreen.hide();
-  } catch (e) {
-    console.warn('SplashScreen plugin not available:', e);
+    // Small delay to let the first paint complete, then hide
+    await SplashScreen.hide({ fadeOutDuration: 300 });
+  } catch {
+    // Plugin not available
+  }
+}
+
+async function configureKeyboard() {
+  try {
+    // Keyboard plugin is optional — use dynamic require to avoid TS module resolution
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const keyboardModule: any = await (Function('return import("@capacitor/keyboard")')());
+    if (keyboardModule?.Keyboard) {
+      await keyboardModule.Keyboard.setResizeMode?.({ mode: 'ionic' });
+      await keyboardModule.Keyboard.setScroll?.({ isDisabled: false });
+    }
+  } catch {
+    // Keyboard plugin not installed — that's fine
   }
 }
 
@@ -31,24 +66,18 @@ export async function takeNativePhoto(): Promise<Blob | null> {
   try {
     const { Camera, CameraResultType, CameraSource } = await import('@capacitor/camera');
     const photo = await Camera.getPhoto({
-      quality: 85,
+      quality: 80,
       resultType: CameraResultType.Base64,
       source: CameraSource.Camera,
       width: 1024,
       height: 1024,
+      correctOrientation: true,
+      allowEditing: false,
     });
 
     if (!photo.base64String) return null;
-
-    const byteString = atob(photo.base64String);
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: `image/${photo.format || 'jpeg'}` });
-  } catch (e) {
-    console.warn('Native camera cancelled or failed:', e);
+    return base64ToBlob(photo.base64String, photo.format || 'jpeg');
+  } catch {
     return null;
   }
 }
@@ -62,54 +91,70 @@ export async function pickNativePhoto(): Promise<Blob | null> {
   try {
     const { Camera, CameraResultType, CameraSource } = await import('@capacitor/camera');
     const photo = await Camera.getPhoto({
-      quality: 85,
+      quality: 80,
       resultType: CameraResultType.Base64,
       source: CameraSource.Photos,
       width: 1024,
       height: 1024,
+      correctOrientation: true,
     });
 
     if (!photo.base64String) return null;
-
-    const byteString = atob(photo.base64String);
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: `image/${photo.format || 'jpeg'}` });
-  } catch (e) {
-    console.warn('Native photo picker cancelled or failed:', e);
+    return base64ToBlob(photo.base64String, photo.format || 'jpeg');
+  } catch {
     return null;
   }
 }
 
+/** Shared base64 → Blob conversion */
+function base64ToBlob(base64: string, format: string): Blob {
+  const byteString = atob(base64);
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  return new Blob([ab], { type: `image/${format}` });
+}
+
 /**
  * Register for push notifications on native platforms.
+ * Returns the device token or null.
  */
-export async function registerPushNotifications() {
-  if (!isNative()) return;
+export async function registerPushNotifications(): Promise<string | null> {
+  if (!isNative()) return null;
 
   try {
     const { PushNotifications } = await import('@capacitor/push-notifications');
 
     const permResult = await PushNotifications.requestPermissions();
-    if (permResult.receive !== 'granted') {
-      console.warn('Push notification permission not granted');
-      return;
-    }
+    if (permResult.receive !== 'granted') return null;
 
-    await PushNotifications.register();
+    return new Promise((resolve) => {
+      PushNotifications.addListener('registration', (token) => {
+        resolve(token.value);
+      });
 
-    PushNotifications.addListener('registration', (token) => {
-      console.log('Push registration token:', token.value);
-      // TODO: send token to backend for storage
+      PushNotifications.addListener('registrationError', () => {
+        resolve(null);
+      });
+
+      PushNotifications.register();
     });
-
-    PushNotifications.addListener('registrationError', (err) => {
-      console.error('Push registration error:', err.error);
-    });
-  } catch (e) {
-    console.warn('PushNotifications plugin not available:', e);
+  } catch {
+    return null;
   }
+}
+
+/**
+ * Add safe-area CSS custom properties for native apps.
+ * Call once at startup so components can use var(--safe-area-top), etc.
+ */
+export function applySafeAreaInsets() {
+  if (!isNative()) return;
+  const style = document.documentElement.style;
+  style.setProperty('--safe-area-top', 'env(safe-area-inset-top)');
+  style.setProperty('--safe-area-bottom', 'env(safe-area-inset-bottom)');
+  style.setProperty('--safe-area-left', 'env(safe-area-inset-left)');
+  style.setProperty('--safe-area-right', 'env(safe-area-inset-right)');
 }
