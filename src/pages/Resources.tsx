@@ -23,13 +23,15 @@ interface Resource {
 
 const categoryIcons: Record<string, React.ReactNode> = {
   Books: <BookOpen className="h-4 w-4" />,
+  Movies: <Film className="h-4 w-4" />,
+  "TV Shows": <Tv className="h-4 w-4" />,
   Podcasts: <Headphones className="h-4 w-4" />,
   Websites: <Globe className="h-4 w-4" />,
   Services: <Wrench className="h-4 w-4" />,
   Apps: <Smartphone className="h-4 w-4" />,
 };
 
-const categories = ["All", "Books", "Apps", "Podcasts", "Websites", "Services"];
+const categories = ["All", "Books", "Movies", "TV Shows", "Podcasts", "Apps", "Websites", "Services"];
 
 const Resources = () => {
   const [resources, setResources] = useState<Resource[]>([]);
