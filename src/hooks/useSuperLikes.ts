@@ -68,12 +68,10 @@ export const useSuperLikes = () => {
 
       // Decrement balance if not unlimited
       if (!isUnlimited) {
-        const { error: balError } = await supabase
-          .from("super_like_balance")
-          .update({ balance: balance - 1, updated_at: new Date().toISOString() })
-          .eq("user_id", session.user.id);
+        const { data: newBalance, error: balError } = await supabase
+          .rpc("decrement_super_like", { _user_id: session.user.id });
         if (balError) throw balError;
-        setBalance(prev => prev - 1);
+        setBalance(newBalance ?? balance - 1);
       }
 
       return true;
