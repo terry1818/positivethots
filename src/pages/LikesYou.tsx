@@ -29,20 +29,30 @@ const LikesYou = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { navigate("/auth"); return; }
 
-      const { data: swipes } = await supabase.from("swipes").select("swiper_id").eq("swiped_id", user.id).eq("direction", "right");
+      const [swipesResult, superLikesResult, matchesResult] = await Promise.all([
+        supabase.from("swipes").select("swiper_id").eq("swiped_id", user.id).eq("direction", "right"),
+        supabase.from("super_likes").select("sender_id").eq("receiver_id", user.id),
+        supabase.from("matches").select("user1_id, user2_id").or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`),
+      ]);
+      const swipes = swipesResult.data;
       if (!swipes || swipes.length === 0) { setLikers([]); setLoading(false); return; }
 
-      const { data: matches } = await supabase.from("matches").select("user1_id, user2_id").or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
-      const matchedIds = new Set((matches || []).flatMap(m => [m.user1_id, m.user2_id].filter(id => id !== user.id)));
+      const matchedIds = new Set((matchesResult.data || []).flatMap(m => [m.user1_id, m.user2_id].filter(id => id !== user.id)));
+      const superLikerIds = new Set((superLikesResult.data || []).map(sl => sl.sender_id));
       const likerIds = swipes.map(s => s.swiper_id).filter(id => !matchedIds.has(id));
 
       if (likerIds.length === 0) { setLikers([]); setLoading(false); return; }
 
-      const likerProfiles: LikerProfile[] = [];
-      for (const likerId of likerIds) {
-        const { data } = await supabase.rpc("get_public_profile", { _user_id: likerId });
-        if (data?.[0]) likerProfiles.push(data[0] as LikerProfile);
-      }
+      const profilePromises = likerIds.map(likerId =>
+        supabase.rpc("get_public_profile", { _user_id: likerId })
+      );
+      const profileResults = await Promise.all(profilePromises);
+      const likerProfiles: LikerProfile[] = profileResults
+        .map(r => r.data?.[0])
+        .filter(Boolean)
+        .map(p => ({ ...p, is_super_like: superLikerIds.has(p.id) } as LikerProfile));
+      // Sort super likes first
+      likerProfiles.sort((a, b) => (b.is_super_like ? 1 : 0) - (a.is_super_like ? 1 : 0));
       setLikers(likerProfiles);
       setLoading(false);
     };
