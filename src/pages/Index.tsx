@@ -94,8 +94,9 @@ const Index = () => {
       else blockedUserIds.add(row.blocker_id);
     });
 
+    const excludeIds = [userId, ...Array.from(matchedUserIds), ...Array.from(blockedUserIds)];
     const { data: profiles } = await supabase
-      .from("profiles").select("*").neq("id", userId).eq("onboarding_completed", true);
+      .rpc("get_discovery_profiles", { _exclude_ids: excludeIds });
 
     if (!profiles) return;
 
