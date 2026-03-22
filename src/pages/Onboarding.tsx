@@ -258,9 +258,31 @@ const Onboarding = () => {
     }
   };
 
-  const advanceStep = () => {
+  const advanceStep = async () => {
     setDirection("forward");
     setStep(s => Math.min(s + 1, TOTAL_STEPS));
+
+    // Save progress after each step
+    if (userId) {
+      const pronounsValue = formData.customPronouns.trim() || formData.pronouns;
+      await supabase.from("profiles").update({
+        pronouns: pronounsValue || null,
+        gender: formData.gender || null,
+        sexuality: formData.sexuality || null,
+        desires: formData.desires.length > 0 ? formData.desires : null,
+        relationship_style: formData.relationshipStyle || null,
+        relationship_status: formData.relationshipStatus || null,
+        experience_level: formData.experienceLevel || "curious",
+        bio: formData.bio.trim() || null,
+        interests: formData.interests.length > 0 ? formData.interests : null,
+        location: formData.location.trim() || null,
+        boundaries: formData.boundaries.trim() || null,
+        height_cm: formData.heightCm,
+        zodiac_sign: formData.zodiacSign || null,
+        languages: formData.languages.length > 0 ? formData.languages : null,
+        lifestyle: Object.keys(formData.lifestyle).length > 0 ? formData.lifestyle : null,
+      } as any).eq("id", userId);
+    }
   };
 
   const goBack = () => {
