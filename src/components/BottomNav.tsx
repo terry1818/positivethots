@@ -42,8 +42,8 @@ export const BottomNav = () => {
                 isTapped && "animate-tap-bounce"
               )}
             >
-              <Icon className={cn("h-5 w-5 transition-transform duration-200", isActive && "scale-110")} />
-              <span className="text-[10px] font-medium">{label}</span>
+              <Icon className={cn("h-[18px] w-[18px] transition-transform duration-200", isActive && "scale-110")} />
+              <span className="text-[9px] font-medium">{label}</span>
               {isActive && (
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-gradient-to-r from-primary to-secondary" />
               )}
