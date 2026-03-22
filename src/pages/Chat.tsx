@@ -24,6 +24,16 @@ import type { Database } from "@/integrations/supabase/types";
 type Message = Database['public']['Tables']['messages']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
+interface PublicProfile {
+  id: string;
+  name: string;
+  age: number;
+  bio: string | null;
+  profile_image: string | null;
+  pronouns: string | null;
+  [key: string]: any;
+}
+
 interface EnhancedMessage extends Message {
   read?: boolean;
   delivered?: boolean;
@@ -35,7 +45,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<EnhancedMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
-  const [otherUser, setOtherUser] = useState<Profile | null>(null);
+  const [otherUser, setOtherUser] = useState<PublicProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
   const [onlineStatus, setOnlineStatus] = useState<"online" | "away" | "offline">("offline");
