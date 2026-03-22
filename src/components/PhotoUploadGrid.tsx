@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { isNative, pickNativePhoto } from "@/lib/capacitor";
 
 interface UserPhoto {
   id: string;
