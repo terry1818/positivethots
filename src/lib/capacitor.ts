@@ -44,8 +44,9 @@ async function configureSplashScreen() {
 
 async function configureKeyboard() {
   try {
-    // Keyboard plugin is optional — dynamically import without type checking
-    const keyboardModule = await import(/* @vite-ignore */ '@capacitor/keyboard');
+    // Keyboard plugin is optional — use dynamic require to avoid TS module resolution
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const keyboardModule: any = await (Function('return import("@capacitor/keyboard")')());
     if (keyboardModule?.Keyboard) {
       await keyboardModule.Keyboard.setResizeMode?.({ mode: 'ionic' });
       await keyboardModule.Keyboard.setScroll?.({ isDisabled: false });
