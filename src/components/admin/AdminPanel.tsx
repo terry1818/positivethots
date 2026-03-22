@@ -13,13 +13,13 @@
    video_url: string | null;
  }
  
- interface Question {
-   id: string;
-   question: string;
-   options: string[];
-   correct_answer: number;
-   order_index: number;
- }
+interface Question {
+  id: string;
+  question: string;
+  options: string[];
+  correct_answer?: number;
+  order_index: number;
+}
  
  interface AdminPanelProps {
    module: Module;
