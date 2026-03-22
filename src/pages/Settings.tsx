@@ -102,6 +102,19 @@ const Settings = () => {
     }
   };
 
+  const handleManageSubscription = async () => {
+    setManagingPortal(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("customer-portal");
+      if (error) throw error;
+      if (data?.url) window.open(data.url, "_blank");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to open subscription management");
+    } finally {
+      setManagingPortal(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border bg-card">
