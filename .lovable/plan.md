@@ -41,10 +41,18 @@
 
 ---
 
+## ✅ COMPLETED — Phase 5: Stripe Webhook & Subscription Management
+- [x] `stripe-webhook` edge function handles subscription lifecycle events
+- [x] `customer-portal` edge function for self-service subscription management
+- [x] Subscription card in Settings page (status, manage, upgrade)
+- [x] `STRIPE_WEBHOOK_SECRET` secret configured
+- [x] Subscriptions table unique constraint on user_id for upsert
+
+---
+
 ## 🔲 REMAINING — Still Needed Before Launch
 
-### Phase 5: Operational
-- [ ] Stripe webhook handler
+### Phase 6: Operational
 - [ ] Error monitoring integration
 - [ ] Analytics integration
 - [ ] Custom email templates
