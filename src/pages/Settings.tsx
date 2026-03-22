@@ -157,7 +157,52 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Change Password */}
+        {/* Subscription */}
+        <Card className="animate-fade-in" style={{ animationDelay: "80ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Crown className="h-5 w-5" /> Subscription
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {subLoading ? (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Checking status…
+              </div>
+            ) : isPremium ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                    <Crown className="h-3.5 w-3.5" /> Premium Active
+                  </span>
+                </div>
+                {subscriptionEnd && (
+                  <p className="text-sm text-muted-foreground">
+                    Renews on {new Date(subscriptionEnd).toLocaleDateString()}
+                  </p>
+                )}
+                <Button
+                  variant="outline"
+                  className="w-full justify-start gap-2"
+                  onClick={handleManageSubscription}
+                  disabled={managingPortal}
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  {managingPortal ? "Opening…" : "Manage Subscription"}
+                </Button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-muted-foreground">You're on the free plan.</p>
+                <Button className="w-full" onClick={() => navigate("/premium")}>
+                  <Crown className="h-4 w-4 mr-2" /> Upgrade to Premium
+                </Button>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+
         <Card className="animate-fade-in" style={{ animationDelay: "100ms" }}>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
