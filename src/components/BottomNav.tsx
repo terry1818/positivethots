@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, BookOpen, MessageCircle, User } from "lucide-react";
+import { Heart, Sparkles, BookOpen, MessageCircle, User, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
