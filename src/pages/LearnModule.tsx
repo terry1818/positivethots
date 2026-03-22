@@ -440,7 +440,7 @@ const LearnModule = () => {
                     <div className="flex justify-center gap-1.5 flex-wrap">
                       {questions.map((q, i) => {
                         const isAnswered = answeredQuestions.has(q.id);
-                        const isCorrect = isAnswered && answers[q.id] === q.correct_answer;
+                        const isCorrect = isAnswered && correctAnswers.has(q.id);
                         return (
                           <button
                             key={q.id}
