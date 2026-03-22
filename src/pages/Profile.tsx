@@ -45,7 +45,7 @@ const Profile = () => {
     }
   }, [searchParams]);
 
-  useEffect(() => { loadProfile(); }, []);
+  useEffect(() => { loadProfile(); checkActiveBoost(); }, []);
 
   const loadProfile = async () => {
     try {
