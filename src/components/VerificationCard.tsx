@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, Camera, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
+import { isNative, takeNativePhoto } from "@/lib/capacitor";
 
 interface VerificationCardProps {
   userId: string;
