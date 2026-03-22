@@ -154,6 +154,10 @@ const LearnModule = () => {
       _selected_answer: answerIndex,
     });
 
+    if (isCorrect) {
+      setCorrectAnswers(prev => new Set(prev).add(questionId));
+    }
+
     setQuestionFeedback(isCorrect ? "correct" : "wrong");
 
     if (isCorrect) {
