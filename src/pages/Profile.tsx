@@ -191,6 +191,13 @@ const Profile = () => {
           </Button>
           <Button
             variant="outline"
+            className="w-full justify-start text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
+            onClick={() => navigate("/resources")}
+          >
+            <BookOpen className="mr-2 h-5 w-5" />Recommended Resources
+          </Button>
+          <Button
+            variant="outline"
             className="w-full justify-start text-left text-destructive hover:text-destructive transition-all hover:-translate-y-0.5 hover:shadow-md"
             onClick={handleSignOut}
           >
