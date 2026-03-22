@@ -31,9 +31,19 @@ const Profile = () => {
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [userPhotos, setUserPhotos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [boostLoading, setBoostLoading] = useState(false);
+  const [hasActiveBoost, setHasActiveBoost] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { stats } = useLearningStats();
   const { tiers } = useFeatureUnlocks();
+  const { hasFeature, tier } = useSubscription();
+
+  useEffect(() => {
+    if (searchParams.get("boost") === "activated") {
+      handleActivateBoost();
+    }
+  }, [searchParams]);
 
   useEffect(() => { loadProfile(); }, []);
 
