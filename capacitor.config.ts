@@ -20,14 +20,15 @@ const config: CapacitorConfig = {
       launchShowDuration: 2000,
       backgroundColor: '#6633CC',
       showSpinner: false,
-      launchAutoHide: false, // We hide manually after app is ready
+      launchAutoHide: false,
     },
   },
-  // Performance: allow mixed content for faster local asset loading
   android: {
     allowMixedContent: true,
     captureInput: true,
     webContentsDebuggingEnabled: false,
+    // Deep linking: handle positivethots.app URLs
+    appendUrlPathToIntentFilter: true,
   },
   ios: {
     contentInset: 'automatic',
