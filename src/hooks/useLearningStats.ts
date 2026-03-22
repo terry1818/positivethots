@@ -121,95 +121,70 @@ export const useLearningStats = () => {
     // Daily bonus: first XP of the day gets +5
     let bonusXP = 0;
     if (lastDate !== today) bonusXP = 5;
-
-    let newStreak = stats.current_streak;
-    let streakMilestone = false;
-
-    if (lastDate !== today) {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toISOString().split("T")[0];
-
-      if (lastDate === yesterdayStr) {
-        newStreak = stats.current_streak + 1;
-      } else if (!lastDate) {
-        newStreak = 1;
-      } else if (stats.streak_freeze_available && lastDate) {
-        newStreak = stats.current_streak;
-      } else {
-        newStreak = 1;
-      }
-      streakMilestone = isStreakMilestone(newStreak);
-    }
-
     const totalAmount = amount + bonusXP;
-    const newTotalXP = stats.total_xp + totalAmount;
-    const newLevel = calculateLevel(newTotalXP);
-    const leveledUp = newLevel > stats.current_level;
-    const newLongest = Math.max(stats.longest_streak, newStreak);
-    const freezeAvailable = newStreak > 0 && newStreak % 7 === 0 ? true : stats.streak_freeze_available;
 
-    const updatedStats: LearningStats = {
-      ...stats,
-      total_xp: newTotalXP,
-      current_level: newLevel,
-      current_streak: newStreak,
-      longest_streak: newLongest,
-      last_activity_date: today,
-      streak_freeze_available: lastDate !== today ? (stats.streak_freeze_available && lastDate && lastDate !== new Date(Date.now() - 86400000).toISOString().split("T")[0] ? false : freezeAvailable) : stats.streak_freeze_available,
-    };
+    try {
+      // Use server-side RPC to award XP securely
+      const { data, error } = await supabase.rpc("award_xp", {
+        _user_id: userId,
+        _amount: totalAmount,
+        _source: source,
+        _source_id: sourceId || null,
+      });
 
-    setStats(updatedStats);
-    setIsStreakAtRisk(false);
+      if (error) throw error;
 
-    await Promise.all([
-      supabase.from("user_learning_stats").update({
-        total_xp: newTotalXP,
-        current_level: newLevel,
-        current_streak: newStreak,
-        longest_streak: newLongest,
+      const result = data as { new_xp: number; new_level: number; new_streak: number };
+      const leveledUp = result.new_level > stats.current_level;
+      const streakMilestone = isStreakMilestone(result.new_streak);
+
+      // Update local state from server response
+      setStats(prev => prev ? {
+        ...prev,
+        total_xp: result.new_xp,
+        current_level: result.new_level,
+        current_streak: result.new_streak,
+        longest_streak: Math.max(prev.longest_streak, result.new_streak),
         last_activity_date: today,
-        streak_freeze_available: freezeAvailable,
-      }).eq("user_id", userId),
-      supabase.from("xp_transactions").insert({
-        user_id: userId,
-        xp_amount: totalAmount,
-        source,
-        source_id: sourceId || null,
-      }),
-    ]);
+      } : prev);
 
-    // Update daily challenge progress
-    const challengeTypeMap: Record<string, string> = {
-      section_complete: "sections",
-      quiz_pass: "xp",
-      quiz_perfect: "xp",
-    };
-    const challengeType = challengeTypeMap[source];
-    if (challengeType) {
-      const { data: challenge } = await supabase
-        .from("daily_challenges")
-        .select("*")
-        .eq("user_id", userId)
-        .eq("challenge_date", today)
-        .maybeSingle();
+      setIsStreakAtRisk(false);
 
-      if (challenge && !challenge.completed && challenge.challenge_type === challengeType) {
-        const newProgress = challenge.current_progress + (challengeType === "xp" ? totalAmount : 1);
-        const completed = newProgress >= challenge.target_value;
-        await supabase.from("daily_challenges").update({
-          current_progress: newProgress,
-          completed,
-        }).eq("id", challenge.id);
+      // Update daily challenge progress
+      const challengeTypeMap: Record<string, string> = {
+        section_complete: "sections",
+        quiz_pass: "xp",
+        quiz_perfect: "xp",
+      };
+      const challengeType = challengeTypeMap[source];
+      if (challengeType) {
+        const { data: challenge } = await supabase
+          .from("daily_challenges")
+          .select("*")
+          .eq("user_id", userId)
+          .eq("challenge_date", today)
+          .maybeSingle();
+
+        if (challenge && !challenge.completed && challenge.challenge_type === challengeType) {
+          const newProgress = challenge.current_progress + (challengeType === "xp" ? totalAmount : 1);
+          const completed = newProgress >= challenge.target_value;
+          await supabase.from("daily_challenges").update({
+            current_progress: newProgress,
+            completed,
+          }).eq("id", challenge.id);
+        }
       }
-    }
 
-    // Update sections today count
-    if (source === "section_complete") {
-      setSectionsToday(prev => prev + 1);
-    }
+      // Update sections today count
+      if (source === "section_complete") {
+        setSectionsToday(prev => prev + 1);
+      }
 
-    return { newXP: totalAmount, leveledUp, newStreak, streakMilestone };
+      return { newXP: totalAmount, leveledUp, newStreak: result.new_streak, streakMilestone };
+    } catch (err) {
+      console.error("Error awarding XP:", err);
+      return { newXP: 0, leveledUp: false, newStreak: stats.current_streak, streakMilestone: false };
+    }
   }, [stats, userId]);
 
   return { stats, loading, awardXP, reload: loadStats, sectionsToday, isStreakAtRisk, streakHoursLeft };

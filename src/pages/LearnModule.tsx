@@ -35,7 +35,6 @@ interface Question {
   id: string;
   question: string;
   options: string[];
-  correct_answer: number;
   order_index: number;
 }
 
@@ -59,6 +58,7 @@ const LearnModule = () => {
   const [maxCombo, setMaxCombo] = useState(0);
   const [questionFeedback, setQuestionFeedback] = useState<"correct" | "wrong" | null>(null);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(new Set());
+  const [correctAnswers, setCorrectAnswers] = useState<Set<string>>(new Set());
 
   // XP & celebrations
   const { stats, awardXP } = useLearningStats();
@@ -140,15 +140,24 @@ const LearnModule = () => {
     }
   }, [markComplete, awardXP, stats]);
 
-  // Quiz: answer a question with immediate feedback
-  const handleAnswerQuestion = (questionId: string, answerIndex: number) => {
+  // Quiz: answer a question with server-side validation
+  const handleAnswerQuestion = async (questionId: string, answerIndex: number) => {
     const question = questions.find(q => q.id === questionId);
     if (!question || answeredQuestions.has(questionId)) return;
 
     setAnswers(prev => ({ ...prev, [questionId]: answerIndex }));
     setAnsweredQuestions(prev => new Set(prev).add(questionId));
 
-    const isCorrect = answerIndex === question.correct_answer;
+    // Validate answer server-side
+    const { data: isCorrect } = await supabase.rpc("validate_quiz_answer", {
+      _question_id: questionId,
+      _selected_answer: answerIndex,
+    });
+
+    if (isCorrect) {
+      setCorrectAnswers(prev => new Set(prev).add(questionId));
+    }
+
     setQuestionFeedback(isCorrect ? "correct" : "wrong");
 
     if (isCorrect) {
@@ -171,10 +180,7 @@ const LearnModule = () => {
   const handleSubmitQuiz = async () => {
     if (!module || !userId) return;
 
-    let correct = 0;
-    questions.forEach(q => {
-      if (answers[q.id] === q.correct_answer) correct++;
-    });
+    const correct = correctAnswers.size;
 
     const scorePercent = Math.round((correct / questions.length) * 100);
     setScore(scorePercent);
@@ -412,16 +418,17 @@ const LearnModule = () => {
                           {currentQuestion.options.map((option: string, oIndex: number) => {
                             const isAnswered = answeredQuestions.has(currentQuestion.id);
                             const isSelected = answers[currentQuestion.id] === oIndex;
-                            const isCorrectOption = oIndex === currentQuestion.correct_answer;
+                            const isCorrectOption = isAnswered && correctAnswers.has(currentQuestion.id) && isSelected;
+                            const isWrongOption = isAnswered && isSelected && !correctAnswers.has(currentQuestion.id);
                             return (
                               <div key={oIndex} className={cn(
                                 "flex items-center space-x-2 py-2 px-2 rounded-md transition-colors",
-                                isAnswered && isCorrectOption && "bg-success/10",
-                                isAnswered && isSelected && !isCorrectOption && "bg-destructive/10"
+                                isCorrectOption && "bg-success/10",
+                                isWrongOption && "bg-destructive/10"
                               )}>
                                 <RadioGroupItem value={oIndex.toString()} id={`${currentQuestion.id}-${oIndex}`} />
                                 <Label htmlFor={`${currentQuestion.id}-${oIndex}`} className="flex-1 cursor-pointer">{option}</Label>
-                                {isAnswered && isCorrectOption && <CheckCircle className="h-4 w-4 text-success" />}
+                                {isCorrectOption && <CheckCircle className="h-4 w-4 text-success" />}
                               </div>
                             );
                           })}
@@ -433,7 +440,7 @@ const LearnModule = () => {
                     <div className="flex justify-center gap-1.5 flex-wrap">
                       {questions.map((q, i) => {
                         const isAnswered = answeredQuestions.has(q.id);
-                        const isCorrect = isAnswered && answers[q.id] === q.correct_answer;
+                        const isCorrect = isAnswered && correctAnswers.has(q.id);
                         return (
                           <button
                             key={q.id}
@@ -518,7 +525,7 @@ const LearnModule = () => {
                     <Button variant="outline" onClick={() => {
                       setShowQuiz(false); setSubmitted(false); setAnswers({});
                       setCurrentQuestionIndex(0); setComboCount(0); setMaxCombo(0);
-                      setAnsweredQuestions(new Set());
+                      setAnsweredQuestions(new Set()); setCorrectAnswers(new Set());
                     }} className="flex-1">
                       Review Material
                     </Button>

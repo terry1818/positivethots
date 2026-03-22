@@ -100,7 +100,29 @@ const Auth = () => {
               <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={255} className="focus-glow" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                {!isSignUp && (
+                  <button
+                    type="button"
+                    className="text-xs text-primary hover:underline"
+                    onClick={async () => {
+                      if (!email.trim()) { toast.error("Enter your email first"); return; }
+                      try {
+                        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+                          redirectTo: `${window.location.origin}/reset-password`,
+                        });
+                        if (error) throw error;
+                        toast.success("Password reset email sent! Check your inbox.");
+                      } catch (err: any) {
+                        toast.error(err.message || "Failed to send reset email");
+                      }
+                    }}
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </div>
               <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} maxLength={100} className="focus-glow" />
             </div>
             <ShimmerButton

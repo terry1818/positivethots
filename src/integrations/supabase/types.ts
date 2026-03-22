@@ -654,9 +654,59 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      quiz_questions_public: {
+        Row: {
+          id: string | null
+          module_id: string | null
+          options: Json | null
+          order_index: number | null
+          question: string | null
+          section_id: string | null
+        }
+        Insert: {
+          id?: string | null
+          module_id?: string | null
+          options?: Json | null
+          order_index?: number | null
+          question?: string | null
+          section_id?: string | null
+        }
+        Update: {
+          id?: string | null
+          module_id?: string | null
+          options?: Json | null
+          order_index?: number | null
+          question?: string | null
+          section_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "education_modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_questions_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "module_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      award_xp: {
+        Args: {
+          _amount: number
+          _source: string
+          _source_id?: string
+          _user_id: string
+        }
+        Returns: Json
+      }
       check_match: { Args: { user1: string; user2: string }; Returns: string }
       has_role: {
         Args: {
@@ -666,6 +716,10 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      validate_quiz_answer: {
+        Args: { _question_id: string; _selected_answer: number }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
