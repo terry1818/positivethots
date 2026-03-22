@@ -561,6 +561,42 @@ export type Database = {
           },
         ]
       }
+      recommended_resources: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean
+          order_index: number
+          title: string
+          url: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          order_index?: number
+          title: string
+          url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          order_index?: number
+          title?: string
+          url?: string
+        }
+        Relationships: []
+      }
       reports: {
         Row: {
           created_at: string
