@@ -31,6 +31,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { stats } = useLearningStats();
+  const { tiers } = useFeatureUnlocks();
 
   useEffect(() => { loadProfile(); }, []);
 
