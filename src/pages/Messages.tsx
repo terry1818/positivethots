@@ -39,27 +39,44 @@ const Messages = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      const { data: matchesData, error } = await supabase
-        .from("matches")
-        .select("id, user1_id, user2_id, created_at")
-        .or(`user1_id.eq.${session.user.id},user2_id.eq.${session.user.id}`)
-        .order("created_at", { ascending: false });
+      const [matchesResult, blockedResult] = await Promise.all([
+        supabase
+          .from("matches")
+          .select("id, user1_id, user2_id, created_at")
+          .or(`user1_id.eq.${session.user.id},user2_id.eq.${session.user.id}`)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("blocked_users")
+          .select("blocked_id, blocker_id")
+          .or(`blocker_id.eq.${session.user.id},blocked_id.eq.${session.user.id}`),
+      ]);
 
-      if (error) throw error;
+      if (matchesResult.error) throw matchesResult.error;
+
+      const blockedUserIds = new Set<string>();
+      blockedResult.data?.forEach(row => {
+        if (row.blocker_id === session.user.id) blockedUserIds.add(row.blocked_id);
+        else blockedUserIds.add(row.blocker_id);
+      });
 
       const matchesWithProfiles = await Promise.all(
-        matchesData.map(async (match) => {
-          const otherId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
-          const { data: profile } = await supabase
-            .from("profiles").select("id, name, profile_image, age").eq("id", otherId).single();
-          return {
-            id: match.id,
-            profile: profile || {
-              id: otherId, name: "Unknown",
-              profile_image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${otherId}`, age: 0,
-            },
-          };
-        })
+        matchesResult.data
+          .filter(match => {
+            const otherId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
+            return !blockedUserIds.has(otherId);
+          })
+          .map(async (match) => {
+            const otherId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
+            const { data: profile } = await supabase
+              .from("profiles").select("id, name, profile_image, age").eq("id", otherId).single();
+            return {
+              id: match.id,
+              profile: profile || {
+                id: otherId, name: "Unknown",
+                profile_image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${otherId}`, age: 0,
+              },
+            };
+          })
       );
 
       setMatches(matchesWithProfiles);
