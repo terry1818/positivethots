@@ -58,6 +58,7 @@ const LearnModule = () => {
   const [maxCombo, setMaxCombo] = useState(0);
   const [questionFeedback, setQuestionFeedback] = useState<"correct" | "wrong" | null>(null);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(new Set());
+  const [correctAnswers, setCorrectAnswers] = useState<Set<string>>(new Set());
 
   // XP & celebrations
   const { stats, awardXP } = useLearningStats();
