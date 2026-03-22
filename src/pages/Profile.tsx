@@ -129,7 +129,8 @@ const Profile = () => {
                 <div className="flex gap-2 overflow-x-auto pb-1">
                   {userPhotos.map((photo) => (
                     <img key={photo.id} src={photo.photo_url} alt="Profile photo"
-                      className="h-16 w-16 rounded-lg object-cover flex-shrink-0 border border-border" />
+                      className="h-16 w-16 rounded-lg object-cover flex-shrink-0 border border-border"
+                      loading="lazy" decoding="async" />
                   ))}
                 </div>
               </div>
