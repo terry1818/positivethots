@@ -305,6 +305,13 @@ const Index = () => {
         </div>
       )}
 
+      {/* Nearby Users */}
+      {isSharing && (
+        <div className="container max-w-7xl mx-auto px-4 mb-4">
+          <NearbyUsers nearbyUsers={nearbyUsers} isSharing={isSharing} />
+        </div>
+      )}
+
       {/* Curated Matches Grid */}
       <div className="container max-w-7xl mx-auto px-4">
         {suggestions.length === 0 ? (
