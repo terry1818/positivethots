@@ -97,6 +97,8 @@ serve(async (req) => {
         supabaseAdmin.from("verification_requests").delete().eq("user_id", userId),
         supabaseAdmin.from("linked_profiles").delete().or(`user_id.eq.${userId},partner_id.eq.${userId}`),
         supabaseAdmin.from("user_roles").delete().eq("user_id", userId),
+        supabaseAdmin.from("reports").delete().eq("reporter_id", userId),
+        supabaseAdmin.from("blocked_users").delete().or(`blocker_id.eq.${userId},blocked_id.eq.${userId}`),
       ]);
 
       // Delete swipes and matches
