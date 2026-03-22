@@ -85,6 +85,7 @@ serve(async (req) => {
       // Delete in dependency order
       if (matchIds.length > 0) {
         await supabaseAdmin.from("messages").delete().in("match_id", matchIds);
+        await supabaseAdmin.from("flagged_messages").delete().in("match_id", matchIds);
       }
       
       await Promise.all([
@@ -99,6 +100,9 @@ serve(async (req) => {
         supabaseAdmin.from("user_roles").delete().eq("user_id", userId),
         supabaseAdmin.from("reports").delete().eq("reporter_id", userId),
         supabaseAdmin.from("blocked_users").delete().or(`blocker_id.eq.${userId},blocked_id.eq.${userId}`),
+        supabaseAdmin.from("analytics_events").delete().eq("user_id", userId),
+        supabaseAdmin.from("error_logs").delete().eq("user_id", userId),
+        supabaseAdmin.from("flagged_messages").delete().eq("sender_id", userId),
       ]);
 
       // Delete swipes and matches
