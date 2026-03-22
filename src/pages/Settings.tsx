@@ -22,6 +22,7 @@ const Settings = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
+  const { isPremium, loading: subLoading, subscriptionEnd } = useSubscription();
 
   // Password change
   const [currentPassword, setCurrentPassword] = useState("");
