@@ -25,6 +25,7 @@ const Settings = () => {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const { isPremium, loading: subLoading, subscriptionEnd } = useSubscription();
+  const { isUnlocked: locationUnlocked, isSharing, toggleSharing, error: locationError, loading: locationLoading } = useLocationSharing();
 
   // Password change
   const [currentPassword, setCurrentPassword] = useState("");
