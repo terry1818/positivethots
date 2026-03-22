@@ -44,10 +44,12 @@ async function configureSplashScreen() {
 
 async function configureKeyboard() {
   try {
-    // Keyboard plugin is optional — only import if available
-    const { Keyboard, KeyboardResize } = await import('@capacitor/keyboard');
-    await Keyboard.setResizeMode({ mode: KeyboardResize.Ionic });
-    await Keyboard.setScroll({ isDisabled: false });
+    // Keyboard plugin is optional — dynamically import without type checking
+    const keyboardModule = await import(/* @vite-ignore */ '@capacitor/keyboard');
+    if (keyboardModule?.Keyboard) {
+      await keyboardModule.Keyboard.setResizeMode?.({ mode: 'ionic' });
+      await keyboardModule.Keyboard.setScroll?.({ isDisabled: false });
+    }
   } catch {
     // Keyboard plugin not installed — that's fine
   }
