@@ -82,6 +82,18 @@ const Index = () => {
     const matchedUserIds = new Set(matches?.flatMap(m => [m.user1_id, m.user2_id]) || []);
     matchedUserIds.add(userId);
 
+    // Fetch blocked users
+    const { data: blockedRows } = await supabase
+      .from("blocked_users")
+      .select("blocked_id, blocker_id")
+      .or(`blocker_id.eq.${userId},blocked_id.eq.${userId}`);
+    
+    const blockedUserIds = new Set<string>();
+    blockedRows?.forEach(row => {
+      if (row.blocker_id === userId) blockedUserIds.add(row.blocked_id);
+      else blockedUserIds.add(row.blocker_id);
+    });
+
     const { data: profiles } = await supabase
       .from("profiles").select("*").neq("id", userId).eq("onboarding_completed", true);
 
@@ -95,7 +107,7 @@ const Index = () => {
     });
 
     const enhancedProfiles: EnhancedProfile[] = profiles
-      .filter(p => !matchedUserIds.has(p.id))
+      .filter(p => !matchedUserIds.has(p.id) && !blockedUserIds.has(p.id))
       .map(p => ({
         ...p,
         badge_count: badgeCounts.get(p.id) || 0,
