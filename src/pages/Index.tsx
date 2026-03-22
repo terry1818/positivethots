@@ -107,7 +107,6 @@ const Index = () => {
     });
 
     const enhancedProfiles: EnhancedProfile[] = profiles
-      .filter(p => !matchedUserIds.has(p.id) && !blockedUserIds.has(p.id))
       .map(p => ({
         ...p,
         badge_count: badgeCounts.get(p.id) || 0,
