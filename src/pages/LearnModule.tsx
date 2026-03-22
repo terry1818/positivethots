@@ -235,11 +235,7 @@ const LearnModule = () => {
   const canTakeQuiz = !hasSections || allSectionsComplete;
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
-      </div>
-    );
+    return <PageSkeleton variant="learn" />;
   }
   if (!module) return null;
 
