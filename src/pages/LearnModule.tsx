@@ -428,7 +428,7 @@ const LearnModule = () => {
                               )}>
                                 <RadioGroupItem value={oIndex.toString()} id={`${currentQuestion.id}-${oIndex}`} />
                                 <Label htmlFor={`${currentQuestion.id}-${oIndex}`} className="flex-1 cursor-pointer">{option}</Label>
-                                {isAnswered && isCorrectOption && <CheckCircle className="h-4 w-4 text-success" />}
+                                {isCorrectOption && <CheckCircle className="h-4 w-4 text-success" />}
                               </div>
                             );
                           })}
