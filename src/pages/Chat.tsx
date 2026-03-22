@@ -132,8 +132,35 @@ const Chat = () => {
     }
   };
 
-  const handleReport = () => { toast.success("Report Submitted", { description: "Our team will review this conversation." }); };
-  const handleBlock = () => { toast.success("User Blocked", { description: "You won't receive messages from this user anymore." }); navigate("/messages"); };
+  const handleReport = async () => {
+    if (!currentUser || !otherUser) return;
+    try {
+      const { error } = await supabase.from("reports").insert({
+        reporter_id: currentUser.id,
+        reported_user_id: otherUser.id,
+        reason: "Reported from chat",
+      });
+      if (error) throw error;
+      toast.success("Report Submitted", { description: "Our team will review this conversation." });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to submit report");
+    }
+  };
+
+  const handleBlock = async () => {
+    if (!currentUser || !otherUser) return;
+    try {
+      const { error } = await supabase.from("blocked_users").insert({
+        blocker_id: currentUser.id,
+        blocked_id: otherUser.id,
+      });
+      if (error && !error.message.includes("duplicate")) throw error;
+      toast.success("User Blocked", { description: "You won't see this user anymore." });
+      navigate("/messages");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to block user");
+    }
+  };
 
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
