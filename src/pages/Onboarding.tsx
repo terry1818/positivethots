@@ -164,11 +164,52 @@ const Onboarding = () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { navigate("/auth"); return; }
     setUserId(session.user.id);
-    const { data: profile } = await supabase.from("profiles").select("name, age, profile_image").eq("id", session.user.id).single();
+    const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
     if (profile) {
       setUserName(profile.name);
       setUserAge(profile.age);
       setProfileImage(profile.profile_image);
+
+      // Resume onboarding from saved progress
+      const saved: Partial<typeof formData> = {};
+      if (profile.gender) saved.gender = profile.gender;
+      if (profile.pronouns) saved.pronouns = profile.pronouns;
+      if (profile.sexuality) saved.sexuality = profile.sexuality;
+      if (profile.desires?.length) saved.desires = profile.desires;
+      if (profile.relationship_style) saved.relationshipStyle = profile.relationship_style;
+      if (profile.relationship_status) saved.relationshipStatus = profile.relationship_status;
+      if (profile.experience_level && profile.experience_level !== "curious") saved.experienceLevel = profile.experience_level;
+      if (profile.height_cm) saved.heightCm = profile.height_cm;
+      if (profile.zodiac_sign) saved.zodiacSign = profile.zodiac_sign;
+      if (profile.languages?.length) saved.languages = profile.languages;
+      if (profile.lifestyle) saved.lifestyle = profile.lifestyle as Record<string, string>;
+      if (profile.interests?.length) saved.interests = profile.interests;
+      if (profile.bio) saved.bio = profile.bio;
+      if (profile.boundaries) saved.boundaries = profile.boundaries;
+      if (profile.location) saved.location = profile.location;
+
+      if (Object.keys(saved).length > 0) {
+        setFormData(prev => ({ ...prev, ...saved }));
+        // Jump to the furthest incomplete step
+        const stepFields: Record<number, () => boolean> = {
+          2: () => !!saved.gender,
+          3: () => !!saved.pronouns,
+          4: () => !!saved.sexuality,
+          5: () => (saved.desires?.length ?? 0) > 0,
+          6: () => !!saved.relationshipStyle,
+          7: () => !!saved.relationshipStatus,
+          8: () => !!saved.experienceLevel,
+          9: () => !!saved.heightCm || !!saved.zodiacSign,
+          10: () => (saved.interests?.length ?? 0) >= 3,
+          11: () => !!saved.location,
+        };
+        let resumeStep = 1;
+        for (let s = 2; s <= 11; s++) {
+          if (stepFields[s]?.()) resumeStep = s + 1;
+          else break;
+        }
+        if (resumeStep > 1 && resumeStep <= TOTAL_STEPS) setStep(resumeStep);
+      }
     }
     const { data: photoData } = await supabase.from("user_photos").select("*").eq("user_id", session.user.id).order("order_index");
     if (photoData) setPhotos(photoData);
@@ -217,9 +258,31 @@ const Onboarding = () => {
     }
   };
 
-  const advanceStep = () => {
+  const advanceStep = async () => {
     setDirection("forward");
     setStep(s => Math.min(s + 1, TOTAL_STEPS));
+
+    // Save progress after each step
+    if (userId) {
+      const pronounsValue = formData.customPronouns.trim() || formData.pronouns;
+      await supabase.from("profiles").update({
+        pronouns: pronounsValue || null,
+        gender: formData.gender || null,
+        sexuality: formData.sexuality || null,
+        desires: formData.desires.length > 0 ? formData.desires : null,
+        relationship_style: formData.relationshipStyle || null,
+        relationship_status: formData.relationshipStatus || null,
+        experience_level: formData.experienceLevel || "curious",
+        bio: formData.bio.trim() || null,
+        interests: formData.interests.length > 0 ? formData.interests : null,
+        location: formData.location.trim() || null,
+        boundaries: formData.boundaries.trim() || null,
+        height_cm: formData.heightCm,
+        zodiac_sign: formData.zodiacSign || null,
+        languages: formData.languages.length > 0 ? formData.languages : null,
+        lifestyle: Object.keys(formData.lifestyle).length > 0 ? formData.lifestyle : null,
+      } as any).eq("id", userId);
+    }
   };
 
   const goBack = () => {

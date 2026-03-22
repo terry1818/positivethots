@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, BookOpen, MessageCircle, User, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 
 const navItems = [
   { path: "/", icon: Heart, label: "Discover" },
@@ -17,6 +18,7 @@ export const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [tapped, setTapped] = useState<string | null>(null);
+  const { unreadCount } = useUnreadMessages();
 
   const handleTap = (path: string) => {
     setTapped(path);
@@ -30,6 +32,7 @@ export const BottomNav = () => {
         {navItems.map(({ path, icon: Icon, label }) => {
           const isActive = location.pathname === path;
           const isTapped = tapped === path;
+          const showBadge = path === "/messages" && unreadCount > 0;
           return (
             <Button
               key={path}
@@ -42,7 +45,14 @@ export const BottomNav = () => {
                 isTapped && "animate-tap-bounce"
               )}
             >
-              <Icon className={cn("h-[18px] w-[18px] transition-transform duration-200", isActive && "scale-110")} />
+              <div className="relative">
+                <Icon className={cn("h-[18px] w-[18px] transition-transform duration-200", isActive && "scale-110")} />
+                {showBadge && (
+                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </div>
               <span className="text-[9px] font-medium">{label}</span>
               {isActive && (
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-gradient-to-r from-primary to-secondary" />
