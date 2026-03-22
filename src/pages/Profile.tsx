@@ -285,6 +285,34 @@ const Profile = () => {
           </Card>
         )}
 
+        {/* Boost */}
+        <Card className="animate-fade-in">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-sm flex items-center gap-2">
+                  <Rocket className="h-4 w-4 text-accent" />
+                  Profile Boost
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {hasActiveBoost
+                    ? "Your profile is currently boosted! 🔥"
+                    : hasFeature("profile_boost")
+                      ? "1 free boost/month with VIP"
+                      : "Get to the top of discovery — $2.99"}
+                </p>
+              </div>
+              <Button
+                size="sm"
+                disabled={hasActiveBoost || boostLoading}
+                onClick={handleBoostProfile}
+              >
+                {boostLoading ? "..." : hasActiveBoost ? "Active" : "Boost"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Actions */}
         <div className="space-y-3">
           <Button

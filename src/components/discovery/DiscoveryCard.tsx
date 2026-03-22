@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Clock, Users, Shield, BookOpen } from "lucide-react";
+import { Heart, MapPin, Clock, Users, Shield, BookOpen, Star, Rocket } from "lucide-react";
 
 interface DiscoveryProfile {
   id: string;
@@ -19,6 +19,7 @@ interface DiscoveryProfile {
   last_active?: string;
   verified?: boolean;
   distance?: number;
+  is_boosted?: boolean;
 }
 
 interface DiscoveryCardProps {
@@ -26,9 +27,12 @@ interface DiscoveryCardProps {
   index: number;
   onConnect: (id: string) => void;
   onPass: (id: string) => void;
+  onSuperLike?: (id: string) => void;
+  canSuperLike?: boolean;
+  superLikeBalance?: number;
 }
 
-export const DiscoveryCard = memo(({ profile, index, onConnect, onPass }: DiscoveryCardProps) => (
+export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperLike, canSuperLike, superLikeBalance }: DiscoveryCardProps) => (
   <Card
     className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-stagger-fade"
     style={{ animationDelay: `${index * 80}ms` }}
@@ -48,6 +52,11 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass }: Discov
         </div>
       )}
       <div className="absolute top-3 left-3 flex gap-2">
+        {profile.is_boosted && (
+          <Badge className="bg-accent text-accent-foreground animate-pulse">
+            <Rocket className="h-3 w-3 mr-1" />Boosted
+          </Badge>
+        )}
         {profile.verified && (
           <Badge className="bg-primary text-primary-foreground">
             <Shield className="h-3 w-3 mr-1" />Verified
@@ -107,6 +116,18 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass }: Discov
         <Button variant="outline" className="flex-1" onClick={() => onPass(profile.id)}>
           Pass
         </Button>
+        {canSuperLike && onSuperLike && (
+          <Button
+            variant="outline"
+            size="icon"
+            className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
+            onClick={() => onSuperLike(profile.id)}
+            disabled={superLikeBalance !== undefined && superLikeBalance <= 0}
+            title={superLikeBalance !== undefined ? `${superLikeBalance} Super Likes left` : "Super Like"}
+          >
+            <Star className="h-4 w-4 fill-current" />
+          </Button>
+        )}
         <Button
           className="flex-1 bg-gradient-primary text-primary-foreground animate-pulse-glow"
           onClick={() => onConnect(profile.id)}
