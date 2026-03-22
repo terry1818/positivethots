@@ -69,7 +69,8 @@ const Chat = () => {
     if (!match) { toast.error("Match not found"); navigate("/messages"); return; }
 
     const otherUserId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
-    const { data: otherProfile } = await supabase.from("profiles").select("*").eq("id", otherUserId).single();
+    const { data: otherProfileData } = await supabase.rpc("get_public_profile", { _user_id: otherUserId });
+    const otherProfile = otherProfileData?.[0] || null;
 
     if (otherProfile) {
       setOtherUser(otherProfile);

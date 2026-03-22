@@ -67,8 +67,9 @@ const Messages = () => {
           })
           .map(async (match) => {
             const otherId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
-            const { data: profile } = await supabase
-              .from("profiles").select("id, name, profile_image, age").eq("id", otherId).single();
+            const { data: profileData } = await supabase
+              .rpc("get_public_profile", { _user_id: otherId });
+            const profile = profileData?.[0];
             return {
               id: match.id,
               profile: profile || {
