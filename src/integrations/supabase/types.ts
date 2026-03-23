@@ -1118,6 +1118,10 @@ export type Database = {
       }
     }
     Functions: {
+      award_badge: {
+        Args: { _module_id: string; _quiz_score: number }
+        Returns: undefined
+      }
       award_xp: {
         Args: {
           _amount: number
