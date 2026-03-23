@@ -24,3 +24,22 @@ createRoot(document.getElementById("root")!).render(<App />);
 
 // Initialize native plugins after first render
 initCapacitor();
+
+// Register service worker
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").then((reg) => {
+      reg.addEventListener("updatefound", () => {
+        const newWorker = reg.installing;
+        if (newWorker) {
+          newWorker.addEventListener("statechange", () => {
+            if (newWorker.state === "activated" && navigator.serviceWorker.controller) {
+              // New version available — reload on next navigation
+              console.log("New version available");
+            }
+          });
+        }
+      });
+    });
+  });
+}
