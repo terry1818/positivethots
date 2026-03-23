@@ -43,27 +43,54 @@ const Auth = () => {
           options: { emailRedirectTo: `${window.location.origin}/`, data: { name: name.trim(), age: parseInt(age) } },
         });
         if (signUpError) throw signUpError;
-        if (authData.user) {
+        if (authData.user && !authData.session) {
+          // Email confirmation required — don't create profile yet
+          toast.success("Account created! Check your email to confirm your account before signing in.");
+          setIsSignUp(false);
+          return;
+        }
+        if (authData.user && authData.session) {
+          // Auto-confirmed (shouldn't happen with current config, but handle gracefully)
           const { error: profileError } = await supabase.from("profiles").insert({
             id: authData.user.id, name: name.trim(), age: parseInt(age), bio: "",
             location: "Location not set",
             profile_image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${authData.user.id}`,
           });
-          if (profileError) { console.error("Profile creation error:", profileError); throw new Error("Failed to create profile"); }
+          if (profileError) console.error("Profile creation error:", profileError);
           toast.success("Account created successfully!");
           navigate("/onboarding");
         }
       } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (signInError) throw signInError;
+        // Create profile on first login if missing (e.g. user confirmed email but profile wasn't created)
+        if (signInData.user) {
+          const { data: existingProfile } = await supabase
+            .from("profiles").select("id").eq("id", signInData.user.id).maybeSingle();
+          if (!existingProfile) {
+            const meta = signInData.user.user_metadata;
+            const userName = meta?.name || email.split("@")[0];
+            const userAge = meta?.age || 18;
+            await supabase.from("profiles").insert({
+              id: signInData.user.id, name: userName, age: userAge, bio: "",
+              location: "Location not set",
+              profile_image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${signInData.user.id}`,
+            });
+            toast.success("Signed in successfully!");
+            navigate("/onboarding");
+            return;
+          }
+        }
         toast.success("Signed in successfully!");
         navigate("/");
       }
     } catch (error: any) {
       console.error("Auth error:", error);
       if (error instanceof z.ZodError) toast.error(error.errors[0].message);
+      else if (error.name === "AuthWeakPasswordError" || error.message?.includes("weak") || error.message?.includes("leaked")) toast.error("This password has appeared in a data breach. Please choose a different, more unique password.");
       else if (error.message?.includes("User already registered")) toast.error("This email is already registered. Please sign in instead.");
       else if (error.message?.includes("Invalid login credentials")) toast.error("Invalid email or password");
+      else if (error.message?.includes("Email not confirmed")) toast.error("Please confirm your email before signing in. Check your inbox for a confirmation link.");
       else toast.error(error.message || "An error occurred during authentication");
     } finally {
       setLoading(false);
