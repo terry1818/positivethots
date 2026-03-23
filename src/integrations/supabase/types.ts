@@ -474,6 +474,8 @@ export type Database = {
       profiles: {
         Row: {
           age: number
+          bdsm_test_screenshot: string | null
+          bdsm_test_url: string | null
           bio: string | null
           boundaries: string | null
           created_at: string
@@ -505,6 +507,8 @@ export type Database = {
         }
         Insert: {
           age: number
+          bdsm_test_screenshot?: string | null
+          bdsm_test_url?: string | null
           bio?: string | null
           boundaries?: string | null
           created_at?: string
@@ -536,6 +540,8 @@ export type Database = {
         }
         Update: {
           age?: number
+          bdsm_test_screenshot?: string | null
+          bdsm_test_url?: string | null
           bio?: string | null
           boundaries?: string | null
           created_at?: string

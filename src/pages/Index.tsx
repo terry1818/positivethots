@@ -13,8 +13,10 @@ import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { NearbyUsers } from "@/components/NearbyUsers";
 import { DiscoveryCard } from "@/components/discovery/DiscoveryCard";
+import { TierRoadmap } from "@/components/education/TierRoadmap";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
+import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
@@ -85,6 +87,7 @@ const calculateCompatibility = (user: Profile, other: DiscoveryProfile, otherBad
 const Index = () => {
   const { isSharing, nearbyUsers } = useLocationSharing();
   const { balance: superLikeBalance, canSuperLike, sendSuperLike, isUnlimited } = useSuperLikes();
+  const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
@@ -344,6 +347,13 @@ const Index = () => {
               <Button size="sm" onClick={() => navigate("/learn")}>Learn</Button>
             </div>
           </Card>
+        </div>
+      )}
+
+      {/* Feature Unlock Roadmap */}
+      {tiers.length > 0 && (
+        <div className="container max-w-7xl mx-auto px-4 mb-4">
+          <TierRoadmap tiers={tiers} />
         </div>
       )}
 

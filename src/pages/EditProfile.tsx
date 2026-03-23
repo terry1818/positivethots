@@ -11,6 +11,7 @@ import { ArrowLeft, Save } from "lucide-react";
 import { toast } from "sonner";
 import { PhotoUploadGrid } from "@/components/PhotoUploadGrid";
 import { VerificationCard } from "@/components/VerificationCard";
+import { BdsmTestSection } from "@/components/BdsmTestSection";
 import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/PageSkeleton";
 
@@ -32,6 +33,8 @@ const EditProfile = () => {
   const [relationshipStyle, setRelationshipStyle] = useState("");
   const [relationshipStatus, setRelationshipStatus] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("");
+  const [bdsmTestUrl, setBdsmTestUrl] = useState("");
+  const [bdsmTestScreenshot, setBdsmTestScreenshot] = useState("");
 
   useEffect(() => { loadProfile(); }, []);
 
@@ -53,6 +56,7 @@ const EditProfile = () => {
       setPronouns(data.pronouns || ""); setBoundaries(data.boundaries || "");
       setLookingFor(data.looking_for || ""); setRelationshipStyle(data.relationship_style || "");
       setRelationshipStatus(data.relationship_status || ""); setExperienceLevel(data.experience_level || "");
+      setBdsmTestUrl(data.bdsm_test_url || ""); setBdsmTestScreenshot(data.bdsm_test_screenshot || "");
       setPhotos(photosResult.data || []);
       setLatestVerification(verResult.data?.[0] || null);
     } catch (error) {
@@ -85,7 +89,8 @@ const EditProfile = () => {
         name: name.trim(), bio: bio.trim(), location: location.trim(), pronouns: pronouns.trim(),
         boundaries: boundaries.trim(), looking_for: lookingFor, relationship_style: relationshipStyle,
         relationship_status: relationshipStatus, experience_level: experienceLevel,
-      }).eq("id", profile.id);
+        bdsm_test_url: bdsmTestUrl.trim() || null, bdsm_test_screenshot: bdsmTestScreenshot || null,
+      } as any).eq("id", profile.id);
       if (error) throw error;
       toast.success("Profile updated!");
       navigate("/profile");
@@ -198,6 +203,17 @@ const EditProfile = () => {
               <Textarea id="boundaries" value={boundaries} onChange={(e) => { setBoundaries(e.target.value); markChanged(); }} rows={3} maxLength={500} placeholder="Share your boundaries and preferences..." className="focus-glow" />
             </CardContent>
           </Card>
+
+          {profile?.id && (
+            <BdsmTestSection
+              bdsmTestUrl={bdsmTestUrl}
+              bdsmTestScreenshot={bdsmTestScreenshot}
+              onUrlChange={setBdsmTestUrl}
+              onScreenshotChange={setBdsmTestScreenshot}
+              userId={profile.id}
+              onChange={markChanged}
+            />
+          )}
 
           {profile?.id && (
             <VerificationCard userId={profile.id} isVerified={profile.is_verified || false} latestRequest={latestVerification} onVerificationChange={reloadPhotos} />

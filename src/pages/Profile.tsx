@@ -151,7 +151,7 @@ const Profile = () => {
         </div>
       </header>
 
-      <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
+      <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-24 space-y-4">
         {/* Profile Card */}
         <Card className="overflow-hidden animate-fade-in">
           <div className="relative h-64 bg-gradient-to-br from-primary/20 to-secondary/20">
@@ -246,6 +246,29 @@ const Profile = () => {
               <div className="pt-2 border-t">
                 <p className="text-sm font-medium mb-1">Boundaries & Preferences</p>
                 <p className="text-sm text-muted-foreground">{profile.boundaries}</p>
+              </div>
+            )}
+            {(profile?.bdsm_test_url || profile?.bdsm_test_screenshot) && (
+              <div className="pt-2 border-t">
+                <p className="text-sm font-medium mb-2 flex items-center gap-1">🔗 Kink Profile</p>
+                {profile.bdsm_test_url && (
+                  <a
+                    href={profile.bdsm_test_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary underline inline-flex items-center gap-1 mb-2"
+                  >
+                    View BDSMtest Results <Heart className="h-3 w-3" />
+                  </a>
+                )}
+                {profile.bdsm_test_screenshot && (
+                  <img
+                    src={profile.bdsm_test_screenshot}
+                    alt="BDSM test results"
+                    className="w-full rounded-lg border border-border max-h-48 object-contain bg-muted"
+                    loading="lazy"
+                  />
+                )}
               </div>
             )}
           </CardContent>
