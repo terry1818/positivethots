@@ -225,12 +225,13 @@ const LearnModule = () => {
           </ul>
         );
       }
+      const escapeHtml = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
       const withLinks = paragraph.replace(
         /\[([^\]]+)\]\(([^)]+)\)/g,
         (_, text, url) => {
           const trimmed = url.trim().toLowerCase();
           const safe = (trimmed.startsWith('javascript:') || trimmed.startsWith('data:') || trimmed.startsWith('vbscript:')) ? '#' : url;
-          return `<a href="${safe}" target="_blank" rel="noopener noreferrer" class="text-secondary underline hover:text-secondary/80">${text}</a>`;
+          return `<a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="text-secondary underline hover:text-secondary/80">${escapeHtml(text)}</a>`;
         }
       );
       return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: withLinks }} />;

@@ -53,9 +53,12 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error("[create-boost-payment] error:", error);
+    const msg = error instanceof Error ? error.message : String(error);
+    const isUserError = msg === "User not authenticated";
+    return new Response(JSON.stringify({ error: isUserError ? msg : "An unexpected error occurred. Please try again." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status: isUserError ? 400 : 500,
     });
   }
 });
