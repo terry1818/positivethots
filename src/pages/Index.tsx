@@ -13,7 +13,7 @@ import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { NearbyUsers } from "@/components/NearbyUsers";
 import { DiscoveryCard } from "@/components/discovery/DiscoveryCard";
-import { TierRoadmap } from "@/components/education/TierRoadmap";
+import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
@@ -327,50 +327,10 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Stats Bar */}
-      <div className="container max-w-7xl mx-auto px-4 py-4">
-        <div className="grid grid-cols-3 gap-4">
-          <Card className="p-4 text-center animate-stagger-fade" style={{ animationDelay: "0ms" }}>
-            <div className="text-2xl font-bold text-primary">
-              <AnimatedCounter end={suggestions.length} />
-            </div>
-            <div className="text-sm text-muted-foreground">New Matches</div>
-          </Card>
-          <Card className="p-4 text-center animate-stagger-fade" style={{ animationDelay: "100ms" }}>
-            <div className="text-2xl font-bold text-secondary">
-              <AnimatedCounter end={userBadgeCount} />
-            </div>
-            <div className="text-sm text-muted-foreground">Badges Earned</div>
-          </Card>
-          <Card className="p-4 text-center animate-stagger-fade" style={{ animationDelay: "200ms" }}>
-            <div className="text-2xl font-bold text-accent">Active</div>
-            <div className="text-sm text-muted-foreground">Status</div>
-          </Card>
-        </div>
-      </div>
-
-      {/* Education Reminder */}
-      {userBadgeCount < 10 && (
-        <div className="container max-w-7xl mx-auto px-4 mb-4">
-          <Card className="p-4 bg-primary/5 border-primary/20">
-            <div className="flex items-start gap-3">
-              <BookOpen className="h-5 w-5 text-primary mt-0.5" />
-              <div className="flex-1">
-                <h3 className="font-semibold text-sm">Boost Your Matches</h3>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Complete more education modules to unlock better compatibility scoring and increase your match potential!
-                </p>
-              </div>
-              <Button size="sm" onClick={() => navigate("/learn")}>Learn</Button>
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {/* Feature Unlock Roadmap */}
+      {/* Compact Progress Strip */}
       {tiers.length > 0 && (
-        <div className="container max-w-7xl mx-auto px-4 mb-4">
-          <TierRoadmap tiers={tiers} />
+        <div className="container max-w-7xl mx-auto px-4 py-3">
+          <CompactProgressBar tiers={tiers} badgeCount={userBadgeCount} suggestionCount={suggestions.length} />
         </div>
       )}
 
