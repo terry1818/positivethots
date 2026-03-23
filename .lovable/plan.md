@@ -1,57 +1,52 @@
 
+Plan
 
-## Plan: Fix Authentication Issues (Signup + Login)
+1. Verify the actual failure path, not just the UI message.
+   - The frontend call is correct: it sends password reset to `/reset-password`.
+   - The backend auth logs show real `429 over_email_send_rate_limit` responses from the auth service, so this is not just a misleading toast.
+   - The same account (`yeaimforsale@gmail.com`) hit `/recover` multiple times within about 2 minutes, which is why the provider blocked more sends.
 
-### Root Causes Identified
+2. Fix the product behavior so users don’t get trapped by this.
+   - Add a dedicated “Forgot password” flow instead of the current inline link-only behavior.
+   - Move reset sending into a small modal or dedicated screen with:
+     - clear email field validation
+     - loading state
+     - single-submit protection
+     - disabled resend cooldown on the client
+   - This prevents accidental repeated submits, double clicks, and spammy retries.
 
-After testing the auth flow and inspecting the database, I found two distinct problems:
+3. Stop hidden duplicate triggers.
+   - Audit the auth screen and related session/auth listeners for anything that may re-trigger recovery or remount unexpectedly.
+   - Specifically verify:
+     - the forgot-password action only fires on explicit click
+     - no route transition or recovery-page logic is causing extra recover requests
+     - no browser autofill/form submission edge case is invoking it more than once
 
-1. **Signup fails silently with unconfirmed email**: When a user signs up, email confirmation is required (correct behavior). However, the code assumes `authData.user` being present means the session is active. It then tries to insert a profile via `supabase.from("profiles").insert(...)` — but RLS requires `auth.uid() = id`, which fails because there's no active session yet. The profile insert fails, the user sees an error ("Failed to create profile"), and they're stuck — they can't retry signup ("User already registered") and can't log in (email unconfirmed).
+4. Improve reset request handling.
+   - Add a local debounce / in-flight guard so only one recovery request can be sent at a time.
+   - Persist a short client-side cooldown timestamp per email so refreshes/remounts don’t immediately allow repeat requests.
+   - Keep the UX honest: show “email sent” only on success, and show a specific explanation if the backend truly rejects the request.
 
-2. **Weak password error (HIBP)**: The HIBP check rejects compromised passwords with a technical error message. Users don't understand what "known to be weak and easy to guess" means in context.
+5. Verify the email delivery path end-to-end.
+   - Check that the custom auth email setup is actually active for password recovery, since there are currently no recovery entries in the email send log and no recent auth-email-hook logs for recovery sends.
+   - Confirm the reset email is being handed off to the project’s branded auth email pipeline and not failing before queueing.
 
-**Evidence**: User `terryleerhea@gmail.com` signed up, `email_confirmed_at` is NULL, and no profile row exists — confirming the exact failure path.
+6. If the custom email hook is not active, repair that integration.
+   - Reconnect the auth recovery email flow to the existing branded email setup.
+   - Ensure password reset requests enqueue and send properly through the project’s email system.
+   - Re-test with one controlled request and confirm the reset email is logged and delivered.
 
-### Fix
+7. Final validation after implementation.
+   - Test these cases:
+     - first reset request for an existing confirmed user
+     - repeated click protection
+     - expired/used reset link behavior
+     - reset password submission on `/reset-password`
+     - mobile + desktop auth flow
+   - Confirm there are no duplicate recovery calls and the user can actually complete the reset successfully.
 
-**File: `src/pages/Auth.tsx`**
-
-Three changes to the `handleAuth` function:
-
-1. **Handle unconfirmed signup correctly**: After `signUp()`, check if `authData.user` exists but `authData.session` is null — this means email confirmation is pending. Show a success message telling the user to check their email, and do NOT attempt profile creation or navigation. The profile will be created after email confirmation.
-
-2. **Create profile on first login instead**: Move profile creation logic so it runs during sign-in when a confirmed user has no profile yet. After successful `signInWithPassword`, check if a profile exists; if not, create one using the user's metadata (`name`, `age` from `raw_user_meta_data`).
-
-3. **Better HIBP error handling**: Detect `AuthWeakPasswordError` specifically and show a user-friendly message: "This password has been found in a data breach. Please choose a different, unique password."
-
-**File: `src/pages/Auth.tsx`** — updated `handleAuth`:
-
-```
-// SIGNUP path changes:
-if (authData.user && !authData.session) {
-  // Email confirmation required — don't create profile yet
-  toast.success("Check your email to confirm your account before signing in.");
-  return;
-}
-
-// SIGNIN path changes:
-// After successful signInWithPassword, check for missing profile
-const { data: existingProfile } = await supabase
-  .from("profiles").select("id").eq("id", signInData.user.id).maybeSingle();
-if (!existingProfile) {
-  // Create profile from user metadata
-  await supabase.from("profiles").insert({...});
-}
-
-// ERROR handling changes:
-if (error.name === "AuthWeakPasswordError") {
-  toast.error("This password has appeared in a data breach. Please choose a different, more unique password.");
-}
-```
-
-### Summary of Changes
-
-| File | Change |
-|------|--------|
-| `src/pages/Auth.tsx` | Fix signup to handle email confirmation pending state; create profile on first login if missing; improve HIBP error message |
-
+Technical notes
+- Current evidence indicates two issues may exist at once:
+  1. real auth-provider throttling caused by repeated `/recover` requests
+  2. possible custom auth email pipeline not logging recovery sends as expected
+- The plan should fix both the usability problem and the backend delivery gap so reset works reliably instead of just showing a friendlier error.
