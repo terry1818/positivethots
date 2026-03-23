@@ -219,6 +219,8 @@ export default {
         "crown-spin": "crown-spin 0.8s ease-out",
         "streak-glow": "streak-glow 2s ease-in-out infinite",
         "banner-slide": "banner-slide 2.5s ease-in-out forwards",
+        "mascot-entrance": "mascot-entrance 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        "float-gentle": "float-gentle 3s ease-in-out infinite",
       },
     },
   },

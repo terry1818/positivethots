@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { getLevelName } from "@/hooks/useLearningStats";
-import { Flame, Zap, Star, Trophy, Share2, Copy, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Flame, Zap, Star, Share2, Copy, Check } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import mascotImg from "@/assets/mascot-celebration.png";
 
 interface CelebrationModalProps {
   type: "level_up" | "streak_milestone" | "badge_earned" | "tier_complete" | null;
@@ -33,23 +33,66 @@ const tierTopics: Record<string, string> = {
 
 const APP_URL = "https://positivethots.lovable.app";
 
+const BRAND_COLORS = [
+  "hsl(270 60% 50%)",
+  "hsl(320 70% 55%)",
+  "hsl(280 80% 65%)",
+  "hsl(45 85% 55%)",
+  "hsl(270 55% 58%)",
+  "hsl(340 65% 55%)",
+  "hsl(280 60% 45%)",
+  "hsl(50 90% 60%)",
+];
+
+function playCelebrationSound() {
+  try {
+    const ctx = new AudioContext();
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = "sine";
+      gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.1 + 0.3);
+      osc.start(ctx.currentTime + i * 0.1);
+      osc.stop(ctx.currentTime + i * 0.1 + 0.3);
+    });
+  } catch {
+    // Audio not supported
+  }
+}
+
 export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, onClose }: CelebrationModalProps) => {
-  const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string; size: number }>>([]);
+  const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string; size: number; shape: string }>>([]);
   const [copied, setCopied] = useState(false);
+  const soundPlayed = useRef(false);
 
   useEffect(() => {
     if (type) {
-      const colors = ["hsl(15 85% 60%)", "hsl(175 60% 40%)", "hsl(25 90% 65%)", "hsl(45 80% 50%)", "hsl(270 50% 55%)", "hsl(340 65% 55%)"];
+      const shapes = ["circle", "rect", "star"];
+      const count = type === "tier_complete" ? 80 : 50;
       setConfetti(
-        Array.from({ length: 50 }, (_, i) => ({
+        Array.from({ length: count }, (_, i) => ({
           id: i,
           x: Math.random() * 100,
-          delay: Math.random() * 0.8,
-          color: colors[i % colors.length],
-          size: 4 + Math.random() * 6,
+          delay: Math.random() * 1.2,
+          color: BRAND_COLORS[i % BRAND_COLORS.length],
+          size: 4 + Math.random() * 8,
+          shape: shapes[i % shapes.length],
         }))
       );
       setCopied(false);
+      soundPlayed.current = false;
+    }
+  }, [type]);
+
+  useEffect(() => {
+    if (type === "tier_complete" && !soundPlayed.current) {
+      soundPlayed.current = true;
+      playCelebrationSound();
     }
   }, [type]);
 
@@ -83,24 +126,46 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
     }
   };
 
+  const renderConfettiPiece = (c: typeof confetti[0]) => {
+    const baseStyle: React.CSSProperties = {
+      left: `${c.x}%`,
+      animationDelay: `${c.delay}s`,
+      backgroundColor: c.color,
+    };
+
+    if (c.shape === "rect") {
+      return (
+        <div
+          key={c.id}
+          className="absolute animate-confetti-fall"
+          style={{ ...baseStyle, width: c.size * 0.6, height: c.size * 1.4, borderRadius: 2 }}
+        />
+      );
+    }
+    if (c.shape === "star") {
+      return (
+        <div
+          key={c.id}
+          className="absolute animate-confetti-fall"
+          style={{ ...baseStyle, width: c.size, height: c.size, borderRadius: "1px", transform: "rotate(45deg)" }}
+        />
+      );
+    }
+    return (
+      <div
+        key={c.id}
+        className="absolute rounded-full animate-confetti-fall"
+        style={{ ...baseStyle, width: c.size, height: c.size }}
+      />
+    );
+  };
+
   return (
     <Dialog open={!!type} onOpenChange={() => onClose()}>
       <DialogContent className="sm:max-w-sm text-center overflow-hidden">
-        {/* Enhanced confetti */}
+        {/* Confetti */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {confetti.map((c) => (
-            <div
-              key={c.id}
-              className="absolute rounded-full animate-confetti-fall"
-              style={{
-                left: `${c.x}%`,
-                animationDelay: `${c.delay}s`,
-                backgroundColor: c.color,
-                width: c.size,
-                height: c.size,
-              }}
-            />
-          ))}
+          {confetti.map(renderConfettiPiece)}
         </div>
 
         <div className="relative z-10 py-4">
@@ -140,16 +205,30 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
           )}
           {type === "tier_complete" && (
             <>
-              <Trophy className="h-16 w-16 mx-auto text-accent mb-4 animate-bounce" />
-              <h2 className="text-2xl font-bold mb-2">Tier Complete! 🏆</h2>
-              <p className="text-muted-foreground">
-                You've mastered <span className="font-bold text-foreground">{tierName}</span>!
-              </p>
-              {tierTopics[tierName || ""] && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  Covering {tierTopics[tierName || ""]}
+              {/* Mascot celebration */}
+              <div className="relative mx-auto w-28 h-28 mb-4">
+                {/* Glow ring behind mascot */}
+                <div className="absolute inset-0 rounded-full animate-glow-ring bg-primary/10" />
+                <img
+                  src={mascotImg}
+                  alt="Celebration!"
+                  width={112}
+                  height={112}
+                  className="relative z-10 w-28 h-28 object-contain animate-mascot-entrance"
+                  style={{ animationFillMode: "both" }}
+                />
+              </div>
+              <div className="animate-float-gentle">
+                <h2 className="text-2xl font-bold mb-2">Tier Complete! 🏆</h2>
+                <p className="text-muted-foreground">
+                  You've mastered <span className="font-bold text-foreground">{tierName}</span>!
                 </p>
-              )}
+                {tierTopics[tierName || ""] && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Covering {tierTopics[tierName || ""]}
+                  </p>
+                )}
+              </div>
 
               {/* Share section */}
               <div className="mt-5 pt-4 border-t border-border">
