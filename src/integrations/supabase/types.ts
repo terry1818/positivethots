@@ -1247,6 +1247,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      submit_quiz: {
+        Args: { _answers: Json; _module_id: string }
+        Returns: Json
+      }
       validate_quiz_answer: {
         Args: { _question_id: string; _selected_answer: number }
         Returns: boolean
