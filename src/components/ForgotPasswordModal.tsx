@@ -82,6 +82,9 @@ export const ForgotPasswordModal = () => {
               Check your inbox (and spam folder) for{" "}
               <span className="font-medium text-foreground">{email.trim()}</span>
             </p>
+            <p className="text-xs text-muted-foreground text-center">
+              Use the most recent reset email only — newer requests invalidate older links.
+            </p>
             <Button variant="ghost" size="sm" onClick={() => setSent(false)}>
               Send another reset email
             </Button>

@@ -13,21 +13,47 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isRecovery, setIsRecovery] = useState(false);
+  const [checkingLink, setCheckingLink] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for recovery event
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
+      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
         setIsRecovery(true);
+        setCheckingLink(false);
       }
     });
 
-    // Also check hash for type=recovery
-    const hash = window.location.hash;
-    if (hash.includes("type=recovery")) {
-      setIsRecovery(true);
-    }
+    const initializeRecovery = async () => {
+      try {
+        const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+        const searchParams = new URLSearchParams(window.location.search);
+
+        const type = hashParams.get("type") ?? searchParams.get("type");
+        const code = searchParams.get("code");
+        const accessToken = hashParams.get("access_token");
+
+        if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) throw error;
+
+          setIsRecovery(true);
+          window.history.replaceState({}, document.title, window.location.pathname);
+          return;
+        }
+
+        if (type === "recovery" || !!accessToken) {
+          setIsRecovery(true);
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      } catch (error: any) {
+        toast.error(error.message || "This reset link is invalid or has already been used. Please request a new one.");
+      } finally {
+        setCheckingLink(false);
+      }
+    };
+
+    void initializeRecovery();
 
     return () => subscription.unsubscribe();
   }, []);
@@ -50,11 +76,24 @@ const ResetPassword = () => {
       toast.success("Password updated successfully!");
       navigate("/");
     } catch (error: any) {
-      toast.error(error.message || "Failed to update password");
+      toast.error(error.message || "Failed to update password. Please request a new reset link and use the latest email.");
     } finally {
       setLoading(false);
     }
   };
+
+  if (checkingLink) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6 text-center">
+            <Logo size="lg" />
+            <p className="mt-4 text-muted-foreground">Checking your reset link...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!isRecovery) {
     return (
