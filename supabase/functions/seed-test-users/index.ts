@@ -139,9 +139,10 @@ Deno.serve(async (req) => {
     const userIds: { user: typeof testUsers[0]; userId: string }[] = [];
 
     for (const user of testUsers) {
+      const randomPassword = generateRandomPassword();
       const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email: user.email,
-        password: user.password,
+        password: randomPassword,
         email_confirm: true,
       });
 
