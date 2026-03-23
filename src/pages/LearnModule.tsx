@@ -181,13 +181,6 @@ const LearnModule = () => {
       setScore(scorePercent);
       setSubmitted(true);
 
-      // Update correctAnswers from server result
-      setCorrectAnswers(prev => {
-        const newSet = new Set(prev);
-        // Keep existing correct answers from per-question feedback
-        return newSet;
-      });
-
       if (quizResult.passed) {
         const quizXP = 50;
         const perfectBonus = scorePercent === 100 ? 25 : 0;
