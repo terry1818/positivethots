@@ -518,8 +518,8 @@ const LearnModule = () => {
                   <div className="flex gap-3 mt-6">
                     <Button variant="outline" onClick={() => {
                       setShowQuiz(false); setSubmitted(false); setAnswers({});
-                      setCurrentQuestionIndex(0); setComboCount(0); setMaxCombo(0);
-                      setAnsweredQuestions(new Set()); setCorrectAnswers(new Set());
+                      setCurrentQuestionIndex(0);
+                      setAnsweredQuestions(new Set());
                     }} className="flex-1">
                       Review Material
                     </Button>
