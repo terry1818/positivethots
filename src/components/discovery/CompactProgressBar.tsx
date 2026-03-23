@@ -46,6 +46,17 @@ export const CompactProgressBar = ({ tiers, badgeCount, suggestionCount }: Compa
         </div>
       </div>
 
+      {/* Next unlock */}
+      {nextTier && nextFeature ? (
+        <p className="text-[11px] text-muted-foreground mb-1.5 truncate">
+          <span>{nextFeature.icon}</span>{" "}
+          Next: <span className="font-medium text-foreground">{nextFeature.label}</span>
+          <span className="text-muted-foreground"> — {nextTier.earnedModules}/{nextTier.totalModules} badges</span>
+        </p>
+      ) : tiers.length > 0 ? (
+        <p className="text-[11px] text-muted-foreground mb-1.5">✓ All features unlocked</p>
+      ) : null}
+
       {/* Segmented progress bar */}
       <div className="flex h-1.5 gap-0.5 rounded-full overflow-hidden">
         {tiers.map((tier) => {
