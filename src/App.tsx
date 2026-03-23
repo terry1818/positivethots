@@ -67,6 +67,7 @@ const AppContent = () => {
         <Route path="/shop" element={<Shop />} />
         <Route path="/product/:handle" element={<ProductDetail />} />
         <Route path="/resources" element={<Resources />} />
+        <Route path="/events" element={<Events />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="*" element={<NotFound />} />
