@@ -432,6 +432,92 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* Send a Gift */}
+        <Card className="animate-fade-in" style={{ animationDelay: "97ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Send className="h-5 w-5" /> Send a Gift
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Gift a free trial to a friend. We'll email them a redemption link.
+            </p>
+            <div className="flex gap-2 flex-wrap">
+              <Select value={giftTier} onValueChange={setGiftTier}>
+                <SelectTrigger className="w-[110px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="plus">Plus</SelectItem>
+                  <SelectItem value="premium">Premium</SelectItem>
+                  <SelectItem value="vip">VIP</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={giftDays} onValueChange={setGiftDays}>
+                <SelectTrigger className="w-[100px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">7 days</SelectItem>
+                  <SelectItem value="14">14 days</SelectItem>
+                  <SelectItem value="30">30 days</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Input
+              type="email"
+              placeholder="Recipient's email"
+              value={giftEmail}
+              onChange={(e) => setGiftEmail(e.target.value)}
+              maxLength={100}
+            />
+            <Button
+              className="w-full"
+              size="sm"
+              disabled={sendingGift || !giftEmail.trim()}
+              onClick={async () => {
+                setSendingGift(true);
+                try {
+                  const code = generateCode();
+                  const { error } = await supabase.from("promo_codes").insert({
+                    code,
+                    type: "gift",
+                    tier: giftTier,
+                    trial_days: parseInt(giftDays),
+                    created_by: user!.id,
+                  });
+                  if (error) throw error;
+
+                  await supabase.functions.invoke("send-transactional-email", {
+                    body: {
+                      templateName: "gift-code",
+                      recipientEmail: giftEmail.trim(),
+                      idempotencyKey: `gift-${code}`,
+                      templateData: {
+                        code,
+                        tier: giftTier.charAt(0).toUpperCase() + giftTier.slice(1),
+                        days: giftDays,
+                        senderName: user?.user_metadata?.name || "A friend",
+                      },
+                    },
+                  });
+
+                  toast.success(`Gift sent to ${giftEmail}!`);
+                  setGiftEmail("");
+                  await loadMyCodes();
+                } catch (err: any) {
+                  toast.error(err.message || "Failed to send gift");
+                } finally {
+                  setSendingGift(false);
+                }
+              }}
+            >
+              {sendingGift ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Send className="h-4 w-4 mr-1" /> Send Gift</>}
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card className="animate-fade-in" style={{ animationDelay: "100ms" }}>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
