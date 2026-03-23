@@ -1258,6 +1258,7 @@ export type Database = {
       }
     }
     Functions: {
+      activate_vip_boost: { Args: never; Returns: undefined }
       award_badge: {
         Args: { _module_id: string; _quiz_score: number }
         Returns: undefined

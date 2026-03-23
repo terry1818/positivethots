@@ -65,7 +65,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("[create-checkout] error:", error);
     const msg = error instanceof Error ? error.message : String(error);
-    const isUserError = msg === "User not authenticated or email not available" || msg === "price_id is required";
+    const isUserError = msg === "User not authenticated or email not available" || msg === "price_id is required" || msg === "Invalid price_id";
     return new Response(JSON.stringify({ error: isUserError ? msg : "An unexpected error occurred. Please try again." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: isUserError ? 400 : 500,

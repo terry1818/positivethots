@@ -148,41 +148,20 @@ const LearnModule = () => {
     }
   }, [markComplete, awardXP, stats]);
 
-  // Quiz: answer a question with server-side validation
-  const handleAnswerQuestion = async (questionId: string, answerIndex: number) => {
+  // Quiz: store answer locally (no server-side validation per question)
+  const handleAnswerQuestion = (questionId: string, answerIndex: number) => {
     const question = questions.find(q => q.id === questionId);
     if (!question || answeredQuestions.has(questionId)) return;
 
     setAnswers(prev => ({ ...prev, [questionId]: answerIndex }));
     setAnsweredQuestions(prev => new Set(prev).add(questionId));
 
-    // Validate answer server-side
-    const { data: isCorrect } = await supabase.rpc("validate_quiz_answer", {
-      _question_id: questionId,
-      _selected_answer: answerIndex,
-    });
-
-    if (isCorrect) {
-      setCorrectAnswers(prev => new Set(prev).add(questionId));
-    }
-
-    setQuestionFeedback(isCorrect ? "correct" : "wrong");
-
-    if (isCorrect) {
-      const newCombo = comboCount + 1;
-      setComboCount(newCombo);
-      setMaxCombo(Math.max(maxCombo, newCombo));
-    } else {
-      setComboCount(0);
-    }
-
-    // Auto-advance after feedback
+    // Auto-advance after brief delay
     setTimeout(() => {
-      setQuestionFeedback(null);
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       }
-    }, 800);
+    }, 400);
   };
 
   const handleSubmitQuiz = async () => {
