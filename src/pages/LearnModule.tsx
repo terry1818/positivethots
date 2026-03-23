@@ -500,12 +500,6 @@ const LearnModule = () => {
                             <span className="font-bold text-accent">+25 XP</span>
                           </div>
                         )}
-                        {maxCombo >= 3 && (
-                          <div className="flex justify-between text-sm">
-                            <span>Best combo: {maxCombo} in a row 🔥</span>
-                            <span className="text-muted-foreground">Nice!</span>
-                          </div>
-                        )}
                       </div>
 
                       <p className="text-muted-foreground mb-6">You've earned the {module.title} badge!</p>
