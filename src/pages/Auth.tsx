@@ -149,30 +149,7 @@ const Auth = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                {!isSignUp && (
-                  <button
-                    type="button"
-                    className="text-xs text-primary hover:underline"
-                    onClick={async () => {
-                      if (!email.trim()) { toast.error("Enter your email first"); return; }
-                      try {
-                        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-                          redirectTo: `${window.location.origin}/reset-password`,
-                        });
-                        if (error) throw error;
-                        toast.success("Password reset email sent! Check your inbox.");
-                      } catch (err: any) {
-                        if (err.message?.includes("rate limit") || err.code === "over_email_send_rate_limit") {
-                          toast.error("Too many reset attempts. Please wait a few minutes before trying again.");
-                        } else {
-                          toast.error(err.message || "Failed to send reset email");
-                        }
-                      }
-                    }}
-                  >
-                    Forgot password?
-                  </button>
-                )}
+                {!isSignUp && <ForgotPasswordModal />}
               </div>
               <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} maxLength={100} className="focus-glow" />
             </div>
