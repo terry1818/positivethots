@@ -155,6 +155,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
       </div>
     </div>
   </Card>
-));
+  );
+});
 
 DiscoveryCard.displayName = "DiscoveryCard";
