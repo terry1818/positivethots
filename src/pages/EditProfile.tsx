@@ -11,6 +11,7 @@ import { ArrowLeft, Save } from "lucide-react";
 import { toast } from "sonner";
 import { PhotoUploadGrid } from "@/components/PhotoUploadGrid";
 import { VerificationCard } from "@/components/VerificationCard";
+import { BdsmTestSection } from "@/components/BdsmTestSection";
 import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/PageSkeleton";
 
