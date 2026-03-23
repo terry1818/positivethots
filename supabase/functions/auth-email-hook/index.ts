@@ -36,7 +36,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "swipe-right-recreate"
+const SITE_NAME = "Positive Thots"
 const SENDER_DOMAIN = "notify.positivethots.app"
 const ROOT_DOMAIN = "positivethots.app"
 const FROM_DOMAIN = "positivethots.app" // Domain shown in From address (may be root or sender subdomain)
