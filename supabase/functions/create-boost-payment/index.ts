@@ -43,7 +43,7 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: "price_1TDkZwAEIVQtquY2bChArXyZ", quantity: 1 }],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/profile?boost=activated`,
+      success_url: `${req.headers.get("origin")}/profile?boost=success`,
       cancel_url: `${req.headers.get("origin")}/profile`,
       metadata: { user_id: user.id, type: "profile_boost" },
     });

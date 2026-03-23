@@ -40,8 +40,9 @@ const Profile = () => {
   const { hasFeature, tier } = useSubscription();
 
   useEffect(() => {
-    if (searchParams.get("boost") === "activated") {
-      handleActivateBoost();
+    if (searchParams.get("boost") === "success") {
+      toast.success("Profile Boosted! 🚀", { description: "You'll appear at the top of discovery for 24 hours." });
+      checkActiveBoost();
     }
   }, [searchParams]);
 
@@ -80,33 +81,28 @@ const Profile = () => {
     setHasActiveBoost((data?.length || 0) > 0);
   };
 
-  const handleActivateBoost = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      await supabase.from("profile_boosts").insert({ user_id: session.user.id });
-      setHasActiveBoost(true);
-      toast.success("Profile Boosted! 🚀", { description: "You'll appear at the top of discovery for 24 hours." });
-    } catch (err) {
-      console.error("Boost activation error:", err);
-    }
-  };
-
   const handleBoostProfile = async () => {
-    // VIP gets one free boost/month — check if they already used it this month
+    // VIP gets one free boost/month — validated server-side
     if (hasFeature("profile_boost")) {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      const startOfMonth = new Date();
-      startOfMonth.setDate(1);
-      startOfMonth.setHours(0, 0, 0, 0);
-      const { data: monthBoosts } = await supabase
-        .from("profile_boosts")
-        .select("id")
-        .eq("user_id", session.user.id)
-        .gte("created_at", startOfMonth.toISOString());
-      if (!monthBoosts || monthBoosts.length === 0) {
-        await handleActivateBoost();
+      setBoostLoading(true);
+      try {
+        const { error } = await supabase.rpc("activate_vip_boost");
+        if (error) {
+          if (error.message?.includes("already used")) {
+            // Fall through to Stripe payment
+          } else {
+            throw error;
+          }
+        } else {
+          setHasActiveBoost(true);
+          toast.success("Profile Boosted! 🚀", { description: "You'll appear at the top of discovery for 24 hours." });
+          setBoostLoading(false);
+          return;
+        }
+      } catch (err: any) {
+        console.error("VIP boost error:", err);
+        toast.error("Failed to activate free boost");
+        setBoostLoading(false);
         return;
       }
     }

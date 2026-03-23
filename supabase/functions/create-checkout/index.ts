@@ -31,6 +31,14 @@ serve(async (req) => {
     const { price_id } = await req.json();
     if (!price_id) throw new Error("price_id is required");
 
+    // Server-side allowlist of valid subscription price IDs
+    const ALLOWED_PRICES = new Set([
+      "price_1TDkQ9AEIVQtquY2C4kfHe4d", // Plus
+      "price_1TDjjHQL8g2unk5Zfe9VvytG", // Premium
+      "price_1TDkQpAEIVQtquY2s6feqEgV", // VIP
+    ]);
+    if (!ALLOWED_PRICES.has(price_id)) throw new Error("Invalid price_id");
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
@@ -57,7 +65,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("[create-checkout] error:", error);
     const msg = error instanceof Error ? error.message : String(error);
-    const isUserError = msg === "User not authenticated or email not available" || msg === "price_id is required";
+    const isUserError = msg === "User not authenticated or email not available" || msg === "price_id is required" || msg === "Invalid price_id";
     return new Response(JSON.stringify({ error: isUserError ? msg : "An unexpected error occurred. Please try again." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: isUserError ? 400 : 500,

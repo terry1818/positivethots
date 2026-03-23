@@ -13,7 +13,7 @@ import { LearningPath } from "@/components/education/LearningPath";
 import { XPPopup } from "@/components/education/XPPopup";
 import { CelebrationModal } from "@/components/education/CelebrationModal";
 import { ReadingProgress } from "@/components/education/ReadingProgress";
-import { QuizCombo } from "@/components/education/QuizCombo";
+
 import { useAntiCheat } from "@/hooks/useAntiCheat";
 import { useModuleProgress } from "@/hooks/useModuleProgress";
 import { useLearningStats } from "@/hooks/useLearningStats";
@@ -55,11 +55,7 @@ const LearnModule = () => {
 
   // Quiz enhancements
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [comboCount, setComboCount] = useState(0);
-  const [maxCombo, setMaxCombo] = useState(0);
-  const [questionFeedback, setQuestionFeedback] = useState<"correct" | "wrong" | null>(null);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(new Set());
-  const [correctAnswers, setCorrectAnswers] = useState<Set<string>>(new Set());
 
   // XP & celebrations
   const { stats, awardXP } = useLearningStats();
@@ -148,41 +144,20 @@ const LearnModule = () => {
     }
   }, [markComplete, awardXP, stats]);
 
-  // Quiz: answer a question with server-side validation
-  const handleAnswerQuestion = async (questionId: string, answerIndex: number) => {
+  // Quiz: store answer locally (no server-side validation per question)
+  const handleAnswerQuestion = (questionId: string, answerIndex: number) => {
     const question = questions.find(q => q.id === questionId);
     if (!question || answeredQuestions.has(questionId)) return;
 
     setAnswers(prev => ({ ...prev, [questionId]: answerIndex }));
     setAnsweredQuestions(prev => new Set(prev).add(questionId));
 
-    // Validate answer server-side
-    const { data: isCorrect } = await supabase.rpc("validate_quiz_answer", {
-      _question_id: questionId,
-      _selected_answer: answerIndex,
-    });
-
-    if (isCorrect) {
-      setCorrectAnswers(prev => new Set(prev).add(questionId));
-    }
-
-    setQuestionFeedback(isCorrect ? "correct" : "wrong");
-
-    if (isCorrect) {
-      const newCombo = comboCount + 1;
-      setComboCount(newCombo);
-      setMaxCombo(Math.max(maxCombo, newCombo));
-    } else {
-      setComboCount(0);
-    }
-
-    // Auto-advance after feedback
+    // Auto-advance after brief delay
     setTimeout(() => {
-      setQuestionFeedback(null);
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       }
-    }, 800);
+    }, 400);
   };
 
   const handleSubmitQuiz = async () => {
@@ -205,13 +180,6 @@ const LearnModule = () => {
       const scorePercent = quizResult.score;
       setScore(scorePercent);
       setSubmitted(true);
-
-      // Update correctAnswers from server result
-      setCorrectAnswers(prev => {
-        const newSet = new Set(prev);
-        // Keep existing correct answers from per-question feedback
-        return newSet;
-      });
 
       if (quizResult.passed) {
         const quizXP = 50;
@@ -412,7 +380,6 @@ const LearnModule = () => {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <h2 className="text-xl font-bold">Quiz: {module.title}</h2>
-                    <QuizCombo combo={comboCount} maxCombo={maxCombo} />
                   </div>
                   {questions.length > 0 && (
                     <div className="space-y-1">
@@ -443,12 +410,7 @@ const LearnModule = () => {
                 ) : currentQuestion ? (
                   <>
                     {/* Single question view */}
-                    <Card className={cn(
-                      "transition-all",
-                      questionFeedback === "correct" ? "border-success bg-success/5" :
-                      questionFeedback === "wrong" ? "border-destructive bg-destructive/5 animate-shake-wrong" :
-                      ""
-                    )}>
+                    <Card className="transition-all">
                       <CardHeader className="pb-3">
                         <CardTitle className="text-base">
                           {currentQuestionIndex + 1}. {currentQuestion.question}
@@ -461,19 +423,14 @@ const LearnModule = () => {
                           disabled={answeredQuestions.has(currentQuestion.id)}
                         >
                           {currentQuestion.options.map((option: string, oIndex: number) => {
-                            const isAnswered = answeredQuestions.has(currentQuestion.id);
                             const isSelected = answers[currentQuestion.id] === oIndex;
-                            const isCorrectOption = isAnswered && correctAnswers.has(currentQuestion.id) && isSelected;
-                            const isWrongOption = isAnswered && isSelected && !correctAnswers.has(currentQuestion.id);
                             return (
                               <div key={oIndex} className={cn(
                                 "flex items-center space-x-2 py-2 px-2 rounded-md transition-colors",
-                                isCorrectOption && "bg-success/10",
-                                isWrongOption && "bg-destructive/10"
+                                isSelected && "bg-primary/10"
                               )}>
                                 <RadioGroupItem value={oIndex.toString()} id={`${currentQuestion.id}-${oIndex}`} />
                                 <Label htmlFor={`${currentQuestion.id}-${oIndex}`} className="flex-1 cursor-pointer">{option}</Label>
-                                {isCorrectOption && <CheckCircle className="h-4 w-4 text-success" />}
                               </div>
                             );
                           })}
@@ -485,7 +442,6 @@ const LearnModule = () => {
                     <div className="flex justify-center gap-1.5 flex-wrap">
                       {questions.map((q, i) => {
                         const isAnswered = answeredQuestions.has(q.id);
-                        const isCorrect = isAnswered && correctAnswers.has(q.id);
                         return (
                           <button
                             key={q.id}
@@ -493,8 +449,7 @@ const LearnModule = () => {
                             className={cn(
                               "w-3 h-3 rounded-full transition-all",
                               i === currentQuestionIndex ? "bg-primary scale-125" :
-                              isCorrect ? "bg-success shadow-sm shadow-success/50" :
-                              isAnswered ? "bg-destructive" :
+                              isAnswered ? "bg-muted-foreground" :
                               "bg-muted"
                             )}
                           />
@@ -545,12 +500,6 @@ const LearnModule = () => {
                             <span className="font-bold text-accent">+25 XP</span>
                           </div>
                         )}
-                        {maxCombo >= 3 && (
-                          <div className="flex justify-between text-sm">
-                            <span>Best combo: {maxCombo} in a row 🔥</span>
-                            <span className="text-muted-foreground">Nice!</span>
-                          </div>
-                        )}
                       </div>
 
                       <p className="text-muted-foreground mb-6">You've earned the {module.title} badge!</p>
@@ -569,8 +518,8 @@ const LearnModule = () => {
                   <div className="flex gap-3 mt-6">
                     <Button variant="outline" onClick={() => {
                       setShowQuiz(false); setSubmitted(false); setAnswers({});
-                      setCurrentQuestionIndex(0); setComboCount(0); setMaxCombo(0);
-                      setAnsweredQuestions(new Set()); setCorrectAnswers(new Set());
+                      setCurrentQuestionIndex(0);
+                      setAnsweredQuestions(new Set());
                     }} className="flex-1">
                       Review Material
                     </Button>
