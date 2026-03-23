@@ -303,6 +303,96 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* Admin Tools */}
+        {isAdmin && (
+          <Card className="animate-fade-in border-primary/30" style={{ animationDelay: "40ms" }}>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <UserCog className="h-5 w-5 text-primary" /> Admin Tools
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3 p-3 rounded-lg bg-muted/50">
+                <p className="text-sm font-medium">Grant a Role</p>
+                <Input
+                  type="email"
+                  placeholder="User's email address"
+                  value={adminEmail}
+                  onChange={(e) => setAdminEmail(e.target.value)}
+                  maxLength={100}
+                />
+                <div className="flex gap-2">
+                  <Select value={adminRole} onValueChange={setAdminRole}>
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {isOwner && <SelectItem value="admin">Admin</SelectItem>}
+                      <SelectItem value="moderator">Moderator</SelectItem>
+                      <SelectItem value="user">User</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    onClick={handleGrantRole}
+                    disabled={grantingRole || !adminEmail.trim()}
+                    className="flex-1"
+                    size="sm"
+                  >
+                    {grantingRole ? <Loader2 className="h-4 w-4 animate-spin" /> : "Grant Role"}
+                  </Button>
+                </div>
+                {!isOwner && (
+                  <p className="text-xs text-muted-foreground">
+                    Only the app owner can grant or revoke admin roles.
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Current Role Holders</p>
+                {loadingRoles ? (
+                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                    <Loader2 className="h-3 w-3 animate-spin" /> Loading…
+                  </div>
+                ) : roleHolders.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No roles assigned.</p>
+                ) : (
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {roleHolders.map((rh) => (
+                      <div key={rh.id} className="flex items-center justify-between p-2 rounded-md border text-sm">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="font-mono text-xs truncate max-w-[140px]">{rh.user_id}</span>
+                          <Badge variant={rh.role === "admin" ? "default" : "secondary"} className="text-xs">
+                            {rh.role}
+                          </Badge>
+                          {rh.user_id === OWNER_ID && (
+                            <Badge variant="outline" className="text-xs">Owner</Badge>
+                          )}
+                        </div>
+                        {rh.user_id !== user?.id && (isOwner || rh.role !== "admin") && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-destructive"
+                            onClick={() => handleRevokeRole(rh.user_id, rh.role)}
+                            disabled={revokingId === rh.user_id + rh.role}
+                          >
+                            {revokingId === rh.user_id + rh.role ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <X className="h-3.5 w-3.5" />
+                            )}
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Subscription */}
         <Card className="animate-fade-in" style={{ animationDelay: "80ms" }}>
           <CardHeader>
