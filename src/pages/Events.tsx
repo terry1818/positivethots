@@ -154,7 +154,7 @@ const Events = () => {
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-lg">{event.title}</CardTitle>
                       {isRegistered && (
-                        <Badge className="bg-green-600 text-white">Registered</Badge>
+                        <Badge className="bg-primary text-primary-foreground">Registered</Badge>
                       )}
                     </div>
                     <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mt-1">
