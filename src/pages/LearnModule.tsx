@@ -194,7 +194,8 @@ const LearnModule = () => {
       });
       if (error) throw error;
 
-      const scorePercent = result.score;
+      const quizResult = result as { score: number; correct: number; total: number; passed: boolean };
+      const scorePercent = quizResult.score;
       setScore(scorePercent);
       setSubmitted(true);
 
