@@ -107,8 +107,15 @@ const LearnModule = () => {
       setModule(moduleData);
       setModuleId(moduleData.id);
 
+      // Check if user is admin to fetch full question data (including correct_answer)
+      const { data: roleData } = await supabase
+        .from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
+      const isAdminUser = !!roleData;
+
       const [questionsResult, badgeResult] = await Promise.all([
-        supabase.from("quiz_questions_public").select("*").eq("module_id", moduleData.id).order("order_index"),
+        isAdminUser
+          ? supabase.from("quiz_questions").select("*").eq("module_id", moduleData.id).order("order_index")
+          : supabase.from("quiz_questions_public").select("*").eq("module_id", moduleData.id).order("order_index"),
         supabase.from("user_badges").select("id").eq("user_id", session.user.id).eq("module_id", moduleData.id).maybeSingle()
       ]);
       if (questionsResult.error) throw questionsResult.error;

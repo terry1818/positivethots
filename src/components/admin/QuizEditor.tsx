@@ -180,7 +180,7 @@ interface Question {
                  <div className="space-y-2">
                    <Label>Options (select the correct answer)</Label>
                    <RadioGroup
-                     value={question.correct_answer.toString()}
+                     value={(question.correct_answer ?? 0).toString()}
                      onValueChange={(value) => handleQuestionChange(qIndex, "correct_answer", parseInt(value))}
                    >
                      {question.options.map((option, oIndex) => (
