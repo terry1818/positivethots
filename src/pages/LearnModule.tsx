@@ -336,7 +336,7 @@ const LearnModule = () => {
                     onComplete={() => handleSectionComplete(sections[currentSectionIndex].id)}
                     onNext={() => {
                       if (currentSectionIndex < sections.length - 1) setCurrentSectionIndex(currentSectionIndex + 1);
-                      else if (canTakeQuiz) setShowQuiz(true);
+                      else setShowQuiz(true);
                     }}
                     onPrev={() => { if (currentSectionIndex > 0) setCurrentSectionIndex(currentSectionIndex - 1); }}
                     isFirst={currentSectionIndex === 0}
