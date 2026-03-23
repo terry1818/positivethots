@@ -87,8 +87,10 @@ const Auth = () => {
     } catch (error: any) {
       console.error("Auth error:", error);
       if (error instanceof z.ZodError) toast.error(error.errors[0].message);
+      else if (error.name === "AuthWeakPasswordError" || error.message?.includes("weak") || error.message?.includes("leaked")) toast.error("This password has appeared in a data breach. Please choose a different, more unique password.");
       else if (error.message?.includes("User already registered")) toast.error("This email is already registered. Please sign in instead.");
       else if (error.message?.includes("Invalid login credentials")) toast.error("Invalid email or password");
+      else if (error.message?.includes("Email not confirmed")) toast.error("Please confirm your email before signing in. Check your inbox for a confirmation link.");
       else toast.error(error.message || "An error occurred during authentication");
     } finally {
       setLoading(false);
