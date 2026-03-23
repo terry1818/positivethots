@@ -89,7 +89,8 @@ const EditProfile = () => {
         name: name.trim(), bio: bio.trim(), location: location.trim(), pronouns: pronouns.trim(),
         boundaries: boundaries.trim(), looking_for: lookingFor, relationship_style: relationshipStyle,
         relationship_status: relationshipStatus, experience_level: experienceLevel,
-      }).eq("id", profile.id);
+        bdsm_test_url: bdsmTestUrl.trim() || null, bdsm_test_screenshot: bdsmTestScreenshot || null,
+      } as any).eq("id", profile.id);
       if (error) throw error;
       toast.success("Profile updated!");
       navigate("/profile");
