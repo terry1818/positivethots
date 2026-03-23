@@ -380,7 +380,6 @@ const LearnModule = () => {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <h2 className="text-xl font-bold">Quiz: {module.title}</h2>
-                    <QuizCombo combo={comboCount} maxCombo={maxCombo} />
                   </div>
                   {questions.length > 0 && (
                     <div className="space-y-1">
