@@ -308,6 +308,30 @@ const Profile = () => {
           </Card>
         )}
 
+        {/* Premium Upsell — free tier only */}
+        {tier === "free" && (
+          <Card className="animate-fade-in bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <div className="rounded-full bg-primary/10 p-2">
+                  <Crown className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-sm">Go Premium</h3>
+                  <ul className="mt-1.5 space-y-1 text-xs text-muted-foreground">
+                    <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />See who likes you</li>
+                    <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Unlimited Super Likes</li>
+                    <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Priority Visibility</li>
+                  </ul>
+                  <Button size="sm" className="mt-3" onClick={() => navigate("/premium")}>
+                    View Plans
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Boost */}
         <Card className="animate-fade-in">
           <CardContent className="p-4">
