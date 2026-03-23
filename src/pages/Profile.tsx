@@ -40,8 +40,9 @@ const Profile = () => {
   const { hasFeature, tier } = useSubscription();
 
   useEffect(() => {
-    if (searchParams.get("boost") === "activated") {
-      handleActivateBoost();
+    if (searchParams.get("boost") === "success") {
+      toast.success("Profile Boosted! 🚀", { description: "You'll appear at the top of discovery for 24 hours." });
+      checkActiveBoost();
     }
   }, [searchParams]);
 
