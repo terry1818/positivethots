@@ -248,6 +248,29 @@ const Profile = () => {
                 <p className="text-sm text-muted-foreground">{profile.boundaries}</p>
               </div>
             )}
+            {(profile?.bdsm_test_url || profile?.bdsm_test_screenshot) && (
+              <div className="pt-2 border-t">
+                <p className="text-sm font-medium mb-2 flex items-center gap-1">🔗 Kink Profile</p>
+                {profile.bdsm_test_url && (
+                  <a
+                    href={profile.bdsm_test_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary underline inline-flex items-center gap-1 mb-2"
+                  >
+                    View BDSMtest Results <Heart className="h-3 w-3" />
+                  </a>
+                )}
+                {profile.bdsm_test_screenshot && (
+                  <img
+                    src={profile.bdsm_test_screenshot}
+                    alt="BDSM test results"
+                    className="w-full rounded-lg border border-border max-h-48 object-contain bg-muted"
+                    loading="lazy"
+                  />
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
