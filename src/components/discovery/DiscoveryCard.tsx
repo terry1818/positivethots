@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Clock, Users, Shield, BookOpen, Star, Rocket } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface DiscoveryProfile {
   id: string;
@@ -32,7 +34,24 @@ interface DiscoveryCardProps {
   superLikeBalance?: number;
 }
 
-export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperLike, canSuperLike, superLikeBalance }: DiscoveryCardProps) => (
+export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperLike, canSuperLike, superLikeBalance }: DiscoveryCardProps) => {
+  const navigate = useNavigate();
+
+  const handleSuperLikeClick = () => {
+    if (superLikeBalance !== undefined && superLikeBalance <= 0) {
+      toast("Out of Super Likes!", {
+        description: "Get more to stand out from the crowd.",
+        action: {
+          label: "Get More",
+          onClick: () => navigate("/premium"),
+        },
+      });
+      return;
+    }
+    onSuperLike?.(profile.id);
+  };
+
+  return (
   <Card
     className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-stagger-fade"
     style={{ animationDelay: `${index * 80}ms` }}
@@ -121,8 +140,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
             variant="outline"
             size="icon"
             className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
-            onClick={() => onSuperLike(profile.id)}
-            disabled={superLikeBalance !== undefined && superLikeBalance <= 0}
+            onClick={handleSuperLikeClick}
             title={superLikeBalance !== undefined ? `${superLikeBalance} Super Likes left` : "Super Like"}
           >
             <Star className="h-4 w-4 fill-current" />
@@ -137,6 +155,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
       </div>
     </div>
   </Card>
-));
+  );
+});
 
 DiscoveryCard.displayName = "DiscoveryCard";

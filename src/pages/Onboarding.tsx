@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
-import { ChevronRight, ChevronLeft, SkipForward } from "lucide-react";
+import { ChevronRight, ChevronLeft, SkipForward, Crown, Zap, Star, Check } from "lucide-react";
 import { toast } from "sonner";
 import { StepTransition } from "@/components/onboarding/StepTransition";
 import { ChipSelector } from "@/components/onboarding/ChipSelector";
@@ -95,13 +95,13 @@ const PHASES = [
   { label: "Sexuality", steps: [4, 5], emoji: "🔥" },
   { label: "Relationship", steps: [6, 7], emoji: "🔗" },
   { label: "About You", steps: [8, 9, 10], emoji: "✨" },
-  { label: "Your Story", steps: [11, 12], emoji: "📖" },
+  { label: "Your Story", steps: [11, 12, 13], emoji: "📖" },
 ];
 
 const STEP_EMOJIS: Record<number, string> = {
   1: "👋", 2: "🌈", 3: "💬", 4: "🔥", 5: "⭐",
   6: "🔗", 7: "💜", 8: "📏", 9: "🌿", 10: "🎨",
-  11: "✍️", 12: "📸",
+  11: "✍️", 12: "👑", 13: "📸",
 };
 
 const PHASE_GRADIENTS: Record<number, string> = {
@@ -119,7 +119,7 @@ const PHASE_INTERSTITIALS = [
   { emoji: "📖", message: "The fun part!", nextPhase: "Share your story..." },
 ];
 
-const TOTAL_STEPS = 12;
+const TOTAL_STEPS = 13;
 
 // ── Component ──
 
@@ -360,8 +360,8 @@ const Onboarding = () => {
   const phaseIndex = PHASES.findIndex(p => p.steps.includes(step));
   const currentPhase = PHASES[phaseIndex];
   const progress = Math.round((step / TOTAL_STEPS) * 100);
-  const isOptionalStep = [4, 5, 8, 9].includes(step);
-  const showMiniPreview = step >= 8 && step < 12;
+  const isOptionalStep = [4, 5, 8, 9, 12].includes(step);
+  const showMiniPreview = step >= 8 && step < 13;
 
   // Mini-preview fields
   const miniFields = [
@@ -733,8 +733,46 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 12: Photos & Preview */}
+              {/* Step 12: Premium Upsell (Optional) */}
               {step === 12 && (
+                <div className="space-y-5">
+                  <StepHeader emoji="👑" title="Unlock More" subtitle="Get the most out of Positive Thots" />
+                  <div className="space-y-3 animate-stagger-1">
+                    {[
+                      { icon: Crown, name: "Plus", price: "$4.99/mo", features: ["See who likes you", "5 Super Likes/day"] },
+                      { icon: Star, name: "Premium", price: "$9.99/mo", features: ["Everything in Plus", "Priority visibility", "Advanced filters"], highlight: true },
+                      { icon: Zap, name: "VIP", price: "$19.99/mo", features: ["Everything in Premium", "Unlimited Super Likes", "Mentor badge"] },
+                    ].map((tier) => (
+                      <div
+                        key={tier.name}
+                        className={`rounded-xl border p-4 transition-all ${tier.highlight ? "border-primary bg-primary/5 shadow-md" : "border-border"}`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <tier.icon className="h-5 w-5 text-primary" />
+                            <span className="font-semibold">{tier.name}</span>
+                          </div>
+                          <span className="text-sm font-bold text-primary">{tier.price}</span>
+                        </div>
+                        <ul className="space-y-1">
+                          {tier.features.map((f) => (
+                            <li key={f} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                              <Check className="h-3 w-3 text-primary flex-shrink-0" />
+                              {f}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-center text-muted-foreground animate-stagger-2">
+                    You can always upgrade later from Settings. Skip to continue for free.
+                  </p>
+                </div>
+              )}
+
+              {/* Step 13: Photos & Preview */}
+              {step === 13 && (
                 <div className="space-y-6">
                   <StepHeader emoji="📸" title="Photos & Preview" subtitle="Add photos and see how your profile looks" />
 

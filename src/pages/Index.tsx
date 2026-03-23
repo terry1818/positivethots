@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/analytics";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, BookOpen, Shield, Eye, EyeOff, Star } from "lucide-react";
+import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { MatchModal } from "@/components/MatchModal";
@@ -300,6 +300,23 @@ const Index = () => {
               >
                 {incognitoMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 <span className="ml-2 hidden sm:inline">{incognitoMode ? "Incognito" : "Visible"}</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
+                onClick={async () => {
+                  try {
+                    const { data, error } = await supabase.functions.invoke("create-boost-payment");
+                    if (error) throw error;
+                    if (data?.url) window.open(data.url, "_blank");
+                  } catch (err) {
+                    toast.error("Failed to start boost checkout");
+                  }
+                }}
+              >
+                <Zap className="h-4 w-4" />
+                <span className="ml-2 hidden sm:inline">Boost</span>
               </Button>
               <Button variant="outline" size="sm" onClick={() => navigate("/profile")}>
                 <Shield className="h-4 w-4" />

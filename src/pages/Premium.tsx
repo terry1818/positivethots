@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ShimmerButton } from "@/components/ShimmerButton";
 import { StaggerChildren } from "@/components/StaggerChildren";
@@ -162,6 +163,33 @@ const Premium = () => {
                 )}
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Free Tier */}
+        <Card className="mb-6 animate-fade-in border-muted">
+          <CardHeader className="text-center pb-2">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mx-auto mb-2">
+              <Heart className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <CardTitle className="text-lg">Free</CardTitle>
+            <div className="mt-2">
+              <span className="text-3xl font-bold">$0</span>
+              <span className="text-muted-foreground text-sm">/forever</span>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <ul className="space-y-2 mb-4">
+              {["Browse profiles", "1 daily Super Like", "Education access", "Real-time chat", "Basic matching"].map((feature) => (
+                <li key={feature} className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+            {!currentTier || currentTier === "free" ? (
+              <Badge className="w-full justify-center py-1.5" variant="secondary">Current Plan</Badge>
+            ) : null}
           </CardContent>
         </Card>
 
