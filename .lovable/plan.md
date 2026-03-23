@@ -1,52 +1,56 @@
 
 
-## Remaining Launch Readiness Items
+## Plan: Update External Website HTML
 
-After reviewing the codebase and security scan, here's what I can still automate for you.
+Since this is an external HTML file hosted on Namecheap, I'll generate an updated version of `index_1.html` as a downloadable file in `/mnt/documents/` that you can upload to replace your current site.
 
-### What's Already Done
-- Security: RLS hardened, RPC-only matches/super-likes, quiz answers hidden, rate limiting on payment functions
-- Capacitor: Configured with StatusBar, SplashScreen, push notifications, device token storage
-- PWA: Service worker, manifest, offline caching
-- Deep linking: Capacitor config ready
+### Changes
 
-### What I Can Still Do
+**1. Fix Mobile Menu (Accessibility Bug)**
+- The current mobile menu (`nav ul.open`) uses `position:fixed; inset:0` but inherits `background:var(--bg)` which is semi-transparent. The nav itself has `background:rgba(250,248,255,.92)` with backdrop-blur, but the menu overlay sits behind the nav bar (z-index:99 vs nav z-index:100).
+- Fix: Give the mobile menu `background:var(--card)` (solid white), `z-index:101` (above nav), add a close button, and ensure text contrast.
 
-**1. Onboarding Resume Support**
-Users who abandon onboarding mid-flow currently restart from step 1. Save progress to the `profiles` table on each step so returning users resume where they left off.
+**2. Update Pricing Section — Show All 3 Tiers**
+- Currently only shows Premium ($9.99). Update to show Plus ($4.99), Premium ($9.99), and VIP ($19.99) side by side with their actual feature lists from `subscriptionTiers.ts`.
+- Add one-time purchases mention (Profile Boost $2.99, Super Like Pack $1.99).
 
-**2. Empty States for All Pages**
-Messages, LikesYou, Learn, and Shop pages lack dedicated empty-state illustrations/messages when there's no data. Add friendly empty states with CTAs (e.g., "No matches yet — start swiping!").
+**3. Update Features Section — Reflect Actual App Features**
+Current features listed are generic. Replace with actual implemented features:
+- Education-First Discovery (complete 5 foundation badges to unlock swiping)
+- Compatibility Scoring (algorithm based on badges, interests, relationship style)
+- Real-Time Chat with unread badges and message moderation
+- Curated Shop (Shopify-integrated merch/product store)
+- Super Likes & Profile Boosts (one-time purchases)
+- Incognito Mode (browse without being seen)
+- Daily Challenges & Streaks (XP, combos, learning paths)
+- Photo Moderation & Safety (AI-powered content moderation)
 
-**3. Auth Guard Consolidation**
-Multiple pages duplicate `checkAuth` logic with raw `supabase.auth.getSession()`. Create a shared `useRequireAuth()` hook that redirects to `/auth` and checks `onboarding_completed`, reducing duplicated code and preventing edge cases.
+**4. Update "How It Works" Section**
+Currently 4 steps. Update to reflect actual flow:
+1. Sign Up & Verify Email
+2. Complete Onboarding (preferences, photos, bio)
+3. Earn 5 Foundation Badges (interactive courses + quizzes)
+4. Discover & Connect (swipe, match, chat)
 
-**4. Realtime Message Notifications**
-The Chat page likely polls or subscribes but the Messages list page doesn't show unread counts. Add a realtime subscription for new messages and display unread badges on the Messages tab in BottomNav.
+**5. Update Hero & CTA**
+- Change "Join the Waitlist" → "Get Started Free" linking to `https://positivethots.lovable.app/auth`
+- Update hero stats to reflect actual app capabilities
+- Change "Coming Soon" language to launched/live language
 
-**5. Meta Tags & SEO**
-Add `<meta>` description, Open Graph tags, and Twitter Card tags to `index.html` for link sharing previews (important for App Store review and social sharing).
+**6. Update FAQ**
+- Update Premium question to mention all 3 tiers (Plus/Premium/VIP)
+- Update "When does the app launch?" to reflect current status
+- Add FAQ about Super Likes and Profile Boosts
 
-**6. Security Scan Refresh**
-The security scan results are stale. I can trigger a fresh scan to verify all fixes are applied correctly.
+**7. Update Footer Links**
+- Privacy and Terms links → point to `https://positivethots.lovable.app/privacy` and `/terms`
+- Add link to the app itself
 
-### What Requires Manual Action (Not Automatable by Me)
-- **Leaked password protection**: Must be toggled in backend auth settings (I can configure this via the auth tool)
-- **App Store screenshots & metadata**: Requires design assets from you
-- **Domain verification files** (`apple-app-site-association`, `assetlinks.json`): Need your production domain DNS access
-- **FCM/APNs credentials**: Need keys from Firebase Console / Apple Developer Portal
+### Output
+A single updated `index_1.html` file saved to `/mnt/documents/index.html` ready for upload to Namecheap.
 
----
-
-### Recommended Order
-
-| Step | Task | Files |
-|------|------|-------|
-| 1 | Auth guard hook + onboarding resume | New hook + edit Onboarding.tsx, Index.tsx |
-| 2 | Empty states for all list pages | Messages, LikesYou, Learn, Shop |
-| 3 | Unread message badges (realtime) | BottomNav, Messages |
-| 4 | Meta/OG tags | index.html |
-| 5 | Enable leaked password protection | Auth config tool |
-
-Shall I implement all of these?
+### Files
+| Action | File |
+|--------|------|
+| Generate | `/mnt/documents/index.html` — updated website |
 
