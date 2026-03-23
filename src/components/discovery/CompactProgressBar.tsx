@@ -23,12 +23,15 @@ export const CompactProgressBar = ({ tiers, badgeCount, suggestionCount }: Compa
   const totalModules = tiers.reduce((s, t) => s + t.totalModules, 0);
   const earnedModules = tiers.reduce((s, t) => s + t.earnedModules, 0);
 
+  const nextTier = tiers.find((t) => !t.isComplete);
+  const nextFeature = nextTier?.features.find((f) => !f.isUnlocked);
+
   return (
     <button
       onClick={() => navigate("/learn")}
       className="w-full rounded-lg border border-border bg-card p-3 text-left transition-colors hover:bg-accent/50 active:scale-[0.99]"
     >
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <span className="font-semibold text-foreground">{suggestionCount} matches</span>
           <span>·</span>
@@ -42,6 +45,17 @@ export const CompactProgressBar = ({ tiers, badgeCount, suggestionCount }: Compa
           <ChevronRight className="h-3.5 w-3.5" />
         </div>
       </div>
+
+      {/* Next unlock */}
+      {nextTier && nextFeature ? (
+        <p className="text-[11px] text-muted-foreground mb-1.5 truncate">
+          <span>{nextFeature.icon}</span>{" "}
+          Next: <span className="font-medium text-foreground">{nextFeature.label}</span>
+          <span className="text-muted-foreground"> — {nextTier.earnedModules}/{nextTier.totalModules} badges</span>
+        </p>
+      ) : tiers.length > 0 ? (
+        <p className="text-[11px] text-muted-foreground mb-1.5">✓ All features unlocked</p>
+      ) : null}
 
       {/* Segmented progress bar */}
       <div className="flex h-1.5 gap-0.5 rounded-full overflow-hidden">
