@@ -12,7 +12,7 @@ import { StreakCalendar } from "@/components/education/StreakCalendar";
 import { DailyChallenge } from "@/components/education/DailyChallenge";
 import { ContinueLearning } from "@/components/education/ContinueLearning";
 import { SessionGoal } from "@/components/education/SessionGoal";
-import { TierRoadmap } from "@/components/education/TierRoadmap";
+
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
