@@ -40,6 +40,69 @@ const Settings = () => {
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [managingPortal, setManagingPortal] = useState(false);
 
+  // Promo code generation
+  const [codeType, setCodeType] = useState<"gift" | "referral">("referral");
+  const [giftTier, setGiftTier] = useState("premium");
+  const [giftDays, setGiftDays] = useState("14");
+  const [creatingCode, setCreatingCode] = useState(false);
+  const [myCodes, setMyCodes] = useState<any[]>([]);
+  const [loadingCodes, setLoadingCodes] = useState(true);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  const loadMyCodes = useCallback(async () => {
+    const { data } = await supabase
+      .from("promo_codes")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setMyCodes(data || []);
+    setLoadingCodes(false);
+  }, []);
+
+  useEffect(() => {
+    loadMyCodes();
+  }, [loadMyCodes]);
+
+  const generateCode = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let result = "";
+    for (let i = 0; i < 8; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+
+  const handleCreateCode = async () => {
+    setCreatingCode(true);
+    try {
+      const code = generateCode();
+      const { error } = await supabase.from("promo_codes").insert({
+        code,
+        type: codeType,
+        tier: codeType === "gift" ? giftTier : "premium",
+        trial_days: codeType === "gift" ? parseInt(giftDays) : 14,
+        created_by: user!.id,
+      });
+      if (error) throw error;
+      toast.success(`${codeType === "gift" ? "Gift" : "Referral"} code created: ${code}`);
+      await loadMyCodes();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create code");
+    } finally {
+      setCreatingCode(false);
+    }
+  };
+
+  const copyCode = (code: string) => {
+    const isReferral = myCodes.find(c => c.code === code)?.type === "referral";
+    const text = isReferral
+      ? `https://positivethots.lovable.app/auth?ref=${code}`
+      : code;
+    navigator.clipboard.writeText(text);
+    setCopiedCode(code);
+    toast.success("Copied to clipboard!");
+    setTimeout(() => setCopiedCode(null), 2000);
+  };
+
   const themeOptions = [
     { value: "light", label: "Light", desc: "Always use light mode", icon: Sun },
     { value: "dark", label: "Dark", desc: "Always use dark mode", icon: Moon },
