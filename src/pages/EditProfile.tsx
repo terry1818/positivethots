@@ -205,6 +205,17 @@ const EditProfile = () => {
           </Card>
 
           {profile?.id && (
+            <BdsmTestSection
+              bdsmTestUrl={bdsmTestUrl}
+              bdsmTestScreenshot={bdsmTestScreenshot}
+              onUrlChange={setBdsmTestUrl}
+              onScreenshotChange={setBdsmTestScreenshot}
+              userId={profile.id}
+              onChange={markChanged}
+            />
+          )}
+
+          {profile?.id && (
             <VerificationCard userId={profile.id} isVerified={profile.is_verified || false} latestRequest={latestVerification} onVerificationChange={reloadPhotos} />
           )}
         </StaggerChildren>
