@@ -33,6 +33,8 @@ const EditProfile = () => {
   const [relationshipStyle, setRelationshipStyle] = useState("");
   const [relationshipStatus, setRelationshipStatus] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("");
+  const [bdsmTestUrl, setBdsmTestUrl] = useState("");
+  const [bdsmTestScreenshot, setBdsmTestScreenshot] = useState("");
 
   useEffect(() => { loadProfile(); }, []);
 
