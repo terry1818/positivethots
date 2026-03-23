@@ -30,6 +30,7 @@ const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const Shop = lazy(() => import("./pages/Shop"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Resources = lazy(() => import("./pages/Resources"));
+const Events = lazy(() => import("./pages/Events"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -66,6 +67,7 @@ const AppContent = () => {
         <Route path="/shop" element={<Shop />} />
         <Route path="/product/:handle" element={<ProductDetail />} />
         <Route path="/resources" element={<Resources />} />
+        <Route path="/events" element={<Events />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
         <Route path="*" element={<NotFound />} />

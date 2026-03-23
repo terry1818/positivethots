@@ -98,10 +98,18 @@ export const ONE_TIME_PRODUCTS = {
     price: 2.99,
     name: "Profile Boost",
   },
-  super_like_pack: {
+  super_like_pack_5: {
+    productId: "prod_SbSVkKVkIvYeSB",
+    priceId: "price_1TOGT3AEIVQtquY2Zxm1pWeN",
+    price: 1.99,
+    name: "Super Like Pack (5)",
+    packSize: 5,
+  },
+  super_like_pack_10: {
     productId: "prod_UC8stYS4Xx9hot",
     priceId: "price_1TDkaqAEIVQtquY2l8yO6Xf3",
-    price: 1.99,
+    price: 3.99,
     name: "Super Like Pack (10)",
+    packSize: 10,
   },
 } as const;

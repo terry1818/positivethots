@@ -38,14 +38,23 @@ serve(async (req) => {
       customerId = customers.data[0].id;
     }
 
+    const { pack_size } = await req.json().catch(() => ({ pack_size: 10 }));
+
+    const PACK_PRICES: Record<number, string> = {
+      5: "price_1TOGT3AEIVQtquY2Zxm1pWeN",   // Super Like Pack (5) — $1.99
+      10: "price_1TDkaqAEIVQtquY2l8yO6Xf3",  // Super Like Pack (10) — $3.99
+    };
+
+    const priceId = PACK_PRICES[pack_size] ?? PACK_PRICES[10];
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
-      line_items: [{ price: "price_1TDkaqAEIVQtquY2l8yO6Xf3", quantity: 1 }],
+      line_items: [{ price: priceId, quantity: 1 }],
       mode: "payment",
       success_url: `${req.headers.get("origin")}/?superlikes=purchased`,
       cancel_url: `${req.headers.get("origin")}/`,
-      metadata: { user_id: user.id, type: "super_like_pack" },
+      metadata: { user_id: user.id, type: "super_like_pack", pack_size: String(pack_size) },
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
