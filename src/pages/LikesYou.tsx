@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useSubscription } from "@/hooks/useSubscription";
 import { BottomNav } from "@/components/BottomNav";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,8 +18,9 @@ interface LikerProfile {
 
 const LikesYou = () => {
   const navigate = useNavigate();
-  const { isPremium, loading: subLoading } = useSubscription();
+  const [isPremium, setIsPremium] = useState(false);
   const [likers, setLikers] = useState<LikerProfile[]>([]);
+  const [likerCount, setLikerCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
 
@@ -29,31 +29,48 @@ const LikesYou = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { navigate("/auth"); return; }
 
-      const [swipesResult, superLikesResult, matchesResult] = await Promise.all([
-        supabase.from("swipes").select("swiper_id").eq("swiped_id", user.id).eq("direction", "right"),
-        supabase.from("super_likes").select("sender_id").eq("receiver_id", user.id),
-        supabase.from("matches").select("user1_id, user2_id").or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`),
-      ]);
-      const swipes = swipesResult.data;
-      if (!swipes || swipes.length === 0) { setLikers([]); setLoading(false); return; }
+      // Use server-side RPC that gates data by subscription status
+      const { data, error } = await supabase.rpc("get_likers_for_user", { _user_id: user.id });
+      
+      if (error) {
+        console.error("Error fetching likers:", error);
+        setLoading(false);
+        return;
+      }
 
-      const matchedIds = new Set((matchesResult.data || []).flatMap(m => [m.user1_id, m.user2_id].filter(id => id !== user.id)));
-      const superLikerIds = new Set((superLikesResult.data || []).map(sl => sl.sender_id));
-      const likerIds = swipes.map(s => s.swiper_id).filter(id => !matchedIds.has(id));
+      if (!data || data.length === 0) {
+        setLikers([]);
+        setLikerCount(0);
+        setLoading(false);
+        return;
+      }
 
-      if (likerIds.length === 0) { setLikers([]); setLoading(false); return; }
+      // The RPC returns is_premium and liker_count in every row
+      const firstRow = data[0];
+      const premium = firstRow.is_premium;
+      const count = firstRow.liker_count;
+      setIsPremium(premium);
+      setLikerCount(count);
 
-      const profilePromises = likerIds.map(likerId =>
-        supabase.rpc("get_public_profile", { _user_id: likerId })
-      );
-      const profileResults = await Promise.all(profilePromises);
-      const likerProfiles: LikerProfile[] = profileResults
-        .map(r => r.data?.[0])
-        .filter(Boolean)
-        .map(p => ({ ...p, is_super_like: superLikerIds.has(p.id) } as LikerProfile));
-      // Sort super likes first
-      likerProfiles.sort((a, b) => (b.is_super_like ? 1 : 0) - (a.is_super_like ? 1 : 0));
-      setLikers(likerProfiles);
+      if (premium && firstRow.id) {
+        // Premium user: full profile data returned
+        const profiles: LikerProfile[] = data
+          .filter((r: any) => r.id != null)
+          .map((r: any) => ({
+            id: r.id,
+            name: r.name,
+            age: r.age,
+            profile_image: r.profile_image,
+            location: r.location,
+            bio: r.bio,
+            is_super_like: r.is_super_like,
+          }));
+        setLikers(profiles);
+      } else {
+        // Non-premium: no identity data, just count
+        setLikers([]);
+      }
+
       setLoading(false);
     };
     fetchLikers();
@@ -68,6 +85,7 @@ const LikesYou = () => {
       setCelebrationTrigger(prev => prev + 1);
       toast({ title: "It's a match! 🎉", description: "You can now start chatting." });
       setLikers(prev => prev.filter(l => l.id !== likerId));
+      setLikerCount(prev => Math.max(0, prev - 1));
     }
   };
 
@@ -76,6 +94,7 @@ const LikesYou = () => {
     if (!user) return;
     await supabase.from("swipes").insert({ swiper_id: user.id, swiped_id: likerId, direction: "left" });
     setLikers(prev => prev.filter(l => l.id !== likerId));
+    setLikerCount(prev => Math.max(0, prev - 1));
   };
 
   return (
@@ -86,23 +105,23 @@ const LikesYou = () => {
           <div className="flex items-center gap-2 mb-6">
             <Heart className="h-6 w-6 text-primary" />
             <h1 className="text-2xl font-bold">Likes You</h1>
-            {likers.length > 0 && (
-              <span className="bg-primary text-primary-foreground text-sm px-2 py-0.5 rounded-full animate-pulse">{likers.length}</span>
+            {likerCount > 0 && (
+              <span className="bg-primary text-primary-foreground text-sm px-2 py-0.5 rounded-full animate-pulse">{likerCount}</span>
             )}
           </div>
 
-          {loading || subLoading ? (
+          {loading ? (
             <div className="grid grid-cols-2 gap-3">
               {[1,2,3,4].map(i => <Skeleton key={i} className="h-52 rounded-xl" />)}
             </div>
-          ) : likers.length === 0 ? (
+          ) : likerCount === 0 ? (
             <div className="text-center py-16 text-muted-foreground">
               <div className="animate-bounce-in">
                 <Heart className="h-12 w-12 mx-auto mb-3 opacity-30 animate-pulse" />
               </div>
               <p className="text-lg font-medium">No likes yet</p>
               <p className="text-sm mb-6">Keep swiping — they'll show up here!</p>
-              {!isPremium && !subLoading && (
+              {!isPremium && (
                 <Card className="animate-pulse-border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-left">
                   <CardContent className="p-4 text-center">
                     <Crown className="h-8 w-8 text-primary mx-auto mb-2 animate-wiggle" />
@@ -115,65 +134,56 @@ const LikesYou = () => {
                 </Card>
               )}
             </div>
+          ) : !isPremium ? (
+            /* Non-premium: show count but no identities */
+            <Card className="mb-6 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 animate-pulse-border">
+              <CardContent className="p-4 text-center">
+                <Crown className="h-8 w-8 text-primary mx-auto mb-2" />
+                <p className="font-semibold mb-1">{likerCount} {likerCount === 1 ? "person" : "people"} liked you</p>
+                <p className="text-sm text-muted-foreground mb-3">Upgrade to Premium to see who they are</p>
+                <Button onClick={() => navigate("/premium")} className="w-full">
+                  <Lock className="h-4 w-4 mr-2" />Unlock Premium — $9.99/mo
+                </Button>
+              </CardContent>
+            </Card>
           ) : (
-            <>
-              {!isPremium && (
-                <Card className="mb-6 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 animate-pulse-border">
-                  <CardContent className="p-4 text-center">
-                    <Crown className="h-8 w-8 text-primary mx-auto mb-2" />
-                    <p className="font-semibold mb-1">{likers.length} {likers.length === 1 ? "person" : "people"} liked you</p>
-                    <p className="text-sm text-muted-foreground mb-3">Upgrade to Premium to see who they are</p>
-                    <Button onClick={() => navigate("/premium")} className="w-full">
-                      <Lock className="h-4 w-4 mr-2" />Unlock Premium — $9.99/mo
-                    </Button>
-                  </CardContent>
-                </Card>
-              )}
-
-              <div className="grid grid-cols-2 gap-3">
-                {likers.map((liker, idx) => (
-                  <Card key={liker.id} className={cn("overflow-hidden relative animate-stagger-fade", liker.is_super_like && "ring-2 ring-amber-500/50")} style={{ animationDelay: `${idx * 80}ms` }}>
-                    {liker.is_super_like && (
-                      <Badge className="absolute top-2 right-2 z-10 bg-amber-500 text-white">
-                        <Star className="h-3 w-3 mr-1 fill-current" />Super Like
-                      </Badge>
-                    )}
-                    <div className="relative h-44 bg-gradient-to-br from-primary/20 to-secondary/20">
-                      {liker.profile_image ? (
-                        <img
-                          src={liker.profile_image}
-                          alt={isPremium ? liker.name : "Hidden"}
-                          className={cn("absolute inset-0 w-full h-full object-cover", !isPremium && "animate-peek-unblur")}
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Heart className={cn("h-10 w-10 text-primary/30", !isPremium && "blur-lg")} />
-                        </div>
-                      )}
-                      {!isPremium && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                          <Lock className="h-8 w-8 text-white/80" />
-                        </div>
-                      )}
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-                        <p className={cn("text-white font-semibold text-sm", !isPremium && "blur-md")}>{liker.name}, {liker.age}</p>
-                        {liker.location && <p className={cn("text-white/80 text-xs", !isPremium && "blur-md")}>{liker.location}</p>}
+            /* Premium: show full profiles */
+            <div className="grid grid-cols-2 gap-3">
+              {likers.map((liker, idx) => (
+                <Card key={liker.id} className={cn("overflow-hidden relative animate-stagger-fade", liker.is_super_like && "ring-2 ring-amber-500/50")} style={{ animationDelay: `${idx * 80}ms` }}>
+                  {liker.is_super_like && (
+                    <Badge className="absolute top-2 right-2 z-10 bg-amber-500 text-white">
+                      <Star className="h-3 w-3 mr-1 fill-current" />Super Like
+                    </Badge>
+                  )}
+                  <div className="relative h-44 bg-gradient-to-br from-primary/20 to-secondary/20">
+                    {liker.profile_image ? (
+                      <img
+                        src={liker.profile_image}
+                        alt={liker.name}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Heart className="h-10 w-10 text-primary/30" />
                       </div>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                      <p className="text-white font-semibold text-sm">{liker.name}, {liker.age}</p>
+                      {liker.location && <p className="text-white/80 text-xs">{liker.location}</p>}
                     </div>
-                    {isPremium && (
-                      <div className="flex">
-                        <Button variant="ghost" size="sm" className="flex-1 rounded-none text-destructive hover:bg-destructive/10" onClick={() => handlePass(liker.id)}>
-                          <X className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="flex-1 rounded-none text-primary hover:bg-primary/10" onClick={() => handleConnect(liker.id)}>
-                          <Check className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )}
-                  </Card>
-                ))}
-              </div>
-            </>
+                  </div>
+                  <div className="flex">
+                    <Button variant="ghost" size="sm" className="flex-1 rounded-none text-destructive hover:bg-destructive/10" onClick={() => handlePass(liker.id)}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" className="flex-1 rounded-none text-primary hover:bg-primary/10" onClick={() => handleConnect(liker.id)}>
+                      <Check className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
           )}
         </div>
       </div>
