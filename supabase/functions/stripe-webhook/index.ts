@@ -280,5 +280,74 @@ async function processReferralReward(
     const msg = err instanceof Error ? err.message : String(err);
     logStep("Error processing referral reward", { message: msg });
     // Don't throw — referral reward failure shouldn't fail the webhook
+}
+
+async function handleOneTimePayment(supabase: any, session: Stripe.Checkout.Session) {
+  const metadata = session.metadata ?? {};
+  const userId = metadata.user_id;
+  const type = metadata.type;
+
+  if (!userId) {
+    logStep("One-time payment missing user_id metadata", { sessionId: session.id });
+    return;
   }
+
+  logStep("Processing one-time payment", { type, userId });
+
+  if (type === "event_ticket") {
+    const eventId = metadata.event_id;
+    if (!eventId) return;
+
+    const { error } = await supabase.from("event_registrations").insert({
+      event_id: eventId,
+      user_id: userId,
+      stripe_payment_intent_id: session.payment_intent as string,
+    });
+
+    if (error) {
+      logStep("Error inserting event registration", { error: error.message });
+    } else {
+      logStep("Event registration created", { userId, eventId });
+    }
+  } else if (type === "super_like_pack") {
+    const packSize = parseInt(metadata.pack_size ?? "10", 10);
+
+    // Track the purchase
+    await supabase.from("super_like_purchases").insert({
+      user_id: userId,
+      pack_size: packSize,
+      stripe_payment_intent_id: session.payment_intent as string,
+    });
+
+    // Add to user's balance
+    const { data: existing } = await supabase
+      .from("super_like_balance")
+      .select("balance")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase
+        .from("super_like_balance")
+        .update({ balance: existing.balance + packSize, updated_at: new Date().toISOString() })
+        .eq("user_id", userId);
+    } else {
+      await supabase
+        .from("super_like_balance")
+        .insert({ user_id: userId, balance: packSize });
+    }
+
+    logStep("Super like pack credited", { userId, packSize });
+  } else if (type === "profile_boost") {
+    const { error } = await supabase.from("profile_boosts").insert({
+      user_id: userId,
+    });
+
+    if (error) {
+      logStep("Error inserting profile boost", { error: error.message });
+    } else {
+      logStep("Profile boost activated", { userId });
+    }
+  }
+}
 }
