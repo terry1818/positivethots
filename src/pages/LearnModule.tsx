@@ -442,7 +442,6 @@ const LearnModule = () => {
                     <div className="flex justify-center gap-1.5 flex-wrap">
                       {questions.map((q, i) => {
                         const isAnswered = answeredQuestions.has(q.id);
-                        const isCorrect = isAnswered && correctAnswers.has(q.id);
                         return (
                           <button
                             key={q.id}
@@ -450,8 +449,7 @@ const LearnModule = () => {
                             className={cn(
                               "w-3 h-3 rounded-full transition-all",
                               i === currentQuestionIndex ? "bg-primary scale-125" :
-                              isCorrect ? "bg-success shadow-sm shadow-success/50" :
-                              isAnswered ? "bg-destructive" :
+                              isAnswered ? "bg-muted-foreground" :
                               "bg-muted"
                             )}
                           />
