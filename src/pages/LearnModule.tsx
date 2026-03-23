@@ -410,12 +410,7 @@ const LearnModule = () => {
                 ) : currentQuestion ? (
                   <>
                     {/* Single question view */}
-                    <Card className={cn(
-                      "transition-all",
-                      questionFeedback === "correct" ? "border-success bg-success/5" :
-                      questionFeedback === "wrong" ? "border-destructive bg-destructive/5 animate-shake-wrong" :
-                      ""
-                    )}>
+                    <Card className="transition-all">
                       <CardHeader className="pb-3">
                         <CardTitle className="text-base">
                           {currentQuestionIndex + 1}. {currentQuestion.question}
