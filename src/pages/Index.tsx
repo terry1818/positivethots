@@ -87,6 +87,7 @@ const calculateCompatibility = (user: Profile, other: DiscoveryProfile, otherBad
 const Index = () => {
   const { isSharing, nearbyUsers } = useLocationSharing();
   const { balance: superLikeBalance, canSuperLike, sendSuperLike, isUnlimited } = useSuperLikes();
+  const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
