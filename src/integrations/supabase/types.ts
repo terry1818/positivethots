@@ -287,6 +287,80 @@ export type Database = {
         }
         Relationships: []
       }
+      event_registrations: {
+        Row: {
+          event_id: string
+          id: string
+          purchased_at: string
+          stripe_payment_intent_id: string | null
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          purchased_at?: string
+          stripe_payment_intent_id?: string | null
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          purchased_at?: string
+          stripe_payment_intent_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          capacity: number
+          created_at: string
+          description: string | null
+          event_date: string
+          host_name: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          price_cents: number
+          stripe_price_id: string | null
+          title: string
+        }
+        Insert: {
+          capacity?: number
+          created_at?: string
+          description?: string | null
+          event_date: string
+          host_name: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price_cents?: number
+          stripe_price_id?: string | null
+          title: string
+        }
+        Update: {
+          capacity?: number
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          host_name?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price_cents?: number
+          stripe_price_id?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       flagged_messages: {
         Row: {
           content: string
@@ -785,6 +859,30 @@ export type Database = {
           balance?: number
           last_daily_refresh?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      super_like_purchases: {
+        Row: {
+          id: string
+          pack_size: number
+          purchased_at: string
+          stripe_payment_intent_id: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          pack_size: number
+          purchased_at?: string
+          stripe_payment_intent_id?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          pack_size?: number
+          purchased_at?: string
+          stripe_payment_intent_id?: string | null
           user_id?: string
         }
         Relationships: []
