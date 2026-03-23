@@ -42,6 +42,15 @@ serve(async (req) => {
       });
     }
 
+    // Only allow service_role to call this function (server-to-server only)
+    const callerRole = (claimsData.claims as Record<string, unknown>).role;
+    if (callerRole !== "service_role") {
+      return new Response(JSON.stringify({ error: "Forbidden: service role required" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { user_id, type, data } = await req.json();
     if (!user_id || !type) throw new Error("user_id and type are required");
 
