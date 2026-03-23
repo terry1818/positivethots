@@ -573,6 +573,48 @@ export type Database = {
         }
         Relationships: []
       }
+      promo_codes: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string
+          id: string
+          redeemed_at: string | null
+          redeemed_by: string | null
+          referred_subscribed: boolean
+          reward_granted: boolean
+          tier: string | null
+          trial_days: number
+          type: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by: string
+          id?: string
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          referred_subscribed?: boolean
+          reward_granted?: boolean
+          tier?: string | null
+          trial_days?: number
+          type: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          referred_subscribed?: boolean
+          reward_granted?: boolean
+          tier?: string | null
+          trial_days?: number
+          type?: string
+        }
+        Relationships: []
+      }
       quiz_questions: {
         Row: {
           correct_answer: number
