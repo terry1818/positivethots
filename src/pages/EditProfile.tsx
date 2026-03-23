@@ -56,6 +56,7 @@ const EditProfile = () => {
       setPronouns(data.pronouns || ""); setBoundaries(data.boundaries || "");
       setLookingFor(data.looking_for || ""); setRelationshipStyle(data.relationship_style || "");
       setRelationshipStatus(data.relationship_status || ""); setExperienceLevel(data.experience_level || "");
+      setBdsmTestUrl(data.bdsm_test_url || ""); setBdsmTestScreenshot(data.bdsm_test_screenshot || "");
       setPhotos(photosResult.data || []);
       setLatestVerification(verResult.data?.[0] || null);
     } catch (error) {
