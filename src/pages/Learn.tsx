@@ -12,7 +12,7 @@ import { StreakCalendar } from "@/components/education/StreakCalendar";
 import { DailyChallenge } from "@/components/education/DailyChallenge";
 import { ContinueLearning } from "@/components/education/ContinueLearning";
 import { SessionGoal } from "@/components/education/SessionGoal";
-import { TierRoadmap } from "@/components/education/TierRoadmap";
+
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
@@ -165,103 +165,124 @@ const Learn = () => {
           <span>{(1200 + Math.floor(Math.random() * 300)).toLocaleString()} learners active today</span>
         </div>
 
-        {/* Progress Section */}
-        <Card className="bg-gradient-to-br from-secondary/20 to-primary/20 border border-border animate-fade-in">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Your Progress</span>
-              <span className="text-sm text-muted-foreground"><AnimatedCounter end={earnedCount} />/{totalBadges} badges</span>
+        {/* Unified Learning Path */}
+        <Card className="animate-fade-in overflow-hidden">
+          <CardContent className="pt-5 pb-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-semibold flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-primary" />
+                Learning Path
+              </h2>
+              <span className="text-xs text-muted-foreground">
+                <AnimatedCounter end={earnedCount} />/{totalBadges} badges
+              </span>
             </div>
-            <div className="relative overflow-hidden rounded-full h-3 bg-muted">
+            <div className="relative overflow-hidden rounded-full h-2 bg-muted">
               <div
                 className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-1000 ease-out"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
             {requiredEarned === requiredModules.length && requiredModules.length > 0 ? (
-              <p className="text-sm text-success mt-2 flex items-center gap-1 animate-bounce-in">
-                <CheckCircle className="h-4 w-4" />Discovery unlocked! Keep learning for more badges.
+              <p className="text-xs text-success flex items-center gap-1">
+                <CheckCircle className="h-3.5 w-3.5" />Discovery unlocked! Keep learning for more.
               </p>
             ) : (
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-xs text-muted-foreground">
                 Complete {requiredModules.length - requiredEarned} more foundation module{requiredModules.length - requiredEarned !== 1 ? 's' : ''} to unlock discovery
               </p>
             )}
+
+            <div className="space-y-2">
+              {tierOrder.map((tier, tierIdx) => {
+                const tierModules = modulesByTier[tier];
+                if (!tierModules || tierModules.length === 0) return null;
+                const config = tierConfig[tier];
+                const tierCompleted = tierModules.filter(m => earnedModuleIds.has(m.id)).length;
+                const isOpen = openTiers[tier] ?? false;
+                const isTierComplete = tierCompleted === tierModules.length && tierModules.length > 0;
+                const tierFeatures = tiers.find(t => t.tier === tier)?.features || [];
+
+                return (
+                  <Collapsible key={tier} open={isOpen} onOpenChange={() => toggleTier(tier)}>
+                    <CollapsibleTrigger asChild>
+                      <button className={cn(
+                        "w-full flex items-center gap-2 p-3 rounded-lg bg-gradient-to-r border border-border transition-all animate-stagger-fade",
+                        config.bgClass,
+                        isTierComplete && "ring-2 ring-success/30"
+                      )} style={{ animationDelay: `${tierIdx * 100}ms` }}>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className={cn("font-semibold text-sm", config.color)}>{config.label}</span>
+                          <span className="text-xs text-muted-foreground">{tierCompleted}/{tierModules.length}</span>
+                          {isTierComplete && <CheckCircle className="h-3.5 w-3.5 text-success" />}
+                        </div>
+                        {tierFeatures.length > 0 && (
+                          <div className="flex flex-wrap gap-1 flex-1 min-w-0">
+                            {tierFeatures.map(f => (
+                              <span
+                                key={f.key}
+                                className={cn(
+                                  "inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full border",
+                                  f.isUnlocked
+                                    ? `bg-success/10 border-success/30 text-success font-medium`
+                                    : "bg-muted/50 border-muted text-muted-foreground"
+                                )}
+                              >
+                                <span>{f.icon}</span>
+                                <span className="hidden sm:inline">{f.label}</span>
+                                {f.isUnlocked && <CheckCircle className="h-2 w-2" />}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform shrink-0", isOpen && "rotate-180")} />
+                      </button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-2 pt-2">
+                      {tierModules.map((module, moduleIdx) => {
+                        const isCompleted = earnedModuleIds.has(module.id);
+                        const isUnlocked = isModuleUnlocked(module);
+                        return (
+                          <Card
+                            key={module.id}
+                            className={cn(
+                              "cursor-pointer transition-all border-l-4 animate-stagger-fade",
+                              config.borderColor,
+                              isUnlocked ? "hover:shadow-md hover:-translate-y-0.5" : "opacity-60 cursor-not-allowed"
+                            )}
+                            style={{ animationDelay: `${moduleIdx * 60}ms` }}
+                            onClick={() => isUnlocked && navigate(`/learn/${module.slug}`)}
+                          >
+                            <CardContent className="p-3 flex items-center gap-3">
+                              <EducationBadge moduleSlug={module.slug} title={module.title} isEarned={isCompleted} tier={module.tier || 'foundation'} size="md" />
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-semibold text-sm flex items-center gap-1.5">
+                                  <span className="truncate">{module.title}</span>
+                                  {!isUnlocked && <Lock className="h-3 w-3 shrink-0" />}
+                                </h3>
+                                <p className="text-xs text-muted-foreground line-clamp-1">{module.description}</p>
+                                {module.estimated_minutes && (
+                                  <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">
+                                    ~{module.estimated_minutes} min
+                                  </span>
+                                )}
+                              </div>
+                              {isCompleted ? (
+                                <CheckCircle className="h-5 w-5 text-success shrink-0 animate-bounce-in" />
+                              ) : isUnlocked ? (
+                                <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+                              ) : null}
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </CollapsibleContent>
+                  </Collapsible>
+                );
+              })}
+            </div>
           </CardContent>
         </Card>
-
-        {/* Tier Roadmap — Feature Unlocks */}
-        {tiers.length > 0 && <TierRoadmap tiers={tiers} />}
-
-        {/* Tiered Modules */}
-        <div className="space-y-3">
-          {tierOrder.map((tier, tierIdx) => {
-            const tierModules = modulesByTier[tier];
-            if (!tierModules || tierModules.length === 0) return null;
-            const config = tierConfig[tier];
-            const tierCompleted = tierModules.filter(m => earnedModuleIds.has(m.id)).length;
-            const isOpen = openTiers[tier] ?? false;
-            const isTierComplete = tierCompleted === tierModules.length && tierModules.length > 0;
-
-            return (
-              <Collapsible key={tier} open={isOpen} onOpenChange={() => toggleTier(tier)}>
-                <CollapsibleTrigger asChild>
-                  <button className={cn(
-                    "w-full flex items-center justify-between p-3 rounded-lg bg-gradient-to-r border border-border transition-all animate-stagger-fade",
-                    config.bgClass,
-                    isTierComplete && "ring-2 ring-success/30"
-                  )} style={{ animationDelay: `${tierIdx * 100}ms` }}>
-                    <div className="flex items-center gap-2">
-                      <span className={cn("font-semibold text-sm", config.color)}>{config.label}</span>
-                      <span className="text-xs text-muted-foreground">{tierCompleted}/{tierModules.length}</span>
-                      {isTierComplete && <CheckCircle className="h-3.5 w-3.5 text-success" />}
-                    </div>
-                    <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", isOpen && "rotate-180")} />
-                  </button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-2 pt-2">
-                  {tierModules.map((module, moduleIdx) => {
-                    const isCompleted = earnedModuleIds.has(module.id);
-                    const isUnlocked = isModuleUnlocked(module);
-                    return (
-                      <Card
-                        key={module.id}
-                        className={cn(
-                          "cursor-pointer transition-all border-l-4 animate-stagger-fade",
-                          config.borderColor,
-                          isUnlocked ? "hover:shadow-md hover:-translate-y-0.5" : "opacity-60 cursor-not-allowed"
-                        )}
-                        style={{ animationDelay: `${moduleIdx * 60}ms` }}
-                        onClick={() => isUnlocked && navigate(`/learn/${module.slug}`)}
-                      >
-                        <CardContent className="p-3 flex items-center gap-3">
-                          <EducationBadge moduleSlug={module.slug} title={module.title} isEarned={isCompleted} tier={module.tier || 'foundation'} size="md" />
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-sm flex items-center gap-1.5">
-                              <span className="truncate">{module.title}</span>
-                              {!isUnlocked && <Lock className="h-3 w-3 shrink-0" />}
-                            </h3>
-                            <p className="text-xs text-muted-foreground line-clamp-1">{module.description}</p>
-                            {module.estimated_minutes && (
-                              <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">
-                                ~{module.estimated_minutes} min
-                              </span>
-                            )}
-                          </div>
-                          {isCompleted ? (
-                            <CheckCircle className="h-5 w-5 text-success shrink-0 animate-bounce-in" />
-                          ) : isUnlocked ? (
-                            <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
-                          ) : null}
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </CollapsibleContent>
-              </Collapsible>
-            );
-          })}
-        </div>
 
         <Card className="bg-muted/50 border border-border">
           <CardContent className="pt-6">
