@@ -1,42 +1,40 @@
 
 
-# Fix Auth Emails: Wrong Sender Name + Broken Reset Link
+# Replace vite-plugin-pwa with a Lightweight Custom Service Worker
 
-## Root Causes Found
+## Why
+`vite-plugin-pwa` v0.19.8 pulls in `workbox-build`, which transitively depends on vulnerable versions of `@rollup/plugin-terser` and `serialize-javascript`. The latest v1.2.0 still carries similar transitive risk. Replacing it with a hand-written service worker and manifest eliminates the entire dependency chain.
 
-### Issue 1: "swipe-right-recreate" sender name
-In `supabase/functions/auth-email-hook/index.ts` line 39:
-```
-const SITE_NAME = "swipe-right-recreate"
-```
-This is used on line 259 to construct the `from` field: `swipe-right-recreate <noreply@positivethots.app>`. That's why every email shows the old project name.
+## What Changes
 
-Also line 49: `SAMPLE_PROJECT_URL = "https://swipe-right-recreate.lovable.app"` — wrong for previews.
+### 1. Remove dependencies from `package.json`
+- Remove `vite-plugin-pwa`
+- Remove `serialize-javascript` (was an override for this chain)
 
-### Issue 2: Reset link redirects to wrong URL
-The password reset link in the email uses `confirmationUrl` from `payload.data.url` (line 225), which Supabase Auth generates based on the `redirectTo` parameter. The `ForgotPasswordModal` correctly passes `${window.location.origin}/reset-password`, but the Supabase project's allowed redirect URLs may not include the published domain (`positivethots.lovable.app`), causing it to fall back to a default Lovable URL.
+### 2. Update `vite.config.ts`
+- Remove the `VitePWA` import and entire plugin configuration block
+- Keep all other config (react, tagger, build chunks, etc.) unchanged
 
-## Changes
+### 3. Create `public/manifest.json`
+- Move the manifest data currently inline in the VitePWA config (app name, icons, theme color, display mode) into a standalone JSON file
 
-### 1. Fix auth-email-hook configuration (line 39 and 49)
-**File:** `supabase/functions/auth-email-hook/index.ts`
-- Change `SITE_NAME` from `"swipe-right-recreate"` to `"Positive Thots"`
-- Change `SAMPLE_PROJECT_URL` from `"https://swipe-right-recreate.lovable.app"` to `"https://positivethots.lovable.app"`
+### 4. Create `public/sw.js` — minimal service worker
+- Cache-first for Google Fonts
+- Network-first for Supabase API calls (same strategy as current config)
+- Precache the app shell on install
+- Skip `/~oauth` routes (required for auth redirects)
+- Auto-update on new deployments via `skipWaiting` + `clients.claim`
 
-### 2. Update auth redirect URL configuration
-Configure the authentication system to include `https://positivethots.lovable.app` in the allowed redirect URLs so password reset links point to the correct site instead of a default URL.
+### 5. Update `index.html`
+- Add `<link rel="manifest" href="/manifest.json">`
+- Add `<meta name="theme-color" content="#6633CC">`
 
-### 3. Redeploy the auth-email-hook edge function
-Required for the name change to take effect — edge functions serve deployed code, not source code.
+### 6. Register the service worker in `src/main.tsx`
+- Add a small registration snippet that registers `/sw.js` after the app mounts
+- Handles update detection with a simple reload prompt
 
-### 4. End-to-end test
-- Trigger a fresh password reset email and verify:
-  - Sender shows "Positive Thots" (not "swipe-right-recreate")
-  - Reset link goes to `positivethots.lovable.app/reset-password` (not lovable.ai)
-  - The reset password form works and updates the password
-- Trigger a fresh signup verification email and verify the same sender name fix
-
-## Technical Notes
-- The email templates themselves (recovery.tsx, signup.tsx, etc.) are already correctly branded with "Positive Thots" text and logo. The problem is only in the edge function's configuration constants.
-- The `from` field in sent emails is constructed as `${SITE_NAME} <noreply@${FROM_DOMAIN}>`, so fixing `SITE_NAME` fixes the display name in all auth emails at once.
+## Result
+- All PWA features preserved (installable, offline shell, font caching, API caching)
+- The vulnerable `workbox-build` → `@rollup/plugin-terser` dependency chain is completely removed
+- No new runtime dependencies added
 
