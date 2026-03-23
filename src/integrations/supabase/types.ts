@@ -1344,6 +1344,17 @@ export type Database = {
           zodiac_sign: string
         }[]
       }
+      get_sent_likes: {
+        Args: { _user_id: string }
+        Returns: {
+          age: number
+          id: string
+          location: string
+          name: string
+          profile_image: string
+          swiped_at: string
+        }[]
+      }
       grant_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
