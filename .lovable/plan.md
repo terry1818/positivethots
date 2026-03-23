@@ -1,63 +1,42 @@
 
 
-# Plan: Sticky Bottom Nav, Feature Unlocks on Index, and BDSMtest Integration
+# Fix Auth Emails: Wrong Sender Name + Broken Reset Link
 
-## 1. Make BottomNav Sticky (Fixed to Bottom)
+## Root Causes Found
 
-**Problem**: BottomNav scrolls with page content, forcing users to scroll past all profiles to reach navigation.
+### Issue 1: "swipe-right-recreate" sender name
+In `supabase/functions/auth-email-hook/index.ts` line 39:
+```
+const SITE_NAME = "swipe-right-recreate"
+```
+This is used on line 259 to construct the `from` field: `swipe-right-recreate <noreply@positivethots.app>`. That's why every email shows the old project name.
 
-**Fix**: Change `BottomNav` from static to `fixed bottom-0` positioning, and add bottom padding to all pages that use it.
+Also line 49: `SAMPLE_PROJECT_URL = "https://swipe-right-recreate.lovable.app"` — wrong for previews.
 
-**Changes**:
-- `src/components/BottomNav.tsx` — add `fixed bottom-0 left-0 right-0 z-50` classes to the nav element
-- All 7 pages using BottomNav (Index, Learn, Messages, LikesYou, Profile, Shop, Resources) — change `pb-20` to ensure content isn't hidden behind the fixed nav. Most already have this but need verification.
+### Issue 2: Reset link redirects to wrong URL
+The password reset link in the email uses `confirmationUrl` from `payload.data.url` (line 225), which Supabase Auth generates based on the `redirectTo` parameter. The `ForgotPasswordModal` correctly passes `${window.location.origin}/reset-password`, but the Supabase project's allowed redirect URLs may not include the published domain (`positivethots.lovable.app`), causing it to fall back to a default Lovable URL.
 
----
+## Changes
 
-## 2. Add Feature Unlock Roadmap to Discovery Page (Index)
+### 1. Fix auth-email-hook configuration (line 39 and 49)
+**File:** `supabase/functions/auth-email-hook/index.ts`
+- Change `SITE_NAME` from `"swipe-right-recreate"` to `"Positive Thots"`
+- Change `SAMPLE_PROJECT_URL` from `"https://swipe-right-recreate.lovable.app"` to `"https://positivethots.lovable.app"`
 
-**Problem**: The Index/Discovery page doesn't show users what features they unlock by completing education tiers.
+### 2. Update auth redirect URL configuration
+Configure the authentication system to include `https://positivethots.lovable.app` in the allowed redirect URLs so password reset links point to the correct site instead of a default URL.
 
-**Fix**: Import the existing `TierRoadmap` component and `useFeatureUnlocks` hook into `Index.tsx`, and render it below the stats bar / education reminder section.
+### 3. Redeploy the auth-email-hook edge function
+Required for the name change to take effect — edge functions serve deployed code, not source code.
 
-**Changes**:
-- `src/pages/Index.tsx` — import `useFeatureUnlocks` and `TierRoadmap`, add the roadmap card between the education reminder and the matches grid.
+### 4. End-to-end test
+- Trigger a fresh password reset email and verify:
+  - Sender shows "Positive Thots" (not "swipe-right-recreate")
+  - Reset link goes to `positivethots.lovable.app/reset-password` (not lovable.ai)
+  - The reset password form works and updates the password
+- Trigger a fresh signup verification email and verify the same sender name fix
 
----
-
-## 3. BDSMtest.org Integration (Link + Screenshot)
-
-**Problem**: Users want to share their BDSMtest.org results on their profile.
-
-**Approach**: Since BDSMtest.org has no public API, users will:
-1. Paste their results URL (e.g., `https://bdsmtest.org/r/abc123`)
-2. Optionally upload a screenshot of their results
-
-**Changes**:
-
-**Database**:
-- Add `bdsm_test_url` (text, nullable) and `bdsm_test_screenshot` (text, nullable) columns to the `profiles` table via migration.
-
-**Edit Profile** (`src/pages/EditProfile.tsx`):
-- Add a new "Kink Profile" card section with:
-  - URL input field for the BDSMtest.org results link (validated to match `bdsmtest.org` domain)
-  - Screenshot upload button (uploads to `user-photos` bucket, stores URL in `bdsm_test_screenshot`)
-- Save both fields with the existing profile save flow.
-
-**Profile Display** (`src/pages/Profile.tsx`):
-- Show a "Kink Profile" section if either URL or screenshot is set
-- Render the URL as a clickable external link
-- Display the screenshot as a viewable image
-
-**Discovery Card** (`src/components/discovery/DiscoveryCard.tsx` and `src/components/ProfileCard.tsx`):
-- Show a small badge/icon if the user has BDSM test results linked, so potential matches can see it at a glance.
-
----
-
-## Technical Details
-
-- The `BottomNav` fix uses `fixed` positioning with `z-50` to stay above all content. Safe-area insets are already handled by the viewport meta tag.
-- BDSMtest URL validation uses a simple regex: `/^https?:\/\/(www\.)?bdsmtest\.org\/r\//`
-- Screenshot upload reuses the existing `user-photos` storage bucket (already public).
-- No new edge functions needed — all changes are client-side + one DB migration.
+## Technical Notes
+- The email templates themselves (recovery.tsx, signup.tsx, etc.) are already correctly branded with "Positive Thots" text and logo. The problem is only in the edge function's configuration constants.
+- The `from` field in sent emails is constructed as `${SITE_NAME} <noreply@${FROM_DOMAIN}>`, so fixing `SITE_NAME` fixes the display name in all auth emails at once.
 
