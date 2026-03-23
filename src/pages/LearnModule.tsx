@@ -181,33 +181,45 @@ const LearnModule = () => {
   const handleSubmitQuiz = async () => {
     if (!module || !userId) return;
 
-    const correct = correctAnswers.size;
+    // Build answers array from tracked state
+    const answersArray = questions.map(q => ({
+      question_id: q.id,
+      selected_answer: answers[q.id] ?? -1,
+    }));
 
-    const scorePercent = Math.round((correct / questions.length) * 100);
-    setScore(scorePercent);
-    setSubmitted(true);
+    try {
+      const { data: result, error } = await supabase.rpc("submit_quiz", {
+        _module_id: module.id,
+        _answers: answersArray,
+      });
+      if (error) throw error;
 
-    if (scorePercent >= 80) {
-      try {
-        const { error } = await supabase.rpc("award_badge", {
-          _module_id: module.id, _quiz_score: scorePercent
-        });
-        if (error) throw error;
+      const scorePercent = result.score;
+      setScore(scorePercent);
+      setSubmitted(true);
 
+      // Update correctAnswers from server result
+      setCorrectAnswers(prev => {
+        const newSet = new Set(prev);
+        // Keep existing correct answers from per-question feedback
+        return newSet;
+      });
+
+      if (result.passed) {
         const quizXP = 50;
         const perfectBonus = scorePercent === 100 ? 25 : 0;
         const totalXP = quizXP + perfectBonus;
         
-        const result = await awardXP(totalXP, scorePercent === 100 ? "quiz_perfect" : "quiz_pass", module.id);
-        setXpPopup({ show: true, amount: result.newXP });
+        const xpResult = await awardXP(totalXP, scorePercent === 100 ? "quiz_perfect" : "quiz_pass", module.id);
+        setXpPopup({ show: true, amount: xpResult.newXP });
 
         setTimeout(() => {
           setCelebration({ type: "badge_earned", badgeTitle: module.title });
         }, 1600);
-      } catch (error: any) {
-        console.error("Error saving badge:", error);
-        toast.error("Failed to save your progress");
       }
+    } catch (error: any) {
+      console.error("Error submitting quiz:", error);
+      toast.error("Failed to save your progress");
     }
   };
 
