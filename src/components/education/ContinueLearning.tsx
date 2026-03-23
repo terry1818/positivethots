@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlayCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface ContinueData {
   moduleSlug: string;
@@ -63,13 +62,76 @@ export const ContinueLearning = () => {
       .eq("completed", true)
       .in("section_id", (allSections || []).map(s => s.id));
 
+    const totalSections = allSections?.length || 0;
+    const completedSections = completedProgress?.length || 0;
+
+    // If this module is 100% complete, try to find the next incomplete module
+    if (totalSections > 0 && completedSections >= totalSections) {
+      // Check if the badge is also earned (fully done)
+      const { data: badge } = await supabase
+        .from("user_badges")
+        .select("id")
+        .eq("user_id", session.user.id)
+        .eq("module_id", section.module_id)
+        .maybeSingle();
+
+      // Find next incomplete module by looking for modules without badges
+      const { data: allModules } = await supabase
+        .from("education_modules")
+        .select("id, slug, title")
+        .order("order_index");
+
+      const { data: allBadges } = await supabase
+        .from("user_badges")
+        .select("module_id")
+        .eq("user_id", session.user.id);
+
+      const earnedIds = new Set((allBadges || []).map(b => b.module_id));
+      const nextModule = (allModules || []).find(m => !earnedIds.has(m.id));
+
+      if (!nextModule) {
+        // All modules complete — don't show the card
+        return;
+      }
+
+      // Get sections for the next module
+      const { data: nextSections } = await supabase
+        .from("module_sections")
+        .select("id, section_number, title")
+        .eq("module_id", nextModule.id)
+        .order("section_number")
+        .limit(1);
+
+      const { data: nextModuleSectionsAll } = await supabase
+        .from("module_sections")
+        .select("id")
+        .eq("module_id", nextModule.id);
+
+      const { data: nextCompleted } = await supabase
+        .from("user_section_progress")
+        .select("section_id")
+        .eq("user_id", session.user.id)
+        .eq("completed", true)
+        .in("section_id", (nextModuleSectionsAll || []).map(s => s.id));
+
+      setData({
+        moduleSlug: nextModule.slug,
+        moduleTitle: nextModule.title,
+        sectionTitle: nextSections?.[0]?.title || "Section 1",
+        sectionNumber: nextSections?.[0]?.section_number || 1,
+        totalSections: nextModuleSectionsAll?.length || 0,
+        completedSections: nextCompleted?.length || 0,
+      });
+      return;
+    }
+
     setData({
       moduleSlug: moduleData.slug,
       moduleTitle: moduleData.title,
       sectionTitle: section.title,
       sectionNumber: section.section_number,
-      totalSections: allSections?.length || 0,
-      completedSections: completedProgress?.length || 0,
+      totalSections,
+      completedSections,
     });
   };
 
