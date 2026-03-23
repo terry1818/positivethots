@@ -1161,6 +1161,20 @@ export type Database = {
           zodiac_sign: string
         }[]
       }
+      get_likers_for_user: {
+        Args: { _user_id: string }
+        Returns: {
+          age: number
+          bio: string
+          id: string
+          is_premium: boolean
+          is_super_like: boolean
+          liker_count: number
+          location: string
+          name: string
+          profile_image: string
+        }[]
+      }
       get_public_profile: {
         Args: { _user_id: string }
         Returns: {
