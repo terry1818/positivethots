@@ -119,7 +119,7 @@ const PHASE_INTERSTITIALS = [
   { emoji: "📖", message: "The fun part!", nextPhase: "Share your story..." },
 ];
 
-const TOTAL_STEPS = 12;
+const TOTAL_STEPS = 13;
 
 // ── Component ──
 
