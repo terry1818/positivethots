@@ -172,6 +172,16 @@ export default {
           "0%": { opacity: "1", transform: "translateY(-20px) rotate(0deg) scale(0.8)" },
           "100%": { opacity: "0", transform: "translateY(400px) rotate(720deg) scale(0.4)" },
         },
+        "mascot-entrance": {
+          "0%": { opacity: "0", transform: "scale(0) rotate(-15deg)" },
+          "60%": { opacity: "1", transform: "scale(1.15) rotate(5deg)" },
+          "80%": { transform: "scale(0.95) rotate(-2deg)" },
+          "100%": { opacity: "1", transform: "scale(1) rotate(0deg)" },
+        },
+        "float-gentle": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
