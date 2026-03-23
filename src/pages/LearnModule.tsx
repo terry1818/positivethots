@@ -206,7 +206,7 @@ const LearnModule = () => {
         return newSet;
       });
 
-      if (result.passed) {
+      if (quizResult.passed) {
         const quizXP = 50;
         const perfectBonus = scorePercent === 100 ? 25 : 0;
         const totalXP = quizXP + perfectBonus;
