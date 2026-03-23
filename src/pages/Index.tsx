@@ -143,11 +143,12 @@ const Index = () => {
   };
 
   const loadSuggestions = async (userId: string, profile: Profile) => {
-    const [matchesResult, blockedResult] = await Promise.all([
+    const [matchesResult, blockedResult, swipesResult] = await Promise.all([
       supabase.from("matches").select("user1_id, user2_id")
         .or(`user1_id.eq.${userId},user2_id.eq.${userId}`),
       supabase.from("blocked_users").select("blocked_id, blocker_id")
         .or(`blocker_id.eq.${userId},blocked_id.eq.${userId}`),
+      supabase.from("swipes").select("swiped_id").eq("swiper_id", userId),
     ]);
 
     const matchedUserIds = new Set(matchesResult.data?.flatMap(m => [m.user1_id, m.user2_id]) || []);
@@ -159,7 +160,9 @@ const Index = () => {
       else blockedUserIds.add(row.blocker_id);
     });
 
-    const excludeIds = [userId, ...Array.from(matchedUserIds), ...Array.from(blockedUserIds)];
+    const swipedUserIds = new Set(swipesResult.data?.map(s => s.swiped_id) || []);
+
+    const excludeIds = [userId, ...Array.from(matchedUserIds), ...Array.from(blockedUserIds), ...Array.from(swipedUserIds)];
 
     const [profilesResult, allBadgesResult, boostsResult] = await Promise.all([
       supabase.rpc("get_discovery_profiles", { _exclude_ids: excludeIds }),
@@ -202,7 +205,7 @@ const Index = () => {
     const { error: swipeError } = await supabase.from("swipes").insert({
       swiper_id: currentUser.id, swiped_id: otherUserId, direction: "right",
     });
-    if (swipeError) { console.error("Swipe error:", swipeError); return; }
+    if (swipeError) { toast.error("Failed to send connection"); console.error("Swipe error:", swipeError); return; }
 
     trackEvent("swipe", { direction: "right", swiped_id: otherUserId });
     setCelebrationTrigger(prev => prev + 1);
