@@ -1,42 +1,83 @@
 
 
-# Fix Auth Emails: Wrong Sender Name + Broken Reset Link
+# Marketing Site Updates to Match Current App Design
 
-## Root Causes Found
+After auditing the uploaded `index_2-2.html` against the actual app codebase, here are **all the areas that need updating** beyond the already-planned "Unlock as You Learn" feature card:
 
-### Issue 1: "swipe-right-recreate" sender name
-In `supabase/functions/auth-email-hook/index.ts` line 39:
-```
-const SITE_NAME = "swipe-right-recreate"
-```
-This is used on line 259 to construct the `from` field: `swipe-right-recreate <noreply@positivethots.app>`. That's why every email shows the old project name.
+---
 
-Also line 49: `SAMPLE_PROJECT_URL = "https://swipe-right-recreate.lovable.app"` — wrong for previews.
+## 1. Add "Unlock as You Learn" Feature Card (already planned)
+Add a new card to the Features section explaining the 5-tier education unlock system:
+- Foundation (5 badges) -- Discovery, Location Sharing, Basic Matching
+- Sexual Health (4 badges) -- STI Status Sharing, Safer Sex Badge
+- Identity & Diversity (4 badges) -- Advanced Filters, Profile Linking
+- Healthy Relationships (4 badges) -- Priority Matching, Conversation Tools
+- Advanced Topics (3 badges) -- Mentor Badge, Event Creation, Premium Content
 
-### Issue 2: Reset link redirects to wrong URL
-The password reset link in the email uses `confirmationUrl` from `payload.data.url` (line 225), which Supabase Auth generates based on the `redirectTo` parameter. The `ForgotPasswordModal` correctly passes `${window.location.origin}/reset-password`, but the Supabase project's allowed redirect URLs may not include the published domain (`positivethots.lovable.app`), causing it to fall back to a default Lovable URL.
+## 2. Add Gamification / Duolingo-Style Learning Feature Card
+The app has a rich gamification layer that is a major differentiator but is not mentioned on the marketing site:
+- Daily streaks with flame icons and "streak-at-risk" warnings
+- XP system with levels (Curious to Legend)
+- Daily challenges with randomized micro-goals
+- Quiz combo counters with visual fire trails
+- "Continue Learning" session resume
+- This deserves its own feature card (e.g., "Learn Like a Game")
 
-## Changes
+## 3. Add One-Time Purchases to Pricing Section
+The app offers a la carte purchases not mentioned on the site:
+- **Profile Boost** -- $2.99 (appear higher in Discovery for 24 hours)
+- **Super Like Pack (10)** -- $1.99
 
-### 1. Fix auth-email-hook configuration (line 39 and 49)
-**File:** `supabase/functions/auth-email-hook/index.ts`
-- Change `SITE_NAME` from `"swipe-right-recreate"` to `"Positive Thots"`
-- Change `SAMPLE_PROJECT_URL` from `"https://swipe-right-recreate.lovable.app"` to `"https://positivethots.lovable.app"`
+These should appear below the subscription tiers as an "A La Carte" row or note.
 
-### 2. Update auth redirect URL configuration
-Configure the authentication system to include `https://positivethots.lovable.app` in the allowed redirect URLs so password reset links point to the correct site instead of a default URL.
+## 4. Verify/Update Subscription Tier Feature Lists
+Ensure the pricing cards match the actual app tiers exactly:
+- **Plus ($4.99/mo)**: See Who Likes You, 5 Super Likes/day
+- **Premium ($9.99/mo)**: + Priority Visibility, Advanced Filters -- mark as "Most Popular"
+- **VIP ($19.99/mo)**: + 1 Profile Boost/mo, Unlimited Super Likes, Mentor Badge
 
-### 3. Redeploy the auth-email-hook edge function
-Required for the name change to take effect — edge functions serve deployed code, not source code.
+## 5. Add Compatibility Matching Feature Card
+The app calculates a compatibility percentage for each match based on shared interests, relationship styles, goals, education badges earned, location, and experience level. This is not mentioned in the Features section.
 
-### 4. End-to-end test
-- Trigger a fresh password reset email and verify:
-  - Sender shows "Positive Thots" (not "swipe-right-recreate")
-  - Reset link goes to `positivethots.lovable.app/reset-password` (not lovable.ai)
-  - The reset password form works and updates the password
-- Trigger a fresh signup verification email and verify the same sender name fix
+## 6. Add Nearby Users / Location Sharing Feature
+The app includes GPS-based "Nearby Users" for finding people at events. This is a unique feature worth calling out (e.g., "Find People at Events" card).
 
-## Technical Notes
-- The email templates themselves (recovery.tsx, signup.tsx, etc.) are already correctly branded with "Positive Thots" text and logo. The problem is only in the edge function's configuration constants.
-- The `from` field in sent emails is constructed as `${SITE_NAME} <noreply@${FROM_DOMAIN}>`, so fixing `SITE_NAME` fixes the display name in all auth emails at once.
+## 7. Update Hero Stats Bar
+Currently shows "20+ Education Badges". The database has exactly **20 modules**, so either:
+- Change to "20 Education Badges" (accurate)
+- Keep "20+" if you plan to add more modules soon
+
+## 8. Update "How It Works" Accuracy
+Ensure the steps reflect the actual user flow:
+1. Sign up free and complete onboarding (profile, photos, preferences)
+2. Complete 5 Foundation courses (Consent, ENM, Boundaries, Safer Sex, Emotional Responsibility)
+3. Pass each quiz with 80%+ to earn badges
+4. Unlock Discovery and start matching
+5. Keep learning to unlock more features (STI sharing, filters, mentor badge, etc.)
+
+## 9. FAQ Updates
+Add or update FAQ entries for:
+- "What happens if I fail a quiz?" (retake unlimited times)
+- "What features do I unlock by learning?" (tier breakdown)
+- "Can I buy features without completing courses?" (no -- education unlocks are separate from subscription perks)
+- "What are Super Likes and Profile Boosts?" (explain one-time purchases)
+
+---
+
+## Summary of All Changes
+
+| # | Area | What to Update |
+|---|------|----------------|
+| 1 | Features | Add "Unlock as You Learn" card with tier details |
+| 2 | Features | Add "Learn Like a Game" gamification card |
+| 3 | Pricing | Add one-time purchases ($2.99 Boost, $1.99 Super Likes) |
+| 4 | Pricing | Verify tier feature lists match app exactly |
+| 5 | Features | Add "Compatibility Matching" card |
+| 6 | Features | Add "Nearby Users at Events" card |
+| 7 | Hero | Fix "20+" to "20" or confirm intent |
+| 8 | How It Works | Update steps to match actual onboarding flow |
+| 9 | FAQ | Add questions about unlocks, quizzes, purchases |
+
+## Output
+A single updated HTML file written to `/mnt/documents/index.html` for download, incorporating all approved changes.
 
