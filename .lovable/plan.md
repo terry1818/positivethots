@@ -1,28 +1,19 @@
 
-# Rebuild Logo From Clean Upload
 
-## What I found
-- The app logo component imports `src/assets/logo.png`.
-- The favicon/app icon is served from `public/icon-512.png` via `index.html`.
-- A clean replacement source already exists in the repo as `src/assets/logo-rebuild-source.png`.
+# Remove White Background from Logo
 
-## Implementation plan
-1. Replace the damaged logo asset by rebuilding `src/assets/logo.png` from the clean uploaded source, instead of trying to “remove” the baked background from the corrupted file again.
-2. Preserve true transparency in the rebuilt logo so it renders correctly on all page backgrounds.
-3. Generate a proper square `public/icon-512.png` from the same clean source, cropped/padded thoughtfully so the artwork fits well as a favicon and app icon.
-4. Keep the existing asset paths the same so no React component changes are needed:
-   - `src/components/Logo.tsx` can continue importing `@/assets/logo.png`
-   - `index.html` can continue referencing `/icon-512.png`
-5. QA both outputs visually against light and dark backgrounds to make sure:
-   - no white matte or checkerboard remains
-   - edges are clean
-   - the favicon composition is centered and readable at small sizes
+## What needs to happen
+1. Take the uploaded `logo_edited-3.png` and remove the white background to create a transparent PNG.
+2. Present the cleaned image for your approval before replacing anything.
+3. Once approved, overwrite `src/assets/logo.png` and regenerate `public/icon-512.png`.
 
-## Expected file updates
-- `src/assets/logo.png`
-- `public/icon-512.png`
+## Technical approach
+- Use Python with PIL/numpy to identify white pixels (near RGB 255,255,255) and set their alpha to 0.
+- Apply edge anti-aliasing so the artwork edges blend smoothly against any background.
+- Save the result to `/mnt/documents/` for your visual review.
+- No code or component changes needed — same file paths are preserved.
 
-## Technical notes
-- I would use the clean uploaded image as the new master, not the previously edited asset.
-- If the uploaded source still contains a visible white background baked into the pixels, I would rebuild transparency from the clean source with a tighter mask/manual cleanup pass before exporting the final PNGs.
-- No backend or database changes are involved.
+## Expected outputs
+- **For approval**: Cleaned transparent PNG rendered against both light and dark backgrounds
+- **After approval**: Updated `src/assets/logo.png` and `public/icon-512.png`
+
