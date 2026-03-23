@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { ShimmerButton } from "@/components/ShimmerButton";
 import { StaggerChildren } from "@/components/StaggerChildren";
 import {
@@ -17,6 +18,8 @@ import {
   X,
   Star,
   Shield,
+  Gift,
+  Ticket,
 } from "lucide-react";
 import {
   SUBSCRIPTION_TIERS,
@@ -25,6 +28,7 @@ import {
   type FeatureKey,
 } from "@/lib/subscriptionTiers";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const tierIcons = {
   plus: Zap,
@@ -34,8 +38,27 @@ const tierIcons = {
 
 const Premium = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { isPremium, tier: currentTier } = useSubscription();
   const [loading, setLoading] = useState<string | null>(null);
+  const [promoCode, setPromoCode] = useState("");
+  const [redeemingCode, setRedeemingCode] = useState(false);
+
+  // Pre-fill from sessionStorage (referral flow)
+  useEffect(() => {
+    const refCode = sessionStorage.getItem("referralCode");
+    if (refCode) {
+      setPromoCode(refCode);
+      sessionStorage.removeItem("referralCode");
+    }
+  }, []);
+
+  // Show success toast if redirected after redemption
+  useEffect(() => {
+    if (searchParams.get("redeemed") === "true") {
+      toast.success("Your trial has started! Welcome aboard 🎉");
+    }
+  }, [searchParams]);
 
   const handleSubscribe = async (priceId: string) => {
     setLoading(priceId);
@@ -49,6 +72,26 @@ const Premium = () => {
       console.error("Checkout error:", err);
     } finally {
       setLoading(null);
+    }
+  };
+
+  const handleRedeemCode = async () => {
+    if (!promoCode.trim()) return;
+    setRedeemingCode(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("redeem-promo-code", {
+        body: { code: promoCode.trim() },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      if (data?.url) {
+        toast.success("Code accepted! Redirecting to checkout…");
+        window.open(data.url, "_blank");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to redeem code");
+    } finally {
+      setRedeemingCode(false);
     }
   };
 
@@ -92,6 +135,35 @@ const Premium = () => {
           <h1 className="text-3xl font-bold mb-2">Choose Your Plan</h1>
           <p className="text-muted-foreground">Unlock the full experience</p>
         </div>
+
+        {/* Promo Code Section */}
+        <Card className="mb-6 animate-fade-in border-dashed border-primary/30">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-2 mb-3">
+              <Gift className="h-5 w-5 text-primary" />
+              <span className="font-medium">Have a promo or referral code?</span>
+            </div>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter code"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                maxLength={12}
+                className="font-mono tracking-wider uppercase"
+              />
+              <Button
+                onClick={handleRedeemCode}
+                disabled={redeemingCode || !promoCode.trim()}
+              >
+                {redeemingCode ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Redeem"
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         <StaggerChildren className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8" stagger={100}>
           {SUBSCRIPTION_TIERS.map((config) => {

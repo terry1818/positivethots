@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,11 +12,13 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Logo } from "@/components/Logo";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2, MapPin, Lock } from "lucide-react";
+import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2, MapPin, Lock, Gift, Copy, Users, Check, Ticket } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -37,6 +39,69 @@ const Settings = () => {
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [managingPortal, setManagingPortal] = useState(false);
+
+  // Promo code generation
+  const [codeType, setCodeType] = useState<"gift" | "referral">("referral");
+  const [giftTier, setGiftTier] = useState("premium");
+  const [giftDays, setGiftDays] = useState("14");
+  const [creatingCode, setCreatingCode] = useState(false);
+  const [myCodes, setMyCodes] = useState<any[]>([]);
+  const [loadingCodes, setLoadingCodes] = useState(true);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  const loadMyCodes = useCallback(async () => {
+    const { data } = await supabase
+      .from("promo_codes")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setMyCodes(data || []);
+    setLoadingCodes(false);
+  }, []);
+
+  useEffect(() => {
+    loadMyCodes();
+  }, [loadMyCodes]);
+
+  const generateCode = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let result = "";
+    for (let i = 0; i < 8; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+
+  const handleCreateCode = async () => {
+    setCreatingCode(true);
+    try {
+      const code = generateCode();
+      const { error } = await supabase.from("promo_codes").insert({
+        code,
+        type: codeType,
+        tier: codeType === "gift" ? giftTier : "premium",
+        trial_days: codeType === "gift" ? parseInt(giftDays) : 14,
+        created_by: user!.id,
+      });
+      if (error) throw error;
+      toast.success(`${codeType === "gift" ? "Gift" : "Referral"} code created: ${code}`);
+      await loadMyCodes();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create code");
+    } finally {
+      setCreatingCode(false);
+    }
+  };
+
+  const copyCode = (code: string) => {
+    const isReferral = myCodes.find(c => c.code === code)?.type === "referral";
+    const text = isReferral
+      ? `https://positivethots.lovable.app/auth?ref=${code}`
+      : code;
+    navigator.clipboard.writeText(text);
+    setCopiedCode(code);
+    toast.success("Copied to clipboard!");
+    setTimeout(() => setCopiedCode(null), 2000);
+  };
 
   const themeOptions = [
     { value: "light", label: "Light", desc: "Always use light mode", icon: Sun },
@@ -254,6 +319,114 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* Promo & Referral Codes */}
+        <Card className="animate-fade-in" style={{ animationDelay: "95ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Gift className="h-5 w-5" /> Promo & Referral Codes
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3 p-3 rounded-lg bg-muted/50">
+              <p className="text-sm font-medium">Create a Code</p>
+              <div className="flex gap-2 flex-wrap">
+                <Select value={codeType} onValueChange={(v) => setCodeType(v as "gift" | "referral")}>
+                  <SelectTrigger className="w-[130px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="referral">Referral</SelectItem>
+                    <SelectItem value="gift">Gift Trial</SelectItem>
+                  </SelectContent>
+                </Select>
+                {codeType === "gift" && (
+                  <>
+                    <Select value={giftTier} onValueChange={setGiftTier}>
+                      <SelectTrigger className="w-[110px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="plus">Plus</SelectItem>
+                        <SelectItem value="premium">Premium</SelectItem>
+                        <SelectItem value="vip">VIP</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={giftDays} onValueChange={setGiftDays}>
+                      <SelectTrigger className="w-[100px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="7">7 days</SelectItem>
+                        <SelectItem value="14">14 days</SelectItem>
+                        <SelectItem value="30">30 days</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {codeType === "referral"
+                  ? "Share your link — when your friend subscribes, you get 3 months Premium free!"
+                  : `Gift a ${giftDays}-day free trial of ${giftTier.charAt(0).toUpperCase() + giftTier.slice(1)}`}
+              </p>
+              <Button onClick={handleCreateCode} disabled={creatingCode} className="w-full" size="sm">
+                {creatingCode ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Ticket className="h-4 w-4 mr-1" /> Generate Code</>}
+              </Button>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium flex items-center gap-1">
+                <Users className="h-4 w-4" /> My Codes
+              </p>
+              {loadingCodes ? (
+                <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                  <Loader2 className="h-3 w-3 animate-spin" /> Loading…
+                </div>
+              ) : myCodes.filter(c => c.created_by === user?.id).length === 0 ? (
+                <p className="text-sm text-muted-foreground">No codes yet. Create one above!</p>
+              ) : (
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {myCodes.filter(c => c.created_by === user?.id).map((code) => (
+                    <div key={code.id} className="flex items-center justify-between p-2 rounded-md border text-sm">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="font-mono font-medium">{code.code}</span>
+                        <Badge variant={code.type === "referral" ? "default" : "secondary"} className="text-xs">
+                          {code.type}
+                        </Badge>
+                        {code.type === "gift" && (
+                          <span className="text-xs text-muted-foreground">
+                            {code.tier} · {code.trial_days}d
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {code.redeemed_by ? (
+                          <Badge variant="outline" className="text-xs">
+                            {code.referred_subscribed ? "🎉 Subscribed" : "✅ Used"}
+                          </Badge>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => copyCode(code.code)}
+                          >
+                            {copiedCode === code.code ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                          </Button>
+                        )}
+                        {code.reward_granted && (
+                          <Badge className="text-xs bg-primary/10 text-primary">
+                            🏆 Reward!
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="animate-fade-in" style={{ animationDelay: "100ms" }}>
           <CardHeader>

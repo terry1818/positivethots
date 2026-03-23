@@ -104,6 +104,9 @@ serve(async (req) => {
       const subscription = await stripe.subscriptions.retrieve(subscriptionId);
       await upsertSubscription(supabase, user.id, subscription);
       logStep("Checkout processed", { userId: user.id });
+
+      // Process referral reward
+      await processReferralReward(supabase, stripe, user.id);
     } else {
       const subscription = event.data.object as Stripe.Subscription;
       const customerId = subscription.customer as string;
@@ -135,6 +138,14 @@ serve(async (req) => {
 
       await upsertSubscription(supabase, user.id, subscription);
       logStep(`${event.type} processed`, { userId: user.id });
+
+      // Process referral reward on subscription created/updated (active status)
+      if (
+        (event.type === "customer.subscription.created" || event.type === "customer.subscription.updated") &&
+        (subscription.status === "active" || subscription.status === "trialing")
+      ) {
+        await processReferralReward(supabase, stripe, user.id);
+      }
     }
 
     return new Response(JSON.stringify({ received: true }), {
@@ -187,4 +198,77 @@ async function upsertSubscription(
   }
 
   logStep("Subscription upserted", { userId, status, plan, periodEnd });
+}
+
+async function processReferralReward(
+  supabase: any,
+  stripe: Stripe,
+  subscribedUserId: string
+) {
+  try {
+    // Check if this user redeemed a referral-type promo code
+    const { data: referralCode, error: refError } = await supabase
+      .from("promo_codes")
+      .select("*")
+      .eq("redeemed_by", subscribedUserId)
+      .eq("type", "referral")
+      .eq("referred_subscribed", false)
+      .maybeSingle();
+
+    if (refError || !referralCode) return;
+
+    logStep("Referral detected", { referrer: referralCode.created_by, referred: subscribedUserId });
+
+    // Mark as subscribed
+    await supabase
+      .from("promo_codes")
+      .update({ referred_subscribed: true })
+      .eq("id", referralCode.id);
+
+    // Check if reward already granted
+    if (referralCode.reward_granted) return;
+
+    // Grant referrer 90-day Premium trial via Stripe
+    const referrerId = referralCode.created_by;
+
+    // Get referrer's email
+    const { data: referrerData } = await supabase.auth.admin.getUserById(referrerId);
+    if (!referrerData?.user?.email) {
+      logStep("Referrer not found", { referrerId });
+      return;
+    }
+
+    const referrerEmail = referrerData.user.email;
+
+    // Find or create Stripe customer for referrer
+    const customers = await stripe.customers.list({ email: referrerEmail, limit: 1 });
+    let customerId: string;
+    if (customers.data.length > 0) {
+      customerId = customers.data[0].id;
+    } else {
+      const newCustomer = await stripe.customers.create({ email: referrerEmail });
+      customerId = newCustomer.id;
+    }
+
+    // Create subscription with 90-day trial for Premium
+    const premiumPriceId = "price_1TDjjHQL8g2unk5Zfe9VvytG";
+    await stripe.subscriptions.create({
+      customer: customerId,
+      items: [{ price: premiumPriceId }],
+      trial_period_days: 90,
+      metadata: { referral_reward: "true", referred_user: subscribedUserId },
+    });
+
+    // Mark reward as granted
+    await supabase
+      .from("promo_codes")
+      .update({ reward_granted: true })
+      .eq("id", referralCode.id);
+
+    logStep("Referral reward granted", { referrerId, trialDays: 90 });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    logStep("Error processing referral reward", { message: msg });
+    // Don't throw — referral reward failure shouldn't fail the webhook
+  }
 }
