@@ -350,6 +350,13 @@ const Index = () => {
         </div>
       )}
 
+      {/* Feature Unlock Roadmap */}
+      {tiers.length > 0 && (
+        <div className="container max-w-7xl mx-auto px-4 mb-4">
+          <TierRoadmap tiers={tiers} />
+        </div>
+      )}
+
       {/* Nearby Users */}
       {isSharing && (
         <div className="container max-w-7xl mx-auto px-4 mb-4">

@@ -151,7 +151,7 @@ const Profile = () => {
         </div>
       </header>
 
-      <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
+      <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-24 space-y-4">
         {/* Profile Card */}
         <Card className="overflow-hidden animate-fade-in">
           <div className="relative h-64 bg-gradient-to-br from-primary/20 to-secondary/20">

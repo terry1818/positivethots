@@ -79,7 +79,7 @@ const LikesYou = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col pb-20">
       <MicroCelebration trigger={celebrationTrigger} emojis={["🎉", "💕", "✨", "💜"]} />
       <div className="flex-1 overflow-auto">
         <div className="container max-w-md mx-auto px-4 py-6">
