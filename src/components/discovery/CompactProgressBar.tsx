@@ -23,12 +23,15 @@ export const CompactProgressBar = ({ tiers, badgeCount, suggestionCount }: Compa
   const totalModules = tiers.reduce((s, t) => s + t.totalModules, 0);
   const earnedModules = tiers.reduce((s, t) => s + t.earnedModules, 0);
 
+  const nextTier = tiers.find((t) => !t.isComplete);
+  const nextFeature = nextTier?.features.find((f) => !f.isUnlocked);
+
   return (
     <button
       onClick={() => navigate("/learn")}
       className="w-full rounded-lg border border-border bg-card p-3 text-left transition-colors hover:bg-accent/50 active:scale-[0.99]"
     >
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <span className="font-semibold text-foreground">{suggestionCount} matches</span>
           <span>·</span>
