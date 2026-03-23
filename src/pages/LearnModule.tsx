@@ -189,10 +189,10 @@ const LearnModule = () => {
 
     if (scorePercent >= 80) {
       try {
-        const { error } = await supabase.from("user_badges").insert({
-          user_id: userId, module_id: module.id, quiz_score: scorePercent
+        const { error } = await supabase.rpc("award_badge", {
+          _module_id: module.id, _quiz_score: scorePercent
         });
-        if (error && !error.message.includes("duplicate")) throw error;
+        if (error) throw error;
 
         const quizXP = 50;
         const perfectBonus = scorePercent === 100 ? 25 : 0;
