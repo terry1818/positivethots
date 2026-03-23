@@ -1,0 +1,19 @@
+{
+  "name": "Positive Thots — Ethical Dating & Connection",
+  "short_name": "Positive Thots",
+  "description": "An education-first dating app for ethical, inclusive, and informed connections.",
+  "theme_color": "#6633CC",
+  "background_color": "#6633CC",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
