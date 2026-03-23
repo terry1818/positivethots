@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { getLevelName } from "@/hooks/useLearningStats";
-import { Flame, Zap, Star, Trophy } from "lucide-react";
+import { Flame, Zap, Star, Trophy, Share2, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 interface CelebrationModalProps {
   type: "level_up" | "streak_milestone" | "badge_earned" | "tier_complete" | null;
@@ -22,8 +23,19 @@ const streakMessages: Record<number, string> = {
   100: "100 DAYS! Absolute legend! 👑",
 };
 
+const tierTopics: Record<string, string> = {
+  Foundation: "consent, communication, boundaries, trust, and relationship basics",
+  "Sexual Health": "STI prevention, safer sex practices, sexual wellness, and testing awareness",
+  "Identity & Diversity": "gender identity, sexual orientation, pronouns, and inclusivity",
+  "Healthy Relationships": "conflict resolution, attachment styles, emotional intelligence, and partner communication",
+  "Advanced Topics": "ethical non-monogamy, kink education, community leadership, and mentorship",
+};
+
+const APP_URL = "https://positivethots.lovable.app";
+
 export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, onClose }: CelebrationModalProps) => {
   const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string; size: number }>>([]);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (type) {
@@ -37,10 +49,39 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
           size: 4 + Math.random() * 6,
         }))
       );
+      setCopied(false);
     }
   }, [type]);
 
   if (!type) return null;
+
+  const getShareText = () => {
+    const topics = tierTopics[tierName || ""] || "";
+    return `I just completed the ${tierName} tier on Positive Thots! 🏆 I've passed courses covering ${topics}. Join me in learning at ${APP_URL}`;
+  };
+
+  const handleShareTwitter = () => {
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(getShareText())}`, "_blank");
+  };
+
+  const handleShareFacebook = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(getShareText())}&u=${encodeURIComponent(APP_URL)}`, "_blank");
+  };
+
+  const handleShareLinkedIn = () => {
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(APP_URL)}`, "_blank");
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(getShareText());
+      setCopied(true);
+      toast({ title: "Copied!", description: "Achievement text copied to clipboard." });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ title: "Copy failed", variant: "destructive" });
+    }
+  };
 
   return (
     <Dialog open={!!type} onOpenChange={() => onClose()}>
@@ -104,6 +145,33 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
               <p className="text-muted-foreground">
                 You've mastered <span className="font-bold text-foreground">{tierName}</span>!
               </p>
+              {tierTopics[tierName || ""] && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Covering {tierTopics[tierName || ""]}
+                </p>
+              )}
+
+              {/* Share section */}
+              <div className="mt-5 pt-4 border-t border-border">
+                <p className="text-xs text-muted-foreground mb-3 flex items-center justify-center gap-1">
+                  <Share2 className="h-3 w-3" /> Share your achievement
+                </p>
+                <div className="flex justify-center gap-2">
+                  <Button variant="outline" size="sm" onClick={handleShareTwitter} className="text-xs gap-1.5">
+                    𝕏 Post
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleShareFacebook} className="text-xs gap-1.5">
+                    Facebook
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleShareLinkedIn} className="text-xs gap-1.5">
+                    LinkedIn
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleCopy} className="text-xs gap-1.5">
+                    {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                    {copied ? "Copied" : "Copy"}
+                  </Button>
+                </div>
+              </div>
             </>
           )}
           <Button onClick={onClose} className="mt-6 w-full">
