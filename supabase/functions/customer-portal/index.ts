@@ -48,10 +48,12 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
+    console.error("[customer-portal] error:", error);
     const msg = error instanceof Error ? error.message : String(error);
-    return new Response(JSON.stringify({ error: msg }), {
+    const isUserError = msg === "No authorization header provided" || msg === "User not authenticated or email not available" || msg === "No subscription found. Please subscribe first." || msg === "STRIPE_SECRET_KEY is not set";
+    return new Response(JSON.stringify({ error: isUserError ? msg : "An unexpected error occurred. Please try again." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status: isUserError ? 400 : 500,
     });
   }
 });
