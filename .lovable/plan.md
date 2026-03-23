@@ -1,52 +1,63 @@
 
-Plan
 
-1. Verify the actual failure path, not just the UI message.
-   - The frontend call is correct: it sends password reset to `/reset-password`.
-   - The backend auth logs show real `429 over_email_send_rate_limit` responses from the auth service, so this is not just a misleading toast.
-   - The same account (`yeaimforsale@gmail.com`) hit `/recover` multiple times within about 2 minutes, which is why the provider blocked more sends.
+# Plan: Sticky Bottom Nav, Feature Unlocks on Index, and BDSMtest Integration
 
-2. Fix the product behavior so users don’t get trapped by this.
-   - Add a dedicated “Forgot password” flow instead of the current inline link-only behavior.
-   - Move reset sending into a small modal or dedicated screen with:
-     - clear email field validation
-     - loading state
-     - single-submit protection
-     - disabled resend cooldown on the client
-   - This prevents accidental repeated submits, double clicks, and spammy retries.
+## 1. Make BottomNav Sticky (Fixed to Bottom)
 
-3. Stop hidden duplicate triggers.
-   - Audit the auth screen and related session/auth listeners for anything that may re-trigger recovery or remount unexpectedly.
-   - Specifically verify:
-     - the forgot-password action only fires on explicit click
-     - no route transition or recovery-page logic is causing extra recover requests
-     - no browser autofill/form submission edge case is invoking it more than once
+**Problem**: BottomNav scrolls with page content, forcing users to scroll past all profiles to reach navigation.
 
-4. Improve reset request handling.
-   - Add a local debounce / in-flight guard so only one recovery request can be sent at a time.
-   - Persist a short client-side cooldown timestamp per email so refreshes/remounts don’t immediately allow repeat requests.
-   - Keep the UX honest: show “email sent” only on success, and show a specific explanation if the backend truly rejects the request.
+**Fix**: Change `BottomNav` from static to `fixed bottom-0` positioning, and add bottom padding to all pages that use it.
 
-5. Verify the email delivery path end-to-end.
-   - Check that the custom auth email setup is actually active for password recovery, since there are currently no recovery entries in the email send log and no recent auth-email-hook logs for recovery sends.
-   - Confirm the reset email is being handed off to the project’s branded auth email pipeline and not failing before queueing.
+**Changes**:
+- `src/components/BottomNav.tsx` — add `fixed bottom-0 left-0 right-0 z-50` classes to the nav element
+- All 7 pages using BottomNav (Index, Learn, Messages, LikesYou, Profile, Shop, Resources) — change `pb-20` to ensure content isn't hidden behind the fixed nav. Most already have this but need verification.
 
-6. If the custom email hook is not active, repair that integration.
-   - Reconnect the auth recovery email flow to the existing branded email setup.
-   - Ensure password reset requests enqueue and send properly through the project’s email system.
-   - Re-test with one controlled request and confirm the reset email is logged and delivered.
+---
 
-7. Final validation after implementation.
-   - Test these cases:
-     - first reset request for an existing confirmed user
-     - repeated click protection
-     - expired/used reset link behavior
-     - reset password submission on `/reset-password`
-     - mobile + desktop auth flow
-   - Confirm there are no duplicate recovery calls and the user can actually complete the reset successfully.
+## 2. Add Feature Unlock Roadmap to Discovery Page (Index)
 
-Technical notes
-- Current evidence indicates two issues may exist at once:
-  1. real auth-provider throttling caused by repeated `/recover` requests
-  2. possible custom auth email pipeline not logging recovery sends as expected
-- The plan should fix both the usability problem and the backend delivery gap so reset works reliably instead of just showing a friendlier error.
+**Problem**: The Index/Discovery page doesn't show users what features they unlock by completing education tiers.
+
+**Fix**: Import the existing `TierRoadmap` component and `useFeatureUnlocks` hook into `Index.tsx`, and render it below the stats bar / education reminder section.
+
+**Changes**:
+- `src/pages/Index.tsx` — import `useFeatureUnlocks` and `TierRoadmap`, add the roadmap card between the education reminder and the matches grid.
+
+---
+
+## 3. BDSMtest.org Integration (Link + Screenshot)
+
+**Problem**: Users want to share their BDSMtest.org results on their profile.
+
+**Approach**: Since BDSMtest.org has no public API, users will:
+1. Paste their results URL (e.g., `https://bdsmtest.org/r/abc123`)
+2. Optionally upload a screenshot of their results
+
+**Changes**:
+
+**Database**:
+- Add `bdsm_test_url` (text, nullable) and `bdsm_test_screenshot` (text, nullable) columns to the `profiles` table via migration.
+
+**Edit Profile** (`src/pages/EditProfile.tsx`):
+- Add a new "Kink Profile" card section with:
+  - URL input field for the BDSMtest.org results link (validated to match `bdsmtest.org` domain)
+  - Screenshot upload button (uploads to `user-photos` bucket, stores URL in `bdsm_test_screenshot`)
+- Save both fields with the existing profile save flow.
+
+**Profile Display** (`src/pages/Profile.tsx`):
+- Show a "Kink Profile" section if either URL or screenshot is set
+- Render the URL as a clickable external link
+- Display the screenshot as a viewable image
+
+**Discovery Card** (`src/components/discovery/DiscoveryCard.tsx` and `src/components/ProfileCard.tsx`):
+- Show a small badge/icon if the user has BDSM test results linked, so potential matches can see it at a glance.
+
+---
+
+## Technical Details
+
+- The `BottomNav` fix uses `fixed` positioning with `z-50` to stay above all content. Safe-area insets are already handled by the viewport meta tag.
+- BDSMtest URL validation uses a simple regex: `/^https?:\/\/(www\.)?bdsmtest\.org\/r\//`
+- Screenshot upload reuses the existing `user-photos` storage bucket (already public).
+- No new edge functions needed — all changes are client-side + one DB migration.
+
