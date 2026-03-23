@@ -122,9 +122,12 @@ serve(async (req) => {
 
     throw new Error("Invalid action. Use 'export' or 'delete'.");
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error("[manage-account] error:", error);
+    const msg = error instanceof Error ? error.message : String(error);
+    const isUserError = msg === "No authorization header" || msg === "Unauthorized" || msg === "Invalid action. Use 'export' or 'delete'.";
+    return new Response(JSON.stringify({ error: isUserError ? msg : "An unexpected error occurred. Please try again." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
+      status: isUserError ? 400 : 500,
     });
   }
 });
