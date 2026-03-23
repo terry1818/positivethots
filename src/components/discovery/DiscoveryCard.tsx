@@ -34,7 +34,24 @@ interface DiscoveryCardProps {
   superLikeBalance?: number;
 }
 
-export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperLike, canSuperLike, superLikeBalance }: DiscoveryCardProps) => (
+export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperLike, canSuperLike, superLikeBalance }: DiscoveryCardProps) => {
+  const navigate = useNavigate();
+
+  const handleSuperLikeClick = () => {
+    if (superLikeBalance !== undefined && superLikeBalance <= 0) {
+      toast("Out of Super Likes!", {
+        description: "Get more to stand out from the crowd.",
+        action: {
+          label: "Get More",
+          onClick: () => navigate("/premium"),
+        },
+      });
+      return;
+    }
+    onSuperLike?.(profile.id);
+  };
+
+  return (
   <Card
     className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-stagger-fade"
     style={{ animationDelay: `${index * 80}ms` }}
