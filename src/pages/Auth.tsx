@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ShimmerButton } from "@/components/ShimmerButton";
 import { Logo } from "@/components/Logo";
 import { ForgotPasswordModal } from "@/components/ForgotPasswordModal";
+import { buildAuthRedirectUrl } from "@/lib/authRedirect";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -41,17 +42,18 @@ const Auth = () => {
       if (isSignUp) {
         const { data: authData, error: signUpError } = await supabase.auth.signUp({
           email: email.trim(), password,
-          options: { emailRedirectTo: `${window.location.origin}/`, data: { name: name.trim(), age: parseInt(age) } },
+          options: {
+            emailRedirectTo: buildAuthRedirectUrl("/"),
+            data: { name: name.trim(), age: parseInt(age) },
+          },
         });
         if (signUpError) throw signUpError;
         if (authData.user && !authData.session) {
-          // Email confirmation required — don't create profile yet
           toast.success("Account created! Check your email to confirm your account before signing in.");
           setIsSignUp(false);
           return;
         }
         if (authData.user && authData.session) {
-          // Auto-confirmed (shouldn't happen with current config, but handle gracefully)
           const { error: profileError } = await supabase.from("profiles").insert({
             id: authData.user.id, name: name.trim(), age: parseInt(age), bio: "",
             location: "Location not set",
@@ -64,7 +66,6 @@ const Auth = () => {
       } else {
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (signInError) throw signInError;
-        // Create profile on first login if missing (e.g. user confirmed email but profile wasn't created)
         if (signInData.user) {
           const { data: existingProfile } = await supabase
             .from("profiles").select("id").eq("id", signInData.user.id).maybeSingle();

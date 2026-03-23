@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { buildAuthRedirectUrl } from "@/lib/authRedirect";
 import {
   Dialog,
   DialogContent,
@@ -52,7 +53,6 @@ export const ForgotPasswordModal = () => {
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
     if (!isOpen) {
-      // Reset state when closing
       setSent(false);
       setLoading(false);
       setCooldownSeconds(0);
@@ -67,7 +67,6 @@ export const ForgotPasswordModal = () => {
       return;
     }
 
-    // Check client-side cooldown
     const remaining = getRemainingCooldown(trimmed);
     if (remaining > 0) {
       setCooldownSeconds(Math.ceil(remaining / 1000));
@@ -79,17 +78,15 @@ export const ForgotPasswordModal = () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(trimmed, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: buildAuthRedirectUrl("/reset-password"),
       });
       if (error) throw error;
 
-      // Set cooldown AFTER successful send
       setCooldown(trimmed);
       startCooldownTimer(trimmed);
       setSent(true);
     } catch (err: any) {
       if (err.message?.includes("rate limit") || err.code === "over_email_send_rate_limit") {
-        // If backend rate-limits, set a cooldown too
         setCooldown(trimmed);
         startCooldownTimer(trimmed);
         toast.error("Too many reset attempts. Please wait a minute before trying again.");
@@ -132,11 +129,7 @@ export const ForgotPasswordModal = () => {
                 You can request another reset in {cooldownSeconds}s
               </p>
             ) : (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSent(false)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setSent(false)}>
                 Didn't receive it? Try again
               </Button>
             )}
@@ -163,16 +156,8 @@ export const ForgotPasswordModal = () => {
                 />
               </div>
             </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading || cooldownSeconds > 0}
-            >
-              {loading
-                ? "Sending..."
-                : cooldownSeconds > 0
-                ? `Wait ${cooldownSeconds}s`
-                : "Send Reset Link"}
+            <Button type="submit" className="w-full" disabled={loading || cooldownSeconds > 0}>
+              {loading ? "Sending..." : cooldownSeconds > 0 ? `Wait ${cooldownSeconds}s` : "Send Reset Link"}
             </Button>
           </form>
         )}
