@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShimmerButton } from "@/components/ShimmerButton";
 import { Logo } from "@/components/Logo";
+import { ForgotPasswordModal } from "@/components/ForgotPasswordModal";
 import { toast } from "sonner";
 import { z } from "zod";
 
