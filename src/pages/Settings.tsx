@@ -319,6 +319,114 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* Promo & Referral Codes */}
+        <Card className="animate-fade-in" style={{ animationDelay: "95ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Gift className="h-5 w-5" /> Promo & Referral Codes
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3 p-3 rounded-lg bg-muted/50">
+              <p className="text-sm font-medium">Create a Code</p>
+              <div className="flex gap-2 flex-wrap">
+                <Select value={codeType} onValueChange={(v) => setCodeType(v as "gift" | "referral")}>
+                  <SelectTrigger className="w-[130px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="referral">Referral</SelectItem>
+                    <SelectItem value="gift">Gift Trial</SelectItem>
+                  </SelectContent>
+                </Select>
+                {codeType === "gift" && (
+                  <>
+                    <Select value={giftTier} onValueChange={setGiftTier}>
+                      <SelectTrigger className="w-[110px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="plus">Plus</SelectItem>
+                        <SelectItem value="premium">Premium</SelectItem>
+                        <SelectItem value="vip">VIP</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={giftDays} onValueChange={setGiftDays}>
+                      <SelectTrigger className="w-[100px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="7">7 days</SelectItem>
+                        <SelectItem value="14">14 days</SelectItem>
+                        <SelectItem value="30">30 days</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {codeType === "referral"
+                  ? "Share your link — when your friend subscribes, you get 3 months Premium free!"
+                  : `Gift a ${giftDays}-day free trial of ${giftTier.charAt(0).toUpperCase() + giftTier.slice(1)}`}
+              </p>
+              <Button onClick={handleCreateCode} disabled={creatingCode} className="w-full" size="sm">
+                {creatingCode ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Ticket className="h-4 w-4 mr-1" /> Generate Code</>}
+              </Button>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium flex items-center gap-1">
+                <Users className="h-4 w-4" /> My Codes
+              </p>
+              {loadingCodes ? (
+                <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                  <Loader2 className="h-3 w-3 animate-spin" /> Loading…
+                </div>
+              ) : myCodes.filter(c => c.created_by === user?.id).length === 0 ? (
+                <p className="text-sm text-muted-foreground">No codes yet. Create one above!</p>
+              ) : (
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {myCodes.filter(c => c.created_by === user?.id).map((code) => (
+                    <div key={code.id} className="flex items-center justify-between p-2 rounded-md border text-sm">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="font-mono font-medium">{code.code}</span>
+                        <Badge variant={code.type === "referral" ? "default" : "secondary"} className="text-xs">
+                          {code.type}
+                        </Badge>
+                        {code.type === "gift" && (
+                          <span className="text-xs text-muted-foreground">
+                            {code.tier} · {code.trial_days}d
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {code.redeemed_by ? (
+                          <Badge variant="outline" className="text-xs">
+                            {code.referred_subscribed ? "🎉 Subscribed" : "✅ Used"}
+                          </Badge>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => copyCode(code.code)}
+                          >
+                            {copiedCode === code.code ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                          </Button>
+                        )}
+                        {code.reward_granted && (
+                          <Badge className="text-xs bg-primary/10 text-primary">
+                            🏆 Reward!
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="animate-fade-in" style={{ animationDelay: "100ms" }}>
           <CardHeader>
