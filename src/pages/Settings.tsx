@@ -49,6 +49,10 @@ const Settings = () => {
   const [loadingCodes, setLoadingCodes] = useState(true);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
+  // Send Gift
+  const [giftEmail, setGiftEmail] = useState("");
+  const [sendingGift, setSendingGift] = useState(false);
+
   const loadMyCodes = useCallback(async () => {
     const { data } = await supabase
       .from("promo_codes")
