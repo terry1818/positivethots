@@ -31,6 +31,14 @@ serve(async (req) => {
     const { price_id } = await req.json();
     if (!price_id) throw new Error("price_id is required");
 
+    // Server-side allowlist of valid subscription price IDs
+    const ALLOWED_PRICES = new Set([
+      "price_1TDkQ9AEIVQtquY2C4kfHe4d", // Plus
+      "price_1TDjjHQL8g2unk5Zfe9VvytG", // Premium
+      "price_1TDkQpAEIVQtquY2s6feqEgV", // VIP
+    ]);
+    if (!ALLOWED_PRICES.has(price_id)) throw new Error("Invalid price_id");
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
