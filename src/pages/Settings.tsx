@@ -79,6 +79,67 @@ const Settings = () => {
     loadMyCodes();
   }, [loadMyCodes]);
 
+  // Admin: load role holders
+  const loadRoleHolders = useCallback(async () => {
+    if (!isAdmin) return;
+    setLoadingRoles(true);
+    try {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("*")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      setRoleHolders(data || []);
+    } catch (err) {
+      console.error("Failed to load roles:", err);
+    } finally {
+      setLoadingRoles(false);
+    }
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (isAdmin) loadRoleHolders();
+  }, [isAdmin, loadRoleHolders]);
+
+  const handleGrantRole = async () => {
+    if (!adminEmail.trim()) return;
+    setGrantingRole(true);
+    try {
+      const { data: targetUserId, error: lookupError } = await supabase.rpc("get_user_id_by_email", { _email: adminEmail.trim() });
+      if (lookupError) throw lookupError;
+
+      const { error } = await supabase.rpc("grant_role", {
+        _target_user_id: targetUserId,
+        _role: adminRole as any,
+      });
+      if (error) throw error;
+      toast.success(`${adminRole} role granted to ${adminEmail}`);
+      setAdminEmail("");
+      await loadRoleHolders();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to grant role");
+    } finally {
+      setGrantingRole(false);
+    }
+  };
+
+  const handleRevokeRole = async (targetUserId: string, role: string) => {
+    setRevokingId(targetUserId + role);
+    try {
+      const { error } = await supabase.rpc("revoke_role", {
+        _target_user_id: targetUserId,
+        _role: role as any,
+      });
+      if (error) throw error;
+      toast.success("Role revoked");
+      await loadRoleHolders();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to revoke role");
+    } finally {
+      setRevokingId(null);
+    }
+  };
+
   const generateCode = () => {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     let result = "";
