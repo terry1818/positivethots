@@ -1,36 +1,37 @@
 
 
-# Improve Next Unlock Context + Shareable Tier Completion Card
+# Celebration Animation with Mascot Character
 
-## 1. CompactProgressBar — Descriptive "Next Unlock"
+## Approach
 
-**File: `src/components/discovery/CompactProgressBar.tsx`**
+The logo contains a woman character (mascot). I'll use AI image generation to create a standalone version of this character in a celebratory pose (transparent background, arms raised, confetti around her), then save it as a static asset and use it in the tier completion celebration animation.
 
-- Change the next unlock display to: `Complete [Tier Name] to unlock: [Feature Name]`
-- Add a second line showing `nextFeature.description` in smaller muted text for full context
+## Steps
 
-## 2. Shareable Tier Completion Card
+### 1. Generate mascot celebration image
+Use the AI image generation API (via an edge function or build-time script) to create a stylized illustration of a celebratory woman character inspired by the logo — arms up, joyful expression, party/confetti vibe. Save as `src/assets/mascot-celebration.png`.
 
-**File: `src/components/education/CelebrationModal.tsx`**
+Since we can't programmatically extract the woman from the logo at build time in a client-side app, I'll generate a new illustration that matches the logo's art style and use it as a dedicated celebration asset.
 
-When `type === "tier_complete"`:
-- Add share buttons below "Continue": Twitter/X, Facebook, LinkedIn, Copy Link
-- Share message includes what the user learned, e.g.:
+### 2. Update CelebrationModal (`src/components/education/CelebrationModal.tsx`)
 
-> "I just completed the Sexual Health tier on Positive Thots! 🏆 I've passed courses covering STI prevention, safer sex practices, and sexual wellness. Join me in learning at positivethots.lovable.app"
+For `tier_complete` type:
+- Replace the Trophy icon with the mascot celebration image
+- Wrap in an animated container with:
+  - **Entrance**: CSS `mascot-entrance` animation (scale 0 → 1.15 → 1 with slight rotation)
+  - **Idle**: gentle floating animation after entrance
+  - **Glow ring**: pulsing purple glow ring behind the mascot
+- Increase confetti to 80 particles with brand colors (purple, magenta, gold, violet)
+- Add a Web Audio API celebration sound (3 ascending tones, ~300ms total)
 
-- Map each tier to a summary of topics covered:
-  - **Foundation**: consent, communication, boundaries, trust, and relationship basics
-  - **Sexual Health**: STI prevention, safer sex practices, sexual wellness, and testing awareness
-  - **Identity & Diversity**: gender identity, sexual orientation, pronouns, and inclusivity
-  - **Healthy Relationships**: conflict resolution, attachment styles, emotional intelligence, and partner communication
-  - **Advanced Topics**: ethical non-monogamy, kink education, community leadership, and mentorship
+### 3. Add CSS animations (`src/index.css`)
+- `@keyframes mascot-entrance` — scale bounce-in with rotation
+- `@keyframes float-gentle` — subtle vertical float loop
+- `@keyframes confetti-fall` (if not already present) — top-to-bottom fall with rotation
 
-- "Share your achievement" label above share buttons
-- Use `window.open` with standard share intents (no SDK)
-- Copy Link button copies the text blurb to clipboard with a toast
-
-## Files to modify
-- `src/components/discovery/CompactProgressBar.tsx`
-- `src/components/education/CelebrationModal.tsx`
+### Files to modify
+- `src/assets/mascot-celebration.png` — new generated asset
+- `src/components/education/CelebrationModal.tsx` — mascot image, enhanced confetti, celebration sound
+- `src/index.css` — new keyframe animations
+- `tailwind.config.ts` — register new animation utilities
 
