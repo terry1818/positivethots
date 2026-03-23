@@ -205,7 +205,7 @@ const Index = () => {
     const { error: swipeError } = await supabase.from("swipes").insert({
       swiper_id: currentUser.id, swiped_id: otherUserId, direction: "right",
     });
-    if (swipeError) { console.error("Swipe error:", swipeError); return; }
+    if (swipeError) { toast.error("Failed to send connection"); console.error("Swipe error:", swipeError); return; }
 
     trackEvent("swipe", { direction: "right", swiped_id: otherUserId });
     setCelebrationTrigger(prev => prev + 1);
