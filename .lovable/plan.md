@@ -1,56 +1,57 @@
 
 
-## Plan: Update External Website HTML
+## Plan: Fix Authentication Issues (Signup + Login)
 
-Since this is an external HTML file hosted on Namecheap, I'll generate an updated version of `index_1.html` as a downloadable file in `/mnt/documents/` that you can upload to replace your current site.
+### Root Causes Identified
 
-### Changes
+After testing the auth flow and inspecting the database, I found two distinct problems:
 
-**1. Fix Mobile Menu (Accessibility Bug)**
-- The current mobile menu (`nav ul.open`) uses `position:fixed; inset:0` but inherits `background:var(--bg)` which is semi-transparent. The nav itself has `background:rgba(250,248,255,.92)` with backdrop-blur, but the menu overlay sits behind the nav bar (z-index:99 vs nav z-index:100).
-- Fix: Give the mobile menu `background:var(--card)` (solid white), `z-index:101` (above nav), add a close button, and ensure text contrast.
+1. **Signup fails silently with unconfirmed email**: When a user signs up, email confirmation is required (correct behavior). However, the code assumes `authData.user` being present means the session is active. It then tries to insert a profile via `supabase.from("profiles").insert(...)` — but RLS requires `auth.uid() = id`, which fails because there's no active session yet. The profile insert fails, the user sees an error ("Failed to create profile"), and they're stuck — they can't retry signup ("User already registered") and can't log in (email unconfirmed).
 
-**2. Update Pricing Section — Show All 3 Tiers**
-- Currently only shows Premium ($9.99). Update to show Plus ($4.99), Premium ($9.99), and VIP ($19.99) side by side with their actual feature lists from `subscriptionTiers.ts`.
-- Add one-time purchases mention (Profile Boost $2.99, Super Like Pack $1.99).
+2. **Weak password error (HIBP)**: The HIBP check rejects compromised passwords with a technical error message. Users don't understand what "known to be weak and easy to guess" means in context.
 
-**3. Update Features Section — Reflect Actual App Features**
-Current features listed are generic. Replace with actual implemented features:
-- Education-First Discovery (complete 5 foundation badges to unlock swiping)
-- Compatibility Scoring (algorithm based on badges, interests, relationship style)
-- Real-Time Chat with unread badges and message moderation
-- Curated Shop (Shopify-integrated merch/product store)
-- Super Likes & Profile Boosts (one-time purchases)
-- Incognito Mode (browse without being seen)
-- Daily Challenges & Streaks (XP, combos, learning paths)
-- Photo Moderation & Safety (AI-powered content moderation)
+**Evidence**: User `terryleerhea@gmail.com` signed up, `email_confirmed_at` is NULL, and no profile row exists — confirming the exact failure path.
 
-**4. Update "How It Works" Section**
-Currently 4 steps. Update to reflect actual flow:
-1. Sign Up & Verify Email
-2. Complete Onboarding (preferences, photos, bio)
-3. Earn 5 Foundation Badges (interactive courses + quizzes)
-4. Discover & Connect (swipe, match, chat)
+### Fix
 
-**5. Update Hero & CTA**
-- Change "Join the Waitlist" → "Get Started Free" linking to `https://positivethots.lovable.app/auth`
-- Update hero stats to reflect actual app capabilities
-- Change "Coming Soon" language to launched/live language
+**File: `src/pages/Auth.tsx`**
 
-**6. Update FAQ**
-- Update Premium question to mention all 3 tiers (Plus/Premium/VIP)
-- Update "When does the app launch?" to reflect current status
-- Add FAQ about Super Likes and Profile Boosts
+Three changes to the `handleAuth` function:
 
-**7. Update Footer Links**
-- Privacy and Terms links → point to `https://positivethots.lovable.app/privacy` and `/terms`
-- Add link to the app itself
+1. **Handle unconfirmed signup correctly**: After `signUp()`, check if `authData.user` exists but `authData.session` is null — this means email confirmation is pending. Show a success message telling the user to check their email, and do NOT attempt profile creation or navigation. The profile will be created after email confirmation.
 
-### Output
-A single updated `index_1.html` file saved to `/mnt/documents/index.html` ready for upload to Namecheap.
+2. **Create profile on first login instead**: Move profile creation logic so it runs during sign-in when a confirmed user has no profile yet. After successful `signInWithPassword`, check if a profile exists; if not, create one using the user's metadata (`name`, `age` from `raw_user_meta_data`).
 
-### Files
-| Action | File |
-|--------|------|
-| Generate | `/mnt/documents/index.html` — updated website |
+3. **Better HIBP error handling**: Detect `AuthWeakPasswordError` specifically and show a user-friendly message: "This password has been found in a data breach. Please choose a different, unique password."
+
+**File: `src/pages/Auth.tsx`** — updated `handleAuth`:
+
+```
+// SIGNUP path changes:
+if (authData.user && !authData.session) {
+  // Email confirmation required — don't create profile yet
+  toast.success("Check your email to confirm your account before signing in.");
+  return;
+}
+
+// SIGNIN path changes:
+// After successful signInWithPassword, check for missing profile
+const { data: existingProfile } = await supabase
+  .from("profiles").select("id").eq("id", signInData.user.id).maybeSingle();
+if (!existingProfile) {
+  // Create profile from user metadata
+  await supabase.from("profiles").insert({...});
+}
+
+// ERROR handling changes:
+if (error.name === "AuthWeakPasswordError") {
+  toast.error("This password has appeared in a data breach. Please choose a different, more unique password.");
+}
+```
+
+### Summary of Changes
+
+| File | Change |
+|------|--------|
+| `src/pages/Auth.tsx` | Fix signup to handle email confirmation pending state; create profile on first login if missing; improve HIBP error message |
 
