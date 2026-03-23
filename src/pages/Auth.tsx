@@ -161,7 +161,11 @@ const Auth = () => {
                         if (error) throw error;
                         toast.success("Password reset email sent! Check your inbox.");
                       } catch (err: any) {
-                        toast.error(err.message || "Failed to send reset email");
+                        if (err.message?.includes("rate limit") || err.code === "over_email_send_rate_limit") {
+                          toast.error("Too many reset attempts. Please wait a few minutes before trying again.");
+                        } else {
+                          toast.error(err.message || "Failed to send reset email");
+                        }
                       }
                     }}
                   >
