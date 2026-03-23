@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/analytics";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, BookOpen, Shield, Eye, EyeOff, Star } from "lucide-react";
+import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { MatchModal } from "@/components/MatchModal";
