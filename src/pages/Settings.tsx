@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
+import { useAdminRole } from "@/hooks/useAdminRole";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -18,9 +19,11 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2, MapPin, Lock, Gift, Copy, Users, Check, Ticket, Send } from "lucide-react";
+import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2, MapPin, Lock, Gift, Copy, Users, Check, Ticket, Send, UserCog, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+const OWNER_ID = "fcf7e150-d122-47e0-b30e-359668184d85";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -28,6 +31,16 @@ const Settings = () => {
   const { user, signOut } = useAuth();
   const { isPremium, tier, loading: subLoading, subscriptionEnd } = useSubscription();
   const { isUnlocked: locationUnlocked, isSharing, toggleSharing, error: locationError, loading: locationLoading } = useLocationSharing();
+  const { isAdmin, userId: adminUserId } = useAdminRole();
+  const isOwner = adminUserId === OWNER_ID;
+
+  // Admin tools
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminRole, setAdminRole] = useState<string>("moderator");
+  const [grantingRole, setGrantingRole] = useState(false);
+  const [roleHolders, setRoleHolders] = useState<any[]>([]);
+  const [loadingRoles, setLoadingRoles] = useState(false);
+  const [revokingId, setRevokingId] = useState<string | null>(null);
 
   // Password change
   const [currentPassword, setCurrentPassword] = useState("");
@@ -65,6 +78,67 @@ const Settings = () => {
   useEffect(() => {
     loadMyCodes();
   }, [loadMyCodes]);
+
+  // Admin: load role holders
+  const loadRoleHolders = useCallback(async () => {
+    if (!isAdmin) return;
+    setLoadingRoles(true);
+    try {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("*")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      setRoleHolders(data || []);
+    } catch (err) {
+      console.error("Failed to load roles:", err);
+    } finally {
+      setLoadingRoles(false);
+    }
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (isAdmin) loadRoleHolders();
+  }, [isAdmin, loadRoleHolders]);
+
+  const handleGrantRole = async () => {
+    if (!adminEmail.trim()) return;
+    setGrantingRole(true);
+    try {
+      const { data: targetUserId, error: lookupError } = await supabase.rpc("get_user_id_by_email", { _email: adminEmail.trim() });
+      if (lookupError) throw lookupError;
+
+      const { error } = await supabase.rpc("grant_role", {
+        _target_user_id: targetUserId,
+        _role: adminRole as any,
+      });
+      if (error) throw error;
+      toast.success(`${adminRole} role granted to ${adminEmail}`);
+      setAdminEmail("");
+      await loadRoleHolders();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to grant role");
+    } finally {
+      setGrantingRole(false);
+    }
+  };
+
+  const handleRevokeRole = async (targetUserId: string, role: string) => {
+    setRevokingId(targetUserId + role);
+    try {
+      const { error } = await supabase.rpc("revoke_role", {
+        _target_user_id: targetUserId,
+        _role: role as any,
+      });
+      if (error) throw error;
+      toast.success("Role revoked");
+      await loadRoleHolders();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to revoke role");
+    } finally {
+      setRevokingId(null);
+    }
+  };
 
   const generateCode = () => {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -228,6 +302,96 @@ const Settings = () => {
             </RadioGroup>
           </CardContent>
         </Card>
+
+        {/* Admin Tools */}
+        {isAdmin && (
+          <Card className="animate-fade-in border-primary/30" style={{ animationDelay: "40ms" }}>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <UserCog className="h-5 w-5 text-primary" /> Admin Tools
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3 p-3 rounded-lg bg-muted/50">
+                <p className="text-sm font-medium">Grant a Role</p>
+                <Input
+                  type="email"
+                  placeholder="User's email address"
+                  value={adminEmail}
+                  onChange={(e) => setAdminEmail(e.target.value)}
+                  maxLength={100}
+                />
+                <div className="flex gap-2">
+                  <Select value={adminRole} onValueChange={setAdminRole}>
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {isOwner && <SelectItem value="admin">Admin</SelectItem>}
+                      <SelectItem value="moderator">Moderator</SelectItem>
+                      <SelectItem value="user">User</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    onClick={handleGrantRole}
+                    disabled={grantingRole || !adminEmail.trim()}
+                    className="flex-1"
+                    size="sm"
+                  >
+                    {grantingRole ? <Loader2 className="h-4 w-4 animate-spin" /> : "Grant Role"}
+                  </Button>
+                </div>
+                {!isOwner && (
+                  <p className="text-xs text-muted-foreground">
+                    Only the app owner can grant or revoke admin roles.
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Current Role Holders</p>
+                {loadingRoles ? (
+                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                    <Loader2 className="h-3 w-3 animate-spin" /> Loading…
+                  </div>
+                ) : roleHolders.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No roles assigned.</p>
+                ) : (
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {roleHolders.map((rh) => (
+                      <div key={rh.id} className="flex items-center justify-between p-2 rounded-md border text-sm">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="font-mono text-xs truncate max-w-[140px]">{rh.user_id}</span>
+                          <Badge variant={rh.role === "admin" ? "default" : "secondary"} className="text-xs">
+                            {rh.role}
+                          </Badge>
+                          {rh.user_id === OWNER_ID && (
+                            <Badge variant="outline" className="text-xs">Owner</Badge>
+                          )}
+                        </div>
+                        {rh.user_id !== user?.id && (isOwner || rh.role !== "admin") && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-destructive"
+                            onClick={() => handleRevokeRole(rh.user_id, rh.role)}
+                            disabled={revokingId === rh.user_id + rh.role}
+                          >
+                            {revokingId === rh.user_id + rh.role ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <X className="h-3.5 w-3.5" />
+                            )}
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Subscription */}
         <Card className="animate-fade-in" style={{ animationDelay: "80ms" }}>

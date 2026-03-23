@@ -1356,6 +1356,7 @@ export type Database = {
           swiped_at: string
         }[]
       }
+      get_user_id_by_email: { Args: { _email: string }; Returns: string }
       grant_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
