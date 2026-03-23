@@ -1,149 +1,57 @@
 
 
-# Analysis: Requested Features vs. Existing Implementation
+# Gap Analysis: What's Done vs. What's Still Missing
 
-After thorough review of the codebase, Stripe products, and database schema, **most of the requested features already exist**. Here is a detailed breakdown:
+## Completed
+- **Feature 5 (Events):** Database tables, `create-event-checkout` edge function, Events page UI, route registered, 25% Stripe coupon created, webhook handles `event_ticket` payments
+- **Feature 3 (Super Likes):** New "Super Like Pack (5)" Stripe product created, `create-superlike-payment` updated for both pack sizes, `super_like_purchases` table created, webhook handles `super_like_pack` payments
+- **Stripe Webhook:** Updated to handle all one-time payment types (events, super likes, boosts)
 
----
+## Still Missing — 6 Gaps
 
-## Feature 1 — Boost Credits: ALREADY EXISTS
+### Gap 1: No Boost button on Discovery screen (Feature 1)
+The Discovery page (`Index.tsx`) has no "Boost Profile" CTA. Only the Profile page has it.
+- **Fix:** Add a small "Boost" button/icon in the Discovery header area (near the super-likes badge) that links to the boost payment flow.
 
-**What's already built:**
-- Stripe product: `prod_UC8rptUQyJjuTX` ("Profile Boost", $2.99 one-time)
-- Database table: `profile_boosts` (id, user_id, activated_at, expires_at)
-- Edge function: `create-boost-payment/index.ts` (creates Stripe checkout)
-- Profile page: "Boost Profile" button with VIP free boost logic
-- Discovery query: boosted profiles get `is_boosted` flag and sort priority
-- Discovery card: shows "Boosted" badge on boosted profiles
+### Gap 2: No free tier feature list on Premium page (Feature 2)
+The Premium page only shows Plus/Premium/VIP tiers. No "Free" column showing what free users get.
+- **Fix:** Add a "Free" tier column (or a "What you get free" section) before the paid tiers listing basic features like "1 daily super like", "Browse profiles", "Education access".
 
-**Gaps to fill:**
-- No `is_active` computed column (currently uses `expires_at > now()` which is equivalent)
-- No boost button on the Discovery/swipe screen itself (only on Profile page)
-- The Zap badge exists but could be made more prominent
+### Gap 3: No onboarding upsell step (Feature 2)
+Onboarding (`Onboarding.tsx`, 12 steps) has no subscription upsell screen.
+- **Fix:** Add an optional upsell step near the end of onboarding (before completion) showing tier benefits with a "Try Premium" CTA and a "Skip" option.
 
-**Verdict:** ~95% done. Minor UI addition needed (boost button on Discovery screen).
+### Gap 4: No "Get More Super Likes" prompt when balance hits 0 (Feature 3)
+When `superLikeBalance <= 0`, the button just disables. No prompt to purchase more.
+- **Fix:** In `DiscoveryCard.tsx`, when balance is 0 and user clicks the super like button, show a toast or modal prompting them to buy a pack with a link to the purchase flow.
 
----
+### Gap 5: No "Send Gift" email flow (Feature 4)
+Settings page has code generation/copying but no way to enter a recipient email and send them a notification.
+- **Fix:** Add a "Send Gift" form in Settings with a recipient email field. On submit, generate a gift code and send a notification email to the recipient via the existing email queue infrastructure.
 
-## Feature 2 — Plus Tier Subscription: ALREADY EXISTS
-
-**What's already built:**
-- Stripe product: `prod_UC8hgE8GHk3Jz2` ("Plus Subscription", $4.99/mo)
-- Three-tier system: free / plus / premium / vip defined in `subscriptionTiers.ts`
-- `useSubscription` hook returns `tier` and `hasFeature()` for feature gating
-- Premium page shows all 3 tiers (Plus $4.99, Premium $9.99, VIP $19.99)
-- Feature gates: `see_likes`, `super_likes`, `priority_visibility`, etc.
-
-**Gaps to fill:**
-- No subscription upsell during onboarding/profile setup
-- No explicit listing of "free tier features" on the Premium page
-- Incognito mode feature gate not fully implemented (only mentioned in context)
-
-**Verdict:** ~85% done. Needs onboarding upsell step and free tier feature list.
+### Gap 6: No Resources section on marketing site (Website)
+`public/landing.html` has no Resources section or nav link.
+- **Fix:** Add a "Resources" section to `landing.html` with static resource cards (books, podcasts, communities) with affiliate link placeholders, and add a "Resources" nav link.
 
 ---
 
-## Feature 3 — Super Like Packs: ALREADY EXISTS
+## Implementation Plan
 
-**What's already built:**
-- Stripe product: `prod_UC8stYS4Xx9hot` ("Super Like Pack (10)", $1.99)
-- Database table: `super_like_balance` (user_id, balance, last_daily_refresh)
-- Edge function: `create-superlike-payment/index.ts`
-- Hook: `useSuperLikes` with daily refresh, decrement, unlimited for premium
-- Super Like button on Discovery cards with balance display
+### Step 1: Discovery screen boost button
+Add a Zap icon button in the `Index.tsx` header that triggers the existing `create-boost-payment` flow or navigates to `/profile?boost=true`.
 
-**Gaps to fill:**
-- Only one pack size exists (10 for $1.99). Request asks for two: 5 for $1.99 and 10 for $3.99
-- No `super_like_purchases` tracking table
-- No "Get More Super Likes" prompt when balance hits 0
+### Step 2: Premium page free tier column
+Add a "Free" card before the paid tiers in `Premium.tsx` listing basic free features with a "Current Plan" label for free users.
 
-**Verdict:** ~80% done. Needs second pack option and empty-state prompt.
+### Step 3: Onboarding upsell step
+Add step 13 (or insert before photo upload) in `Onboarding.tsx` with a compact tier comparison and "Try Premium" / "Skip" buttons.
 
----
+### Step 4: Super Like empty-state prompt
+In `DiscoveryCard.tsx`, when balance is 0 and super like is clicked, show a toast with "Out of Super Likes! Get more" linking to the purchase flow. Also add a small "Get More" link below the super like button when balance is low.
 
-## Feature 4 — Gift Subscriptions: ALREADY EXISTS
+### Step 5: Send Gift email flow
+Add a "Send a Gift" card in `Settings.tsx` with a recipient email input. Create a simple edge function or use the existing email queue to send a branded email with the gift code and redemption link.
 
-**What's already built:**
-- Database table: `promo_codes` (code, type, tier, trial_days, created_by, redeemed_by, etc.)
-- Edge function: `redeem-promo-code/index.ts` (validates code, creates Stripe checkout with trial)
-- Stripe webhook: processes referral rewards (90-day Premium trial for referrer)
-- Settings page: full UI for creating gift/referral codes, viewing codes, copying links
-- Premium page: "Have a promo code?" redemption input
-- Auth page: captures `?ref=CODE` and stores in sessionStorage
-
-**Gaps to fill:**
-- No email notification to gift recipient (currently just code sharing)
-- Gift codes create trials that auto-renew (already implemented via Stripe checkout)
-- No dedicated "Send a Gift" flow with recipient email field
-
-**Verdict:** ~85% done. Needs recipient email flow and email notification.
-
----
-
-## Feature 5 — Event Tickets / Virtual Workshops: NOT YET BUILT
-
-**What's needed:**
-- New Stripe products for events (created per-event, not upfront)
-- New tables: `events`, `event_registrations`
-- New edge function: `create-event-checkout`
-- New page/section: Events browsing UI
-- Stripe coupon for 10% Premium discount
-- "Add to Calendar" link generation
-
-**Verdict:** 0% done. Full build required.
-
----
-
-## Website — Resources Section on positivethots.org: NOT YET BUILT
-
-**What exists:**
-- `public/landing.html` is the marketing site with nav, hero, features, pricing, footer
-- App has a `Resources` page (`src/pages/Resources.tsx`) pulling from `recommended_resources` table
-
-**What's needed:**
-- New HTML section/page in `landing.html` for Resources
-- Static resource cards with affiliate link placeholders
-- Nav link addition
-
-**Verdict:** 0% done. Full build required.
-
----
-
-## Recommended Implementation Order
-
-Since Features 1-4 are mostly built, I recommend:
-
-1. **Feature 5 — Events** (largest new build, most complex)
-2. **Website — Resources** (independent, no backend dependencies)
-3. **Gap fills for Features 1-4** (grouped as one pass):
-   - Add boost button to Discovery screen
-   - Add free tier feature list + onboarding upsell to Premium page
-   - Create second Super Like pack (5 for $1.99), update existing to 10 for $3.99
-   - Add "Send Gift" email flow with recipient notification
-
-## New Stripe Products Needed
-
-| Product | Type | Price |
-|---------|------|-------|
-| Super Like Pack (5) | One-time | $1.99 |
-| Event-specific products | One-time | Per-event pricing |
-| Premium 10% Off coupon | Coupon | 10% off |
-
-The existing Super Like Pack (10) price would need updating from $1.99 to $3.99.
-
-## New Database Tables Needed
-
-| Table | Columns |
-|-------|---------|
-| `events` | id, title, description, host_name, event_date, price_cents, stripe_price_id, capacity, image_url, is_active, created_at |
-| `event_registrations` | id, event_id, user_id, purchased_at, stripe_payment_intent_id |
-| `super_like_purchases` | id, user_id, pack_size, purchased_at, stripe_payment_intent_id |
-
-## New Edge Functions Needed
-
-- `create-event-checkout` — one-time payment for event tickets with Premium coupon
-
-## Summary
-
-4 of 6 items are 80-95% already implemented. The two genuinely new builds are Events and the marketing site Resources section. Shall I proceed with this order, or would you prefer a different sequence?
+### Step 6: Landing page Resources section
+Add a static "Resources" HTML section in `landing.html` with curated resource cards and a nav link.
 
