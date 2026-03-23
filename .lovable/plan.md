@@ -1,37 +1,36 @@
 
 
-# Celebration Animation with Mascot Character
+# Fix Broken YouTube Videos in Education Modules
 
-## Approach
+## Problem
+7 section-level video URLs (the primary `content_url` field on Section 2 of various modules) point to unavailable/removed YouTube videos. These are the main video embeds users see when they navigate to a module's video section.
 
-The logo contains a woman character (mascot). I'll use AI image generation to create a standalone version of this character in a celebratory pose (transparent background, arms raised, confetti around her), then save it as a static asset and use it in the tier completion celebration animation.
+## Broken Videos Found
 
-## Steps
+| Module | Section | Broken Video ID | Status |
+|--------|---------|-----------------|--------|
+| Boundaries & Communication | S2: Communication Models That Work | `4sCMSqGXB5o` | Not Found |
+| Safer Sex Practices | S2: Understanding STIs | `YCIfBk2VYlg` | Not Found |
+| Understanding Desire | S2: Desire Discrepancy | `HFHZ5E_P-yI` | Not Found |
+| Pleasure & Satisfaction | S2: Erogenous Zones & Techniques | `LVVdg8Xaj1U` | Not Found |
+| Sexual Orientation Spectrum | S2: LGBTQ+ Identities | `LnTxfv7rill` | Malformed ID |
+| Intersectionality in Intimacy | S2: Race, Culture, and Intimacy | `kYMdJMbWjKc` | Not Found |
+| Maintaining Long-term Intimacy | S2: Rekindling Connection | `ierRipP-k2c` | Not Found |
 
-### 1. Generate mascot celebration image
-Use the AI image generation API (via an edge function or build-time script) to create a stylized illustration of a celebratory woman character inspired by the logo — arms up, joyful expression, party/confetti vibe. Save as `src/assets/mascot-celebration.png`.
+All 5 module-level `video_url` fields and all inline `[youtube:...]` embeds in content text were spot-checked and are working fine.
 
-Since we can't programmatically extract the woman from the logo at build time in a client-side app, I'll generate a new illustration that matches the logo's art style and use it as a dedicated celebration asset.
+## Replacements (all verified as available)
 
-### 2. Update CelebrationModal (`src/components/education/CelebrationModal.tsx`)
+| Module | Replacement Video | ID |
+|--------|------------------|----|
+| Boundaries & Communication | Skills for Healthy Romantic Relationships (TEDxSBU, 7.8M views) | `gh5VhaicC6g` |
+| Safer Sex Practices | STD Testing - How To Know If You Have An STD (Planned Parenthood) | `_EKnKJ-Wb-g` |
+| Understanding Desire | The secret to desire in a long-term relationship (Esther Perel, TED, 8.4M views) | `sa0RUmGTCYY` |
+| Pleasure & Satisfaction | Women's sexual health: desire, arousal, and orgasms (Peter Attia MD) | `_SZUHFA8KyM` |
+| Sexual Orientation Spectrum | A More Fluid Understanding of Gender & Sexual Orientation (TEDx) | `CN0Ccb64xjM` |
+| Intersectionality in Intimacy | The urgency of intersectionality (Kimberle Crenshaw, TED, 2.4M views) | `akOe5-UsQ2o` |
+| Maintaining Long-term Intimacy | The Key Habits for a Successful Relationship (Gottman Institute) | `nQ5DYlbi9y8` |
 
-For `tier_complete` type:
-- Replace the Trophy icon with the mascot celebration image
-- Wrap in an animated container with:
-  - **Entrance**: CSS `mascot-entrance` animation (scale 0 → 1.15 → 1 with slight rotation)
-  - **Idle**: gentle floating animation after entrance
-  - **Glow ring**: pulsing purple glow ring behind the mascot
-- Increase confetti to 80 particles with brand colors (purple, magenta, gold, violet)
-- Add a Web Audio API celebration sound (3 ascending tones, ~300ms total)
-
-### 3. Add CSS animations (`src/index.css`)
-- `@keyframes mascot-entrance` — scale bounce-in with rotation
-- `@keyframes float-gentle` — subtle vertical float loop
-- `@keyframes confetti-fall` (if not already present) — top-to-bottom fall with rotation
-
-### Files to modify
-- `src/assets/mascot-celebration.png` — new generated asset
-- `src/components/education/CelebrationModal.tsx` — mascot image, enhanced confetti, celebration sound
-- `src/index.css` — new keyframe animations
-- `tailwind.config.ts` — register new animation utilities
+## Implementation
+Single database migration with 7 UPDATE statements to replace the `content_url` values in the `module_sections` table. No code changes needed.
 
