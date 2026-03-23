@@ -31,6 +31,16 @@ const Settings = () => {
   const { user, signOut } = useAuth();
   const { isPremium, tier, loading: subLoading, subscriptionEnd } = useSubscription();
   const { isUnlocked: locationUnlocked, isSharing, toggleSharing, error: locationError, loading: locationLoading } = useLocationSharing();
+  const { isAdmin, userId: adminUserId } = useAdminRole();
+  const isOwner = adminUserId === OWNER_ID;
+
+  // Admin tools
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminRole, setAdminRole] = useState<string>("moderator");
+  const [grantingRole, setGrantingRole] = useState(false);
+  const [roleHolders, setRoleHolders] = useState<any[]>([]);
+  const [loadingRoles, setLoadingRoles] = useState(false);
+  const [revokingId, setRevokingId] = useState<string | null>(null);
 
   // Password change
   const [currentPassword, setCurrentPassword] = useState("");
