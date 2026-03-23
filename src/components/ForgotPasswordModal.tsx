@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,47 +15,17 @@ import {
 import { toast } from "sonner";
 import { Mail, CheckCircle } from "lucide-react";
 
-const COOLDOWN_MS = 60_000; // 60 seconds
-
-function getCooldownKey(email: string) {
-  return `pw_reset_cooldown_${email.toLowerCase().trim()}`;
-}
-
-function getRemainingCooldown(email: string): number {
-  const stored = localStorage.getItem(getCooldownKey(email));
-  if (!stored) return 0;
-  const remaining = parseInt(stored, 10) - Date.now();
-  return remaining > 0 ? remaining : 0;
-}
-
-function setCooldown(email: string) {
-  localStorage.setItem(getCooldownKey(email), String(Date.now() + COOLDOWN_MS));
-}
-
 export const ForgotPasswordModal = () => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-  const [cooldownSeconds, setCooldownSeconds] = useState(0);
-
-  const startCooldownTimer = useCallback((email: string) => {
-    const tick = () => {
-      const remaining = getRemainingCooldown(email);
-      setCooldownSeconds(Math.ceil(remaining / 1000));
-      if (remaining > 0) {
-        setTimeout(tick, 1000);
-      }
-    };
-    tick();
-  }, []);
 
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
     if (!isOpen) {
       setSent(false);
       setLoading(false);
-      setCooldownSeconds(0);
     }
   };
 
@@ -67,14 +37,6 @@ export const ForgotPasswordModal = () => {
       return;
     }
 
-    const remaining = getRemainingCooldown(trimmed);
-    if (remaining > 0) {
-      setCooldownSeconds(Math.ceil(remaining / 1000));
-      startCooldownTimer(trimmed);
-      toast.error(`Please wait ${Math.ceil(remaining / 1000)} seconds before requesting another reset.`);
-      return;
-    }
-
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(trimmed, {
@@ -82,13 +44,9 @@ export const ForgotPasswordModal = () => {
       });
       if (error) throw error;
 
-      setCooldown(trimmed);
-      startCooldownTimer(trimmed);
       setSent(true);
     } catch (err: any) {
       if (err.message?.includes("rate limit") || err.code === "over_email_send_rate_limit") {
-        setCooldown(trimmed);
-        startCooldownTimer(trimmed);
         toast.error("Too many reset attempts. Please wait a minute before trying again.");
       } else {
         toast.error(err.message || "Failed to send reset email");
@@ -124,15 +82,9 @@ export const ForgotPasswordModal = () => {
               Check your inbox (and spam folder) for{" "}
               <span className="font-medium text-foreground">{email.trim()}</span>
             </p>
-            {cooldownSeconds > 0 ? (
-              <p className="text-xs text-muted-foreground">
-                You can request another reset in {cooldownSeconds}s
-              </p>
-            ) : (
-              <Button variant="ghost" size="sm" onClick={() => setSent(false)}>
-                Didn't receive it? Try again
-              </Button>
-            )}
+            <Button variant="ghost" size="sm" onClick={() => setSent(false)}>
+              Send another reset email
+            </Button>
             <Button variant="outline" onClick={() => handleOpenChange(false)}>
               Back to Sign In
             </Button>
@@ -156,8 +108,8 @@ export const ForgotPasswordModal = () => {
                 />
               </div>
             </div>
-            <Button type="submit" className="w-full" disabled={loading || cooldownSeconds > 0}>
-              {loading ? "Sending..." : cooldownSeconds > 0 ? `Wait ${cooldownSeconds}s` : "Send Reset Link"}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Sending..." : "Send Reset Link"}
             </Button>
           </form>
         )}
