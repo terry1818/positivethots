@@ -47,15 +47,15 @@ serve(async (req) => {
     const body = await req.text();
     let event: Stripe.Event;
 
-    if (webhookSecret) {
-      const sig = req.headers.get("stripe-signature");
-      if (!sig) throw new Error("Missing stripe-signature header");
-      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-      logStep("Webhook signature verified", { type: event.type });
-    } else {
-      event = JSON.parse(body) as Stripe.Event;
-      logStep("WARNING: No webhook secret configured", { type: event.type });
+    if (!webhookSecret) {
+      logStep("ERROR", { message: "STRIPE_WEBHOOK_SECRET not set" });
+      return new Response("Server misconfigured: webhook secret missing", { status: 500 });
     }
+
+    const sig = req.headers.get("stripe-signature");
+    if (!sig) throw new Error("Missing stripe-signature header");
+    event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+    logStep("Webhook signature verified", { type: event.type });
 
     const relevantEvents = [
       "customer.subscription.created",
