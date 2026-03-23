@@ -336,13 +336,36 @@ const LearnModule = () => {
                     onComplete={() => handleSectionComplete(sections[currentSectionIndex].id)}
                     onNext={() => {
                       if (currentSectionIndex < sections.length - 1) setCurrentSectionIndex(currentSectionIndex + 1);
-                      else if (canTakeQuiz) setShowQuiz(true);
+                      else setShowQuiz(true);
                     }}
                     onPrev={() => { if (currentSectionIndex > 0) setCurrentSectionIndex(currentSectionIndex - 1); }}
                     isFirst={currentSectionIndex === 0}
                     isLast={currentSectionIndex === sections.length - 1}
                     totalSections={sections.length}
                   />
+                )}
+
+                {/* Visible Take Quiz fallback when all sections complete */}
+                {canTakeQuiz && !showQuiz && (
+                  <Card className="bg-gradient-to-br from-primary/10 to-secondary/10 border-0 mt-6">
+                    <CardContent className="pt-6 text-center">
+                      {isAlreadyCompleted ? (
+                        <>
+                          <CheckCircle className="h-12 w-12 mx-auto text-success mb-3" />
+                          <h3 className="font-semibold mb-2">Already Completed!</h3>
+                          <p className="text-sm text-muted-foreground mb-4">You've already earned this badge. Want to review the quiz?</p>
+                          <Button onClick={() => setShowQuiz(true)} variant="outline">Review Quiz</Button>
+                        </>
+                      ) : (
+                        <>
+                          <BookOpen className="h-12 w-12 mx-auto text-primary mb-3" />
+                          <h3 className="font-semibold mb-2">All Sections Complete! Ready for the Quiz?</h3>
+                          <p className="text-sm text-muted-foreground mb-4">Answer the questions to earn your badge. You need 80% to pass.</p>
+                          <Button onClick={() => setShowQuiz(true)}>Take Quiz</Button>
+                        </>
+                      )}
+                    </CardContent>
+                  </Card>
                 )}
               </>
             ) : (
