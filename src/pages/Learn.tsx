@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { XPBar } from "@/components/education/XPBar";
@@ -11,7 +9,6 @@ import { StreakBadge } from "@/components/education/StreakBadge";
 import { StreakCalendar } from "@/components/education/StreakCalendar";
 import { DailyChallenge } from "@/components/education/DailyChallenge";
 import { ContinueLearning } from "@/components/education/ContinueLearning";
-import { SessionGoal } from "@/components/education/SessionGoal";
 
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
@@ -45,7 +42,8 @@ const Learn = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [userBadges, setUserBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
-  const [openTiers, setOpenTiers] = useState<Record<string, boolean>>({ foundation: true });
+  const [openTiers, setOpenTiers] = useState<Record<string, boolean>>({});
+  const [moduleProgress, setModuleProgress] = useState<Record<string, { completed: number; total: number }>>({});
   const navigate = useNavigate();
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
@@ -56,14 +54,46 @@ const Learn = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/auth"); return; }
-      const [modulesResult, badgesResult] = await Promise.all([
+      const [modulesResult, badgesResult, sectionsResult, progressResult] = await Promise.all([
         supabase.from("education_modules").select("*").order("order_index"),
-        supabase.from("user_badges").select("module_id, earned_at").eq("user_id", session.user.id)
+        supabase.from("user_badges").select("module_id, earned_at").eq("user_id", session.user.id),
+        supabase.from("module_sections").select("id, module_id"),
+        supabase.from("user_section_progress").select("section_id, completed").eq("user_id", session.user.id).eq("completed", true),
       ]);
       if (modulesResult.error) throw modulesResult.error;
       if (badgesResult.error) throw badgesResult.error;
-      setModules(modulesResult.data || []);
-      setUserBadges(badgesResult.data || []);
+
+      const mods = modulesResult.data || [];
+      const badges = badgesResult.data || [];
+      const sections = sectionsResult.data || [];
+      const completedProgress = progressResult.data || [];
+
+      setModules(mods);
+      setUserBadges(badges);
+
+      // Build module progress map
+      const completedSectionIds = new Set(completedProgress.map(p => p.section_id));
+      const progressMap: Record<string, { completed: number; total: number }> = {};
+      for (const section of sections) {
+        if (!progressMap[section.module_id]) {
+          progressMap[section.module_id] = { completed: 0, total: 0 };
+        }
+        progressMap[section.module_id].total++;
+        if (completedSectionIds.has(section.id)) {
+          progressMap[section.module_id].completed++;
+        }
+      }
+      setModuleProgress(progressMap);
+
+      // Default open tier = first incomplete tier
+      const earnedIds = new Set(badges.map(b => b.module_id));
+      const firstIncompleteTier = tierOrder.find(tier => {
+        const tierMods = mods.filter(m => m.tier === tier);
+        return tierMods.length > 0 && tierMods.some(m => !earnedIds.has(m.id));
+      });
+      if (firstIncompleteTier) {
+        setOpenTiers({ [firstIncompleteTier]: true });
+      }
     } catch (error: any) {
       console.error("Error loading education data:", error);
       toast.error("Failed to load education modules");
@@ -148,12 +178,9 @@ const Learn = () => {
         {/* Continue Learning hero */}
         <ContinueLearning />
 
-        {/* Streak Calendar + Session Goal row */}
+        {/* Streak Calendar */}
         {stats && (
-          <div className="space-y-3">
-            <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} />
-            <SessionGoal sectionsToday={sectionsToday} />
-          </div>
+          <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} />
         )}
 
         {/* Daily Challenge */}
@@ -242,6 +269,10 @@ const Learn = () => {
                       {tierModules.map((module, moduleIdx) => {
                         const isCompleted = earnedModuleIds.has(module.id);
                         const isUnlocked = isModuleUnlocked(module);
+                        const progress = moduleProgress[module.id];
+                        const sectionPercent = progress && progress.total > 0
+                          ? Math.round((progress.completed / progress.total) * 100)
+                          : 0;
                         return (
                           <Card
                             key={module.id}
@@ -261,10 +292,31 @@ const Learn = () => {
                                   {!isUnlocked && <Lock className="h-3 w-3 shrink-0" />}
                                 </h3>
                                 <p className="text-xs text-muted-foreground line-clamp-1">{module.description}</p>
-                                {module.estimated_minutes && (
-                                  <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">
-                                    ~{module.estimated_minutes} min
-                                  </span>
+                                <div className="flex items-center gap-2 mt-1">
+                                  {module.estimated_minutes && (
+                                    <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full">
+                                      ~{module.estimated_minutes} min
+                                    </span>
+                                  )}
+                                  {progress && progress.total > 0 && !isCompleted && (
+                                    <span className="text-[10px] text-muted-foreground">
+                                      {progress.completed}/{progress.total} sections
+                                    </span>
+                                  )}
+                                </div>
+                                {/* Per-module progress bar */}
+                                {progress && progress.total > 0 && (
+                                  <div className="mt-1.5 relative overflow-hidden rounded-full h-1 bg-muted">
+                                    <div
+                                      className={cn(
+                                        "h-full rounded-full transition-all duration-700",
+                                        isCompleted
+                                          ? "bg-success"
+                                          : "bg-primary/70"
+                                      )}
+                                      style={{ width: `${isCompleted ? 100 : sectionPercent}%` }}
+                                    />
+                                  </div>
                                 )}
                               </div>
                               {isCompleted ? (
