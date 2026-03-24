@@ -73,7 +73,8 @@ export const VerificationCard = ({
         }
         blob = nativeBlob;
       } else {
-        if (!videoRef.current) {
+      if (!videoRef.current || videoRef.current.videoWidth === 0) {
+          toast.error("Camera not ready. Please wait a moment and try again.");
           setSubmitting(false);
           return;
         }
@@ -82,8 +83,11 @@ export const VerificationCard = ({
         canvas.height = videoRef.current.videoHeight;
         canvas.getContext("2d")!.drawImage(videoRef.current, 0, 0);
 
-        blob = await new Promise<Blob>((resolve) =>
-          canvas.toBlob((b) => resolve(b!), "image/jpeg", 0.85)
+        blob = await new Promise<Blob>((resolve, reject) =>
+          canvas.toBlob((b) => {
+            if (b && b.size > 0) resolve(b);
+            else reject(new Error("Failed to capture photo"));
+          }, "image/jpeg", 0.85)
         );
 
         stopCamera();
