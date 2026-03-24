@@ -33,6 +33,19 @@ export const VerificationCard = ({
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        // Wait for video to actually start playing before showing capture button
+        await new Promise<void>((resolve) => {
+          const video = videoRef.current!;
+          const onPlaying = () => {
+            video.removeEventListener("loadeddata", onPlaying);
+            resolve();
+          };
+          if (video.readyState >= 2) {
+            resolve();
+          } else {
+            video.addEventListener("loadeddata", onPlaying);
+          }
+        });
       }
       setShowCamera(true);
     } catch {
@@ -60,7 +73,8 @@ export const VerificationCard = ({
         }
         blob = nativeBlob;
       } else {
-        if (!videoRef.current) {
+      if (!videoRef.current || videoRef.current.videoWidth === 0) {
+          toast.error("Camera not ready. Please wait a moment and try again.");
           setSubmitting(false);
           return;
         }
@@ -69,17 +83,26 @@ export const VerificationCard = ({
         canvas.height = videoRef.current.videoHeight;
         canvas.getContext("2d")!.drawImage(videoRef.current, 0, 0);
 
-        blob = await new Promise<Blob>((resolve) =>
-          canvas.toBlob((b) => resolve(b!), "image/jpeg", 0.85)
+        blob = await new Promise<Blob>((resolve, reject) =>
+          canvas.toBlob((b) => {
+            if (b && b.size > 0) resolve(b);
+            else reject(new Error("Failed to capture photo"));
+          }, "image/jpeg", 0.85)
         );
 
         stopCamera();
       }
 
+      if (!blob || blob.size === 0) {
+        toast.error("Failed to capture photo. Please try again.");
+        setSubmitting(false);
+        return;
+      }
+
       const path = `${userId}/verification/${crypto.randomUUID()}.jpg`;
       const { error: uploadErr } = await supabase.storage
         .from("user-photos")
-        .upload(path, blob);
+        .upload(path, blob, { contentType: "image/jpeg" });
       if (uploadErr) throw uploadErr;
 
       const { data: verReq, error: insertErr } = await supabase
