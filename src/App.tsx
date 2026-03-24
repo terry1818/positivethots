@@ -73,6 +73,7 @@ const AppContent = () => {
         <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/celebration-demo" element={<CelebrationDemo />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
