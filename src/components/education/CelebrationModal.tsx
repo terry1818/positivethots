@@ -219,7 +219,7 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
                     animationFillMode: "both",
                     bottom: "-48%",
                     height: "162%",
-                    transform: "scale(1.6)",
+                    transform: "scale(2.0)",
                     transformOrigin: "center bottom",
                   }}
                 />
