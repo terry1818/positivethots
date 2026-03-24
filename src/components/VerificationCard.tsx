@@ -93,10 +93,16 @@ export const VerificationCard = ({
         stopCamera();
       }
 
+      if (!blob || blob.size === 0) {
+        toast.error("Failed to capture photo. Please try again.");
+        setSubmitting(false);
+        return;
+      }
+
       const path = `${userId}/verification/${crypto.randomUUID()}.jpg`;
       const { error: uploadErr } = await supabase.storage
         .from("user-photos")
-        .upload(path, blob);
+        .upload(path, blob, { contentType: "image/jpeg" });
       if (uploadErr) throw uploadErr;
 
       const { data: verReq, error: insertErr } = await supabase
