@@ -33,6 +33,7 @@ const Resources = lazy(() => import("./pages/Resources"));
 const Events = lazy(() => import("./pages/Events"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const CelebrationDemo = lazy(() => import("./pages/CelebrationDemo"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -72,6 +73,7 @@ const AppContent = () => {
         <Route path="/unsubscribe" element={<Unsubscribe />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/celebration-demo" element={<CelebrationDemo />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
