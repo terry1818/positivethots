@@ -33,6 +33,19 @@ export const VerificationCard = ({
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        // Wait for video to actually start playing before showing capture button
+        await new Promise<void>((resolve) => {
+          const video = videoRef.current!;
+          const onPlaying = () => {
+            video.removeEventListener("loadeddata", onPlaying);
+            resolve();
+          };
+          if (video.readyState >= 2) {
+            resolve();
+          } else {
+            video.addEventListener("loadeddata", onPlaying);
+          }
+        });
       }
       setShowCamera(true);
     } catch {
