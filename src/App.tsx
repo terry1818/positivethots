@@ -33,6 +33,7 @@ const Resources = lazy(() => import("./pages/Resources"));
 const Events = lazy(() => import("./pages/Events"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const CelebrationDemo = lazy(() => import("./pages/CelebrationDemo"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
