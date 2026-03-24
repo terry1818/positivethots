@@ -39,7 +39,7 @@ const relationshipStyleLabels: Record<string, string> = {
 };
 
 const lookingForLabels: Record<string, string> = {
-  dating: "Dating",
+  dating: "Connecting",
   friends: "Friends",
   "play-partners": "Play Partners",
   community: "Community",

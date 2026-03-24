@@ -180,7 +180,7 @@ const EditProfile = () => {
                   <option value="">Select...</option>
                   <option value="New connections">New connections</option>
                   <option value="Friends first">Friends first</option>
-                  <option value="Casual dating">Casual dating</option>
+                  <option value="Casual connecting">Casual connecting</option>
                   <option value="Long-term partners">Long-term partners</option>
                 </select>
               </div>
