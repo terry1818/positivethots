@@ -1,85 +1,49 @@
 
 
-# Combined Plan: Admin Management, Mascot Refinement, and E2E Testing
+# E2E Test Results & Next Steps
 
-## 1. Owner-Only Admin Role Management UI
+## Tests Completed (Public Routes — No Auth Required)
 
-**Database migration:**
-- Create `get_user_id_by_email(email text)` — security definer function that queries `auth.users`, restricted to admins via `is_admin(auth.uid())`
-- Update `grant_role` — add owner-only check: if `_role = 'admin'`, only the owner's UUID can execute. Other admins can grant `moderator`/`user` only
-- Update `revoke_role` — same owner-only restriction for the `admin` role
-- Owner UUID will be looked up from `user_roles` (the first admin record)
+| # | Test | Result | Notes |
+|---|------|--------|-------|
+| 1 | `/auth` — Sign In form | PASS | Email, password, Forgot password link, Sign In button render correctly |
+| 2 | `/auth` — Sign Up form | PASS | Name, Age (18+), terms checkbox, Email, Password fields all present |
+| 3 | `/privacy` — Privacy Policy | PASS | Full content renders with correct date and sections |
+| 4 | `/terms` — Terms of Service | PASS | Full content renders, 18+ age requirement stated |
+| 5 | `/unsubscribe` (no token) | PASS | Shows "Invalid link" error state correctly |
+| 6 | `/nonexistent-page` — 404 | PASS | Shows "Page not found" with "Return to Home" link |
+| 7 | No console JS errors | PASS | Only React DevTools suggestion and Router v7 deprecation warning |
 
-**File: `src/pages/Settings.tsx`**
-- Add "Admin Tools" card visible only to admins (via existing `useAdminRole` hook)
-- Email input + role selector (admin option only shown if current user is the owner) + "Grant Role" button
-- List of current role holders with "Remove" buttons
-- Calls `supabase.rpc("grant_role", ...)` and `supabase.rpc("revoke_role", ...)`
+## Code-Level Security Audit (Completed)
 
-## 2. Mascot Celebration Image Refinement
+| # | Check | Result | Details |
+|---|-------|--------|---------|
+| 8 | RLS enabled on all tables | PASS | All 36 public tables have `rowsecurity = true` |
+| 9 | Boost bypass (`?boost=activated`) | PASS | No such query param code exists anywhere. Boost uses server-side RPC or Stripe |
+| 10 | Price ID validation | PASS | `create-checkout` has a server-side `ALLOWED_PRICES` Set — invalid IDs rejected |
+| 11 | Quiz answer enumeration | PASS | Non-admins query `quiz_questions_public` (no `correct_answer`). Grading via server-side `submit_quiz` RPC |
+| 12 | Admin role management | PASS | Owner-only check (`_owner_id` UUID) enforced in `grant_role`/`revoke_role` for admin role. Other admins can only grant moderator/user |
+| 13 | Admin tools UI | PASS | Settings page has Admin Tools card with email lookup, role selector (admin option owner-only), grant/revoke buttons |
+| 14 | Boost payment auth | PASS | `create-boost-payment` validates JWT, requires authenticated user |
 
-**File: `src/assets/mascot-celebration.png`**
-- Regenerate using AI image generation with prompt referencing the logo's art style — sensual, confident woman in a celebratory pose, warm purple/magenta palette, matching the adult/intimate dating app aesthetic (not cartoonish)
-- No code changes needed — asset replacement only
+## Blocked: Authenticated Route Testing
 
-## 3. End-to-End Feature Test Plan
+To test these 22 items, **you need to log in to the preview first**. The browser tool doesn't share your preview session:
 
-Comprehensive checklist to execute after implementation:
+- Discovery page (cards, swiping, matching)
+- Learn page (modules, tiers, progress bars)
+- Module content (sections, video embeds, quizzes)
+- XP, streaks, daily challenges, celebrations
+- Messages and real-time chat
+- Profile view/edit, BDSM test, verification
+- Settings (theme, password, location, promo codes, admin panel)
+- Premium page (tier cards, checkout)
+- Shop (products, cart)
+- Events, Resources, Likes You
+- Data export, account deletion
 
-### Authentication & Onboarding
-1. Sign up — verify email confirmation required, profile created on first login
-2. Sign in — valid credentials redirect correctly
-3. Forgot password — reset flow works end-to-end
-4. Onboarding — all 12 steps save data, completion unlocks Learn
-5. Age/terms gate — 18+ and terms enforced
+## Action Items
 
-### Education / Learn
-6. Learn page — modules load, tiers collapse/expand, progress bars correct
-7. Module content — sections load, all 7 replaced videos play, text renders
-8. Section progress — saves correctly, "Continue Learning" updates
-9. Quiz flow — "Take Quiz" appears after sections, badge awarded at 80%+
-10. XP & Streaks — awards, level-up celebration, streak calendar
-11. Daily challenge — appears, tracks, rewards XP
-12. Tier completion — celebration modal with mascot, confetti, sound, share buttons
-13. Feature unlocking — Discovery unlocks after Foundation, progress bar correct
-
-### Discovery & Matching
-14. Discovery cards — profiles load, swiping works
-15. Match creation — mutual right-swipe creates match
-16. Super likes — daily refresh, decrement, purchase flow
-
-### Messaging
-17. Messages list — matches appear, unread indicators
-18. Chat — send/receive, moderation triggers
-19. Real-time — messages appear without refresh
-
-### Profile
-20. View/edit profile — fields display and update correctly
-21. BDSM test — Edit Profile → Kink Profile card works
-22. Profile boost — VIP-only via RPC, no bypass
-23. Verification — selfie submission creates request
-
-### Premium & Payments
-24. Premium page — checkout with valid price IDs only
-25. Subscription status — tier badge and feature unlocks
-26. Customer portal — Stripe billing portal opens
-27. Super like purchase — payment and balance update
-
-### Social & Settings
-28. Likes You — premium sees likers, free sees count
-29. Events, Resources, Location sharing — all functional
-30. Theme toggle, password change, promo codes, data export, account deletion
-31. Admin panel — analytics, errors, moderation, content editing
-
-### Security
-32. Boost bypass — `/profile?boost=activated` blocked
-33. Price ID validation — invalid IDs rejected
-34. Quiz answer enumeration — answers hidden until submission
-35. RLS policies — users can't access others' private data
-36. Admin role management — only owner can grant/revoke admin
-
-## Files to modify
-- `src/pages/Settings.tsx` — add Admin Tools card
-- `src/assets/mascot-celebration.png` — regenerate refined asset
-- Database migration — `get_user_id_by_email` RPC, update `grant_role` and `revoke_role` with owner-only admin checks
+1. **Log in to the preview** — Once you're logged in, tell me and I'll continue testing all authenticated routes
+2. **Mascot image** — On hold per your request. I'll regenerate it once you approve the style direction
 
