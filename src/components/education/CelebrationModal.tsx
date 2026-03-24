@@ -206,21 +206,17 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
           {type === "tier_complete" && (
             <>
               {/* Mascot celebration */}
-              <div className="relative mx-auto w-36 h-36 mb-4 overflow-hidden rounded-full">
+              <div className="relative mx-auto w-48 h-48 mb-4 overflow-hidden rounded-full">
                 {/* Glow ring behind mascot */}
                 <div className="absolute inset-0 rounded-full animate-glow-ring bg-primary/10" />
                 <img
                   src={mascotImg}
                   alt="Celebration!"
-                  width={144}
-                  height={180}
-                  className="absolute inset-x-0 z-10 mx-auto w-36 object-contain animate-mascot-entrance"
+                  className="absolute z-10 left-1/2 bottom-0 -translate-x-1/2 animate-mascot-entrance"
                   style={{
                     animationFillMode: "both",
-                    bottom: "-48%",
-                    height: "162%",
-                    transform: "scale(2.0)",
-                    transformOrigin: "center bottom",
+                    height: "85%",
+                    width: "auto",
                   }}
                 />
               </div>
