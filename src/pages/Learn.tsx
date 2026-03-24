@@ -301,7 +301,9 @@ const Learn = () => {
                                   )}
                                   {progress && progress.total > 0 && !isCompleted && (
                                     <span className="text-[10px] text-muted-foreground">
-                                      {progress.completed}/{progress.total} sections
+                                      {progress.completed >= progress.total
+                                        ? "Quiz remaining"
+                                        : `${progress.completed}/${progress.total} sections`}
                                     </span>
                                   )}
                                 </div>

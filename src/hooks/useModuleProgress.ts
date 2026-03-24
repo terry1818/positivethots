@@ -114,7 +114,8 @@ export const useModuleProgress = (moduleId: string) => {
 
   const completedCount = progress.filter(p => p.completed).length;
   const isAllComplete = sections.length > 0 && completedCount >= sections.length;
-  const completionPercent = sections.length > 0 ? Math.round((completedCount / sections.length) * 100) : 0;
+  const rawPercent = sections.length > 0 ? Math.round((completedCount / sections.length) * 100) : 0;
+  const completionPercent = rawPercent >= 100 ? 90 : rawPercent;
 
   return {
     sections,

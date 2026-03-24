@@ -65,16 +65,16 @@ export const ContinueLearning = () => {
     const totalSections = allSections?.length || 0;
     const completedSections = completedProgress?.length || 0;
 
-    // If this module is 100% complete, try to find the next incomplete module
-    if (totalSections > 0 && completedSections >= totalSections) {
-      // Check if the badge is also earned (fully done)
-      const { data: badge } = await supabase
-        .from("user_badges")
-        .select("id")
-        .eq("user_id", session.user.id)
-        .eq("module_id", section.module_id)
-        .maybeSingle();
+    // Check if badge is earned for this module
+    const { data: badge } = await supabase
+      .from("user_badges")
+      .select("id")
+      .eq("user_id", session.user.id)
+      .eq("module_id", section.module_id)
+      .maybeSingle();
 
+    // If this module is 100% complete AND badge earned, try to find the next incomplete module
+    if (totalSections > 0 && completedSections >= totalSections && badge) {
       // Find next incomplete module by looking for modules without badges
       const { data: allModules } = await supabase
         .from("education_modules")
