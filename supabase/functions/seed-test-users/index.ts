@@ -42,7 +42,7 @@ async function generateProfileImage(prompt: string, userId: string, supabaseAdmi
         messages: [
           {
             role: "user",
-            content: `Generate a realistic dating app profile photo. ${prompt}. The photo should look like a real photograph, not AI-generated. No text or watermarks.`,
+            content: `Generate a realistic profile photo for a relationship wellness community app. ${prompt}. The photo should look like a real photograph, not AI-generated. No text or watermarks.`,
           },
         ],
         modalities: ["image", "text"],

@@ -2,7 +2,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { HelpCircle } from "lucide-react";
 
 const GLOSSARY: Record<string, string> = {
-  "ENM": "Ethical Non-Monogamy — any relationship structure where all partners agree to non-exclusive dating.",
+  "ENM": "Ethical Non-Monogamy — any relationship structure where all partners agree to non-exclusive relationships.",
   "GGG": "Good, Giving, and Game — being a generous and open-minded partner.",
   "Solo Poly": "Polyamory where you don't seek a primary/nesting partner; you are your own primary.",
   "Hierarchical Poly": "Polyamory with a ranked structure — typically a primary partner and secondary partners.",

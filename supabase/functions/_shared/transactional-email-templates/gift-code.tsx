@@ -39,7 +39,7 @@ const GiftCodeEmail = ({ code, tier, days, senderName }: GiftCodeProps) => (
         </Button>
         <Hr style={hr} />
         <Text style={footer}>
-          {SITE_NAME} — Education-first dating for the ENM, poly, and queer community.
+          {SITE_NAME} — Education-first relationship wellness for the ENM, poly, and queer community.
         </Text>
       </Container>
     </Body>

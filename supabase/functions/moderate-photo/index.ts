@@ -200,7 +200,7 @@ async function handleModeration(
         content: [
           {
             type: "text",
-            text: `You are a content moderation system for a dating app. Review this image and determine if it's appropriate. Reject images that contain: explicit nudity, violence, hate symbols, spam/ads, or images of minors. Tasteful/artistic content and swimwear are OK. Respond with JSON only: {"approved": true/false, "reason": "brief explanation if rejected"}`,
+            text: `You are a content moderation system for a relationship wellness community app. Review this image and determine if it's appropriate. Reject images that contain: explicit nudity, violence, hate symbols, spam/ads, or images of minors. Tasteful/artistic content and swimwear are OK. Respond with JSON only: {"approved": true/false, "reason": "brief explanation if rejected"}`,
           },
           { type: "image_url", image_url: { url: photo.photo_url } },
         ],
