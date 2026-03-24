@@ -215,7 +215,7 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
                   width={112}
                   height={140}
                   className="absolute inset-x-0 z-10 mx-auto w-28 object-contain animate-mascot-entrance"
-                  style={{ animationFillMode: "both", bottom: "-18%", height: "138%" }}
+                  style={{ animationFillMode: "both", bottom: "-34%", height: "150%" }}
                 />
               </div>
               <div className="animate-float-gentle">
