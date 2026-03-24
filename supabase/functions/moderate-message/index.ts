@@ -82,7 +82,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a content moderation classifier for a dating app. Classify the user message as "safe" or "flagged".
+            content: `You are a content moderation classifier for a relationship wellness community app. Classify the user message as "safe" or "flagged".
 
 Flag messages that contain:
 - Hate speech, slurs, or discriminatory language
@@ -96,7 +96,7 @@ Do NOT flag:
 - Normal flirting or romantic conversation
 - Adult language between consenting adults
 - Mild profanity or casual swearing
-- Discussions about relationships, dating, or intimacy
+- Discussions about relationships, wellness, or intimacy
 
 Respond with ONLY a JSON object: {"verdict":"safe"} or {"verdict":"flagged","reason":"brief reason"}`
           },

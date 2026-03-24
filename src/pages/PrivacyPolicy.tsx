@@ -25,7 +25,7 @@ const PrivacyPolicy = () => {
 
           <h2 className="text-lg font-bold mt-6 mb-3">1. Introduction</h2>
           <p className="mb-4 leading-relaxed text-muted-foreground">
-            Positive Thots ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our dating and education platform ("the App"). By using the App, you consent to the practices described in this policy.
+            Positive Thots ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our relationship education and community platform ("the App"). By using the App, you consent to the practices described in this policy.
           </p>
 
           <h2 className="text-lg font-bold mt-6 mb-3">2. Information We Collect</h2>
