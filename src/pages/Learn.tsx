@@ -270,9 +270,10 @@ const Learn = () => {
                         const isCompleted = earnedModuleIds.has(module.id);
                         const isUnlocked = isModuleUnlocked(module);
                         const progress = moduleProgress[module.id];
-                        const sectionPercent = progress && progress.total > 0
+                        const rawSectionPercent = progress && progress.total > 0
                           ? Math.round((progress.completed / progress.total) * 100)
                           : 0;
+                        const sectionPercent = (rawSectionPercent >= 100 && !isCompleted) ? 90 : rawSectionPercent;
                         return (
                           <Card
                             key={module.id}
@@ -300,7 +301,9 @@ const Learn = () => {
                                   )}
                                   {progress && progress.total > 0 && !isCompleted && (
                                     <span className="text-[10px] text-muted-foreground">
-                                      {progress.completed}/{progress.total} sections
+                                      {progress.completed >= progress.total
+                                        ? "Quiz remaining"
+                                        : `${progress.completed}/${progress.total} sections`}
                                     </span>
                                   )}
                                 </div>
