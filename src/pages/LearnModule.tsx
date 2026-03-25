@@ -620,6 +620,7 @@ const LearnModule = () => {
                       setShowQuiz(false); setSubmitted(false); setAnswers({});
                       setCurrentQuestionIndex(0);
                       setAnsweredQuestions(new Set());
+                      setShowFeedback(false);
                     }} className="flex-1">
                       Review Material
                     </Button>
