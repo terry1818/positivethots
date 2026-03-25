@@ -297,18 +297,29 @@ export const SectionContent = ({
         <KeyTakeaway takeaway={takeaway} sectionTitle={section.title} />
       )}
 
-      {/* Reflection prompt (between sections) */}
-      {!isLast && !isCompleted && (
-        <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-          <p className="text-sm font-medium">💭 Quick Reflection</p>
-          <p className="text-xs text-muted-foreground">What's one thing you'll apply from this section?</p>
-          <Textarea
-            value={reflection}
-            onChange={(e) => setReflection(e.target.value)}
-            placeholder="Type your thoughts..."
-            className="text-sm min-h-[60px] resize-none"
-          />
-        </div>
+      {/* Reflection prompt */}
+      {reflectionPrompt && userId && !isCompleted && (
+        <ReflectionPrompt
+          sectionId={section.id}
+          userId={userId}
+          prompt={reflectionPrompt}
+          onSaveAndContinue={() => {
+            onReflectionSaved?.();
+            handleMarkComplete();
+          }}
+          onSkip={handleMarkComplete}
+        />
+      )}
+
+      {/* Show saved reflection if already completed */}
+      {reflectionPrompt && userId && isCompleted && (
+        <ReflectionPrompt
+          sectionId={section.id}
+          userId={userId}
+          prompt={reflectionPrompt}
+          onSaveAndContinue={() => onReflectionSaved?.()}
+          onSkip={() => {}}
+        />
       )}
 
       {/* Interactive placeholder */}
