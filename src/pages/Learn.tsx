@@ -197,10 +197,12 @@ const Learn = () => {
         <DailyChallenge />
 
         {/* Community social proof */}
-        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground py-1">
-          <Users className="h-3 w-3" />
-          <span>{(1200 + Math.floor(Math.random() * 300)).toLocaleString()} learners active today</span>
-        </div>
+        {activeLearnerCount != null && activeLearnerCount > 0 && (
+          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground py-1">
+            <Users className="h-3 w-3" />
+            <span>{activeLearnerCount.toLocaleString()} learners active today</span>
+          </div>
+        )}
 
         {/* Unified Learning Path */}
         <Card className="animate-fade-in overflow-hidden">

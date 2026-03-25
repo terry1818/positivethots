@@ -95,14 +95,20 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
           </div>
         </div>
       </div>
-      <div className="absolute bottom-3 left-3 right-3 flex justify-between">
-        <Badge variant="secondary" className="bg-background/95 backdrop-blur-sm">
-          <MapPin className="h-3 w-3 mr-1" />{profile.distance} mi
-        </Badge>
-        <Badge variant="secondary" className="bg-background/95 backdrop-blur-sm">
-          <Clock className="h-3 w-3 mr-1" />{profile.last_active}
-        </Badge>
-      </div>
+      {(profile.distance != null || profile.last_active) && (
+        <div className="absolute bottom-3 left-3 right-3 flex justify-between">
+          {profile.distance != null && (
+            <Badge variant="secondary" className="bg-background/95 backdrop-blur-sm">
+              <MapPin className="h-3 w-3 mr-1" />{profile.distance} mi
+            </Badge>
+          )}
+          {profile.last_active && (
+            <Badge variant="secondary" className="bg-background/95 backdrop-blur-sm">
+              <Clock className="h-3 w-3 mr-1" />{profile.last_active}
+            </Badge>
+          )}
+        </div>
+      )}
     </div>
 
     <div className="p-4">

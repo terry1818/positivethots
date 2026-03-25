@@ -182,9 +182,8 @@ const Index = () => {
         ...p,
         badge_count: badgeCounts.get(p.id) || 0,
         compatibility_score: calculateCompatibility(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0),
-        last_active: LAST_ACTIVE_OPTIONS[Math.floor(Math.random() * LAST_ACTIVE_OPTIONS.length)],
         verified: (badgeCounts.get(p.id) || 0) >= 3,
-        distance: Math.floor(Math.random() * 20) + 1,
+        distance: null,
         is_boosted: boostedUserIds.has(p.id),
       }))
       .sort((a, b) => {

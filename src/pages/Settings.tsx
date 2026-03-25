@@ -373,7 +373,7 @@ const Settings = () => {
                           <Badge variant={rh.role === "admin" ? "default" : "secondary"} className="text-xs">
                             {rh.role}
                           </Badge>
-                          {rh.user_id === OWNER_ID && (
+                          {rh.user_id === adminUserId && isOwner && (
                             <Badge variant="outline" className="text-xs">Owner</Badge>
                           )}
                         </div>
