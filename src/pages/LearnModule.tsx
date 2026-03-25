@@ -113,6 +113,23 @@ const LearnModule = () => {
     loadModule();
   }, [slug]);
 
+  // Show session intro for new, uncompleted sections
+  useEffect(() => {
+    if (!hasSections || sections.length === 0 || showQuiz) return;
+    const currentSection = sections[currentSectionIndex];
+    if (!currentSection) return;
+    const isCompleted = sectionProgress.some(p => p.section_id === currentSection.id && p.completed);
+    if (!introShownSections.has(currentSection.id) && !isCompleted) {
+      setShowSessionIntro(true);
+      setIntroShownSections(prev => new Set(prev).add(currentSection.id));
+    }
+  }, [currentSectionIndex, sections, hasSections, showQuiz]);
+
+  const handleReflectionSaved = useCallback(async (sectionId: string) => {
+    const result = await awardXP(5, "reflection", sectionId);
+    setXpPopup({ show: true, amount: result.newXP });
+  }, [awardXP]);
+
   const loadModule = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
