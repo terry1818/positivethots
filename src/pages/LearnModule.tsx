@@ -171,20 +171,21 @@ const LearnModule = () => {
     }
   }, [markComplete, awardXP, stats]);
 
-  // Quiz: store answer locally (no server-side validation per question)
+  // Quiz: store answer locally, show feedback instead of auto-advancing
   const handleAnswerQuestion = (questionId: string, answerIndex: number) => {
     const question = questions.find(q => q.id === questionId);
     if (!question || answeredQuestions.has(questionId)) return;
 
     setAnswers(prev => ({ ...prev, [questionId]: answerIndex }));
     setAnsweredQuestions(prev => new Set(prev).add(questionId));
+    setShowFeedback(true);
+  };
 
-    // Auto-advance after brief delay
-    setTimeout(() => {
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      }
-    }, 400);
+  const handleNextQuestion = () => {
+    setShowFeedback(false);
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
   };
 
   const handleSubmitQuiz = async () => {
