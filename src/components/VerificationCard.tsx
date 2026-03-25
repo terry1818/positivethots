@@ -1,11 +1,10 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShieldCheck, Camera, Loader2, X } from "lucide-react";
+import { ShieldCheck, Camera, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { isNative, takeNativePhoto } from "@/lib/capacitor";
 
 interface VerificationCardProps {
   userId: string;
@@ -22,91 +21,22 @@ export const VerificationCard = ({
   latestRequest,
   onVerificationChange,
 }: VerificationCardProps) => {
-  const [showCamera, setShowCamera] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const startCamera = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: 640, height: 640 },
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        // Wait for video to actually start playing before showing capture button
-        await new Promise<void>((resolve) => {
-          const video = videoRef.current!;
-          const onPlaying = () => {
-            video.removeEventListener("loadeddata", onPlaying);
-            resolve();
-          };
-          if (video.readyState >= 2) {
-            resolve();
-          } else {
-            video.addEventListener("loadeddata", onPlaying);
-          }
-        });
-      }
-      setShowCamera(true);
-    } catch {
-      toast.error("Could not access camera. Please allow camera permissions.");
-    }
-  }, []);
+  const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const stopCamera = useCallback(() => {
-    streamRef.current?.getTracks().forEach((t) => t.stop());
-    streamRef.current = null;
-    setShowCamera(false);
-  }, []);
+    // Reset input so same file can be re-selected if needed
+    e.target.value = "";
 
-  const captureAndSubmit = async () => {
     setSubmitting(true);
-
     try {
-      let blob: Blob;
-
-      if (isNative()) {
-      const nativeBlob = await takeNativePhoto();
-        if (!nativeBlob) {
-          toast.error("Could not capture photo. Please check camera permissions and try again.");
-          setSubmitting(false);
-          onVerificationChange();
-          return;
-        }
-        blob = nativeBlob;
-      } else {
-      if (!videoRef.current || videoRef.current.videoWidth === 0) {
-          toast.error("Camera not ready. Please wait a moment and try again.");
-          setSubmitting(false);
-          return;
-        }
-        const canvas = document.createElement("canvas");
-        canvas.width = videoRef.current.videoWidth;
-        canvas.height = videoRef.current.videoHeight;
-        canvas.getContext("2d")!.drawImage(videoRef.current, 0, 0);
-
-        blob = await new Promise<Blob>((resolve, reject) =>
-          canvas.toBlob((b) => {
-            if (b && b.size > 0) resolve(b);
-            else reject(new Error("Failed to capture photo"));
-          }, "image/jpeg", 0.85)
-        );
-
-        stopCamera();
-      }
-
-      if (!blob || blob.size === 0) {
-        toast.error("Failed to capture photo. Please try again.");
-        setSubmitting(false);
-        return;
-      }
-
       const path = `${userId}/verification/${crypto.randomUUID()}.jpg`;
       const { error: uploadErr } = await supabase.storage
-        .from("user-photos")
-        .upload(path, blob, { contentType: "image/jpeg" });
+        .from("verification-selfies")
+        .upload(path, file, { contentType: file.type || "image/jpeg" });
       if (uploadErr) throw uploadErr;
 
       const { data: verReq, error: insertErr } = await supabase
@@ -116,7 +46,6 @@ export const VerificationCard = ({
         .single();
       if (insertErr) throw insertErr;
 
-      // Trigger verification
       const { data: result } = await supabase.functions.invoke("moderate-photo", {
         body: { photo_id: verReq.id, mode: "verification" },
       });
@@ -124,13 +53,12 @@ export const VerificationCard = ({
       if (result?.verified) {
         toast.success("You're verified! 🎉");
       } else {
-        toast.error(result?.reason || "Verification failed. Please try again.");
+        toast.error(result?.reason || "Verification could not be confirmed. Please try again with a clear, well-lit selfie.");
       }
-
       onVerificationChange();
-    } catch (error) {
-      console.error("Verification error:", error);
-      toast.error("Verification failed");
+    } catch (err) {
+      console.error("Verification error:", err);
+      toast.error("Verification failed. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -143,7 +71,9 @@ export const VerificationCard = ({
           <ShieldCheck className="h-6 w-6 text-amber-500" />
           <div>
             <p className="font-medium text-amber-700 dark:text-amber-400">Verification Unavailable</p>
-            <p className="text-xs text-muted-foreground">You need at least one approved profile photo before verifying your identity. Please upload a photo and wait for it to be approved.</p>
+            <p className="text-xs text-muted-foreground">
+              You need at least one approved profile photo before verifying your identity. Please upload a photo and wait for it to be approved.
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -174,55 +104,57 @@ export const VerificationCard = ({
       </CardHeader>
       <CardContent className="space-y-3">
         <p className="text-sm text-muted-foreground">
-          Take a selfie to verify your identity. We'll compare it with your profile photos
-          to confirm you're real. Verified users get a trust badge.
+          Take a selfie to verify your identity. We compare it with your profile photos to confirm you're real — not a catfish. Verified users get a trust badge on their profile.
         </p>
 
         {latestRequest?.status === "pending" && (
           <Badge variant="secondary" className="gap-1">
             <Loader2 className="h-3 w-3 animate-spin" />
-            Verification pending
+            Verification in progress...
           </Badge>
         )}
 
         {latestRequest?.status === "rejected" && (
-          <div className="text-sm text-destructive">
-            Previous attempt rejected: {latestRequest.reason || "Unknown reason"}
+          <div className="text-sm text-destructive bg-destructive/10 rounded-lg p-3">
+            <p className="font-medium mb-1">Previous attempt unsuccessful</p>
+            <p className="text-xs">
+              {latestRequest.reason || "Please try again with a clear, well-lit selfie that matches your profile photos."}
+            </p>
           </div>
         )}
 
-        {showCamera ? (
-          <div className="space-y-3">
-            <div className="relative aspect-square rounded-lg overflow-hidden bg-black">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover mirror"
-                style={{ transform: "scaleX(-1)" }}
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button onClick={captureAndSubmit} disabled={submitting} className="flex-1">
-                {submitting ? (
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                ) : (
-                  <Camera className="h-4 w-4 mr-1" />
-                )}
-                {submitting ? "Verifying..." : "Take Selfie"}
-              </Button>
-              <Button variant="outline" onClick={stopCamera} disabled={submitting}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <Button onClick={isNative() ? captureAndSubmit : startCamera} variant="outline" className="w-full">
-            <Camera className="h-4 w-4 mr-2" />
-            Start Verification
-          </Button>
-        )}
+        {/* Hidden file input — capture="user" opens front camera on mobile */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          capture="user"
+          className="hidden"
+          onChange={handleFileSelected}
+        />
+
+        <Button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={submitting}
+          variant="outline"
+          className="w-full"
+        >
+          {submitting ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Verifying your identity...
+            </>
+          ) : (
+            <>
+              <Camera className="h-4 w-4 mr-2" />
+              Take Verification Selfie
+            </>
+          )}
+        </Button>
+
+        <p className="text-xs text-muted-foreground text-center">
+          Your selfie is only used for verification and is never shown publicly.
+        </p>
       </CardContent>
     </Card>
   );

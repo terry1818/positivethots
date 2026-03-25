@@ -3,7 +3,6 @@ import { getCorsHeaders } from "../_shared/cors.ts";
 
 function parseAIJson(content: string): Record<string, unknown> | null {
   if (!content) return null;
-  // Strip markdown code fences
   const stripped = content.replace(/```(?:json)?\s*/gi, "").replace(/```/g, "").trim();
   const jsonMatch = stripped.match(/\{[\s\S]*\}/);
   if (jsonMatch) {
@@ -76,10 +75,10 @@ Deno.serve(async (req) => {
     const { photo_id, mode } = await req.json();
 
     if (mode === "verification") {
-      return await handleVerification(supabaseAdmin, user, photo_id, lovableApiKey);
+      return await handleVerification(supabaseAdmin, user, photo_id, lovableApiKey, corsHeaders);
     }
 
-    return await handleModeration(supabaseAdmin, user, photo_id, lovableApiKey);
+    return await handleModeration(supabaseAdmin, user, photo_id, lovableApiKey, corsHeaders);
   } catch (error) {
     console.error("Error in moderate-photo:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
@@ -90,7 +89,7 @@ Deno.serve(async (req) => {
 });
 
 async function handleVerification(
-  supabaseAdmin: any, user: any, photo_id: string, apiKey: string
+  supabaseAdmin: any, user: any, photo_id: string, apiKey: string, corsHeaders: Record<string, string>
 ) {
   const { data: verReq } = await supabaseAdmin
     .from("verification_requests")
@@ -106,9 +105,20 @@ async function handleVerification(
     });
   }
 
-  const { data: selfieUrl } = supabaseAdmin.storage
-    .from("user-photos")
-    .getPublicUrl(verReq.selfie_path);
+  // Generate a signed URL for the private verification selfie
+  const { data: signedUrlData, error: signedUrlErr } = await supabaseAdmin.storage
+    .from("verification-selfies")
+    .createSignedUrl(verReq.selfie_path, 300);
+
+  if (signedUrlErr || !signedUrlData?.signedUrl) {
+    console.error("Failed to create signed URL for selfie:", signedUrlErr);
+    return new Response(
+      JSON.stringify({ verified: false, reason: "Could not access verification selfie. Please try again." }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  const selfieUrl = signedUrlData.signedUrl;
 
   const { data: userPhotos } = await supabaseAdmin
     .from("user_photos")
@@ -141,9 +151,20 @@ async function handleVerification(
         content: [
           {
             type: "text",
-            text: `You are a verification system. Compare this selfie with the profile photos to determine if the same person appears in both. Respond with JSON only: {"verified": true/false, "reason": "brief explanation"}. If there are no profile photos to compare, respond with {"verified": false, "reason": "No profile photos available for comparison"}.`,
+            text: `You are an identity verification system for a relationship community app. Your job is to determine whether a selfie was taken by the same person who appears in the profile photos.
+
+Rules:
+- Compare facial features: face shape, eyes, nose, skin tone, and overall appearance
+- Minor differences in lighting, angle, expression, makeup, or hairstyle are acceptable — focus on underlying facial structure
+- If the selfie clearly shows the same person as the profile photos, respond verified: true
+- If the faces clearly do NOT match, respond verified: false with a helpful reason
+- If image quality is too poor to make a determination, respond verified: false with reason: "Photo quality too low — please retake in good lighting"
+- If the selfie does not show a face at all, respond verified: false with reason: "No face detected in the selfie — please take a clear front-facing photo"
+- Never reject based on accessories like glasses or hats if the underlying person is identifiable
+
+Respond with JSON only, no other text: {"verified": true/false, "reason": "brief helpful explanation"}`,
           },
-          { type: "image_url", image_url: { url: selfieUrl.publicUrl } },
+          { type: "image_url", image_url: { url: selfieUrl } },
           ...photoUrls.map((url: string) => ({
             type: "image_url",
             image_url: { url },
@@ -181,7 +202,7 @@ async function handleVerification(
 }
 
 async function handleModeration(
-  supabaseAdmin: any, user: any, photo_id: string, apiKey: string
+  supabaseAdmin: any, user: any, photo_id: string, apiKey: string, corsHeaders: Record<string, string>
 ) {
   const { data: photo } = await supabaseAdmin
     .from("user_photos")
@@ -217,12 +238,11 @@ async function handleModeration(
 
     const parsed = parseAIJson(content);
     if (parsed) {
-      approved = parsed.approved !== false; // default true unless explicitly false
+      approved = parsed.approved !== false;
       moderationReason = approved ? null : ((parsed.reason as string) || "Content policy violation");
     }
   } catch (err) {
     console.error("AI call failed for moderation:", err);
-    // Fail-open: approve if AI is unreachable
     approved = true;
     moderationReason = null;
   }
@@ -235,7 +255,6 @@ async function handleModeration(
     })
     .eq("id", photo_id);
 
-  // If first approved public photo, set as profile image
   if (approved && photo.visibility === "public" && photo.order_index === 0) {
     await supabaseAdmin.from("profiles").update({ profile_image: photo.photo_url }).eq("id", user.id);
   }
