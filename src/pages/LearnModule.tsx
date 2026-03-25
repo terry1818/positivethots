@@ -456,36 +456,97 @@ const LearnModule = () => {
                           {currentQuestionIndex + 1}. {currentQuestion.question}
                         </CardTitle>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="space-y-4">
                         <RadioGroup
                           value={answers[currentQuestion.id] !== undefined ? answers[currentQuestion.id].toString() : ""}
                           onValueChange={(value) => handleAnswerQuestion(currentQuestion.id, parseInt(value))}
                           disabled={answeredQuestions.has(currentQuestion.id)}
                         >
                           {currentQuestion.options.map((option: string, oIndex: number) => {
-                            const isSelected = answers[currentQuestion.id] === oIndex;
+                            const isAnswered = answeredQuestions.has(currentQuestion.id);
+                            const selectedAnswer = answers[currentQuestion.id];
+                            const isSelected = selectedAnswer === oIndex;
+                            // Note: correct_answer is only available for admin users who fetch from quiz_questions
+                            // For regular users, we show feedback text but can't highlight the correct answer
+                            const correctAnswer = (currentQuestion as any).correct_answer;
+                            const isCorrectOption = correctAnswer !== undefined && correctAnswer === oIndex;
+                            const userWasWrong = isAnswered && correctAnswer !== undefined && selectedAnswer !== correctAnswer;
+
                             return (
                               <div key={oIndex} className={cn(
-                                "flex items-center space-x-2 py-2 px-2 rounded-md transition-colors",
-                                isSelected && "bg-primary/10"
+                                "flex items-center space-x-2 py-2 px-3 rounded-md transition-colors border",
+                                !isAnswered && "border-transparent hover:bg-muted/50",
+                                isAnswered && isSelected && isCorrectOption && "bg-green-500/10 border-green-500/30",
+                                isAnswered && isSelected && !isCorrectOption && correctAnswer !== undefined && "bg-destructive/10 border-destructive/30",
+                                isAnswered && isSelected && correctAnswer === undefined && "bg-primary/10 border-primary/30",
+                                isAnswered && !isSelected && isCorrectOption && userWasWrong && "bg-green-500/10 border-green-500/30",
+                                isAnswered && !isSelected && !isCorrectOption && "opacity-50"
                               )}>
                                 <RadioGroupItem value={oIndex.toString()} id={`${currentQuestion.id}-${oIndex}`} />
                                 <Label htmlFor={`${currentQuestion.id}-${oIndex}`} className="flex-1 cursor-pointer">{option}</Label>
+                                {isAnswered && isSelected && isCorrectOption && <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />}
+                                {isAnswered && isSelected && !isCorrectOption && correctAnswer !== undefined && <XCircle className="h-4 w-4 text-destructive shrink-0" />}
+                                {isAnswered && !isSelected && isCorrectOption && userWasWrong && <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />}
                               </div>
                             );
                           })}
                         </RadioGroup>
+
+                        {/* Feedback card */}
+                        {showFeedback && answeredQuestions.has(currentQuestion.id) && (() => {
+                          const correctAnswer = (currentQuestion as any).correct_answer;
+                          const isCorrect = correctAnswer !== undefined && answers[currentQuestion.id] === correctAnswer;
+                          const explanationText = isCorrect
+                            ? currentQuestion.explanation_correct
+                            : currentQuestion.explanation_wrong;
+
+                          return explanationText ? (
+                            <div className={cn(
+                              "rounded-lg p-4 text-sm space-y-1",
+                              isCorrect ? "bg-green-500/10 border border-green-500/20" : "bg-destructive/10 border border-destructive/20"
+                            )}>
+                              <p className="font-semibold flex items-center gap-1.5">
+                                {isCorrect ? (
+                                  <><CheckCircle2 className="h-4 w-4 text-green-500" /> Correct!</>
+                                ) : (
+                                  <><XCircle className="h-4 w-4 text-destructive" /> Not quite</>
+                                )}
+                              </p>
+                              {!isCorrect && correctAnswer !== undefined && (
+                                <p className="text-xs text-muted-foreground">
+                                  Correct answer: <span className="font-medium text-foreground">{currentQuestion.options[correctAnswer]}</span>
+                                </p>
+                              )}
+                              <p className="text-muted-foreground">{explanationText}</p>
+                            </div>
+                          ) : null;
+                        })()}
                       </CardContent>
                     </Card>
 
-                    {/* Navigation dots with fire trail */}
+                    {/* Next Question button (replaces auto-advance) */}
+                    {showFeedback && answeredQuestions.has(currentQuestion.id) && (
+                      <div className="flex justify-end">
+                        {currentQuestionIndex < questions.length - 1 ? (
+                          <Button onClick={handleNextQuestion}>
+                            Next Question →
+                          </Button>
+                        ) : (
+                          <Button onClick={handleSubmitQuiz} disabled={answeredQuestions.size !== questions.length}>
+                            Review & Submit
+                          </Button>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Navigation dots */}
                     <div className="flex justify-center gap-1.5 flex-wrap">
                       {questions.map((q, i) => {
                         const isAnswered = answeredQuestions.has(q.id);
                         return (
                           <button
                             key={q.id}
-                            onClick={() => setCurrentQuestionIndex(i)}
+                            onClick={() => { setShowFeedback(false); setCurrentQuestionIndex(i); }}
                             className={cn(
                               "w-3 h-3 rounded-full transition-all",
                               i === currentQuestionIndex ? "bg-primary scale-125" :
