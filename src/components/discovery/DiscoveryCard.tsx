@@ -42,8 +42,8 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
 
   const handleSuperLikeClick = () => {
     if (superLikeBalance !== undefined && superLikeBalance <= 0) {
-      toast("Out of Super Likes!", {
-        description: "Get more to stand out from the crowd.",
+      toast("No Thots left!", {
+        description: "Get more to stand out.",
         action: {
           label: "Get More",
           onClick: () => navigate("/premium"),
