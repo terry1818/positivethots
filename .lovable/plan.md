@@ -1,90 +1,58 @@
 
 
-## Plan: Feature Milestone Cards, XP Reward Bar, Events Gate & Location Split
+## Plan: Rebuild Discovery as Swipe Stack
 
 ### Overview
-Three prompts, six files modified. No database changes needed.
+Replace the Discovery grid with a Tinder-style single-card swipe stack. Create two new components, modify Index.tsx rendering.
 
----
+### Files to Create
 
-### Prompt 1 — Feature Unlock Milestone Cards in TierRoadmap
+**1. `src/components/discovery/SwipeDiscoveryCard.tsx`** (new)
 
-**File: `src/hooks/useFeatureUnlocks.ts`**
-- Update `TIER_FEATURES` to match the new structure:
-  - Foundation: `discovery`, `distance_radar`, `basic_matching` (replaces `location_sharing`)
-  - Sexual Health: unchanged keys, updated descriptions
-  - Identity: unchanged keys, updated descriptions
-  - Relationships: unchanged keys, updated descriptions  
-  - Advanced: `events_access`, `event_location_sharing`, `mentor_badge`, `premium_content` (removes `event_creation`)
+Full swipe card for the discovery stack. Ports drag mechanics from SwipeCard.tsx but adapted for EnhancedProfile.
 
-**File: `src/components/education/TierRoadmap.tsx`**
-- **Remove** the emoji icon block from tier header pills (lines 254–269 — the `{node.features.length > 0 && ...}` block with hover tooltips)
-- **Add** a milestone card after each tier header in the `allNodes.map()` loop. When `node.type === "tier-header"` and `node.features.length > 0`, render a `max-w-xs` card below the pill showing:
-  - Header: "✓ Unlocked" (green) or "🔒 Complete this tier to unlock"
-  - Each feature as a row: emoji icon, label (bold), description (muted), CheckCircle or Lock icon
-  - Green border/bg tint when tier is complete, muted border when incomplete
-  - `isTierComplete` flag already computed at line 235 — reuse it
-- Add `relative z-10` to the card container so it sits above the connector line
+- Props: `profile, isTop, stackIndex (0-2), onConnect, onPass, onSuperLike, canSuperLike, superLikeBalance, onViewProfile`
+- **Stack positioning**: stackIndex 0 = full size z-30, 1 = scale-[0.94] translate-y-3 z-20, 2 = scale-[0.88] translate-y-6 z-10. Behind cards get `pointerEvents: "none"`.
+- **Drag mechanics**: Identical to SwipeCard.tsx — `dragStart`, `dragOffset`, `isDragging`, `animate` state. Mouse + touch handlers. Threshold 100px. Rotation = `dragOffset.x / 20`. On threshold exceeded: set `animate` direction, call `onConnect`/`onPass` after 400ms.
+- **LIKE/NOPE overlays**: Green "LIKE" top-left (opacity tied to positive drag), red "NOPE" top-right (opacity tied to negative drag). Only visible during drag.
+- **Photo cycling**: `photoIndex` state, reset on `profile.id` change. `photos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean)`. Dot indicators top-center (max 6 dots, active = w-4 white, inactive = w-2 white/40). Tap zones: left 1/3 prev, right 2/3 next — both use `e.stopPropagation()` to avoid triggering drag.
+- **Card layout**: h-96 photo area with gradient overlay. Over photo bottom: name, age, pronouns, compatibility badge top-right, boosted/verified badges top-left. Below photo: bio (2 lines), compatibility reasons (max 2), tappable "tap for full profile" hint calling `onViewProfile`.
+- **Action buttons**: Positioned absolute bottom-[-70px] centered. Pass (36x36 rounded-full outline destructive border), Super Like (30x30 outline amber, conditional), Connect (46x46 filled gradient). Only respond when `isTop`.
 
----
+**2. `src/components/discovery/ProfileDetailSheet.tsx`** (new)
 
-### Prompt 2 — XP Bar Shows Next Reward
+Bottom sheet using Drawer (from vaul, already installed). Opens when `detailProfile` is set.
 
-**File: `src/hooks/useLearningStats.ts`**
-- Export `LEVEL_REWARDS` map: `{ 3: "+1 Super Like 💜", 5: "Streak Freeze ❄️", 7: "+2 Super Likes 💜💜", 10: "Free Profile Boost 🚀" }`
-- Export `getNextReward(currentLevel)` function returning the next reward level above current, or null
+- Props: `profile (EnhancedProfile | null), onClose, onConnect, onPass, onSuperLike, canSuperLike`
+- Content: Photo carousel (h-56, same dot+tap logic), name/age/verified, compatibility Progress bar with percentage, compatibility reasons list, education badge count display (badge_count number + "Verified Educator" if >= 20), full bio, relationship style badge, looking_for, interests tags.
+- Sticky bottom action bar: Pass (outline destructive), Super Like (outline amber, conditional), Connect (filled primary). Each calls its action + onClose.
+- Open state controlled by `!!profile`.
 
-**File: `src/components/education/XPBar.tsx`**
-- Import `getNextReward` and `getLevelName`
-- Add a second row below the progress bar:
-  - Left: "{X} XP to {NextLevelName}" (or "Level up!" when at threshold)
-  - Right: "Next reward at Lv.{N}: {icon} {label}" (hidden if no more rewards)
-- Update level display from `Lv.{level}` to `Lv.{level} → {level+1}`
+### File to Modify
 
-**File: `src/pages/LearnModule.tsx`**
-- Import `LEVEL_REWARDS` from useLearningStats
-- In `handleSectionComplete`, after the existing `result.leveledUp` block (line 190–191), add a reward toast:
-  - Check `LEVEL_REWARDS[newLevel]`, if exists show `toast.success` with reward info after a 2400ms delay
+**3. `src/pages/Index.tsx`**
 
----
-
-### Prompt 3 — Events Gate + Location Split
-
-**File: `src/hooks/useLocationSharing.ts`**
-- Add `isEventLocationUnlocked` state (default false)
-- In `checkUnlock`, after the existing foundation check, query advanced tier modules + user badges to determine advanced completion
-- Return `isEventLocationUnlocked` alongside existing `isUnlocked`
-
-**File: `src/pages/Settings.tsx`**
-- Destructure `isEventLocationUnlocked` from `useLocationSharing()`
-- Replace the single "Location Sharing" card (lines 449–496) with two cards:
-  - **Card 1 — "Distance Radar 📡"**: Foundation gate, existing toggle
-  - **Card 2 — "Event Location Sharing 📍"**: Locked if foundation incomplete → locked if advanced incomplete → toggle if both complete
-
-**File: `src/pages/Events.tsx`**
-- Import `useFeatureUnlocks` and use existing `useSubscription`
-- Compute `hasEventsAccess = isFeatureUnlocked("events_access")`, `isVIP = subscriptionTier === "vip"`, `isFullyUnlocked`
-- Three render branches:
-  1. **`!hasEventsAccess`**: Blurred skeleton cards (3 placeholders) + centered overlay with curriculum checklist and "Continue Learning →" CTA
-  2. **`hasEventsAccess && !isVIP`**: VIP upgrade banner + real event cards with "VIP Required 👑" buttons replacing "Get Ticket"
-  3. **`isFullyUnlocked`**: Existing behavior unchanged
-- Dynamic subtitle: "Complete the full curriculum..." / "Upgrade to VIP..." / "Learn, connect, and grow" + VIP badge
-
----
-
-### Files Modified
-
-| File | Changes |
-|------|---------|
-| `src/hooks/useFeatureUnlocks.ts` | Update TIER_FEATURES keys and descriptions |
-| `src/components/education/TierRoadmap.tsx` | Remove emoji tooltips, add milestone cards below tier headers |
-| `src/hooks/useLearningStats.ts` | Export LEVEL_REWARDS map + getNextReward helper |
-| `src/components/education/XPBar.tsx` | Add reward hint row below progress bar |
-| `src/pages/LearnModule.tsx` | Add reward toast on level-up |
-| `src/hooks/useLocationSharing.ts` | Add isEventLocationUnlocked state + advanced tier check |
-| `src/pages/Settings.tsx` | Split location card into Distance Radar + Event Location Sharing |
-| `src/pages/Events.tsx` | Add education + VIP triple-gate UI |
+- Add `detailProfile` state: `useState<EnhancedProfile | null>(null)`
+- Import `SwipeDiscoveryCard` and `ProfileDetailSheet`
+- Replace lines 530-544 (the grid rendering block) with the swipe stack container:
+  - `relative flex justify-center items-start px-4 pt-2 pb-32` with `minHeight: 520px`
+  - Render `suggestions.slice(0, 3).map(...)` as `SwipeDiscoveryCard` components
+- Keep the empty state (boost + referral cards) at lines 498-529 unchanged
+- Keep previewMode, loading skeleton, header, CompactProgressBar, NearbyUsers, MatchModal, BottomNav all unchanged
+- Add `<ProfileDetailSheet>` before `<BottomNav>`, wired to `detailProfile` state with action handlers that also clear `detailProfile`
 
 ### Not Changed
-Event purchase flow, checkout edge functions, event registration, BottomNav, PhotoUploadGrid, EditProfile, badge/XP award logic, celebration modal, database schema.
+- `SwipeCard.tsx` — untouched
+- `DiscoveryCard.tsx` — untouched
+- All Supabase queries, RPC calls, handleConnect/handlePass/handleSuperLike logic
+- Preview mode, empty state, header, CompactProgressBar, NearbyUsers, MatchModal, BottomNav
+- calculateCompatibility / calculateCompatibilityReasons functions
+
+### Files Summary
+
+| File | Action |
+|------|--------|
+| `src/components/discovery/SwipeDiscoveryCard.tsx` | Create |
+| `src/components/discovery/ProfileDetailSheet.tsx` | Create |
+| `src/pages/Index.tsx` | Modify grid → stack, add detail sheet |
 
