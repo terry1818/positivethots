@@ -43,3 +43,7 @@ project_id = "zcsnqvncqzpleqoctzfc"
     verify_jwt = false
   [functions.grant-streak-reward]
     verify_jwt = false
+  [functions.recover-abandoned-checkout]
+    verify_jwt = false
+  [functions.notify-onboarding-incomplete]
+    verify_jwt = false
