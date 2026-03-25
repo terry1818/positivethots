@@ -2,17 +2,13 @@ import * as React from 'npm:react@18.3.1'
 import { renderAsync } from 'npm:@react-email/components@0.0.22'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
+import { getCorsHeaders } from '../_shared/cors.ts'
+import { rateLimit, rateLimitResponse } from '../_shared/rate-limit.ts'
 
 // Configuration baked in at scaffold time
 const SITE_NAME = "positivethots"
 const SENDER_DOMAIN = "notify.positivethots.app"
 const FROM_DOMAIN = "positivethots.app"
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type',
-}
 
 // Generate a cryptographically random 32-byte hex token
 function generateToken(): string {
