@@ -86,6 +86,15 @@ const Learn = () => {
       }
       setModuleProgress(progressMap);
 
+      // Fetch real active learner count
+      const last24h = new Date(Date.now() - 86400000).toISOString();
+      const { count: learnerCount } = await supabase
+        .from("analytics_events")
+        .select("user_id", { count: "exact", head: true })
+        .eq("event_name", "module_section_viewed")
+        .gte("created_at", last24h);
+      setActiveLearnerCount(learnerCount && learnerCount > 0 ? learnerCount : null);
+
       // Default open tier = first incomplete tier
       const earnedIds = new Set(badges.map(b => b.module_id));
       const firstIncompleteTier = tierOrder.find(tier => {
