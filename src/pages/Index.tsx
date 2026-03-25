@@ -485,24 +485,24 @@ const Index = () => {
 
       {/* Compact Progress Strip */}
       {tiers.length > 0 && (
-        <div className="container max-w-7xl mx-auto px-4 py-3">
+        <div className="max-w-sm mx-auto px-4 py-3">
           <CompactProgressBar tiers={tiers} badgeCount={userBadgeCount} connectionCount={matchCount} />
         </div>
       )}
 
       {/* Nearby Users */}
       {isSharing && (
-        <div className="container max-w-7xl mx-auto px-4 mb-4">
+        <div className="max-w-sm mx-auto px-4 mb-4">
           <NearbyUsers nearbyUsers={nearbyUsers} isSharing={isSharing} />
         </div>
       )}
 
       {/* Curated Matches Grid */}
-      <div className="container max-w-7xl mx-auto px-4">
+      <div className="max-w-sm mx-auto px-4">
         {suggestions.length === 0 ? (
           <div className="space-y-4">
             {/* Boost upsell card */}
-            <Card className="p-6 text-center">
+            <Card className="p-6 text-center max-w-sm mx-auto w-full">
               <Zap className="h-12 w-12 text-amber-500 mx-auto mb-3" />
               <h2 className="text-xl font-bold mb-1">Get Seen by More People</h2>
               <p className="text-muted-foreground text-sm mb-1">
@@ -516,7 +516,7 @@ const Index = () => {
             </Card>
 
             {/* Referral card */}
-            <Card className="p-6 text-center">
+            <Card className="p-6 text-center max-w-sm mx-auto w-full">
               <Users className="h-12 w-12 text-primary mx-auto mb-3" />
               <h2 className="text-xl font-bold mb-1">Invite a Friend, Earn a Free Boost</h2>
               <p className="text-muted-foreground text-sm mb-4">
