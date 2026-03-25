@@ -21,8 +21,8 @@ export interface FeatureUnlock {
 
 const TIER_FEATURES: Record<string, { key: string; label: string; description: string; icon: string }[]> = {
   foundation: [
-    { key: "discovery", label: "Discovery", description: "Browse and match with other users", icon: "💜" },
-    { key: "location_sharing", label: "Location Sharing", description: "Share your GPS at events to find nearby users", icon: "📍" },
+    { key: "discovery", label: "Discovery", description: "Browse and match with other members", icon: "💜" },
+    { key: "distance_radar", label: "Distance Radar", description: "Find members near you in Discovery", icon: "📡" },
     { key: "basic_matching", label: "Basic Matching", description: "Connect with compatible people", icon: "💕" },
   ],
   sexual_health: [
@@ -30,16 +30,17 @@ const TIER_FEATURES: Record<string, { key: string; label: string; description: s
     { key: "safer_sex_badge", label: "Safer Sex Badge", description: "Show a Safer Sex awareness badge on your profile", icon: "✅" },
   ],
   identity: [
-    { key: "advanced_filters", label: "Advanced Filters", description: "Filter by relationship orientation, gender identity & pronouns", icon: "🔍" },
-    { key: "profile_linking", label: "Profile Linking", description: "Link profiles with partners publicly", icon: "🔗" },
+    { key: "advanced_filters", label: "Advanced Filters", description: "Filter by relationship orientation, gender & pronouns", icon: "🔍" },
+    { key: "profile_linking", label: "Profile Linking", description: "Link your profile publicly with partners", icon: "🔗" },
   ],
   relationships: [
-    { key: "priority_matching", label: "Priority Matching", description: "Appear higher in others' Discovery feeds", icon: "⭐" },
-    { key: "chat_tools", label: "Conversation Tools", description: "Guided conversation starters & conflict resolution prompts", icon: "💬" },
+    { key: "priority_matching", label: "Priority Matching", description: "Appear higher in other members' Discovery feeds", icon: "⭐" },
+    { key: "chat_tools", label: "Conversation Tools", description: "Guided conversation starters & conflict prompts", icon: "💬" },
   ],
   advanced: [
-    { key: "mentor_badge", label: "Mentor Badge", description: "Visible Mentor role on your profile", icon: "🎓" },
-    { key: "event_creation", label: "Event Creation", description: "Host and create community events", icon: "🎉" },
+    { key: "events_access", label: "Events & Workshops", description: "Access and purchase tickets to community events", icon: "🎉" },
+    { key: "event_location_sharing", label: "Event Location Sharing", description: "Share live GPS at events to find nearby attendees", icon: "📍" },
+    { key: "mentor_badge", label: "Mentor Badge", description: "Display a Mentor role badge on your profile", icon: "🎓" },
     { key: "premium_content", label: "Premium Content", description: "Access exclusive content without a subscription", icon: "👑" },
   ],
 };

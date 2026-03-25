@@ -251,23 +251,52 @@ export const BadgePathMap = ({
                     {node.completed}/{node.total}
                   </span>
                   {isTierComplete && <CheckCircle className="h-3 w-3 text-success" />}
-                  {node.features.length > 0 && (
-                    <div className="flex gap-0.5 ml-1">
-                      {node.features.map((f) => (
-                        <span
-                          key={f.key}
-                          className={cn(
-                            "text-[10px]",
-                            f.isUnlocked ? "opacity-100" : "opacity-40"
-                          )}
-                          title={f.description}
-                        >
-                          {f.icon}
-                        </span>
+                </div>
+              </div>
+              {/* Milestone card showing feature unlocks */}
+              {node.features.length > 0 && (
+                <div className="flex justify-center px-4 pb-2 pt-1 relative z-10">
+                  <div className={cn(
+                    "w-full max-w-xs rounded-xl border p-3 text-left transition-all",
+                    isTierComplete
+                      ? "bg-success/5 border-success/30"
+                      : "bg-muted/30 border-border"
+                  )}>
+                    <p className={cn(
+                      "text-[10px] font-bold uppercase tracking-wider mb-2",
+                      isTierComplete ? "text-success" : "text-muted-foreground"
+                    )}>
+                      {isTierComplete ? "✓ Unlocked" : "🔒 Complete this tier to unlock"}
+                    </p>
+                    <div className="space-y-1.5">
+                      {node.features.map(f => (
+                        <div key={f.key} className="flex items-center gap-2">
+                          <span className="text-base leading-none">{f.icon}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className={cn(
+                              "text-xs font-semibold leading-tight",
+                              f.isUnlocked ? "text-foreground" : "text-muted-foreground"
+                            )}>
+                              {f.label}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground leading-tight">
+                              {f.description}
+                            </p>
+                          </div>
+                          {f.isUnlocked
+                            ? <CheckCircle className="h-3.5 w-3.5 text-success shrink-0" />
+                            : <Lock className="h-3 w-3 text-muted-foreground/40 shrink-0" />
+                          }
+                        </div>
                       ))}
                     </div>
-                  )}
+                  </div>
                 </div>
+              )}
+            </>;
+            return (
+              <div key={`tier-${node.tier}`} data-tier-header={node.tier} className="py-4">
+                {tierContent}
               </div>
             );
           }

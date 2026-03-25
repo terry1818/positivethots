@@ -188,7 +188,18 @@ const LearnModule = () => {
     setXpPopup({ show: true, amount: result.newXP });
 
     if (result.leveledUp) {
-      setTimeout(() => setCelebration({ type: "level_up", level: stats?.current_level ? stats.current_level + 1 : 2 }), 1600);
+      const newLevel = stats?.current_level ? stats.current_level + 1 : 2;
+      setTimeout(() => setCelebration({ type: "level_up", level: newLevel }), 1600);
+
+      const reward = LEVEL_REWARDS[newLevel];
+      if (reward) {
+        setTimeout(() => {
+          toast.success(`${reward.icon} Level ${newLevel} reward: ${reward.label}!`, {
+            description: "Added to your account automatically.",
+            duration: 5000,
+          });
+        }, 2400);
+      }
     } else if (result.streakMilestone) {
       setTimeout(() => setCelebration({ type: "streak_milestone", streak: result.newStreak }), 1600);
       // Grant streak milestone reward

@@ -259,6 +259,7 @@ export const useLocationSharing = () => {
 
   return {
     isUnlocked,
+    isEventLocationUnlocked,
     isSharing,
     loading,
     nearbyUsers,
