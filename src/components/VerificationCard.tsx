@@ -18,6 +18,7 @@ interface VerificationCardProps {
 export const VerificationCard = ({
   userId,
   isVerified,
+  hasApprovedPhotos,
   latestRequest,
   onVerificationChange,
 }: VerificationCardProps) => {
