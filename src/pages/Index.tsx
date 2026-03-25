@@ -134,6 +134,7 @@ const Index = () => {
   const [previewProfiles, setPreviewProfiles] = useState<EnhancedProfile[]>([]);
   const [requiredCount, setRequiredCount] = useState(5);
   const [detailProfile, setDetailProfile] = useState<EnhancedProfile | null>(null);
+  const [matchCount, setMatchCount] = useState(0);
 
   // Handle super like purchase redirect
   useEffect(() => {
