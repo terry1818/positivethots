@@ -40,6 +40,7 @@ function haversineDistance(
 
 export const useLocationSharing = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isEventLocationUnlocked, setIsEventLocationUnlocked] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [nearbyUsers, setNearbyUsers] = useState<NearbyUser[]>([]);
