@@ -68,9 +68,11 @@ export const VerificationCard = ({
       let blob: Blob;
 
       if (isNative()) {
-        const nativeBlob = await takeNativePhoto();
+      const nativeBlob = await takeNativePhoto();
         if (!nativeBlob) {
+          toast.error("Could not capture photo. Please check camera permissions and try again.");
           setSubmitting(false);
+          onVerificationChange();
           return;
         }
         blob = nativeBlob;
