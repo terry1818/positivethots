@@ -1,41 +1,44 @@
 
 
-## Plan: Cookie Banner Fix + Photo Verification Fix
+## Plan: Fix Photo Verification (iOS Camera + Private Bucket + Better AI Prompt)
 
-### Prompt 1 — Cookie Banner Fix
-
-**3 surgical changes, no other animations affected:**
-
-1. **`src/index.css` (lines 181-182):** Change `translate(-50%, 20px)` → `translateY(20px)` and `translate(-50%, 0)` → `translateY(0)`
-
-2. **`tailwind.config.ts` (lines 117-118):** Same change in the JS keyframes config
-
-3. **`src/components/CookieConsent.tsx`:** Add `max-h-[90vh] overflow-y-auto` to the Card component
+3 fixes across 3 files + 1 migration.
 
 ---
 
-### Prompt 2 — Photo Verification Fix
+### Fix 1: Replace custom camera UI with native file input
 
-**4 changes across 3 files:**
+**File:** `src/components/VerificationCard.tsx`
 
-1. **`supabase/functions/moderate-photo/index.ts` (after line 120):** Early return with clear error message when `photoUrls.length === 0`, before calling the AI. Updates the verification_request to "rejected" with reason explaining photos must be approved first.
+- Remove: `showCamera` state, `videoRef`, `streamRef`, `startCamera`, `stopCamera`, `captureAndSubmit`, the `<video>` element, the camera toggle UI, and the `isNative()`/`takeNativePhoto()` branch
+- Remove unused imports: `useCallback`, `X`, `isNative`, `takeNativePhoto`
+- Replace with: a hidden `<input type="file" accept="image/*" capture="user">` + `fileInputRef`. Button click triggers the file input. `handleFileSelected` uploads the file directly to `verification-selfies` bucket, inserts `verification_requests`, invokes `moderate-photo`, and shows result toast.
+- Improve rejected state styling: wrap in a `bg-destructive/10 rounded-lg p-3` card
+- Add privacy note: "Your selfie is only used for verification and is never shown publicly."
+- Upload target bucket changes from `user-photos` to `verification-selfies`
 
-2. **`src/components/VerificationCard.tsx`:** Add `hasApprovedPhotos: boolean` prop. When false, render an info card telling the user to upload and wait for photo approval instead of showing the verification UI.
+### Fix 2: Improve AI verification prompt
 
-3. **`src/components/VerificationCard.tsx` (lines 68-74):** In the native branch, add `toast.error` message and `onVerificationChange()` call when `takeNativePhoto()` returns null, so the UI resets properly.
+**File:** `supabase/functions/moderate-photo/index.ts`
 
-4. **`src/pages/EditProfile.tsx`:** Pass `hasApprovedPhotos={photos.some(p => p.moderation_status === 'approved')}` to `VerificationCard`.
+- Replace the single-line AI prompt (line 143-144) with a detailed multi-rule prompt covering: facial feature comparison, tolerance for lighting/angle/accessories, quality rejection guidance, and no-face-detected handling
+- Change selfie URL from `getPublicUrl` (line 109-111) to `createSignedUrl(path, 300)` since the bucket will now be private
+- Upload source bucket changes from `user-photos` to `verification-selfies`
+
+### Fix 3: Create private verification-selfies bucket
+
+**Migration:**
+- Create `verification-selfies` bucket with `public = false`
+- RLS policy: users can INSERT into their own folder (`auth.uid()::text = (storage.foldername(name))[1]`)
+- RLS policy: service role can SELECT (for edge function signed URL access — service role bypasses RLS, so no explicit policy needed)
 
 ---
 
-### Files touched
+### Files
 
 | # | File | Change |
 |---|------|--------|
-| 1 | `src/index.css` | Fix slide-up keyframe |
-| 2 | `tailwind.config.ts` | Fix slide-up keyframe |
-| 3 | `src/components/CookieConsent.tsx` | Add max-height + overflow |
-| 4 | `supabase/functions/moderate-photo/index.ts` | Early return when no approved photos |
-| 5 | `src/components/VerificationCard.tsx` | New prop + native failure handling |
-| 6 | `src/pages/EditProfile.tsx` | Pass hasApprovedPhotos prop |
+| 1 | `src/components/VerificationCard.tsx` | Replace camera UI with file input, upload to private bucket |
+| 2 | `supabase/functions/moderate-photo/index.ts` | Better AI prompt, signed URL, private bucket |
+| 3 | 1 migration | Create `verification-selfies` private bucket + RLS |
 
