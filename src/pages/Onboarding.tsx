@@ -253,10 +253,15 @@ const Onboarding = () => {
 
   const goNext = () => {
     if (!validateStep()) return;
+
+    const phase = PHASES.find(p => p.steps.includes(step));
+    trackEvent('onboarding_step_completed', { step, phase: phase?.label || 'Welcome' });
+
     setCelebrationTrigger(t => t + 1);
     
     const phaseTransition = isPhaseTransition(step);
     if (phaseTransition !== null && phaseTransition < PHASE_INTERSTITIALS.length) {
+      trackEvent('onboarding_phase_completed', { phase: phase?.label || 'Welcome' });
       const data = PHASE_INTERSTITIALS[phaseTransition];
       setInterstitialData(data);
       setShowInterstitial(true);
