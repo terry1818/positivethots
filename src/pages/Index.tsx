@@ -204,6 +204,7 @@ const Index = () => {
     ]);
 
     const matchedUserIds = new Set(matchesResult.data?.flatMap(m => [m.user1_id, m.user2_id]) || []);
+    setMatchCount(matchesResult.data?.length || 0);
     matchedUserIds.add(userId);
 
     const blockedUserIds = new Set<string>();
