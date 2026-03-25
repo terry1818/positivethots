@@ -359,6 +359,7 @@ const Onboarding = () => {
         .eq("id", session.user.id);
 
       if (error) throw error;
+      trackEvent('onboarding_completed', {});
       toast.success("Welcome to Positive Thots! 💕");
       navigate("/learn");
     } catch (error: any) {
