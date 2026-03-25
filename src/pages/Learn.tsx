@@ -44,6 +44,7 @@ const Learn = () => {
   const [loading, setLoading] = useState(true);
   const [openTiers, setOpenTiers] = useState<Record<string, boolean>>({});
   const [moduleProgress, setModuleProgress] = useState<Record<string, { completed: number; total: number }>>({});
+  const [activeLearnerCount, setActiveLearnerCount] = useState<number | null>(null);
   const navigate = useNavigate();
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
