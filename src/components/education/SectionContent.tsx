@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { CheckCircle, CheckCircle2, XCircle, PlayCircle, FileText, Image, BookOpen, Sparkles } from "lucide-react";
+import { CheckCircle, CheckCircle2, XCircle, PlayCircle, FileText, Image, BookOpen, Sparkles, Volume2, Pause, Play, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { KeyTakeaway } from "./KeyTakeaway";
 import { ReflectionPrompt } from "./ReflectionPrompt";
 import { cn } from "@/lib/utils";
+import { useReadAloud } from "@/hooks/useReadAloud";
 
 interface CheckpointQuestion {
   id: string;
@@ -47,7 +48,6 @@ const contentTypeIcons: Record<string, React.ReactNode> = {
   interactive: <Sparkles className="h-4 w-4" />,
 };
 
-// Extract a "key takeaway" from content (first bold sentence or first line of last paragraph)
 const extractTakeaway = (content: string): string => {
   const boldMatch = content.match(/\*\*(.{20,120})\*\*/);
   if (boldMatch) return boldMatch[1];
@@ -73,7 +73,6 @@ const renderParagraph = (paragraph: string, i: number) => {
       </ul>
     );
   }
-  // Handle YouTube video embeds [youtube:Title](url)
   const youtubeMatch = paragraph.match(/\[youtube:(.*?)\]\((https?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/[^\)]+)\)/);
   if (youtubeMatch) {
     const embedUrl = youtubeMatch[2]
@@ -96,7 +95,6 @@ const renderParagraph = (paragraph: string, i: number) => {
       </div>
     );
   }
-  // Handle links [text](url)
   const escapeHtml = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const withLinks = paragraph.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
@@ -115,7 +113,6 @@ const renderMarkdown = (content: string, checkpoints?: CheckpointQuestion[]) => 
 
   paragraphs.forEach((paragraph, i) => {
     elements.push(renderParagraph(paragraph, i));
-    // Insert checkpoint questions after matching paragraph index
     if (checkpoints) {
       const matching = checkpoints.filter(q => q.position_in_section === i);
       matching.forEach(q => {
@@ -127,7 +124,6 @@ const renderMarkdown = (content: string, checkpoints?: CheckpointQuestion[]) => 
   return elements;
 };
 
-// QuickCheck inline card component
 const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
   const [selected, setSelected] = useState<number | null>(null);
   const [dismissed, setDismissed] = useState(false);
@@ -202,6 +198,54 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
   );
 };
 
+// Read-aloud toolbar component
+const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
+  const { isPlaying, isPaused, isSupported, play, pause, resume, stop, rate, setRate, RATES } = useReadAloud();
+
+  if (!isSupported) return null;
+
+  return (
+    <div role="toolbar" aria-label="Read aloud controls" className="flex items-center gap-2 py-2">
+      {!isPlaying && !isPaused && (
+        <Button variant="outline" size="sm" onClick={() => play(contentText)}
+          className="gap-1.5 text-xs" aria-label="Read section aloud">
+          <Volume2 className="h-3.5 w-3.5" /> Listen
+        </Button>
+      )}
+      {isPlaying && (
+        <Button variant="outline" size="sm" onClick={pause}
+          className="gap-1.5 text-xs" aria-label="Pause reading">
+          <Pause className="h-3.5 w-3.5" /> Pause
+        </Button>
+      )}
+      {isPaused && (
+        <Button variant="outline" size="sm" onClick={resume}
+          className="gap-1.5 text-xs" aria-label="Resume reading">
+          <Play className="h-3.5 w-3.5" /> Resume
+        </Button>
+      )}
+      {(isPlaying || isPaused) && (
+        <Button variant="ghost" size="sm" onClick={stop}
+          className="gap-1.5 text-xs text-muted-foreground" aria-label="Stop reading">
+          <Square className="h-3 w-3" /> Stop
+        </Button>
+      )}
+      {(isPlaying || isPaused) && (
+        <div className="flex items-center gap-1 ml-auto">
+          {RATES.map(r => (
+            <button key={r} onClick={() => setRate(r)}
+              className={cn("text-[10px] px-1.5 py-0.5 rounded font-mono",
+                rate === r ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
+              aria-label={`Speed ${r}x`} aria-pressed={rate === r}>
+              {r}x
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const SectionContent = ({
   section,
   isCompleted,
@@ -231,7 +275,6 @@ export const SectionContent = ({
 
   return (
     <div className="space-y-6 relative">
-      {/* Section complete banner */}
       {showBanner && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-banner-slide">
           <div className="bg-success text-success-foreground px-6 py-2 rounded-full font-bold text-sm shadow-lg flex items-center gap-2">
@@ -257,6 +300,11 @@ export const SectionContent = ({
       </div>
 
       <h2 className="text-xl font-bold">{section.title}</h2>
+
+      {/* Read aloud toolbar */}
+      {section.content_text && (
+        <ReadAloudToolbar contentText={section.content_text} />
+      )}
 
       {/* Video content */}
       {section.content_type === 'video' && section.content_url && (() => {
@@ -311,7 +359,6 @@ export const SectionContent = ({
         />
       )}
 
-      {/* Show saved reflection if already completed */}
       {reflectionPrompt && userId && isCompleted && (
         <ReflectionPrompt
           sectionId={section.id}

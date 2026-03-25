@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Lock, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -102,8 +103,11 @@ export const BadgePathMap = ({
   continueProgressPercent,
 }: BadgePathMapProps) => {
   const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeTier, setActiveTier] = useState<string | null>(null);
+  const [showFloating, setShowFloating] = useState(false);
 
-  // Build flat list with tier headers for rendering
+  // Build flat list with tier headers
   const allNodes: Array<
     | { type: "tier-header"; tier: string; config: typeof tierConfig["foundation"]; completed: number; total: number; features: TierUnlock["features"] }
     | { type: "module"; module: Module; tier: string; state: NodeState; icon: string; progress: { completed: number; total: number } | undefined; distanceFromCurrent: number }
@@ -145,7 +149,7 @@ export const BadgePathMap = ({
     });
   });
 
-  // Calculate distance from current node for locked opacity fade
+  // Calculate distance from current node
   let moduleIdx = 0;
   allNodes.forEach((node) => {
     if (node.type === "module") {
@@ -156,8 +160,72 @@ export const BadgePathMap = ({
     }
   });
 
+  // Tier header data for floating indicator
+  const tierHeaderData = allNodes.filter(n => n.type === "tier-header") as Array<
+    { type: "tier-header"; tier: string; config: typeof tierConfig["foundation"]; completed: number; total: number; features: TierUnlock["features"] }
+  >;
+
+  // IntersectionObserver to track active tier
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const headers = container.querySelectorAll<HTMLElement>("[data-tier-header]");
+    if (headers.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find which tier headers are above viewport (scrolled past)
+        const aboveHeaders: { tier: string; top: number }[] = [];
+        headers.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < 80) {
+            aboveHeaders.push({ tier: el.dataset.tierHeader!, top: rect.top });
+          }
+        });
+
+        if (aboveHeaders.length === 0) {
+          // First tier is still visible — hide floating
+          setShowFloating(false);
+          setActiveTier(null);
+        } else {
+          // The most recently scrolled-past header is the active tier
+          aboveHeaders.sort((a, b) => b.top - a.top);
+          setActiveTier(aboveHeaders[0].tier);
+          setShowFloating(true);
+        }
+      },
+      { threshold: [0, 1], rootMargin: "-72px 0px 0px 0px" }
+    );
+
+    headers.forEach((h) => observer.observe(h));
+    return () => observer.disconnect();
+  }, [allNodes.length]);
+
+  // Active tier info for floating pill
+  const activeInfo = activeTier ? tierHeaderData.find(t => t.tier === activeTier) : null;
+
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
+      {/* Floating active-tier indicator */}
+      {showFloating && activeInfo && (
+        <div className="fixed top-[72px] left-1/2 -translate-x-1/2 z-30 transition-all duration-300 animate-in fade-in slide-in-from-top-2">
+          <div
+            className={cn(
+              "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold border backdrop-blur-md bg-background/95 shadow-md",
+              activeInfo.config.border,
+              activeInfo.config.color
+            )}
+          >
+            <span>{activeInfo.config.label}</span>
+            <span className="text-muted-foreground font-normal">
+              {activeInfo.completed}/{activeInfo.total}
+            </span>
+            {activeInfo.completed === activeInfo.total && <CheckCircle className="h-3 w-3 text-success" />}
+          </div>
+        </div>
+      )}
+
       {/* Central vertical connector line */}
       <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-muted -translate-x-1/2 z-0" />
 
@@ -168,7 +236,8 @@ export const BadgePathMap = ({
             return (
               <div
                 key={`tier-${node.tier}`}
-                className="sticky top-[72px] z-20 flex justify-center py-3"
+                data-tier-header={node.tier}
+                className="flex justify-center py-4"
               >
                 <div
                   className={cn(
@@ -211,11 +280,9 @@ export const BadgePathMap = ({
               ? Math.round((progress.completed / progress.total) * 100)
               : 0;
 
-          // For current node: determine if this is the continue module
           const isContinueModule = state === "current" && continueModuleId === module.id;
           const showStreakChip = state === "current" && isStreakAtRisk;
 
-          // Locked opacity fade
           const lockedOpacity =
             state === "locked"
               ? Math.max(0.15, 0.4 - distanceFromCurrent * 0.05)
@@ -223,7 +290,6 @@ export const BadgePathMap = ({
 
           return (
             <div key={module.id} className="flex flex-col items-center py-2">
-              {/* Connector segment (colored if previous was completed) */}
               {idx > 0 && allNodes[idx - 1]?.type === "module" && (
                 <div
                   className={cn(
@@ -235,7 +301,6 @@ export const BadgePathMap = ({
                 />
               )}
 
-              {/* Node button */}
               <button
                 onClick={() => {
                   if (state === "locked") {
@@ -269,14 +334,12 @@ export const BadgePathMap = ({
                     )}
                   </div>
 
-                  {/* Completed checkmark overlay */}
                   {state === "completed" && (
                     <div className="absolute -bottom-0.5 -right-0.5 bg-success rounded-full p-0.5">
                       <CheckCircle className="h-3 w-3 text-white" />
                     </div>
                   )}
 
-                  {/* Current double pulsing ring */}
                   {state === "current" && (
                     <>
                       <div
@@ -297,7 +360,6 @@ export const BadgePathMap = ({
                   )}
                 </div>
 
-                {/* Label */}
                 <span
                   className={cn(
                     "text-xs leading-tight text-center max-w-[120px] line-clamp-2",
@@ -310,7 +372,6 @@ export const BadgePathMap = ({
                   {module.title}
                 </span>
 
-                {/* Current node: resume chip */}
                 {isContinueModule && continueSectionNumber && continueProgressPercent != null && (
                   <button
                     onClick={(e) => {
@@ -323,7 +384,6 @@ export const BadgePathMap = ({
                   </button>
                 )}
 
-                {/* Current node: streak at risk chip */}
                 {showStreakChip && (
                   <button
                     onClick={(e) => {
@@ -336,14 +396,12 @@ export const BadgePathMap = ({
                   </button>
                 )}
 
-                {/* Current: START label */}
                 {state === "current" && (
                   <span className={cn("text-[11px] font-bold uppercase tracking-wider", config.color)}>
                     Start →
                   </span>
                 )}
 
-                {/* Unlocked in-progress: mini progress bar */}
                 {state === "unlocked" && progressPercent > 0 && progressPercent < 100 && (
                   <div className="w-12 h-1 rounded-full bg-muted overflow-hidden">
                     <div
