@@ -19,9 +19,12 @@ function generateToken(): string {
     .join('')
 }
 
-// Auth note: this function uses verify_jwt = true in config.toml, so Supabase's
-// gateway validates the caller's JWT (anon or service_role) before the request
-// reaches this code. No in-function auth check is needed.
+// Templates that regular (non-service-role) users are allowed to invoke directly.
+// System templates (abandoned checkout, onboarding nudges, etc.) require service_role.
+const USER_CALLABLE_TEMPLATES = new Set(['gift-code'])
+
+// Simple email format validation
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req)
@@ -37,8 +40,9 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')
 
-  if (!supabaseUrl || !supabaseServiceKey) {
+  if (!supabaseUrl || !supabaseServiceKey || !supabaseAnonKey) {
     console.error('Missing required environment variables')
     return new Response(
       JSON.stringify({ error: 'Server configuration error' }),
@@ -47,6 +51,30 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     )
+  }
+
+  // Determine if caller is service_role or a regular user
+  const authHeader = req.headers.get('Authorization') || ''
+  const callerToken = authHeader.replace('Bearer ', '')
+  let callerId: string | null = null
+  let isServiceRole = false
+
+  // Check if the JWT is the service_role key (server-to-server calls)
+  if (callerToken === supabaseServiceKey) {
+    isServiceRole = true
+  } else {
+    // Validate user JWT and extract caller ID
+    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    })
+    const { data: userData, error: userError } = await userClient.auth.getUser()
+    if (userError || !userData?.user) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    callerId = userData.user.id
   }
 
   // Parse request body
@@ -84,6 +112,15 @@ Deno.serve(async (req) => {
     )
   }
 
+  // Template access control: non-service-role callers can only use user-callable templates
+  if (!isServiceRole && !USER_CALLABLE_TEMPLATES.has(templateName)) {
+    console.warn('Non-service-role caller attempted restricted template', { templateName, callerId })
+    return new Response(
+      JSON.stringify({ error: 'You do not have permission to use this email template' }),
+      { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+
   // 1. Look up template from registry (early — needed to resolve recipient)
   const template = TEMPLATES[templateName]
 
@@ -91,7 +128,7 @@ Deno.serve(async (req) => {
     console.error('Template not found in registry', { templateName })
     return new Response(
       JSON.stringify({
-        error: `Template '${templateName}' not found. Available: ${Object.keys(TEMPLATES).join(', ')}`,
+        error: 'Template not found',
       }),
       {
         status: 404,
@@ -117,10 +154,18 @@ Deno.serve(async (req) => {
     )
   }
 
+  // Validate email format server-side
+  if (!EMAIL_REGEX.test(effectiveRecipient)) {
+    return new Response(
+      JSON.stringify({ error: 'Invalid email address format' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+
   // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-  // Per-user rate limit: max 5 emails to same recipient per hour
+  // Per-recipient rate limit: max 5 emails to same recipient per hour
   const oneHourAgo = new Date(Date.now() - 3600_000).toISOString()
   const { count: recentEmailCount } = await supabase
     .from('email_send_log')
@@ -129,11 +174,28 @@ Deno.serve(async (req) => {
     .gte('created_at', oneHourAgo)
 
   if (recentEmailCount && recentEmailCount >= 5) {
-    console.warn('Per-user email rate limit exceeded', { recipient: effectiveRecipient, count: recentEmailCount })
+    console.warn('Per-recipient email rate limit exceeded', { recipient: effectiveRecipient, count: recentEmailCount })
     return new Response(
       JSON.stringify({ error: 'Too many emails to this recipient. Please try again later.' }),
       { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '3600' } }
     )
+  }
+
+  // Per-caller rate limit (non-service-role only): max 10 total emails per hour
+  if (callerId) {
+    const { count: callerEmailCount } = await supabase
+      .from('email_send_log')
+      .select('id', { count: 'exact', head: true })
+      .eq('metadata->>caller_id', callerId)
+      .gte('created_at', oneHourAgo)
+
+    if (callerEmailCount && callerEmailCount >= 10) {
+      console.warn('Per-caller email rate limit exceeded', { callerId, count: callerEmailCount })
+      return new Response(
+        JSON.stringify({ error: 'You have sent too many emails. Please try again later.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '3600' } }
+      )
+    }
   }
 
   // 2. Check suppression list (fail-closed: if we can't verify, don't send)
