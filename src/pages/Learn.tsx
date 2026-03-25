@@ -449,11 +449,5 @@ const LeaderboardCard = () => {
     </Card>
   );
 };
-      </main>
-
-      <BottomNav />
-    </div>
-  );
-};
 
 export default Learn;
