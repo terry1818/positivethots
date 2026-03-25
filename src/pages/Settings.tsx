@@ -758,6 +758,25 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* Learning */}
+        <Card className="animate-fade-in" style={{ animationDelay: "150ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <BookOpen className="h-5 w-5" /> Learning
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={() => navigate("/journal")}
+            >
+              <BookOpen className="h-4 w-4" />
+              Learning Journal
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Data & Privacy */}
         <Card className="animate-fade-in" style={{ animationDelay: "200ms" }}>
           <CardHeader>
