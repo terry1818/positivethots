@@ -349,8 +349,7 @@ const LearnModule = () => {
                         explanation_wrong: q.explanation_wrong || "Not quite — review the section above for more context.",
                         position_in_section: q.position_in_section ?? 0,
                       }))}
-                  />
-                  />
+                )
                 )}
 
                 {/* Visible Take Quiz fallback when all sections complete */}
