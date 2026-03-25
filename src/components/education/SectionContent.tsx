@@ -3,7 +3,7 @@ import { CheckCircle, CheckCircle2, XCircle, PlayCircle, FileText, Image, BookOp
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { KeyTakeaway } from "./KeyTakeaway";
-import { Textarea } from "@/components/ui/textarea";
+import { ReflectionPrompt } from "./ReflectionPrompt";
 import { cn } from "@/lib/utils";
 
 interface CheckpointQuestion {
