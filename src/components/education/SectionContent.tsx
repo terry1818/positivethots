@@ -212,9 +212,11 @@ export const SectionContent = ({
   isLast,
   totalSections,
   checkpointQuestions,
+  reflectionPrompt,
+  userId,
+  onReflectionSaved,
 }: SectionContentProps) => {
   const [showBanner, setShowBanner] = useState(false);
-  const [reflection, setReflection] = useState("");
 
   const handleMarkComplete = () => {
     if (!isCompleted) {
