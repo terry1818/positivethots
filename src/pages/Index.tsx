@@ -559,6 +559,15 @@ const Index = () => {
         />
       )}
 
+      <ProfileDetailSheet
+        profile={detailProfile}
+        onClose={() => setDetailProfile(null)}
+        onConnect={(id) => { handleConnect(id); setDetailProfile(null); }}
+        onPass={(id) => { handlePass(id); setDetailProfile(null); }}
+        onSuperLike={handleSuperLike}
+        canSuperLike={canSuperLike}
+      />
+
       <BottomNav />
     </div>
   );
