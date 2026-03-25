@@ -64,6 +64,13 @@ const Profile = () => {
       setProfile(profileResult.data);
       setBadges(badgesResult.data || []);
       setUserPhotos(photosResult.data || []);
+      // Check for pending photos
+      const { count: pendingCount } = await supabase
+        .from("user_photos")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", session.user.id)
+        .eq("moderation_status", "pending");
+      setHasPendingPhotos((pendingCount ?? 0) > 0);
     } catch (error: any) {
       console.error("Error loading profile:", error);
       toast.error("Failed to load profile");
