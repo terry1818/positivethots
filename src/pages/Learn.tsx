@@ -50,6 +50,7 @@ const Learn = () => {
   const navigate = useNavigate();
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
+  const { tier: subscriptionTier } = useSubscription();
 
   useEffect(() => { loadData(); }, []);
 
