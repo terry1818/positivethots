@@ -1,3 +1,5 @@
+
+
 ## Plan: SHA/AASECT Foundation Tier Content Rewrite (Badges 1–5)
 
 ### Schema Migration: Fix `submit_quiz` and `award_badge` RPCs
@@ -196,6 +198,7 @@ Q7 (badge, order_index=4): Author — scenario about responding to a consent vio
 | # | Type | Description |
 |---|------|-------------|
 | 1 | Migration | Fix `submit_quiz` and `award_badge` to exclude checkpoint questions |
-| 2–6 | Insert tool (×5) | Data operations for each Foundation module |
+| 2–6 | Insert tool (x5) | Data operations for each Foundation module |
 
 No frontend code changes needed. No changes to tier names, badge_number, order_index, prerequisite_badges, is_required, is_optional, or any non-education schema.
+
