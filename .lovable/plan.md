@@ -1,69 +1,61 @@
 
 
-## Plan: Evidence-Based Learning — Explanations + Checkpoint Questions
+## Plan: Reflection Prompts + Session Intro Screen
 
 ### Part A — Database Migration
 
 One new migration that:
 
-1. Adds 4 columns to `quiz_questions`:
-   - `explanation_correct TEXT` — feedback for correct answers
-   - `explanation_wrong TEXT` — feedback for wrong answers (SHA non-shaming framing)
-   - `is_checkpoint BOOLEAN DEFAULT false` — inline mid-section recall questions
-   - `position_in_section INTEGER DEFAULT NULL` — paragraph index for checkpoint placement
+1. Adds `reflection_prompt TEXT` column to `module_sections`
+2. Creates `user_reflections` table:
+   - `id UUID PRIMARY KEY DEFAULT gen_random_uuid()`
+   - `user_id UUID NOT NULL` (no FK to auth.users per project guidelines)
+   - `section_id UUID REFERENCES module_sections(id) ON DELETE CASCADE`
+   - `response_text TEXT NOT NULL`
+   - `created_at TIMESTAMPTZ DEFAULT NOW()`
+   - `UNIQUE(user_id, section_id)`
+3. Enables RLS on `user_reflections` with policies:
+   - SELECT own rows: `auth.uid() = user_id`
+   - INSERT own rows: `auth.uid() = user_id`
+   - UPDATE own rows: `auth.uid() = user_id`
 
-2. Recreates the `quiz_questions_public` view to include the new columns (excluding `correct_answer`):
-   ```sql
-   DROP VIEW IF EXISTS public.quiz_questions_public;
-   CREATE VIEW public.quiz_questions_public
-   WITH (security_invoker = true) AS
-     SELECT id, module_id, question, options, order_index, section_id,
-            explanation_correct, explanation_wrong, is_checkpoint, position_in_section
-     FROM public.quiz_questions;
-   ```
+### Part B — Reflection Prompt UI in SectionContent.tsx
 
-No RLS or RPC changes needed.
+Replace the existing hardcoded "Quick Reflection" block (lines 295-307) with a data-driven ReflectionPrompt component:
 
----
+- New props on SectionContent: `reflectionPrompt?: string | null`, `userId?: string`, `onReflectionSaved?: () => void`
+- If `reflectionPrompt` is non-null, render a styled card:
+  - "Take a moment to reflect 💭" header
+  - The `reflectionPrompt` text as the question
+  - Textarea (min 2 rows), disabled until user types >= 20 chars for submit
+  - "Save & Continue (+5 XP) →" button — on click: upsert to `user_reflections`, call parent's `awardXP(5, 'reflection', sectionId)`, then `onComplete()`
+  - "Skip reflection" link — proceeds without XP
+  - If reflection already saved (loaded on mount via SELECT), show pre-filled with "Edit" toggle
+  - Footer: "Your reflections are private and saved to your Learning Journal."
+- If `reflectionPrompt` is null/undefined, render nothing (removes the old hardcoded reflection)
+- SectionContent loads existing reflection on mount via `supabase.from('user_reflections').select().eq('user_id', userId).eq('section_id', section.id).maybeSingle()`
 
-### Part B — Quiz UI Changes in `src/pages/LearnModule.tsx`
+### Part C — Pass reflection data through LearnModule.tsx
 
-**Question interface**: Add `explanation_correct`, `explanation_wrong`, `is_checkpoint`, `position_in_section` fields.
+- Update the `Section` interface in `useModuleProgress.ts` to include `reflection_prompt: string | null`
+- In LearnModule.tsx, pass `reflectionPrompt={sections[currentSectionIndex].reflection_prompt}` and `userId={userId}` to SectionContent
+- Wire up an `onReflectionSaved` callback that calls `awardXP(5, 'reflection', sectionId)` and shows XP popup
 
-**Question filtering**: After loading questions, split into two arrays:
-- `badgeQuestions` — where `is_checkpoint` is false/null (used for quiz)
-- `checkpointQuestions` — where `is_checkpoint` is true (passed to SectionContent)
+### Part D — SessionIntro Component
 
-All existing quiz logic (submit, score, combo, violations) operates on `badgeQuestions` only.
+Create `src/components/education/SessionIntro.tsx`:
+- Props: `moduleTitle`, `sectionTitle`, `estimatedMinutes`, `xpAvailable`, `onStart`, `badgeSlug`, `badgeTier`
+- Full-screen overlay (`fixed inset-0 z-50 bg-background flex items-center justify-center`)
+- Centered layout with EducationBadge (size "lg"), section title, three stat chips, "Start Learning →" button
+- Auto-dismiss after 3 seconds via `setTimeout` calling `onStart`
 
-**Quiz answer flow** (replaces the current 400ms auto-advance):
-1. On answer selection: mark selected option green (correct) or red (wrong)
-2. If wrong: also highlight the correct option in green
-3. Show a feedback card below options:
-   - Correct: green callout with `explanation_correct` text
-   - Wrong: red callout with `explanation_wrong` text + correct answer restated
-4. Show a "Next Question →" button (replaces auto-advance `setTimeout`)
-5. On last question, the button reads "Review & Submit"
-6. QuizCombo, submit button, score calculation — all unchanged
+### Part E — SessionIntro integration in LearnModule.tsx
 
-**Pass `checkpointQuestions` to SectionContent**: Filter by matching `section_id` to current section, pass as new prop.
-
----
-
-### Part C — Checkpoint Questions in `src/components/education/SectionContent.tsx`
-
-**New optional prop**: `checkpointQuestions` array with question data.
-
-**Rendering logic**: Modify `renderMarkdown` to return an array of React elements. After each paragraph at index N, if a checkpoint question has `position_in_section === N`, insert a QuickCheck card.
-
-**QuickCheck card UI**:
-- Purple/violet border with "Quick Check 🧠" label in small caps
-- Question text + 2-4 answer options as compact chip buttons
-- Local state per checkpoint (answered/selected)
-- On selection: immediate correct/wrong coloring + explanation text
-- "Got it! Keep reading →" dismiss button after answering
-- No XP, no grading, no server calls
-- Fully backward compatible (renders nothing if prop is absent/empty)
+- Add `introShownSections` state as `Set<string>`
+- Add `showSessionIntro` boolean state
+- When `currentSectionIndex` changes: if section ID not in `introShownSections` AND section not completed, set `showSessionIntro = true` and add ID to set
+- XP calculation: base 10 + (section has `reflection_prompt` ? 5 : 0)
+- Render `SessionIntro` overlay conditionally above the section content
 
 ---
 
@@ -71,7 +63,9 @@ All existing quiz logic (submit, score, combo, violations) operates on `badgeQue
 
 | # | File | Change |
 |---|------|--------|
-| 1 | 1 migration | Add columns + recreate view |
-| 2 | `src/pages/LearnModule.tsx` | Question filtering, quiz feedback UI, pass checkpoint prop |
-| 3 | `src/components/education/SectionContent.tsx` | Accept checkpoint prop, render QuickCheck cards inline |
+| 1 | 1 migration | Add `reflection_prompt` column, create `user_reflections` table + RLS |
+| 2 | `src/hooks/useModuleProgress.ts` | Add `reflection_prompt` to Section interface |
+| 3 | `src/components/education/SectionContent.tsx` | Replace hardcoded reflection with data-driven ReflectionPrompt, add new props |
+| 4 | `src/components/education/SessionIntro.tsx` | New component — full-screen section intro overlay |
+| 5 | `src/pages/LearnModule.tsx` | Pass reflection props, wire XP, add SessionIntro state + rendering |
 
