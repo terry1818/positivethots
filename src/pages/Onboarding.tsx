@@ -161,6 +161,12 @@ const Onboarding = () => {
     loadUserData();
   }, []);
 
+  // Track step views
+  useEffect(() => {
+    const phase = PHASES.find(p => p.steps.includes(step));
+    trackEvent('onboarding_step_viewed', { step, phase: phase?.label || 'Welcome' });
+  }, [step]);
+
   const loadUserData = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { navigate("/auth"); return; }
