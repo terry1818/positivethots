@@ -60,6 +60,7 @@ const LearnModule = () => {
   
   const [module, setModule] = useState<Module | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [checkpointQuestions, setCheckpointQuestions] = useState<Question[]>([]);
   const [isAlreadyCompleted, setIsAlreadyCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -71,6 +72,7 @@ const LearnModule = () => {
   // Quiz enhancements
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(new Set());
+  const [showFeedback, setShowFeedback] = useState(false);
 
   // XP & celebrations
   const { stats, awardXP } = useLearningStats();
