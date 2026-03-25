@@ -99,15 +99,7 @@ const Learn = () => {
         .gte("created_at", last24h);
       setActiveLearnerCount(learnerCount && learnerCount > 0 ? learnerCount : null);
 
-      // Default open tier = first incomplete tier
-      const earnedIds = new Set(badges.map(b => b.module_id));
-      const firstIncompleteTier = tierOrder.find(tier => {
-        const tierMods = mods.filter(m => m.tier === tier);
-        return tierMods.length > 0 && tierMods.some(m => !earnedIds.has(m.id));
-      });
-      if (firstIncompleteTier) {
-        setOpenTiers({ [firstIncompleteTier]: true });
-      }
+      // No longer need openTiers state
     } catch (error: any) {
       console.error("Error loading education data:", error);
       toast.error("Failed to load education modules");
