@@ -502,7 +502,7 @@ const Index = () => {
         {suggestions.length === 0 ? (
           <div className="space-y-4">
             {/* Boost upsell card */}
-            <Card className="p-6 text-center">
+            <Card className="p-6 text-center max-w-sm mx-auto w-full">
               <Zap className="h-12 w-12 text-amber-500 mx-auto mb-3" />
               <h2 className="text-xl font-bold mb-1">Get Seen by More People</h2>
               <p className="text-muted-foreground text-sm mb-1">
