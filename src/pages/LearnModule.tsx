@@ -13,6 +13,7 @@ import { LearningPath } from "@/components/education/LearningPath";
 import { XPPopup } from "@/components/education/XPPopup";
 import { CelebrationModal } from "@/components/education/CelebrationModal";
 import { ReadingProgress } from "@/components/education/ReadingProgress";
+import { SessionIntro } from "@/components/education/SessionIntro";
 
 import { useAntiCheat } from "@/hooks/useAntiCheat";
 import { useModuleProgress } from "@/hooks/useModuleProgress";
