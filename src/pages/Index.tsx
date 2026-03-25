@@ -290,7 +290,7 @@ const Index = () => {
     if (!currentUser) return;
     const success = await sendSuperLike(otherUserId);
     if (!success) {
-      toast.error("No Super Likes left", { description: "Purchase more or wait until tomorrow." });
+      toast.error("No Thots left", { description: "Purchase more or wait until tomorrow." });
       return;
     }
 
