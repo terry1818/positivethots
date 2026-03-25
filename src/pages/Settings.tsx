@@ -77,6 +77,16 @@ const Settings = () => {
     loadMyCodes();
   }, [loadMyCodes]);
 
+  // Check owner role from database
+  useEffect(() => {
+    const checkOwner = async () => {
+      if (!adminUserId) return;
+      const { data } = await supabase.rpc("has_role", { _user_id: adminUserId, _role: "owner" as any });
+      setIsOwner(data === true);
+    };
+    checkOwner();
+  }, [adminUserId]);
+
   // Admin: load role holders
   const loadRoleHolders = useCallback(async () => {
     if (!isAdmin) return;
