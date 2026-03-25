@@ -119,6 +119,18 @@ async function handleVerification(
 
   const photoUrls = userPhotos?.map((p: any) => p.photo_url) || [];
 
+  if (photoUrls.length === 0) {
+    const reason = "No approved profile photos found. Please wait for your photos to be approved first, then try again.";
+    await supabaseAdmin
+      .from("verification_requests")
+      .update({ status: "rejected", reason, reviewed_at: new Date().toISOString() })
+      .eq("id", photo_id);
+    return new Response(
+      JSON.stringify({ verified: false, reason }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
   let verified = false;
   let reason = "Could not process verification";
 
