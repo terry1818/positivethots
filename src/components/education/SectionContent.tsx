@@ -3,7 +3,7 @@ import { CheckCircle, CheckCircle2, XCircle, PlayCircle, FileText, Image, BookOp
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { KeyTakeaway } from "./KeyTakeaway";
-import { Textarea } from "@/components/ui/textarea";
+import { ReflectionPrompt } from "./ReflectionPrompt";
 import { cn } from "@/lib/utils";
 
 interface CheckpointQuestion {
@@ -34,6 +34,9 @@ interface SectionContentProps {
   isLast: boolean;
   totalSections: number;
   checkpointQuestions?: CheckpointQuestion[];
+  reflectionPrompt?: string | null;
+  userId?: string;
+  onReflectionSaved?: () => void;
 }
 
 const contentTypeIcons: Record<string, React.ReactNode> = {
@@ -209,9 +212,11 @@ export const SectionContent = ({
   isLast,
   totalSections,
   checkpointQuestions,
+  reflectionPrompt,
+  userId,
+  onReflectionSaved,
 }: SectionContentProps) => {
   const [showBanner, setShowBanner] = useState(false);
-  const [reflection, setReflection] = useState("");
 
   const handleMarkComplete = () => {
     if (!isCompleted) {
@@ -292,18 +297,29 @@ export const SectionContent = ({
         <KeyTakeaway takeaway={takeaway} sectionTitle={section.title} />
       )}
 
-      {/* Reflection prompt (between sections) */}
-      {!isLast && !isCompleted && (
-        <div className="bg-muted/50 rounded-lg p-4 space-y-2">
-          <p className="text-sm font-medium">💭 Quick Reflection</p>
-          <p className="text-xs text-muted-foreground">What's one thing you'll apply from this section?</p>
-          <Textarea
-            value={reflection}
-            onChange={(e) => setReflection(e.target.value)}
-            placeholder="Type your thoughts..."
-            className="text-sm min-h-[60px] resize-none"
-          />
-        </div>
+      {/* Reflection prompt */}
+      {reflectionPrompt && userId && !isCompleted && (
+        <ReflectionPrompt
+          sectionId={section.id}
+          userId={userId}
+          prompt={reflectionPrompt}
+          onSaveAndContinue={() => {
+            onReflectionSaved?.();
+            handleMarkComplete();
+          }}
+          onSkip={handleMarkComplete}
+        />
+      )}
+
+      {/* Show saved reflection if already completed */}
+      {reflectionPrompt && userId && isCompleted && (
+        <ReflectionPrompt
+          sectionId={section.id}
+          userId={userId}
+          prompt={reflectionPrompt}
+          onSaveAndContinue={() => onReflectionSaved?.()}
+          onSkip={() => {}}
+        />
       )}
 
       {/* Interactive placeholder */}
