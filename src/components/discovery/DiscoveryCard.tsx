@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { getLevelName, getLevelEmoji } from "@/hooks/useLearningStats";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Clock, Users, Shield, BookOpen, Star, Rocket, Award } from "lucide-react";
 import { useNavigate } from "react-router-dom";
