@@ -23,6 +23,12 @@ const streakMessages: Record<number, string> = {
   100: "100 DAYS! Absolute legend! 👑",
 };
 
+const streakRewards: Record<number, string> = {
+  7: "You earned a bonus Super Like! ⭐",
+  30: "You earned a free 24-hour Profile Boost! ⚡",
+  100: "You earned 3 Super Likes for this incredible milestone! 🏆",
+};
+
 const tierTopics: Record<string, string> = {
   Foundation: "consent, communication, boundaries, trust, and relationship basics",
   "Sexual Health": "STI prevention, safer sex practices, sexual wellness, and testing awareness",
@@ -192,6 +198,11 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
               <p className="text-muted-foreground">
                 {streakMessages[streak || 0] || `${streak} days of learning! Amazing!`}
               </p>
+              {streakRewards[streak || 0] && (
+                <p className="text-sm font-semibold text-primary mt-2 animate-bounce-in">
+                  {streakRewards[streak || 0]}
+                </p>
+              )}
             </>
           )}
           {type === "badge_earned" && (

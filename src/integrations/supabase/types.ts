@@ -1357,6 +1357,15 @@ export type Database = {
         }[]
       }
       get_user_id_by_email: { Args: { _email: string }; Returns: string }
+      get_weekly_leaderboard: {
+        Args: never
+        Returns: {
+          display_name: string
+          rank: number
+          sections_completed: number
+          user_id: string
+        }[]
+      }
       grant_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

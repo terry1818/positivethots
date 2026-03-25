@@ -68,6 +68,21 @@ serve(async (req) => {
       });
     }
 
+    // Rate limit: max 10 messages per 60 seconds per user per match
+    const sixtySecondsAgo = new Date(Date.now() - 60000).toISOString();
+    const { count: recentCount } = await adminClient
+      .from("messages")
+      .select("id", { count: "exact", head: true })
+      .eq("sender_id", userId)
+      .eq("match_id", match_id)
+      .gte("created_at", sixtySecondsAgo);
+
+    if (recentCount !== null && recentCount >= 10) {
+      return new Response(JSON.stringify({ error: "Sending too fast. Please wait a moment." }), {
+        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
