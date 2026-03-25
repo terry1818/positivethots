@@ -63,9 +63,35 @@ serve(async (req) => {
       "customer.subscription.updated",
       "customer.subscription.deleted",
       "checkout.session.completed",
+      "checkout.session.expired",
     ];
 
     if (!relevantEvents.includes(event.type)) {
+      return new Response(JSON.stringify({ received: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
+    // Handle abandoned checkout (expired session)
+    if (event.type === "checkout.session.expired") {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const customerEmail = session.customer_details?.email;
+      if (customerEmail) {
+        const { data: users } = await supabase.auth.admin.listUsers();
+        const user = users?.users.find((u) => u.email === customerEmail);
+        if (user) {
+          await supabase.from("analytics_events").insert({
+            user_id: user.id,
+            event_name: "checkout_abandoned",
+            event_data: {
+              price_id: session.metadata?.price_id || null,
+              amount: session.amount_total,
+            },
+          });
+          logStep("Checkout abandoned logged", { userId: user.id, email: customerEmail });
+        }
+      }
       return new Response(JSON.stringify({ received: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
