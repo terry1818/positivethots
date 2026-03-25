@@ -1,15 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 const PREMIUM_COUPON_ID = "Eb0bLmYb";
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -29,7 +26,6 @@ serve(async (req) => {
     const { event_id } = await req.json();
     if (!event_id) throw new Error("event_id is required");
 
-    // Fetch event details
     const serviceClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
@@ -45,7 +41,6 @@ serve(async (req) => {
 
     if (eventErr || !event) throw new Error("Event not found or inactive");
 
-    // Check capacity
     const { count } = await serviceClient
       .from("event_registrations")
       .select("*", { count: "exact", head: true })
@@ -53,7 +48,6 @@ serve(async (req) => {
 
     if ((count ?? 0) >= event.capacity) throw new Error("Event is sold out");
 
-    // Check if already registered
     const { data: existing } = await serviceClient
       .from("event_registrations")
       .select("id")
@@ -69,7 +63,6 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    // Check if user is a premium subscriber for discount
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId: string | undefined;
     let isPremiumSubscriber = false;
@@ -98,7 +91,6 @@ serve(async (req) => {
       },
     };
 
-    // Apply 25% discount for premium subscribers
     if (isPremiumSubscriber) {
       sessionParams.discounts = [{ coupon: PREMIUM_COUPON_ID }];
     }
