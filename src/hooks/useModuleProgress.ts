@@ -10,6 +10,7 @@ interface Section {
   content_text: string | null;
   content_url: string | null;
   estimated_minutes: number | null;
+  reflection_prompt: string | null;
 }
 
 interface SectionProgress {
