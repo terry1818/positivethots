@@ -531,17 +531,19 @@ const Index = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {suggestions.map((profile, idx) => (
-              <DiscoveryCard
+          <div className="relative flex justify-center items-start px-4 pt-2 pb-32" style={{ minHeight: '520px' }}>
+            {suggestions.slice(0, 3).map((profile, stackIdx) => (
+              <SwipeDiscoveryCard
                 key={profile.id}
                 profile={profile}
-                index={idx}
+                isTop={stackIdx === 0}
+                stackIndex={stackIdx}
                 onConnect={handleConnect}
                 onPass={handlePass}
                 onSuperLike={handleSuperLike}
                 canSuperLike={canSuperLike}
                 superLikeBalance={isUnlimited ? 999 : superLikeBalance}
+                onViewProfile={() => setDetailProfile(profile)}
               />
             ))}
           </div>
