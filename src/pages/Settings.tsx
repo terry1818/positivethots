@@ -28,7 +28,7 @@ const Settings = () => {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
   const { isPremium, tier, loading: subLoading, subscriptionEnd } = useSubscription();
-  const { isUnlocked: locationUnlocked, isSharing, toggleSharing, error: locationError, loading: locationLoading } = useLocationSharing();
+  const { isUnlocked: locationUnlocked, isEventLocationUnlocked, isSharing, toggleSharing, error: locationError, loading: locationLoading } = useLocationSharing();
   const { isAdmin, userId: adminUserId } = useAdminRole();
   const [isOwner, setIsOwner] = useState(false);
 
