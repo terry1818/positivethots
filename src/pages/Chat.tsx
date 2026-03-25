@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   Send, ArrowLeft, Phone, Video, MoreVertical,
-  Image as ImageIcon, Mic, Smile, Gift, Shield, Flag, UserX, Clock, Check, CheckCheck
+  Image as ImageIcon, Mic, Smile, Gift, Shield, Flag, UserX, Clock, Check, CheckCheck, MessageCircle
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -41,6 +41,42 @@ interface EnhancedMessage extends Message {
   delivered?: boolean;
 }
 
+// Icebreaker generation
+function generateIcebreakers(currentUser: Profile | null, otherUser: PublicProfile | null): string[] {
+  const suggestions: string[] = [];
+
+  if (currentUser && otherUser) {
+    const myStyle = (currentUser.relationship_style || "").toLowerCase();
+    const theirStyle = (otherUser.relationship_style || "").toLowerCase();
+    const enmTerms = ["enm", "polyamor", "non-monogam", "open relationship"];
+
+    if (enmTerms.some(t => myStyle.includes(t) && theirStyle.includes(t))) {
+      suggestions.push("What's your current relationship structure like?");
+    }
+
+    const myInterests = currentUser.interests || [];
+    const theirInterests = otherUser.interests || [];
+    const shared = myInterests.filter((i: string) => theirInterests.includes(i));
+    if (shared.length > 0) {
+      suggestions.push(`I see we both like ${shared.slice(0, 2).join(" and ")}! What got you into ${shared[0]}?`);
+    }
+  }
+
+  // Fill with generic fallbacks
+  const fallbacks = [
+    "What brought you to Positive Thots?",
+    "What's your favourite module so far?",
+    "What does ethical non-monogamy mean to you personally?",
+    "How do you prefer to communicate boundaries in new connections?",
+  ];
+  for (const f of fallbacks) {
+    if (suggestions.length >= 3) break;
+    if (!suggestions.includes(f)) suggestions.push(f);
+  }
+
+  return suggestions.slice(0, 3);
+}
+
 const Chat = () => {
   const { matchId } = useParams();
   const navigate = useNavigate();
@@ -55,6 +91,9 @@ const Chat = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<any>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSendTimestamp = useRef<number>(0);
+
+  const icebreakers = useMemo(() => generateIcebreakers(currentUser, otherUser), [currentUser, otherUser]);
 
   useEffect(() => {
     loadChatData();
@@ -121,6 +160,12 @@ const Chat = () => {
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !currentUser || !matchId) return;
+
+    // 500ms debounce
+    const now = Date.now();
+    if (now - lastSendTimestamp.current < 500) return;
+    lastSendTimestamp.current = now;
+
     const messageContent = newMessage.trim();
     setNewMessage("");
     if (channelRef.current) {
@@ -129,11 +174,27 @@ const Chat = () => {
 
     // Moderate message before sending
     try {
-      const { data: modResult } = await supabase.functions.invoke('moderate-message', {
+      const { data: modResult, error: modError } = await supabase.functions.invoke('moderate-message', {
         body: { content: messageContent, sender_id: currentUser.id, match_id: matchId },
       });
+
+      // Handle rate limiting
+      if (modError) {
+        const errorBody = typeof modError === 'object' && modError !== null ? (modError as any) : {};
+        if (errorBody.status === 429 || (typeof modError === 'string' && modError.includes('429'))) {
+          toast.error("Slow down — you're sending too quickly.");
+          setNewMessage(messageContent);
+          return;
+        }
+      }
+
+      if (modResult?.error && modResult.error.includes("Sending too fast")) {
+        toast.error("Slow down — you're sending too quickly.");
+        setNewMessage(messageContent);
+        return;
+      }
+
       if (modResult?.verdict === 'flagged') {
-        // Store flagged message for admin review
         await supabase.from("flagged_messages").insert({
           match_id: matchId,
           sender_id: currentUser.id,
@@ -234,6 +295,11 @@ const Chat = () => {
     return "Recently active";
   };
 
+  const handleIcebreakerTap = (text: string, index: number) => {
+    setNewMessage(text);
+    trackEvent('icebreaker_tapped', { suggestion_index: index });
+  };
+
   if (loading) {
     return <PageSkeleton variant="chat" />;
   }
@@ -297,7 +363,7 @@ const Chat = () => {
 
       {/* Safety Notice */}
       {messages.length === 0 && (
-        <div className="container max-w-4xl mx-auto px-4 py-4">
+        <div className="container max-w-4xl mx-auto px-4 py-4 space-y-3">
           <Card className="p-4 bg-primary/5 border-primary/20 animate-fade-in">
             <div className="flex items-start gap-3">
               <Shield className="h-5 w-5 text-primary mt-0.5" />
@@ -309,6 +375,25 @@ const Chat = () => {
               </div>
             </div>
           </Card>
+
+          {/* Icebreaker suggestions */}
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+              <MessageCircle className="h-3 w-3" />
+              Start the conversation
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {icebreakers.map((text, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleIcebreakerTap(text, i)}
+                  className="text-xs px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 text-foreground transition-colors border border-border"
+                >
+                  {text}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 

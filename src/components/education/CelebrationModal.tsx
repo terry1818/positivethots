@@ -198,6 +198,11 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
               <p className="text-muted-foreground">
                 {streakMessages[streak || 0] || `${streak} days of learning! Amazing!`}
               </p>
+              {streakRewards[streak || 0] && (
+                <p className="text-sm font-semibold text-primary mt-2 animate-bounce-in">
+                  {streakRewards[streak || 0]}
+                </p>
+              )}
             </>
           )}
           {type === "badge_earned" && (
