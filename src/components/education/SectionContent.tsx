@@ -34,6 +34,9 @@ interface SectionContentProps {
   isLast: boolean;
   totalSections: number;
   checkpointQuestions?: CheckpointQuestion[];
+  reflectionPrompt?: string | null;
+  userId?: string;
+  onReflectionSaved?: () => void;
 }
 
 const contentTypeIcons: Record<string, React.ReactNode> = {
