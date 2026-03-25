@@ -137,7 +137,11 @@ const LearnModule = () => {
         ...q,
         options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options
       }));
-      setQuestions(parsedQuestions);
+      // Split into badge quiz questions and checkpoint questions
+      const badge = parsedQuestions.filter(q => !q.is_checkpoint);
+      const checkpoints = parsedQuestions.filter(q => q.is_checkpoint);
+      setQuestions(badge);
+      setCheckpointQuestions(checkpoints);
       setIsAlreadyCompleted(!!badgeResult.data);
     } catch (error: any) {
       console.error("Error loading module:", error);
