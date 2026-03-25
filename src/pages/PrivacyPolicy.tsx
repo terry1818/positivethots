@@ -14,7 +14,7 @@ const PrivacyPolicy = () => {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} aria-label="Go back">
             <ChevronLeft className="h-6 w-6" />
           </Button>
-          <Logo size="md" />
+          <Logo size="md" showText={false} />
           <h1 className="text-xl font-bold">Privacy Policy</h1>
         </div>
       </header>

@@ -140,7 +140,7 @@ const Profile = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border bg-card">
         <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
-          <Logo size="md" />
+          <Logo size="md" showText={false} />
           <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => navigate("/settings")} aria-label="Settings">
             <Settings className="h-6 w-6" />
           </Button>

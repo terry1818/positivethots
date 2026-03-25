@@ -63,7 +63,7 @@ const Resources = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <header className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border">
         <div className="container max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-          <Logo size="sm" />
+          <Logo size="sm" showText={false} />
         </div>
       </header>
 
