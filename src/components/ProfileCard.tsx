@@ -110,6 +110,11 @@ export const ProfileCard = ({
                 {profile.pronouns}
               </span>
             )}
+            {profile.learning_level && profile.learning_level > 1 && (
+              <span className="bg-white/20 px-2 py-0.5 rounded text-xs">
+                {getLevelName(profile.learning_level)} {getLevelEmoji(profile.learning_level)}
+              </span>
+            )}
             {profile.location && (
               <span className="flex items-center gap-1">
                 <MapPin className="h-3 w-3" />

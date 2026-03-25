@@ -126,6 +126,11 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
         <div>
           <h3 className="text-xl font-bold">{profile.name}, {profile.age}</h3>
           {profile.pronouns && <p className="text-sm text-muted-foreground">{profile.pronouns}</p>}
+          {profile.learning_level && profile.learning_level > 1 && (
+            <Badge variant="secondary" className="text-[10px] mt-0.5">
+              {getLevelName(profile.learning_level)} {getLevelEmoji(profile.learning_level)}
+            </Badge>
+          )}
         </div>
         {profile.relationship_status === "couple" && (
           <Badge variant="outline"><Users className="h-3 w-3 mr-1" />Couple</Badge>
