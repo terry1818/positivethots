@@ -162,6 +162,11 @@ const Profile = () => {
             
             {/* Badges with shimmer */}
             <div className="absolute top-3 left-3 flex items-center gap-1">
+              {badges.length >= 20 && (
+                <Badge className="bg-amber-500/90 text-white animate-stagger-fade">
+                  <Award className="h-3 w-3 mr-1" />Verified Educator
+                </Badge>
+              )}
               {badges.slice(0, 5).map((badge, idx) => (
                 <div key={badge.module_id} className="animate-stagger-fade" style={{ animationDelay: `${idx * 100}ms` }}>
                   <EducationBadge
