@@ -24,6 +24,7 @@ interface DiscoveryProfile {
   verified?: boolean;
   distance?: number | null;
   is_boosted?: boolean;
+  learning_level?: number;
 }
 
 interface DiscoveryCardProps {
