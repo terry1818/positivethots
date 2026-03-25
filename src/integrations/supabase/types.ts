@@ -695,28 +695,40 @@ export type Database = {
       quiz_questions: {
         Row: {
           correct_answer: number
+          explanation_correct: string | null
+          explanation_wrong: string | null
           id: string
+          is_checkpoint: boolean | null
           module_id: string
           options: Json
           order_index: number
+          position_in_section: number | null
           question: string
           section_id: string | null
         }
         Insert: {
           correct_answer: number
+          explanation_correct?: string | null
+          explanation_wrong?: string | null
           id?: string
+          is_checkpoint?: boolean | null
           module_id: string
           options: Json
           order_index?: number
+          position_in_section?: number | null
           question: string
           section_id?: string | null
         }
         Update: {
           correct_answer?: number
+          explanation_correct?: string | null
+          explanation_wrong?: string | null
           id?: string
+          is_checkpoint?: boolean | null
           module_id?: string
           options?: Json
           order_index?: number
+          position_in_section?: number | null
           question?: string
           section_id?: string | null
         }
@@ -1219,26 +1231,38 @@ export type Database = {
     Views: {
       quiz_questions_public: {
         Row: {
+          explanation_correct: string | null
+          explanation_wrong: string | null
           id: string | null
+          is_checkpoint: boolean | null
           module_id: string | null
           options: Json | null
           order_index: number | null
+          position_in_section: number | null
           question: string | null
           section_id: string | null
         }
         Insert: {
+          explanation_correct?: string | null
+          explanation_wrong?: string | null
           id?: string | null
+          is_checkpoint?: boolean | null
           module_id?: string | null
           options?: Json | null
           order_index?: number | null
+          position_in_section?: number | null
           question?: string | null
           section_id?: string | null
         }
         Update: {
+          explanation_correct?: string | null
+          explanation_wrong?: string | null
           id?: string | null
+          is_checkpoint?: boolean | null
           module_id?: string | null
           options?: Json | null
           order_index?: number | null
+          position_in_section?: number | null
           question?: string | null
           section_id?: string | null
         }
