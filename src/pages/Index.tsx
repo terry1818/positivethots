@@ -498,7 +498,7 @@ const Index = () => {
       )}
 
       {/* Curated Matches Grid */}
-      <div className="container max-w-7xl mx-auto px-4">
+      <div className="max-w-sm mx-auto px-4">
         {suggestions.length === 0 ? (
           <div className="space-y-4">
             {/* Boost upsell card */}
