@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
@@ -14,8 +15,9 @@ import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
+import { useSubscription } from "@/hooks/useSubscription";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { BookOpen, CheckCircle, Lock, ChevronRight, ChevronDown, Award, Users } from "lucide-react";
+import { BookOpen, CheckCircle, Lock, ChevronRight, ChevronDown, Award, Users, Star } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
