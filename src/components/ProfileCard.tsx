@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EducationBadge } from "@/components/EducationBadge";
 import { Heart, MapPin, Users, ShieldCheck } from "lucide-react";
+import { getLevelName, getLevelEmoji } from "@/hooks/useLearningStats";
 
 interface ProfileBadge {
   moduleSlug: string;
