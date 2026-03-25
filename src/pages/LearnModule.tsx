@@ -338,6 +338,18 @@ const LearnModule = () => {
                     isFirst={currentSectionIndex === 0}
                     isLast={currentSectionIndex === sections.length - 1}
                     totalSections={sections.length}
+                    checkpointQuestions={checkpointQuestions
+                      .filter(q => q.section_id === sections[currentSectionIndex].id)
+                      .map(q => ({
+                        id: q.id,
+                        question: q.question,
+                        options: q.options,
+                        correct_answer: (q as any).correct_answer ?? 0,
+                        explanation_correct: q.explanation_correct || "That's right!",
+                        explanation_wrong: q.explanation_wrong || "Not quite — review the section above for more context.",
+                        position_in_section: q.position_in_section ?? 0,
+                      }))}
+                  />
                   />
                 )}
 
