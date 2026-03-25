@@ -50,11 +50,9 @@ interface EnhancedProfile extends DiscoveryProfile {
   compatibility_score?: number;
   last_active?: string;
   verified?: boolean;
-  distance?: number;
+  distance?: number | null;
   is_boosted?: boolean;
 }
-
-const LAST_ACTIVE_OPTIONS = ["Just now", "5 min ago", "30 min ago", "1 hour ago", "2 hours ago", "Today"];
 
 const calculateCompatibility = (user: Profile, other: DiscoveryProfile, otherBadges: number, userBadges: number): number => {
   let score = 0;
