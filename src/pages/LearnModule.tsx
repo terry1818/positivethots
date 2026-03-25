@@ -17,7 +17,7 @@ import { SessionIntro } from "@/components/education/SessionIntro";
 
 import { useAntiCheat } from "@/hooks/useAntiCheat";
 import { useModuleProgress } from "@/hooks/useModuleProgress";
-import { useLearningStats } from "@/hooks/useLearningStats";
+import { useLearningStats, LEVEL_REWARDS } from "@/hooks/useLearningStats";
 import { ChevronLeft, CheckCircle, CheckCircle2, XCircle, Award, BookOpen, Lock, Zap, Flame } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
