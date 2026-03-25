@@ -11,7 +11,7 @@ export const PageSkeleton = ({ variant = "default" }: PageSkeletonProps) => {
       <div className="min-h-screen bg-background">
         <header className="border-b border-border bg-card">
           <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
-            <Logo size="md" />
+            <Logo size="md" showText={false} />
             <Skeleton className="h-8 w-20 rounded-md" />
           </div>
         </header>
