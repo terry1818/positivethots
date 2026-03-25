@@ -10,6 +10,7 @@ import { isNative, takeNativePhoto } from "@/lib/capacitor";
 interface VerificationCardProps {
   userId: string;
   isVerified: boolean;
+  hasApprovedPhotos: boolean;
   latestRequest?: { status: string; reason?: string | null } | null;
   onVerificationChange: () => void;
 }
@@ -17,6 +18,7 @@ interface VerificationCardProps {
 export const VerificationCard = ({
   userId,
   isVerified,
+  hasApprovedPhotos,
   latestRequest,
   onVerificationChange,
 }: VerificationCardProps) => {
@@ -66,9 +68,11 @@ export const VerificationCard = ({
       let blob: Blob;
 
       if (isNative()) {
-        const nativeBlob = await takeNativePhoto();
+      const nativeBlob = await takeNativePhoto();
         if (!nativeBlob) {
+          toast.error("Could not capture photo. Please check camera permissions and try again.");
           setSubmitting(false);
+          onVerificationChange();
           return;
         }
         blob = nativeBlob;
@@ -131,6 +135,20 @@ export const VerificationCard = ({
       setSubmitting(false);
     }
   };
+
+  if (!hasApprovedPhotos && !isVerified) {
+    return (
+      <Card className="border-amber-500/30 bg-amber-500/5">
+        <CardContent className="p-4 flex items-center gap-3">
+          <ShieldCheck className="h-6 w-6 text-amber-500" />
+          <div>
+            <p className="font-medium text-amber-700 dark:text-amber-400">Verification Unavailable</p>
+            <p className="text-xs text-muted-foreground">You need at least one approved profile photo before verifying your identity. Please upload a photo and wait for it to be approved.</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (isVerified) {
     return (

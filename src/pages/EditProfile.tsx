@@ -216,7 +216,7 @@ const EditProfile = () => {
           )}
 
           {profile?.id && (
-            <VerificationCard userId={profile.id} isVerified={profile.is_verified || false} latestRequest={latestVerification} onVerificationChange={reloadPhotos} />
+            <VerificationCard userId={profile.id} isVerified={profile.is_verified || false} hasApprovedPhotos={photos.some(p => p.moderation_status === 'approved')} latestRequest={latestVerification} onVerificationChange={reloadPhotos} />
           )}
         </StaggerChildren>
       </main>
