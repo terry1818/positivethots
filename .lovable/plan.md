@@ -1,51 +1,69 @@
 
 
-## Plan: Fix Photo Verification — 4 Fixes
+## Plan: Evidence-Based Learning — Explanations + Checkpoint Questions
 
-### Root Cause Analysis
+### Part A — Database Migration
 
-The edge function logs show the **actual error**: `"Unsupported image format for URL: https://zcsnqvncqzpleqoctzfc.supabase.co/storage/v1/object/public/user-photos/..."`. The AI gateway cannot fetch images from Supabase storage URLs directly. This affects both the selfie (signed URL) and profile photos (public URLs).
+One new migration that:
 
-Additionally, `anthropic/claude-3-5-haiku` is **not available** on the Lovable AI gateway. Only Google Gemini and OpenAI models are supported. The best vision model available is `google/gemini-2.5-pro`.
+1. Adds 4 columns to `quiz_questions`:
+   - `explanation_correct TEXT` — feedback for correct answers
+   - `explanation_wrong TEXT` — feedback for wrong answers (SHA non-shaming framing)
+   - `is_checkpoint BOOLEAN DEFAULT false` — inline mid-section recall questions
+   - `position_in_section INTEGER DEFAULT NULL` — paragraph index for checkpoint placement
+
+2. Recreates the `quiz_questions_public` view to include the new columns (excluding `correct_answer`):
+   ```sql
+   DROP VIEW IF EXISTS public.quiz_questions_public;
+   CREATE VIEW public.quiz_questions_public
+   WITH (security_invoker = true) AS
+     SELECT id, module_id, question, options, order_index, section_id,
+            explanation_correct, explanation_wrong, is_checkpoint, position_in_section
+     FROM public.quiz_questions;
+   ```
+
+No RLS or RPC changes needed.
 
 ---
 
-### Fix 1: Validate LOVABLE_API_KEY (line 60)
+### Part B — Quiz UI Changes in `src/pages/LearnModule.tsx`
 
-**File:** `supabase/functions/moderate-photo/index.ts`
+**Question interface**: Add `explanation_correct`, `explanation_wrong`, `is_checkpoint`, `position_in_section` fields.
 
-Replace the `!` assertion with an explicit check that returns a 503 with a clear log message if missing.
+**Question filtering**: After loading questions, split into two arrays:
+- `badgeQuestions` — where `is_checkpoint` is false/null (used for quiz)
+- `checkpointQuestions` — where `is_checkpoint` is true (passed to SectionContent)
 
-### Fix 2: Convert images to base64 data URLs before sending to AI
+All existing quiz logic (submit, score, combo, violations) operates on `badgeQuestions` only.
 
-**File:** `supabase/functions/moderate-photo/index.ts`
+**Quiz answer flow** (replaces the current 400ms auto-advance):
+1. On answer selection: mark selected option green (correct) or red (wrong)
+2. If wrong: also highlight the correct option in green
+3. Show a feedback card below options:
+   - Correct: green callout with `explanation_correct` text
+   - Wrong: red callout with `explanation_wrong` text + correct answer restated
+4. Show a "Next Question →" button (replaces auto-advance `setTimeout`)
+5. On last question, the button reads "Review & Submit"
+6. QuizCombo, submit button, score calculation — all unchanged
 
-The core issue: the AI gateway rejects Supabase storage URLs. Fix by fetching each image and converting to a base64 data URL (`data:image/jpeg;base64,...`) before passing to the AI.
+**Pass `checkpointQuestions` to SectionContent**: Filter by matching `section_id` to current section, pass as new prop.
 
-Add a helper function:
-```
-async function fetchImageAsDataUrl(url: string): Promise<string>
-```
-- Fetches the image bytes
-- Detects content type from response headers (default `image/jpeg`)
-- Returns `data:{mime};base64,{encoded}`
+---
 
-Apply this to:
-- The selfie signed URL in `handleVerification`
-- Each profile photo URL in `handleVerification`
-- The photo URL in `handleModeration`
+### Part C — Checkpoint Questions in `src/components/education/SectionContent.tsx`
 
-### Fix 3: Use `google/gemini-2.5-pro` for vision tasks
+**New optional prop**: `checkpointQuestions` array with question data.
 
-**File:** `supabase/functions/moderate-photo/index.ts`
+**Rendering logic**: Modify `renderMarkdown` to return an array of React elements. After each paragraph at index N, if a checkpoint question has `position_in_section === N`, insert a QuickCheck card.
 
-Change `model: "google/gemini-2.5-flash"` to `model: "google/gemini-2.5-pro"` — this is the strongest vision model available and explicitly supports image+text reasoning.
-
-### Fix 4: Add SELECT policy for verification-selfies bucket + better error logging
-
-**Migration:** Add `SELECT` policy for `service_role` on `verification-selfies` bucket.
-
-**File:** `supabase/functions/moderate-photo/index.ts` — Improve catch block logging with `err.message` and add response preview log after `callAI` returns.
+**QuickCheck card UI**:
+- Purple/violet border with "Quick Check 🧠" label in small caps
+- Question text + 2-4 answer options as compact chip buttons
+- Local state per checkpoint (answered/selected)
+- On selection: immediate correct/wrong coloring + explanation text
+- "Got it! Keep reading →" dismiss button after answering
+- No XP, no grading, no server calls
+- Fully backward compatible (renders nothing if prop is absent/empty)
 
 ---
 
@@ -53,6 +71,7 @@ Change `model: "google/gemini-2.5-flash"` to `model: "google/gemini-2.5-pro"` �
 
 | # | File | Change |
 |---|------|--------|
-| 1 | `supabase/functions/moderate-photo/index.ts` | Validate API key, base64 image conversion, model change, better logging |
-| 2 | 1 migration | SELECT policy for verification-selfies bucket |
+| 1 | 1 migration | Add columns + recreate view |
+| 2 | `src/pages/LearnModule.tsx` | Question filtering, quiz feedback UI, pass checkpoint prop |
+| 3 | `src/components/education/SectionContent.tsx` | Accept checkpoint prop, render QuickCheck cards inline |
 
