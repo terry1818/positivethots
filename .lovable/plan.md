@@ -1,81 +1,37 @@
 
 
-## Plan: Rebuild CompactProgressBar + Rename "Super Like" → "Thot" and "It's a Match!" → "You Both Said Yes"
+## Plan: Align Discovery Content to Card Width
 
-### Prompt 1 — Rebuild CompactProgressBar
+### Problem
+On desktop, the `CompactProgressBar`, `NearbyUsers`, and empty-state cards stretch to `max-w-7xl` (1280px) while the swipe card stack is naturally ~384px (`max-w-sm`), creating a visual mismatch.
 
-**File: `src/components/discovery/CompactProgressBar.tsx`** — Full rewrite
-- Rename prop `suggestionCount` → `connectionCount`
-- Add `CheckCircle` import from lucide-react, add `cn` import
-- Three sections:
-  1. Stats row: three stacked stat columns (Badges/primary, Tiers/muted, Connections/success) + "Keep Learning" pill button right-aligned
-  2. Next unlock card: icon + "Next unlock: {label}" + "{tier} · N badges needed" + "N to go" pill — or "All features unlocked" with CheckCircle
-  3. Segmented bar with first-word tier labels above, h-2 bar segments with gap-1
+### Changes — all in `src/pages/Index.tsx`
 
-**File: `src/pages/Index.tsx`**
-- Add `matchCount` state (`useState(0)`)
-- In `loadSuggestions`, after the existing matches query (line 197-199 already fetches matches), derive count: `const matchCount = matchesResult.data?.length || 0; setMatchCount(matchCount);`
-- Update CompactProgressBar call: `suggestionCount={suggestions.length}` → `connectionCount={matchCount}`
+**1. Constrain content wrappers below the header**
 
-### Prompt 2 — Rename "Super Like" → "Thot" / "It's a Match!" → "You Both Said Yes"
+Three `container max-w-7xl` wrappers become `max-w-sm`:
 
-User-visible text changes only. No variable/function/DB renames.
+| Line | Current | New |
+|------|---------|-----|
+| 488 | `container max-w-7xl mx-auto px-4 py-3` | `max-w-sm mx-auto px-4 py-3` |
+| 495 | `container max-w-7xl mx-auto px-4 mb-4` | `max-w-sm mx-auto px-4 mb-4` |
+| 501 | `container max-w-7xl mx-auto px-4` | `max-w-sm mx-auto px-4` |
 
-**File: `src/pages/Index.tsx`** (6 changes)
-- Line 141: `"Super Likes purchased! 🌟"` → `"Thots purchased! 💜"`, description → `"10 Thots added to your balance."`
-- Line 271: `"It's a Match! 💕"` → `"You Both Said Yes 💜"`, keep description
-- Line 291: `"No Super Likes left"` → `"No Thots left"`
-- Line 305: `"It's a Match! 💕", { description: "Your Super Like worked!" }` → `"You Both Said Yes 💜", { description: "Your Thot worked!" }`
-- Line 307: `"Super Like Sent! ⭐"` → `"Thot Sent! 💜"`
-- Line 446-449: Change `Star` icon to `Heart` with `fill-current text-primary`, tooltip/aria-label → "Thots remaining"
+Drop the `container` class (it sets its own max-widths that conflict).
 
-**File: `src/components/MatchModal.tsx`** (2 changes)
-- Line 75: `"It's a Match!"` → `"You Both Said Yes"`
-- Line 77: `"liked each other"` → `"connected 💜"`
+**2. Empty-state cards constrained**
 
-**File: `src/components/discovery/DiscoveryCard.tsx`** (2 changes)
-- Line 45: `"Out of Super Likes!"` → `"No Thots left!"`
-- Line 177: title attr `"Super Like"` → `"Send a Thot"`
+Lines 505 and 519: add `max-w-sm mx-auto w-full` to the two `<Card>` wrappers so they don't exceed the column width on wider viewports. The inner buttons already have `max-w-xs mx-auto` which is fine.
 
-**File: `src/components/education/CelebrationModal.tsx`** (2 changes)
-- Line 27: `"bonus Super Like! ⭐"` → `"bonus Thot! 💜"`
-- Line 29: `"3 Super Likes"` → `"3 Thots"`
+**3. Card stack — already centered**
 
-**File: `src/pages/LikesYou.tsx`** (2 changes)
-- Line 108: `"It's a match!"` → `"You Both Said Yes 💜"`
-- Line 189: `>Super Like<` → `>Thot<`
-
-**File: `src/pages/Onboarding.tsx`** (2 changes)
-- Line 772: `"5 Super Likes/day"` → `"5 Thots/day"`
-- Line 774: `"Unlimited Super Likes"` → `"Unlimited Thots"`
-
-**File: `src/pages/Profile.tsx`** (1 change)
-- Line 384: `"Unlimited Super Likes"` → `"Unlimited Thots"`
-
-**File: `src/pages/Premium.tsx`** (1 change)
-- Line 259: `"1 daily Super Like"` → `"1 daily Thot"`
-
-**File: `src/lib/subscriptionTiers.ts`** (4 changes)
-- `FEATURE_LABELS.super_likes`: `"5 Super Likes/day"` → `"5 Thots/day"`
-- `FEATURE_LABELS.unlimited_super_likes`: `"Unlimited Super Likes"` → `"Unlimited Thots"`
-- `ONE_TIME_PRODUCTS.super_like_pack_5.name`: → `"Thot Pack (5)"`
-- `ONE_TIME_PRODUCTS.super_like_pack_10.name`: → `"Thot Pack (10)"`
-
-### Files Summary
-
-| File | Changes |
-|------|---------|
-| `src/components/discovery/CompactProgressBar.tsx` | Full rewrite with 3-section layout |
-| `src/pages/Index.tsx` | Add matchCount state, update CompactProgressBar prop, rename 6 toast strings, change Thot balance icon |
-| `src/components/MatchModal.tsx` | Rename heading + body text |
-| `src/components/discovery/DiscoveryCard.tsx` | Rename toast + title |
-| `src/components/education/CelebrationModal.tsx` | Rename streak rewards |
-| `src/pages/LikesYou.tsx` | Rename toast + badge |
-| `src/pages/Onboarding.tsx` | Rename tier features |
-| `src/pages/Profile.tsx` | Rename feature label |
-| `src/pages/Premium.tsx` | Rename free tier feature |
-| `src/lib/subscriptionTiers.ts` | Rename labels + pack names |
+Line 536 already has `flex justify-center items-start` — no change needed.
 
 ### Not Changed
-Database columns, hook names (`useSuperLikes`), edge functions, analytics event strings, Stripe product names, SwipeCard.tsx, ProfileDetailSheet.
+- Sticky header (keeps `max-w-7xl`)
+- BottomNav, MatchModal, ProfileDetailSheet
+- No component files modified
+
+### Technical Detail
+Only className strings on 5 elements in `src/pages/Index.tsx` are edited. No logic, props, or imports change.
 
