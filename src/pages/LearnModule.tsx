@@ -37,6 +37,21 @@ interface Question {
   question: string;
   options: string[];
   order_index: number;
+  explanation_correct?: string | null;
+  explanation_wrong?: string | null;
+  is_checkpoint?: boolean | null;
+  position_in_section?: number | null;
+  section_id?: string | null;
+}
+
+export interface CheckpointQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correct_answer: number;
+  explanation_correct: string;
+  explanation_wrong: string;
+  position_in_section: number;
 }
 
 const LearnModule = () => {
