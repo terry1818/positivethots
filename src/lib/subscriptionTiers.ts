@@ -112,11 +112,11 @@ export const ANNUAL_TIERS = SUBSCRIPTION_TIERS.filter((t) => t.billingPeriod ===
 
 export const FEATURE_LABELS: Record<FeatureKey, string> = {
   see_likes: "See Who Likes You",
-  super_likes: "5 Super Likes/day",
+  super_likes: "5 Thots/day",
   priority_visibility: "Priority Visibility",
   advanced_filters: "Advanced Filters",
   profile_boost: "1 Profile Boost/mo",
-  unlimited_super_likes: "Unlimited Super Likes",
+  unlimited_super_likes: "Unlimited Thots",
   mentor_badge: "Mentor Badge",
   verified_educator: "Verified Educator Badge",
   community_host: "Host Community Events",
