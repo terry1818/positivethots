@@ -516,7 +516,7 @@ const Index = () => {
             </Card>
 
             {/* Referral card */}
-            <Card className="p-6 text-center">
+            <Card className="p-6 text-center max-w-sm mx-auto w-full">
               <Users className="h-12 w-12 text-primary mx-auto mb-3" />
               <h2 className="text-xl font-bold mb-1">Invite a Friend, Earn a Free Boost</h2>
               <p className="text-muted-foreground text-sm mb-4">
