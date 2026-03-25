@@ -1,61 +1,43 @@
 
 
-## Plan: Duolingo-Inspired Badge Path Map
+## Plan: Learning Journal Page
 
-### Overview
+### Part A — New Page: `src/pages/LearningJournal.tsx`
 
-Replace the collapsible tier sections (lines 239-354 in Learn.tsx) with a visual badge path map. Rewrite `TierRoadmap.tsx` as the path map component since its current implementation (feature roadmap with progress bars) doesn't match the new design — it's simpler to rebuild it with the new layout.
+Create a new page at route `/journal`. Requires auth via `useRequireAuth`.
 
-### New `TierRoadmap` Component
-
-**File:** `src/components/education/TierRoadmap.tsx`
-
-Completely reworked. New props:
-
+**Data query:**
 ```typescript
-interface BadgePathMapProps {
-  modulesByTier: Record<string, Module[]>;
-  earnedModuleIds: Set<string>;
-  isModuleUnlocked: (module: Module) => boolean;
-  moduleProgress: Record<string, { completed: number; total: number }>;
-  onModuleClick: (slug: string) => void;
-  tierFeatures: TierUnlock[];
-}
+supabase
+  .from("user_reflections")
+  .select("*, module_sections!inner(title, section_number, module_id, education_modules!inner(title, slug, tier))")
+  .eq("user_id", session.user.id)
+  .order("created_at", { ascending: false })
 ```
 
-**Rendering per tier:**
+**Layout:**
+- Header with back button (navigates to `/settings`) + "My Learning Journal" title
+- Group reflections by module (using `education_modules.title`)
+- Each module group: badge emoji (from `EducationBadge` `badgeIcons` map) + module title as section header
+- Each reflection: card with section title, formatted date ("March 15"), response text
+- Empty state with BookOpen icon and message
+- No BottomNav
 
-1. **Tier label row** — tier name (colored) + X/Y badge count + feature unlock pills (kept from current collapsible headers)
+**Route:** Add lazy import + `/journal` route in `App.tsx`
 
-2. **Horizontal scrollable badge row** — `overflow-x-auto` with `scrollbar-hide`, nodes connected by a horizontal SVG/CSS line:
+### Part B — Settings Link
 
-   - **COMPLETED node**: Filled circle with tier gradient color, badge emoji (from `EducationBadge` `badgeIcons` mapping), small green checkmark overlay, `animate-scale-in` on mount
-   - **CURRENT node** (first unlocked + not earned): Pulsing border ring in tier color (`animate-pulse`), badge emoji visible, "START →" label below
-   - **UNLOCKED node** (unlocked, not started or in-progress): Solid border in tier color, badge emoji, mini progress bar below if `moduleProgress` shows partial completion
-   - **LOCKED node**: Gray circle, Lock icon, `opacity-40`
-
-3. **Connector line** between nodes: a horizontal dashed/solid line segment. Completed segments = tier color, incomplete = muted.
-
-**Interactions:**
-- Completed/Current/Unlocked: `onClick → onModuleClick(slug)` which calls `navigate(/learn/${slug})`
-- Locked: show tooltip "Complete previous badges first" using a simple title attribute or a toast on tap (mobile-friendly)
-
-### Changes to `src/pages/Learn.tsx`
-
-1. **Replace lines 239-353** (the `tierOrder.map` with Collapsible) with a single `<BadgePathMap>` component call
-
-2. **Remove imports** no longer needed: `Collapsible`, `CollapsibleContent`, `CollapsibleTrigger`, `ChevronDown`
-
-3. **Remove state**: `openTiers`, `toggleTier` — no longer needed since tiers are always visible
-
-4. **Pass props** to BadgePathMap: `modulesByTier`, `earnedModuleIds`, `isModuleUnlocked`, `moduleProgress`, `onModuleClick`, `tierFeatures`
-
-5. Keep everything else unchanged: header, ContinueLearning, StreakCalendar, DailyChallenge, overall progress bar, VIP upsell, LeaderboardCard
+In `src/pages/Settings.tsx`, add a new "Learning" card between the "Change Password" card and the "Data & Privacy" card containing a single button:
+- BookOpen icon + "Learning Journal" label
+- `onClick={() => navigate("/journal")}`
 
 ### Files
 
 | # | File | Change |
 |---|------|--------|
-| 1 | `src/components/education/TierRoadmap.tsx` | Rewrite as BadgePathMap with horizontal scrollable badge nodes per tier |
-| 2 | `src/pages/Learn.tsx` | Replace collapsible tier sections with BadgePathMap, remove unused state/imports |
+| 1 | `src/pages/LearningJournal.tsx` | New page component |
+| 2 | `src/App.tsx` | Add lazy import + `/journal` route |
+| 3 | `src/pages/Settings.tsx` | Add Learning Journal link card |
+
+No database changes needed — `user_reflections` table and `module_sections` foreign key already exist.
 
