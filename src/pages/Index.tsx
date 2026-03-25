@@ -14,6 +14,8 @@ import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { NearbyUsers } from "@/components/NearbyUsers";
 import { DiscoveryCard } from "@/components/discovery/DiscoveryCard";
+import { SwipeDiscoveryCard } from "@/components/discovery/SwipeDiscoveryCard";
+import { ProfileDetailSheet } from "@/components/discovery/ProfileDetailSheet";
 import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
