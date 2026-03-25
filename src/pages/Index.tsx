@@ -445,8 +445,8 @@ const Index = () => {
             <Logo size="md" showText={false} />
             <div className="flex items-center gap-2">
               {canSuperLike && (
-                <Badge variant="outline" className="text-amber-500 border-amber-500/30">
-                  <Star className="h-3 w-3 mr-1 fill-current" />
+                <Badge variant="outline" className="text-primary border-primary/30" title="Thots remaining" aria-label="Thots remaining">
+                  <Heart className="h-3 w-3 mr-1 fill-current" />
                   {isUnlimited ? "∞" : superLikeBalance}
                 </Badge>
               )}
