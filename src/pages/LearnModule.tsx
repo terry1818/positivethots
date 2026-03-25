@@ -75,6 +75,10 @@ const LearnModule = () => {
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(new Set());
   const [showFeedback, setShowFeedback] = useState(false);
 
+  // Session intro
+  const [introShownSections, setIntroShownSections] = useState<Set<string>>(new Set());
+  const [showSessionIntro, setShowSessionIntro] = useState(false);
+
   // XP & celebrations
   const { stats, awardXP } = useLearningStats();
   const [xpPopup, setXpPopup] = useState<{ show: boolean; amount: number }>({ show: false, amount: 0 });
