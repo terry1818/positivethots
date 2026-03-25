@@ -446,11 +446,11 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Location Sharing */}
+        {/* Distance Radar */}
         <Card className="animate-fade-in" style={{ animationDelay: "90ms" }}>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
-              <MapPin className="h-5 w-5" /> Location Sharing
+              <span>📡</span> Distance Radar
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -464,7 +464,7 @@ const Settings = () => {
                 <div>
                   <p className="text-sm font-medium">Locked</p>
                   <p className="text-xs text-muted-foreground">
-                    Complete all 5 Foundation courses to unlock location sharing at events.
+                    Complete all 5 Foundation courses to enable Distance Radar and find members near you in Discovery.
                   </p>
                 </div>
               </div>
@@ -474,9 +474,9 @@ const Settings = () => {
                   <div>
                     <p className="text-sm font-medium">Share My Location</p>
                     <p className="text-xs text-muted-foreground">
-                      {isSharing 
+                      {isSharing
                         ? "Your location is visible to nearby users (auto-expires in 2 hours)"
-                        : "Let nearby users find you at events"}
+                        : "Let nearby members find you in Discovery"}
                     </p>
                   </div>
                   <Switch
@@ -489,6 +489,65 @@ const Settings = () => {
                 )}
                 <p className="text-xs text-muted-foreground">
                   Your location is never stored permanently and expires automatically after 2 hours.
+                </p>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Event Location Sharing */}
+        <Card className="animate-fade-in" style={{ animationDelay: "95ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <MapPin className="h-5 w-5" /> Event Location Sharing
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {locationLoading ? (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" /> Checking status…
+              </div>
+            ) : !locationUnlocked ? (
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                <Lock className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Locked</p>
+                  <p className="text-xs text-muted-foreground">
+                    Complete the Foundation tier first, then complete Advanced Topics to unlock event location sharing.
+                  </p>
+                </div>
+              </div>
+            ) : !isEventLocationUnlocked ? (
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                <Lock className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">Locked</p>
+                  <p className="text-xs text-muted-foreground">
+                    Complete the Advanced Topics tier to unlock live location sharing at community events.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">Share at Events</p>
+                    <p className="text-xs text-muted-foreground">
+                      {isSharing
+                        ? "Your live location is visible to nearby event attendees (auto-expires in 2 hours)"
+                        : "Share your live location at events so nearby attendees can find you"}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={isSharing}
+                    onCheckedChange={toggleSharing}
+                  />
+                </div>
+                {locationError && (
+                  <p className="text-xs text-destructive">{locationError}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Auto-expires in 2 hours. Your location is never stored permanently.
                 </p>
               </>
             )}
