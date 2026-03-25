@@ -174,7 +174,8 @@ const Index = () => {
       if (previewData) {
         const enhanced: EnhancedProfile[] = previewData.slice(0, 6).map(p => ({
           ...p,
-          compatibility_score: Math.floor(Math.random() * 30) + 60,
+          compatibility_score: null,
+          compatibility_reasons: [],
           verified: false,
           distance: null,
           is_boosted: false,

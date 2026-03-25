@@ -93,14 +93,16 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
           </Badge>
         )}
       </div>
-      <div className="absolute top-3 right-3">
-        <div className="bg-background/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg">
-          <div className="flex items-center gap-1">
-            <Heart className="h-4 w-4 text-primary fill-primary" />
-            <span className="text-sm font-bold">{profile.compatibility_score}%</span>
+      {profile.compatibility_score != null && (
+        <div className="absolute top-3 right-3">
+          <div className="bg-background/95 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-lg">
+            <div className="flex items-center gap-1">
+              <Heart className="h-4 w-4 text-primary fill-primary" />
+              <span className="text-sm font-bold">{profile.compatibility_score}%</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
       {(profile.distance != null || profile.last_active) && (
         <div className="absolute bottom-3 left-3 right-3 flex justify-between">
           {profile.distance != null && (
