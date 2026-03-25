@@ -1428,6 +1428,7 @@ export type Database = {
           swiped_at: string
         }[]
       }
+      get_success_metrics: { Args: never; Returns: Json }
       get_user_id_by_email: { Args: { _email: string }; Returns: string }
       get_weekly_leaderboard: {
         Args: never
