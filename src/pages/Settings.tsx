@@ -19,7 +19,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2, MapPin, Lock, Gift, Copy, Users, Check, Ticket, Send, UserCog, X } from "lucide-react";
+import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2, MapPin, Lock, Gift, Copy, Users, Check, Ticket, Send, UserCog, X, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -754,6 +754,25 @@ const Settings = () => {
               className="w-full"
             >
               {changingPassword ? "Updating..." : "Update Password"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Learning */}
+        <Card className="animate-fade-in" style={{ animationDelay: "150ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <BookOpen className="h-5 w-5" /> Learning
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={() => navigate("/journal")}
+            >
+              <BookOpen className="h-4 w-4" />
+              Learning Journal
             </Button>
           </CardContent>
         </Card>
