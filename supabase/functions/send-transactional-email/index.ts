@@ -360,6 +360,12 @@ Deno.serve(async (req) => {
 
   console.log('Transactional email enqueued', { templateName, effectiveRecipient })
 
+  // Log email_sent analytics event for rate limiting and tracking
+  await supabase.from('analytics_events').insert({
+    event_name: 'email_sent',
+    event_data: { template: templateName },
+  }).then(() => {}) // fire and forget
+
   return new Response(
     JSON.stringify({ success: true, queued: true }),
     {

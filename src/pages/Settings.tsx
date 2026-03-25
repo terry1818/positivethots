@@ -577,7 +577,7 @@ const Settings = () => {
               }
               return null;
             })()}
-            {totalReferrals > 0 && (
+            {myCodes.filter(c => c.created_by === user?.id).length > 0 && (
               <p className="text-xs text-muted-foreground mb-2">
                 Share more — you earn a free boost for every friend who subscribes.
               </p>
