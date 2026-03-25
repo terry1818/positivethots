@@ -49,6 +49,7 @@ const Profile = () => {
   }, [searchParams]);
 
   useEffect(() => { loadProfile(); checkActiveBoost(); }, []);
+  useEffect(() => { setCurrentPhotoIndex(0); }, [userPhotos]);
 
   const loadProfile = async () => {
     try {
