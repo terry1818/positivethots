@@ -113,6 +113,13 @@ const LearnModule = () => {
     loadModule();
   }, [slug]);
 
+  // Cancel speech synthesis when section changes or component unmounts
+  useEffect(() => {
+    return () => {
+      window.speechSynthesis?.cancel();
+    };
+  }, [currentSectionIndex]);
+
   // Show session intro for new, uncompleted sections
   useEffect(() => {
     if (!hasSections || sections.length === 0 || showQuiz) return;
