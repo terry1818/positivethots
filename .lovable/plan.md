@@ -1,28 +1,36 @@
 
 
+
 ## Completed Plans
 
 ### Prompts 1A, 1B, 1C — Security Hardening & Data Integrity ✅
 ### Prompts 2A–2E — Analytics, Discovery Preview, Upsell, Push Notifications, Compatibility ✅
 ### Prompts 3A–3C — Annual Pricing, VIP Differentiation, Gift on Premium, Nav Swap ✅
+### Prompts 4A–4C — Chat Icebreakers, Admin Analytics, Streak Rewards, Leaderboard, Rate Limiting ✅
 
 ---
 
-## Plan: Annual Pricing, VIP Differentiation, Gift on Premium Page, Nav Swap (DONE)
+## Plan: Chat Icebreakers, Admin Analytics, Streak Rewards, Leaderboard, Rate Limiting (DONE)
 
-### 3A: Annual Pricing ✅
-- Added `billingPeriod` field to TierConfig, 3 annual tiers with placeholder IDs
-- Monthly/Annual toggle on Premium page with "Save 20%" badge
-- Annual cards show monthly equivalent price + annual total
-- create-checkout allowlist updated with annual price IDs
+### 4A-1: Chat Icebreakers ✅
+- 3 contextual icebreaker pills when messages.length === 0
+- Based on shared relationship_style and interests, with generic fallbacks
+- On tap: populates input (no auto-send), tracks `icebreaker_tapped`
 
-### 3B: VIP Differentiation ✅
-- Added `verified_educator` and `community_host` feature keys
-- Amber "Verified Educator" badge on DiscoveryCard (badge_count >= 20)
-- Gold badge on own Profile page
-- VIP description note on Premium page
-- VIP upsell callout on Learn page after completing all badges
+### 4A-2: Admin Analytics Metrics ✅
+- 7 funnel metrics: total users, onboarded, badges, discovery, paid, conversion rates
+- 2-column grid above existing event list
 
-### 3C: Gift Section & Nav Swap ✅
-- "Give the Gift of Growth" section on Premium page with email, tier, and days selectors
-- BottomNav: Shop replaced with Events (Calendar icon)
+### 4B-1: Streak Milestone Rewards ✅
+- New `grant-streak-reward` edge function (idempotent via xp_transactions)
+- Day 7: +1 Super Like, Day 30: 24h Profile Boost, Day 100: +3 Super Likes
+- CelebrationModal shows reward text for milestone days
+
+### 4B-2: Top Learners Leaderboard ✅
+- New `get_weekly_leaderboard` RPC (security definer, anonymized names)
+- Replaces "Why Education First?" card, hides if < 3 users
+- Highlights current user's row
+
+### 4C: Message Rate Limiting ✅
+- Server: 10 messages/60s per user per match, returns 429
+- Client: 500ms debounce + toast on rate limit error

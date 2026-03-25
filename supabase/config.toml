@@ -41,3 +41,5 @@ project_id = "zcsnqvncqzpleqoctzfc"
     verify_jwt = false
   [functions.notify-winback]
     verify_jwt = false
+  [functions.grant-streak-reward]
+    verify_jwt = false
