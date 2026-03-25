@@ -1,6 +1,7 @@
 import { Lock, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import type { TierUnlock } from "@/hooks/useFeatureUnlocks";
 
 interface Module {
@@ -24,14 +25,19 @@ interface BadgePathMapProps {
   moduleProgress: Record<string, { completed: number; total: number }>;
   onModuleClick: (slug: string) => void;
   tierFeatures: TierUnlock[];
+  isStreakAtRisk: boolean;
+  streakHoursLeft: number;
+  continueModuleId?: string;
+  continueSectionNumber?: number;
+  continueProgressPercent?: number;
 }
 
-const tierConfig: Record<string, { label: string; color: string; bg: string; border: string; fill: string }> = {
-  foundation: { label: "Foundation (Required)", color: "text-primary", bg: "bg-primary/15", border: "border-primary", fill: "bg-primary" },
-  sexual_health: { label: "Sexual Health", color: "text-success", bg: "bg-success/15", border: "border-success", fill: "bg-success" },
-  identity: { label: "Identity & Diversity", color: "text-[hsl(285_55%_45%)]", bg: "bg-[hsl(285_55%_45%)]/15", border: "border-[hsl(285_55%_45%)]", fill: "bg-[hsl(285_55%_45%)]" },
-  relationships: { label: "Healthy Relationships", color: "text-[hsl(340_65%_55%)]", bg: "bg-[hsl(340_65%_55%)]/15", border: "border-[hsl(340_65%_55%)]", fill: "bg-[hsl(340_65%_55%)]" },
-  advanced: { label: "Advanced Topics", color: "text-accent", bg: "bg-accent/15", border: "border-accent", fill: "bg-accent" },
+const tierConfig: Record<string, { label: string; color: string; bg: string; border: string; fill: string; gradient: string }> = {
+  foundation: { label: "Foundation (Required)", color: "text-primary", bg: "bg-primary/15", border: "border-primary", fill: "bg-primary", gradient: "from-primary to-primary/80" },
+  sexual_health: { label: "Sexual Health", color: "text-success", bg: "bg-success/15", border: "border-success", fill: "bg-success", gradient: "from-success to-success/80" },
+  identity: { label: "Identity & Diversity", color: "text-[hsl(285_55%_45%)]", bg: "bg-[hsl(285_55%_45%)]/15", border: "border-[hsl(285_55%_45%)]", fill: "bg-[hsl(285_55%_45%)]", gradient: "from-[hsl(285_55%_45%)] to-[hsl(285_55%_45%)]/80" },
+  relationships: { label: "Healthy Relationships", color: "text-[hsl(340_65%_55%)]", bg: "bg-[hsl(340_65%_55%)]/15", border: "border-[hsl(340_65%_55%)]", fill: "bg-[hsl(340_65%_55%)]", gradient: "from-[hsl(340_65%_55%)] to-[hsl(340_65%_55%)]/80" },
+  advanced: { label: "Advanced Topics", color: "text-accent", bg: "bg-accent/15", border: "border-accent", fill: "bg-accent", gradient: "from-accent to-accent/80" },
 };
 
 const badgeIcons: Record<string, string> = {
@@ -89,170 +95,268 @@ export const BadgePathMap = ({
   moduleProgress,
   onModuleClick,
   tierFeatures,
+  isStreakAtRisk,
+  streakHoursLeft,
+  continueModuleId,
+  continueSectionNumber,
+  continueProgressPercent,
 }: BadgePathMapProps) => {
+  const navigate = useNavigate();
+
+  // Build flat list with tier headers for rendering
+  const allNodes: Array<
+    | { type: "tier-header"; tier: string; config: typeof tierConfig["foundation"]; completed: number; total: number; features: TierUnlock["features"] }
+    | { type: "module"; module: Module; tier: string; state: NodeState; icon: string; progress: { completed: number; total: number } | undefined; distanceFromCurrent: number }
+  > = [];
+
+  let currentNodeIndex = -1;
+  let globalIndex = 0;
+
+  TIER_ORDER.forEach((tier) => {
+    const modules = modulesByTier[tier];
+    if (!modules || modules.length === 0) return;
+    const config = tierConfig[tier];
+    const tierCompleted = modules.filter((m) => earnedModuleIds.has(m.id)).length;
+    const features = tierFeatures.find((t) => t.tier === tier)?.features || [];
+
+    allNodes.push({
+      type: "tier-header",
+      tier,
+      config,
+      completed: tierCompleted,
+      total: modules.length,
+      features,
+    });
+
+    let foundFirstUnearned = false;
+    modules.forEach((module) => {
+      const earned = earnedModuleIds.has(module.id);
+      const unlocked = isModuleUnlocked(module);
+      const isFirstUnearned = !earned && unlocked && !foundFirstUnearned;
+      if (isFirstUnearned) foundFirstUnearned = true;
+      const state = getNodeState(module, earned, unlocked, isFirstUnearned);
+      const icon = badgeIcons[module.slug] || "★";
+      const progress = moduleProgress[module.id];
+
+      if (state === "current") currentNodeIndex = globalIndex;
+
+      allNodes.push({ type: "module", module, tier, state, icon, progress, distanceFromCurrent: 0 });
+      globalIndex++;
+    });
+  });
+
+  // Calculate distance from current node for locked opacity fade
+  let moduleIdx = 0;
+  allNodes.forEach((node) => {
+    if (node.type === "module") {
+      if (currentNodeIndex >= 0) {
+        node.distanceFromCurrent = Math.abs(moduleIdx - currentNodeIndex);
+      }
+      moduleIdx++;
+    }
+  });
+
   return (
-    <div className="space-y-5">
-      {TIER_ORDER.map((tier, tierIdx) => {
-        const modules = modulesByTier[tier];
-        if (!modules || modules.length === 0) return null;
-        const config = tierConfig[tier];
-        const tierCompleted = modules.filter((m) => earnedModuleIds.has(m.id)).length;
-        const isTierComplete = tierCompleted === modules.length;
-        const features = tierFeatures.find((t) => t.tier === tier)?.features || [];
+    <div className="relative">
+      {/* Central vertical connector line */}
+      <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-muted -translate-x-1/2 z-0" />
 
-        // Find the first unearned module in this tier for "current" state
-        let foundFirstUnearned = false;
-
-        return (
-          <div key={tier} className="animate-stagger-fade" style={{ animationDelay: `${tierIdx * 80}ms` }}>
-            {/* Tier label row */}
-            <div className="flex items-center gap-2 mb-2">
-              <span className={cn("text-sm font-semibold", config.color)}>{config.label}</span>
-              <span className="text-xs text-muted-foreground">
-                {tierCompleted}/{modules.length}
-              </span>
-              {isTierComplete && <CheckCircle className="h-3.5 w-3.5 text-success" />}
-              {features.length > 0 && (
-                <div className="flex gap-1 ml-auto">
-                  {features.map((f) => (
-                    <span
-                      key={f.key}
-                      className={cn(
-                        "inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full border",
-                        f.isUnlocked
-                          ? "bg-success/10 border-success/30 text-success font-medium"
-                          : "bg-muted/50 border-muted text-muted-foreground"
-                      )}
-                      title={f.description}
-                    >
-                      <span>{f.icon}</span>
-                      {f.isUnlocked && <CheckCircle className="h-2 w-2" />}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Horizontal scrollable badge row */}
-            <div className="overflow-x-auto scrollbar-hide -mx-1 px-1 pb-2">
-              <div className="flex items-start gap-0 min-w-max">
-                {modules.map((module, idx) => {
-                  const earned = earnedModuleIds.has(module.id);
-                  const unlocked = isModuleUnlocked(module);
-                  const isFirstUnearned = !earned && unlocked && !foundFirstUnearned;
-                  if (isFirstUnearned) foundFirstUnearned = true;
-                  const state = getNodeState(module, earned, unlocked, isFirstUnearned);
-                  const icon = badgeIcons[module.slug] || "★";
-                  const progress = moduleProgress[module.id];
-                  const progressPercent =
-                    progress && progress.total > 0 ? Math.round((progress.completed / progress.total) * 100) : 0;
-
-                  return (
-                    <div key={module.id} className="flex items-start">
-                      {/* Connector line (before node, skip first) */}
-                      {idx > 0 && (
-                        <div className="flex items-center h-14 pt-1">
-                          <div
-                            className={cn(
-                              "w-6 h-0.5 rounded-full",
-                              earned || earnedModuleIds.has(modules[idx - 1]?.id)
-                                ? config.fill
-                                : "bg-muted"
-                            )}
-                          />
-                        </div>
-                      )}
-
-                      {/* Node */}
-                      <button
-                        onClick={() => {
-                          if (state === "locked") {
-                            toast.info("Complete previous badges first", { duration: 2000 });
-                          } else {
-                            onModuleClick(module.slug);
-                          }
-                        }}
-                        className="flex flex-col items-center gap-1 min-w-[64px] group"
-                        title={state === "locked" ? "Complete previous badges first" : module.title}
-                      >
-                        <div className="relative">
-                          <div
-                            className={cn(
-                              "w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold transition-all border-2",
-                              state === "completed" &&
-                                `${config.fill} ${config.border} text-white shadow-md animate-scale-in`,
-                              state === "current" &&
-                                `bg-background ${config.border} ${config.color} shadow-lg ring-2 ring-offset-2 ring-offset-background`,
-                              state === "unlocked" &&
-                                `bg-background ${config.border} ${config.color}`,
-                              state === "locked" &&
-                                "bg-muted border-muted text-muted-foreground opacity-40"
-                            )}
-                          >
-                            {state === "locked" ? (
-                              <Lock className="h-4 w-4" />
-                            ) : (
-                              <span>{icon}</span>
-                            )}
-                          </div>
-
-                          {/* Completed checkmark overlay */}
-                          {state === "completed" && (
-                            <div className="absolute -bottom-0.5 -right-0.5 bg-success rounded-full p-0.5">
-                              <CheckCircle className="h-3 w-3 text-white" />
-                            </div>
-                          )}
-
-                          {/* Current pulsing ring */}
-                          {state === "current" && (
-                            <div
-                              className={cn(
-                                "absolute inset-0 rounded-full border-2 animate-pulse",
-                                config.border
-                              )}
-                              style={{ animationDuration: "2s" }}
-                            />
-                          )}
-                        </div>
-
-                        {/* Label */}
+      <div className="relative z-10 space-y-0">
+        {allNodes.map((node, idx) => {
+          if (node.type === "tier-header") {
+            const isTierComplete = node.completed === node.total;
+            return (
+              <div
+                key={`tier-${node.tier}`}
+                className="sticky top-[72px] z-20 flex justify-center py-3"
+              >
+                <div
+                  className={cn(
+                    "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold border backdrop-blur-sm bg-background/95 shadow-sm",
+                    node.config.border,
+                    node.config.color
+                  )}
+                >
+                  <span>{node.config.label}</span>
+                  <span className="text-muted-foreground font-normal">
+                    {node.completed}/{node.total}
+                  </span>
+                  {isTierComplete && <CheckCircle className="h-3 w-3 text-success" />}
+                  {node.features.length > 0 && (
+                    <div className="flex gap-0.5 ml-1">
+                      {node.features.map((f) => (
                         <span
+                          key={f.key}
                           className={cn(
-                            "text-[10px] leading-tight text-center max-w-[64px] line-clamp-2",
-                            state === "completed" && "text-success font-medium",
-                            state === "current" && cn(config.color, "font-semibold"),
-                            state === "unlocked" && "text-foreground",
-                            state === "locked" && "text-muted-foreground opacity-40"
+                            "text-[10px]",
+                            f.isUnlocked ? "opacity-100" : "opacity-40"
                           )}
+                          title={f.description}
                         >
-                          {module.title}
+                          {f.icon}
                         </span>
-
-                        {/* Current: START label */}
-                        {state === "current" && (
-                          <span className={cn("text-[9px] font-bold uppercase tracking-wider", config.color)}>
-                            Start →
-                          </span>
-                        )}
-
-                        {/* Unlocked in-progress: mini progress bar */}
-                        {state === "unlocked" && progressPercent > 0 && progressPercent < 100 && (
-                          <div className="w-10 h-1 rounded-full bg-muted overflow-hidden">
-                            <div
-                              className={cn("h-full rounded-full", config.fill)}
-                              style={{ width: `${progressPercent}%` }}
-                            />
-                          </div>
-                        )}
-                      </button>
+                      ))}
                     </div>
-                  );
-                })}
+                  )}
+                </div>
               </div>
+            );
+          }
+
+          // Module node
+          const { module, tier, state, icon, progress, distanceFromCurrent } = node;
+          const config = tierConfig[tier];
+          const progressPercent =
+            progress && progress.total > 0
+              ? Math.round((progress.completed / progress.total) * 100)
+              : 0;
+
+          // For current node: determine if this is the continue module
+          const isContinueModule = state === "current" && continueModuleId === module.id;
+          const showStreakChip = state === "current" && isStreakAtRisk;
+
+          // Locked opacity fade
+          const lockedOpacity =
+            state === "locked"
+              ? Math.max(0.15, 0.4 - distanceFromCurrent * 0.05)
+              : 1;
+
+          return (
+            <div key={module.id} className="flex flex-col items-center py-2">
+              {/* Connector segment (colored if previous was completed) */}
+              {idx > 0 && allNodes[idx - 1]?.type === "module" && (
+                <div
+                  className={cn(
+                    "w-0.5 h-6 -mt-2 mb-2 rounded-full",
+                    state === "completed" || (allNodes[idx - 1] as any).state === "completed"
+                      ? config.fill
+                      : "bg-muted"
+                  )}
+                />
+              )}
+
+              {/* Node button */}
+              <button
+                onClick={() => {
+                  if (state === "locked") {
+                    toast.info("Complete previous badges first", { duration: 2000 });
+                  } else {
+                    onModuleClick(module.slug);
+                  }
+                }}
+                className="flex flex-col items-center gap-1.5 group"
+                style={{ opacity: lockedOpacity }}
+                title={state === "locked" ? "Complete previous badges first" : module.title}
+              >
+                <div className="relative">
+                  <div
+                    className={cn(
+                      "rounded-full flex items-center justify-center font-bold transition-all border-2",
+                      state === "completed" &&
+                        `w-12 h-12 bg-gradient-to-br ${config.gradient} ${config.border} text-white shadow-md text-lg`,
+                      state === "current" &&
+                        `w-14 h-14 bg-background ${config.border} ${config.color} shadow-lg text-xl`,
+                      state === "unlocked" &&
+                        `w-11 h-11 bg-background ${config.border} ${config.color} text-base`,
+                      state === "locked" &&
+                        "w-9 h-9 bg-muted border-muted text-muted-foreground text-sm"
+                    )}
+                  >
+                    {state === "locked" ? (
+                      <Lock className="h-3.5 w-3.5" />
+                    ) : (
+                      <span>{icon}</span>
+                    )}
+                  </div>
+
+                  {/* Completed checkmark overlay */}
+                  {state === "completed" && (
+                    <div className="absolute -bottom-0.5 -right-0.5 bg-success rounded-full p-0.5">
+                      <CheckCircle className="h-3 w-3 text-white" />
+                    </div>
+                  )}
+
+                  {/* Current double pulsing ring */}
+                  {state === "current" && (
+                    <>
+                      <div
+                        className={cn(
+                          "absolute inset-0 rounded-full border-2 animate-pulse",
+                          config.border
+                        )}
+                        style={{ animationDuration: "2s" }}
+                      />
+                      <div
+                        className={cn(
+                          "absolute -inset-1.5 rounded-full border animate-pulse opacity-50",
+                          config.border
+                        )}
+                        style={{ animationDuration: "2.5s" }}
+                      />
+                    </>
+                  )}
+                </div>
+
+                {/* Label */}
+                <span
+                  className={cn(
+                    "text-xs leading-tight text-center max-w-[120px] line-clamp-2",
+                    state === "completed" && "text-success font-medium",
+                    state === "current" && cn(config.color, "font-semibold"),
+                    state === "unlocked" && "text-foreground",
+                    state === "locked" && "text-muted-foreground"
+                  )}
+                >
+                  {module.title}
+                </span>
+
+                {/* Current node: resume chip */}
+                {isContinueModule && continueSectionNumber && continueProgressPercent != null && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onModuleClick(module.slug);
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-[11px] font-medium hover:bg-indigo-500/25 transition-colors"
+                  >
+                    ▶ Resume · Section {continueSectionNumber} · {continueProgressPercent}%
+                  </button>
+                )}
+
+                {/* Current node: streak at risk chip */}
+                {showStreakChip && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onModuleClick(module.slug);
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-[11px] font-medium hover:bg-destructive/25 transition-colors"
+                  >
+                    🔥 {streakHoursLeft}h · Save your streak
+                  </button>
+                )}
+
+                {/* Current: START label */}
+                {state === "current" && (
+                  <span className={cn("text-[11px] font-bold uppercase tracking-wider", config.color)}>
+                    Start →
+                  </span>
+                )}
+
+                {/* Unlocked in-progress: mini progress bar */}
+                {state === "unlocked" && progressPercent > 0 && progressPercent < 100 && (
+                  <div className="w-12 h-1 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className={cn("h-full rounded-full", config.fill)}
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+                )}
+              </button>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };

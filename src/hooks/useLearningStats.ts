@@ -14,8 +14,10 @@ export interface LearningStats {
 
 const LEVEL_THRESHOLDS = [0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500];
 const LEVEL_NAMES = ["Curious", "Explorer", "Learner", "Scholar", "Expert", "Sage", "Master", "Luminary", "Visionary", "Legend"];
+const LEVEL_EMOJIS = ["🌱", "🧭", "📖", "📚", "⭐", "🔮", "🎯", "✨", "👁️", "🏆"];
 
 export const getLevelName = (level: number) => LEVEL_NAMES[Math.min(level - 1, LEVEL_NAMES.length - 1)] || "Legend";
+export const getLevelEmoji = (level: number) => LEVEL_EMOJIS[Math.min(level - 1, LEVEL_EMOJIS.length - 1)] || "🏆";
 
 export const getXPForNextLevel = (level: number) => {
   const idx = Math.min(level, LEVEL_THRESHOLDS.length - 1);
@@ -35,6 +37,9 @@ export const calculateLevel = (totalXP: number): number => {
 
 const STREAK_MILESTONES = [3, 7, 14, 30, 100];
 export const isStreakMilestone = (streak: number) => STREAK_MILESTONES.includes(streak);
+
+// Levels that grant rewards
+const REWARD_LEVELS = [3, 5, 7, 10];
 
 export const useLearningStats = () => {
   const [stats, setStats] = useState<LearningStats | null>(null);
@@ -149,6 +154,32 @@ export const useLearningStats = () => {
       } : prev);
 
       setIsStreakAtRisk(false);
+
+      // Handle level-up: update profile and grant rewards
+      if (leveledUp) {
+        // Update profiles.learning_level
+        supabase
+          .from("profiles")
+          .update({ learning_level: result.new_level } as any)
+          .eq("id", userId)
+          .then(() => {});
+
+        // Grant level reward if applicable (fire and forget)
+        if (REWARD_LEVELS.includes(result.new_level)) {
+          supabase.functions
+            .invoke("grant-level-reward", {
+              body: { level: result.new_level },
+            })
+            .then(({ data: rewardData }) => {
+              if (rewardData?.rewards?.length > 0) {
+                console.log("Level reward granted:", rewardData.rewards);
+              }
+            })
+            .catch((err) => {
+              console.error("Level reward error:", err);
+            });
+        }
+      }
 
       // Update daily challenge progress
       const challengeTypeMap: Record<string, string> = {
