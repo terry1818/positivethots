@@ -830,7 +830,7 @@ const Onboarding = () => {
                 {step < TOTAL_STEPS ? (
                   <>
                     {isOptionalStep && (
-                      <Button onClick={goNext} variant="ghost" className="px-3" title="Skip this step">
+                      <Button onClick={() => { trackEvent('onboarding_skipped', { step }); goNext(); }} variant="ghost" className="px-3" title="Skip this step">
                         <SkipForward className="h-4 w-4" />
                       </Button>
                     )}

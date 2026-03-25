@@ -17,10 +17,11 @@ interface DiscoveryProfile {
   relationship_status: string | null;
   interests: string[] | null;
   compatibility_score?: number;
+  compatibility_reasons?: string[];
   badge_count?: number;
   last_active?: string;
   verified?: boolean;
-  distance?: number;
+  distance?: number | null;
   is_boosted?: boolean;
 }
 
@@ -121,6 +122,18 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
           <Badge variant="outline"><Users className="h-3 w-3 mr-1" />Couple</Badge>
         )}
       </div>
+
+      {/* Compatibility reasons */}
+      {profile.compatibility_reasons && profile.compatibility_reasons.length > 0 && (profile.compatibility_score ?? 0) >= 50 && (
+        <div className="flex flex-wrap gap-1 mb-2">
+          {profile.compatibility_reasons.slice(0, 2).map((reason, i) => (
+            <span key={i} className="text-xs bg-muted/80 text-muted-foreground rounded-full px-2 py-0.5">
+              {reason}
+            </span>
+          ))}
+        </div>
+      )}
+
       {profile.relationship_style && (
         <Badge className="mb-3" variant="secondary">{profile.relationship_style}</Badge>
       )}

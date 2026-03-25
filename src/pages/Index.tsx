@@ -5,7 +5,8 @@ import { trackEvent } from "@/lib/analytics";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Lock, Copy } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { MatchModal } from "@/components/MatchModal";
@@ -48,6 +49,7 @@ interface DiscoveryProfile {
 interface EnhancedProfile extends DiscoveryProfile {
   badge_count?: number;
   compatibility_score?: number;
+  compatibility_reasons?: string[];
   last_active?: string;
   verified?: boolean;
   distance?: number | null;
@@ -82,6 +84,36 @@ const calculateCompatibility = (user: Profile, other: DiscoveryProfile, otherBad
   return Math.min(100, Math.max(0, score));
 };
 
+const calculateCompatibilityReasons = (
+  user: Profile, other: DiscoveryProfile, otherBadges: number, userBadges: number, isSharing: boolean
+): string[] => {
+  const reasons: string[] = [];
+  const userInterests = new Set(user.interests || []);
+  const otherInterests = new Set(other.interests || []);
+  const sharedInterests = [...userInterests].filter(i => otherInterests.has(i));
+  if (sharedInterests.length >= 2) {
+    reasons.push(`You share ${sharedInterests.length} interests including ${sharedInterests.slice(0, 2).join(" and ")}`);
+  }
+  if (user.relationship_style && user.relationship_style === other.relationship_style) {
+    const styleName = user.relationship_style.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    reasons.push(`You're both into ${styleName}`);
+  }
+  const experienceLevels = ["curious", "new", "experienced", "veteran"];
+  const userExp = experienceLevels.indexOf(user.experience_level || "new");
+  const otherExp = experienceLevels.indexOf(other.experience_level || "new");
+  if (Math.abs(userExp - otherExp) <= 1) {
+    reasons.push("Similar relationship experience level");
+  }
+  if (isSharing && user.location && other.location && user.location === other.location) {
+    reasons.push(`Both near ${user.location}`);
+  }
+  const badgeDiff = Math.abs(userBadges - otherBadges);
+  if (badgeDiff <= 2 && userBadges > 0 && otherBadges > 0) {
+    reasons.push("Both completed similar education modules");
+  }
+  return reasons.slice(0, 3);
+};
+
 const Index = () => {
   const { isSharing, nearbyUsers } = useLocationSharing();
   const { balance: superLikeBalance, canSuperLike, sendSuperLike, isUnlimited } = useSuperLikes();
@@ -96,6 +128,9 @@ const Index = () => {
   const [incognitoMode, setIncognitoMode] = useState(false);
   const [userBadgeCount, setUserBadgeCount] = useState(0);
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
+  const [previewMode, setPreviewMode] = useState(false);
+  const [previewProfiles, setPreviewProfiles] = useState<EnhancedProfile[]>([]);
+  const [requiredCount, setRequiredCount] = useState(5);
 
   // Handle super like purchase redirect
   useEffect(() => {
@@ -127,12 +162,26 @@ const Index = () => {
     const badgeCount = badgesResult.data?.length || 0;
     setUserBadgeCount(badgeCount);
     const requiredFoundationCount = foundationResult.data?.length || 5;
+    setRequiredCount(requiredFoundationCount);
 
     if (badgeCount < requiredFoundationCount) {
-      toast.error("Complete Foundation Education", {
-        description: `You need to earn ${requiredFoundationCount - badgeCount} more foundation badges to access Discovery.`,
-      });
-      navigate("/learn");
+      // Show blurred preview instead of redirecting
+      setPreviewMode(true);
+      trackEvent('discovery_preview_shown', { badge_count: badgeCount });
+
+      // Load preview profiles
+      const { data: previewData } = await supabase.rpc("get_discovery_profiles", { _exclude_ids: [session.user.id] });
+      if (previewData) {
+        const enhanced: EnhancedProfile[] = previewData.slice(0, 6).map(p => ({
+          ...p,
+          compatibility_score: Math.floor(Math.random() * 30) + 60,
+          verified: false,
+          distance: null,
+          is_boosted: false,
+        }));
+        setPreviewProfiles(enhanced);
+      }
+      setLoading(false);
       return;
     }
 
@@ -182,12 +231,12 @@ const Index = () => {
         ...p,
         badge_count: badgeCounts.get(p.id) || 0,
         compatibility_score: calculateCompatibility(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0),
+        compatibility_reasons: calculateCompatibilityReasons(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0, isSharing),
         verified: (badgeCounts.get(p.id) || 0) >= 3,
         distance: null,
         is_boosted: boostedUserIds.has(p.id),
       }))
       .sort((a, b) => {
-        // Boosted profiles first, then by compatibility
         if (a.is_boosted && !b.is_boosted) return -1;
         if (!a.is_boosted && b.is_boosted) return 1;
         return (b.compatibility_score || 0) - (a.compatibility_score || 0);
@@ -256,6 +305,48 @@ const Index = () => {
     setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
   }, [currentUser, suggestions, sendSuperLike]);
 
+  const handleBoostClick = async () => {
+    trackEvent('discovery_empty_boost_clicked', {});
+    try {
+      const { data, error } = await supabase.functions.invoke("create-boost-payment");
+      if (error) throw error;
+      if (data?.url) window.open(data.url, "_blank");
+    } catch (err) {
+      toast.error("Failed to start boost checkout");
+    }
+  };
+
+  const handleReferralClick = async () => {
+    trackEvent('discovery_empty_referral_clicked', {});
+    if (!currentUser) return;
+    try {
+      const { data: existingCodes } = await supabase
+        .from("promo_codes")
+        .select("code")
+        .eq("created_by", currentUser.id)
+        .eq("type", "referral")
+        .is("redeemed_by", null)
+        .limit(1);
+
+      let code = existingCodes?.[0]?.code;
+      if (!code) {
+        code = Array.from({ length: 8 }, () => "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.floor(Math.random() * 36)]).join("");
+        await supabase.from("promo_codes").insert({
+          code,
+          type: "referral",
+          created_by: currentUser.id,
+          trial_days: 14,
+          tier: "premium",
+        });
+      }
+      const link = `https://positivethots.lovable.app/auth?ref=${code}`;
+      await navigator.clipboard.writeText(link);
+      toast.success("Referral link copied!", { description: "Share it with friends to earn rewards." });
+    } catch (err) {
+      toast.error("Failed to generate referral link");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background pb-20">
@@ -274,6 +365,65 @@ const Index = () => {
             ))}
           </div>
         </div>
+      </div>
+    );
+  }
+
+  // Discovery Preview Mode (badge gate)
+  if (previewMode) {
+    return (
+      <div className="min-h-screen bg-background pb-20">
+        <div className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+          <div className="container max-w-7xl mx-auto px-4 py-4">
+            <Logo size="md" />
+          </div>
+        </div>
+
+        <div className="container max-w-7xl mx-auto px-4 py-4 relative">
+          {/* Blurred profile grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 filter blur-[8px] pointer-events-none select-none" aria-hidden="true">
+            {previewProfiles.map((profile, idx) => (
+              <DiscoveryCard
+                key={profile.id}
+                profile={profile}
+                index={idx}
+                onConnect={() => {}}
+                onPass={() => {}}
+              />
+            ))}
+          </div>
+
+          {/* Overlay card */}
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <Card className="max-w-sm w-full p-8 text-center shadow-xl bg-card/95 backdrop-blur-sm border-primary/20">
+              <Lock className="h-12 w-12 text-primary mx-auto mb-4" />
+              <h2 className="text-2xl font-bold mb-2">Unlock Discovery</h2>
+              <p className="text-muted-foreground mb-6">
+                Complete {requiredCount - userBadgeCount} Foundation module{requiredCount - userBadgeCount !== 1 ? "s" : ""} to see who's here
+              </p>
+              <div className="mb-6">
+                <div className="flex justify-between text-sm text-muted-foreground mb-2">
+                  <span>{userBadgeCount} of {requiredCount} complete</span>
+                  <span>{Math.round((userBadgeCount / requiredCount) * 100)}%</span>
+                </div>
+                <Progress value={(userBadgeCount / requiredCount) * 100} className="h-3" />
+              </div>
+              <Button
+                className="w-full"
+                size="lg"
+                onClick={() => {
+                  trackEvent('discovery_preview_cta_clicked', {});
+                  navigate('/learn');
+                }}
+              >
+                <BookOpen className="h-4 w-4 mr-2" />
+                Start Learning →
+              </Button>
+            </Card>
+          </div>
+        </div>
+
+        <BottomNav />
       </div>
     );
   }
@@ -344,17 +494,38 @@ const Index = () => {
       {/* Curated Matches Grid */}
       <div className="container max-w-7xl mx-auto px-4">
         {suggestions.length === 0 ? (
-          <Card className="p-12 text-center">
-            <div className="animate-bounce-in">
-              <Heart className="h-16 w-16 text-muted-foreground mx-auto mb-4 animate-pulse" />
-            </div>
-            <h2 className="text-2xl font-bold mb-2">No More Suggestions</h2>
-            <p className="text-muted-foreground mb-6">Check back later for new matches!</p>
-            <Button onClick={() => navigate("/learn")}>
-              <BookOpen className="h-4 w-4 mr-2" />
-              Continue Learning
-            </Button>
-          </Card>
+          <div className="space-y-4">
+            {/* Boost upsell card */}
+            <Card className="p-6 text-center">
+              <Zap className="h-12 w-12 text-amber-500 mx-auto mb-3" />
+              <h2 className="text-xl font-bold mb-1">Get Seen by More People</h2>
+              <p className="text-muted-foreground text-sm mb-1">
+                A Profile Boost puts you at the top of Discovery for 24 hours.
+              </p>
+              <p className="text-sm font-semibold text-primary mb-4">$2.99</p>
+              <Button className="w-full max-w-xs mx-auto" onClick={handleBoostClick}>
+                <Zap className="h-4 w-4 mr-2" />
+                Boost Now
+              </Button>
+            </Card>
+
+            {/* Referral card */}
+            <Card className="p-6 text-center">
+              <Users className="h-12 w-12 text-primary mx-auto mb-3" />
+              <h2 className="text-xl font-bold mb-1">Invite a Friend, Earn a Free Boost</h2>
+              <p className="text-muted-foreground text-sm mb-4">
+                Share your referral link and you both get rewarded.
+              </p>
+              <Button variant="outline" className="w-full max-w-xs mx-auto" onClick={handleReferralClick}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy Referral Link
+              </Button>
+            </Card>
+
+            <p className="text-center text-xs text-muted-foreground">
+              New profiles added daily — check back tomorrow
+            </p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {suggestions.map((profile, idx) => (
