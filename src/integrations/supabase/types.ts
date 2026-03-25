@@ -566,6 +566,7 @@ export type Database = {
           interests: string[] | null
           is_verified: boolean
           languages: string[] | null
+          learning_level: number | null
           lifestyle: Json | null
           location: string | null
           looking_for: string | null
@@ -600,6 +601,7 @@ export type Database = {
           interests?: string[] | null
           is_verified?: boolean
           languages?: string[] | null
+          learning_level?: number | null
           lifestyle?: Json | null
           location?: string | null
           looking_for?: string | null
@@ -634,6 +636,7 @@ export type Database = {
           interests?: string[] | null
           is_verified?: boolean
           languages?: string[] | null
+          learning_level?: number | null
           lifestyle?: Json | null
           location?: string | null
           looking_for?: string | null
@@ -1014,6 +1017,7 @@ export type Database = {
       }
       user_learning_stats: {
         Row: {
+          boost_credits: number | null
           current_level: number
           current_streak: number
           last_activity_date: string | null
@@ -1025,6 +1029,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          boost_credits?: number | null
           current_level?: number
           current_streak?: number
           last_activity_date?: string | null
@@ -1036,6 +1041,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          boost_credits?: number | null
           current_level?: number
           current_streak?: number
           last_activity_date?: string | null

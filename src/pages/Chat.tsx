@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
+import { getLevelName, getLevelEmoji } from "@/hooks/useLearningStats";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -338,7 +339,16 @@ const Chat = () => {
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold truncate">{otherUser.name}</div>
                   <div className="text-xs text-muted-foreground">
-                    {onlineStatus === "online" ? <span className="text-success">Active now</span> : <span>{formatLastSeen(lastSeen)}</span>}
+                    {otherUser.learning_level && otherUser.learning_level > 1 && (
+                      <span>{getLevelName(otherUser.learning_level)} {getLevelEmoji(otherUser.learning_level)}</span>
+                    )}
+                    {otherUser.learning_level && otherUser.learning_level > 1 && otherUser.pronouns && <span> · </span>}
+                    {otherUser.pronouns && <span>{otherUser.pronouns}</span>}
+                    {!otherUser.learning_level || otherUser.learning_level <= 1 ? (
+                      onlineStatus === "online" ? <span className="text-success">Active now</span> : <span>{formatLastSeen(lastSeen)}</span>
+                    ) : (
+                      <span className="ml-1">· {onlineStatus === "online" ? <span className="text-success">Active now</span> : formatLastSeen(lastSeen)}</span>
+                    )}
                   </div>
                 </div>
               </div>

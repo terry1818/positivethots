@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EducationBadge } from "@/components/EducationBadge";
 import { Heart, MapPin, Users, ShieldCheck } from "lucide-react";
+import { getLevelName, getLevelEmoji } from "@/hooks/useLearningStats";
 
 interface ProfileBadge {
   moduleSlug: string;
@@ -23,6 +24,7 @@ interface ProfileCardProps {
     interests?: string[];
     experience_level?: string;
     is_verified?: boolean;
+    learning_level?: number;
   };
   badges: ProfileBadge[];
   compatibilityScore?: number;
@@ -106,6 +108,11 @@ export const ProfileCard = ({
             {profile.pronouns && (
               <span className="bg-white/20 px-2 py-0.5 rounded">
                 {profile.pronouns}
+              </span>
+            )}
+            {profile.learning_level && profile.learning_level > 1 && (
+              <span className="bg-white/20 px-2 py-0.5 rounded text-xs">
+                {getLevelName(profile.learning_level)} {getLevelEmoji(profile.learning_level)}
               </span>
             )}
             {profile.location && (

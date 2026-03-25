@@ -10,7 +10,6 @@ import { XPBar } from "@/components/education/XPBar";
 import { StreakBadge } from "@/components/education/StreakBadge";
 import { StreakCalendar } from "@/components/education/StreakCalendar";
 import { DailyChallenge } from "@/components/education/DailyChallenge";
-import { ContinueLearning } from "@/components/education/ContinueLearning";
 
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
@@ -48,6 +47,9 @@ const Learn = () => {
   
   const [moduleProgress, setModuleProgress] = useState<Record<string, { completed: number; total: number }>>({});
   const [activeLearnerCount, setActiveLearnerCount] = useState<number | null>(null);
+  const [continueModuleId, setContinueModuleId] = useState<string | undefined>();
+  const [continueSectionNumber, setContinueSectionNumber] = useState<number | undefined>();
+  const [continueProgressPercent, setContinueProgressPercent] = useState<number | undefined>();
   const navigate = useNavigate();
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
@@ -90,6 +92,34 @@ const Learn = () => {
       }
       setModuleProgress(progressMap);
 
+      // Fetch continue data: most recently accessed section progress
+      const { data: recentProgress } = await supabase
+        .from("user_section_progress")
+        .select("section_id, completed, last_accessed")
+        .eq("user_id", session.user.id)
+        .order("last_accessed", { ascending: false })
+        .limit(1);
+
+      if (recentProgress && recentProgress.length > 0) {
+        const { data: sectionData } = await supabase
+          .from("module_sections")
+          .select("module_id, section_number")
+          .eq("id", recentProgress[0].section_id)
+          .single();
+
+        if (sectionData) {
+          const earnedIds = new Set(badges.map(b => b.module_id));
+          // Only show continue if badge not yet earned for this module
+          if (!earnedIds.has(sectionData.module_id)) {
+            const mp = progressMap[sectionData.module_id];
+            const pct = mp && mp.total > 0 ? Math.round((mp.completed / mp.total) * 100) : 0;
+            setContinueModuleId(sectionData.module_id);
+            setContinueSectionNumber(sectionData.section_number);
+            setContinueProgressPercent(Math.min(pct, 90));
+          }
+        }
+      }
+
       // Fetch real active learner count
       const last24h = new Date(Date.now() - 86400000).toISOString();
       const { count: learnerCount } = await supabase
@@ -98,8 +128,6 @@ const Learn = () => {
         .eq("event_name", "module_section_viewed")
         .gte("created_at", last24h);
       setActiveLearnerCount(learnerCount && learnerCount > 0 ? learnerCount : null);
-
-      // No longer need openTiers state
     } catch (error: any) {
       console.error("Error loading education data:", error);
       toast.error("Failed to load education modules");
@@ -132,8 +160,6 @@ const Learn = () => {
     return acc;
   }, {} as Record<string, Module[]>);
 
-  
-
   if (loading) {
     return <PageSkeleton variant="learn" />;
   }
@@ -152,6 +178,12 @@ const Learn = () => {
                 atRisk={isStreakAtRisk}
                 hoursLeft={streakHoursLeft}
               />
+              {/* Streak urgency pill */}
+              {isStreakAtRisk && stats && stats.current_streak > 0 && (
+                <span className="bg-destructive/15 border border-destructive/40 text-destructive text-xs font-bold rounded-full px-2 py-0.5">
+                  🔥 {streakHoursLeft}h left
+                </span>
+              )}
               <div className="flex items-center gap-1.5">
                 <Award className="h-4 w-4 text-primary" />
                 <span className="text-sm font-medium"><AnimatedCounter end={earnedCount} />/{totalBadges}</span>
@@ -170,20 +202,6 @@ const Learn = () => {
       </header>
 
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
-        {/* Streak at risk warning */}
-        {isStreakAtRisk && stats && stats.current_streak > 0 && (
-          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 flex items-center gap-3 animate-heartbeat">
-            <span className="text-2xl">🔥</span>
-            <div className="flex-1">
-              <p className="text-sm font-bold text-destructive">Your {stats.current_streak}-day streak is at risk!</p>
-              <p className="text-xs text-destructive/70">Complete a section in the next {streakHoursLeft}h to keep it going</p>
-            </div>
-          </div>
-        )}
-
-        {/* Continue Learning hero */}
-        <ContinueLearning />
-
         {/* Streak Calendar */}
         {stats && (
           <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} />
@@ -200,44 +218,47 @@ const Learn = () => {
           </div>
         )}
 
-        {/* Unified Learning Path */}
-        <Card className="animate-fade-in overflow-hidden">
-          <CardContent className="pt-5 pb-4 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-primary" />
-                Learning Path
-              </h2>
-              <span className="text-xs text-muted-foreground">
-                <AnimatedCounter end={earnedCount} />/{totalBadges} badges
-              </span>
-            </div>
-            <div className="relative overflow-hidden rounded-full h-2 bg-muted">
-              <div
-                className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-1000 ease-out"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-            {requiredEarned === requiredModules.length && requiredModules.length > 0 ? (
-              <p className="text-xs text-success flex items-center gap-1">
-                <CheckCircle className="h-3.5 w-3.5" />Discovery unlocked! Keep learning for more.
-              </p>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                Complete {requiredModules.length - requiredEarned} more foundation module{requiredModules.length - requiredEarned !== 1 ? 's' : ''} to unlock discovery
-              </p>
-            )}
-
-            <BadgePathMap
-              modulesByTier={modulesByTier}
-              earnedModuleIds={earnedModuleIds}
-              isModuleUnlocked={isModuleUnlocked}
-              moduleProgress={moduleProgress}
-              onModuleClick={(slug) => navigate(`/learn/${slug}`)}
-              tierFeatures={tiers}
+        {/* Learning Path - no Card wrapper */}
+        <div className="animate-fade-in space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-primary" />
+              Learning Path
+            </h2>
+            <span className="text-xs text-muted-foreground">
+              <AnimatedCounter end={earnedCount} />/{totalBadges} badges
+            </span>
+          </div>
+          <div className="relative overflow-hidden rounded-full h-2 bg-muted">
+            <div
+              className="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${progressPercent}%` }}
             />
-          </CardContent>
-        </Card>
+          </div>
+          {requiredEarned === requiredModules.length && requiredModules.length > 0 ? (
+            <p className="text-xs text-success flex items-center gap-1">
+              <CheckCircle className="h-3.5 w-3.5" />Discovery unlocked! Keep learning for more.
+            </p>
+          ) : (
+            <p className="text-xs text-muted-foreground">
+              Complete {requiredModules.length - requiredEarned} more foundation module{requiredModules.length - requiredEarned !== 1 ? 's' : ''} to unlock discovery
+            </p>
+          )}
+
+          <BadgePathMap
+            modulesByTier={modulesByTier}
+            earnedModuleIds={earnedModuleIds}
+            isModuleUnlocked={isModuleUnlocked}
+            moduleProgress={moduleProgress}
+            onModuleClick={(slug) => navigate(`/learn/${slug}`)}
+            tierFeatures={tiers}
+            isStreakAtRisk={isStreakAtRisk}
+            streakHoursLeft={streakHoursLeft}
+            continueModuleId={continueModuleId}
+            continueSectionNumber={continueSectionNumber}
+            continueProgressPercent={continueProgressPercent}
+          />
+        </div>
 
         {/* VIP Upsell for curriculum completion */}
         {earnedCount >= 20 && subscriptionTier !== "vip" && (
