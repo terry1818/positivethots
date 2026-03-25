@@ -24,6 +24,7 @@ interface ProfileCardProps {
     interests?: string[];
     experience_level?: string;
     is_verified?: boolean;
+    learning_level?: number;
   };
   badges: ProfileBadge[];
   compatibilityScore?: number;
