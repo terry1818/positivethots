@@ -105,7 +105,7 @@ const LikesYou = () => {
     const { data: matchId } = await supabase.rpc("check_match", { user1: user.id, user2: likerId });
     if (matchId) {
       setCelebrationTrigger(prev => prev + 1);
-      toast({ title: "It's a match! 🎉", description: "You can now start chatting." });
+      toast({ title: "You Both Said Yes 💜", description: "You can now start chatting." });
       setLikers(prev => prev.filter(l => l.id !== likerId));
       setLikerCount(prev => Math.max(0, prev - 1));
     }
