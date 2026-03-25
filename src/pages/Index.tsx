@@ -304,9 +304,9 @@ const Index = () => {
       trackEvent("match", { matched_user_id: otherUserId });
       const matchedProfile = suggestions.find(s => s.id === otherUserId);
       if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
-      toast.success("It's a Match! 💕", { description: "Your Super Like worked!" });
+      toast.success("You Both Said Yes 💜", { description: "Your Thot worked!" });
     } else {
-      toast.success("Super Like Sent! ⭐", { description: "They'll see you stand out!" });
+      toast.success("Thot Sent! 💜", { description: "They'll see you stand out!" });
     }
     setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
   }, [currentUser, suggestions, sendSuperLike]);
