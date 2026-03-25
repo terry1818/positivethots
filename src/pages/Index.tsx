@@ -270,7 +270,7 @@ const Index = () => {
       trackEvent("match", { matched_user_id: otherUserId });
       const matchedProfile = suggestions.find(s => s.id === otherUserId);
       if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
-      toast.success("It's a Match! 💕", { description: "You can now start chatting!" });
+      toast.success("You Both Said Yes 💜", { description: "You can now start chatting!" });
     } else {
       toast.success("Connection Sent", { description: "They'll be notified of your interest!" });
     }
