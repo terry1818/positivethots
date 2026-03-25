@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
-import { EducationBadge } from "@/components/EducationBadge";
+
 import { XPBar } from "@/components/education/XPBar";
 import { StreakBadge } from "@/components/education/StreakBadge";
 import { StreakCalendar } from "@/components/education/StreakCalendar";
