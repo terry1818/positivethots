@@ -139,7 +139,7 @@ const Index = () => {
   // Handle super like purchase redirect
   useEffect(() => {
     if (searchParams.get("superlikes") === "purchased") {
-      toast.success("Super Likes purchased! 🌟", { description: "10 Super Likes added to your balance." });
+      toast.success("Thots purchased! 💜", { description: "10 Thots added to your balance." });
     }
   }, [searchParams]);
 
