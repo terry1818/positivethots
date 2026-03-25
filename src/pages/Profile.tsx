@@ -33,6 +33,8 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [boostLoading, setBoostLoading] = useState(false);
   const [hasActiveBoost, setHasActiveBoost] = useState(false);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [hasPendingPhotos, setHasPendingPhotos] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { stats } = useLearningStats();
