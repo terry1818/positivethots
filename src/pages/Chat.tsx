@@ -86,8 +86,6 @@ const Chat = () => {
 
     if (otherProfile) {
       setOtherUser(otherProfile);
-      setOnlineStatus(Math.random() > 0.5 ? "online" : "offline");
-      setLastSeen(new Date(Date.now() - Math.random() * 3600000));
     }
 
     const { data: existingMessages } = await supabase
@@ -95,7 +93,7 @@ const Chat = () => {
 
     if (existingMessages) {
       setMessages(existingMessages.map(msg => ({
-        ...msg, read: msg.sender_id === session.user.id || Math.random() > 0.3, delivered: true,
+        ...msg, read: msg.sender_id === session.user.id, delivered: true,
       })));
     }
 

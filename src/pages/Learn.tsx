@@ -44,6 +44,7 @@ const Learn = () => {
   const [loading, setLoading] = useState(true);
   const [openTiers, setOpenTiers] = useState<Record<string, boolean>>({});
   const [moduleProgress, setModuleProgress] = useState<Record<string, { completed: number; total: number }>>({});
+  const [activeLearnerCount, setActiveLearnerCount] = useState<number | null>(null);
   const navigate = useNavigate();
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
@@ -84,6 +85,15 @@ const Learn = () => {
         }
       }
       setModuleProgress(progressMap);
+
+      // Fetch real active learner count
+      const last24h = new Date(Date.now() - 86400000).toISOString();
+      const { count: learnerCount } = await supabase
+        .from("analytics_events")
+        .select("user_id", { count: "exact", head: true })
+        .eq("event_name", "module_section_viewed")
+        .gte("created_at", last24h);
+      setActiveLearnerCount(learnerCount && learnerCount > 0 ? learnerCount : null);
 
       // Default open tier = first incomplete tier
       const earnedIds = new Set(badges.map(b => b.module_id));
@@ -187,10 +197,12 @@ const Learn = () => {
         <DailyChallenge />
 
         {/* Community social proof */}
-        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground py-1">
-          <Users className="h-3 w-3" />
-          <span>{(1200 + Math.floor(Math.random() * 300)).toLocaleString()} learners active today</span>
-        </div>
+        {activeLearnerCount != null && activeLearnerCount > 0 && (
+          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground py-1">
+            <Users className="h-3 w-3" />
+            <span>{activeLearnerCount.toLocaleString()} learners active today</span>
+          </div>
+        )}
 
         {/* Unified Learning Path */}
         <Card className="animate-fade-in overflow-hidden">

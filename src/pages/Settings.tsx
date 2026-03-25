@@ -23,8 +23,6 @@ import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, 
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-const OWNER_ID = "fcf7e150-d122-47e0-b30e-359668184d85";
-
 const Settings = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
@@ -32,7 +30,7 @@ const Settings = () => {
   const { isPremium, tier, loading: subLoading, subscriptionEnd } = useSubscription();
   const { isUnlocked: locationUnlocked, isSharing, toggleSharing, error: locationError, loading: locationLoading } = useLocationSharing();
   const { isAdmin, userId: adminUserId } = useAdminRole();
-  const isOwner = adminUserId === OWNER_ID;
+  const [isOwner, setIsOwner] = useState(false);
 
   // Admin tools
   const [adminEmail, setAdminEmail] = useState("");
@@ -78,6 +76,16 @@ const Settings = () => {
   useEffect(() => {
     loadMyCodes();
   }, [loadMyCodes]);
+
+  // Check owner role from database
+  useEffect(() => {
+    const checkOwner = async () => {
+      if (!adminUserId) return;
+      const { data } = await supabase.rpc("has_role", { _user_id: adminUserId, _role: "owner" as any });
+      setIsOwner(data === true);
+    };
+    checkOwner();
+  }, [adminUserId]);
 
   // Admin: load role holders
   const loadRoleHolders = useCallback(async () => {
@@ -365,7 +373,7 @@ const Settings = () => {
                           <Badge variant={rh.role === "admin" ? "default" : "secondary"} className="text-xs">
                             {rh.role}
                           </Badge>
-                          {rh.user_id === OWNER_ID && (
+                          {rh.user_id === adminUserId && isOwner && (
                             <Badge variant="outline" className="text-xs">Owner</Badge>
                           )}
                         </div>

@@ -2,13 +2,10 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { rateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -41,8 +38,8 @@ serve(async (req) => {
     const { pack_size } = await req.json().catch(() => ({ pack_size: 10 }));
 
     const PACK_PRICES: Record<number, string> = {
-      5: "price_1TOGT3AEIVQtquY2Zxm1pWeN",   // Super Like Pack (5) — $1.99
-      10: "price_1TDkaqAEIVQtquY2l8yO6Xf3",  // Super Like Pack (10) — $3.99
+      5: "price_1TOGT3AEIVQtquY2Zxm1pWeN",
+      10: "price_1TDkaqAEIVQtquY2l8yO6Xf3",
     };
 
     const priceId = PACK_PRICES[pack_size] ?? PACK_PRICES[10];

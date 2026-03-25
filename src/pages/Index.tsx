@@ -50,11 +50,9 @@ interface EnhancedProfile extends DiscoveryProfile {
   compatibility_score?: number;
   last_active?: string;
   verified?: boolean;
-  distance?: number;
+  distance?: number | null;
   is_boosted?: boolean;
 }
-
-const LAST_ACTIVE_OPTIONS = ["Just now", "5 min ago", "30 min ago", "1 hour ago", "2 hours ago", "Today"];
 
 const calculateCompatibility = (user: Profile, other: DiscoveryProfile, otherBadges: number, userBadges: number): number => {
   let score = 0;
@@ -184,9 +182,8 @@ const Index = () => {
         ...p,
         badge_count: badgeCounts.get(p.id) || 0,
         compatibility_score: calculateCompatibility(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0),
-        last_active: LAST_ACTIVE_OPTIONS[Math.floor(Math.random() * LAST_ACTIVE_OPTIONS.length)],
         verified: (badgeCounts.get(p.id) || 0) >= 3,
-        distance: Math.floor(Math.random() * 20) + 1,
+        distance: null,
         is_boosted: boostedUserIds.has(p.id),
       }))
       .sort((a, b) => {

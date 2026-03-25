@@ -2,13 +2,10 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { rateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { getCorsHeaders } from "../_shared/cors.ts";
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -31,11 +28,10 @@ serve(async (req) => {
     const { price_id } = await req.json();
     if (!price_id) throw new Error("price_id is required");
 
-    // Server-side allowlist of valid subscription price IDs
     const ALLOWED_PRICES = new Set([
-      "price_1TDkQ9AEIVQtquY2C4kfHe4d", // Plus
-      "price_1TDjjHQL8g2unk5Zfe9VvytG", // Premium
-      "price_1TDkQpAEIVQtquY2s6feqEgV", // VIP
+      "price_1TDkQ9AEIVQtquY2C4kfHe4d",
+      "price_1TDjjHQL8g2unk5Zfe9VvytG",
+      "price_1TDkQpAEIVQtquY2s6feqEgV",
     ]);
     if (!ALLOWED_PRICES.has(price_id)) throw new Error("Invalid price_id");
 

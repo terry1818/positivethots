@@ -234,19 +234,21 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
           >
             {photo ? (
               <>
-                <img
-                  src={photo.photo_url}
-                  alt={`Photo ${i + 1}`}
-                  className={`w-full h-full object-cover ${photo.moderation_status === "rejected" ? "opacity-40" : ""}`}
-                  draggable={false}
-                />
+                {photo.moderation_status === "pending" ? (
+                  <div className="w-full h-full relative">
+                    <img src={photo.photo_url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover blur-lg" draggable={false} />
+                    <div className="absolute inset-0 bg-background/60 flex flex-col items-center justify-center gap-1">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-[10px] text-muted-foreground font-medium">Under review</span>
+                    </div>
+                  </div>
+                ) : (
+                  <img src={photo.photo_url} alt={`Photo ${i + 1}`} className={`w-full h-full object-cover ${photo.moderation_status === "rejected" ? "opacity-40" : ""}`} draggable={false} />
+                )}
                 <div className={`absolute top-1 left-1 rounded-full p-0.5 text-white ${statusColor(photo.moderation_status)}`}>
                   {statusIcon(photo.moderation_status)}
                 </div>
-                <button
-                  onClick={() => handleDelete(photo)}
-                  className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 hover:bg-black/80 transition-colors"
-                >
+                <button onClick={() => handleDelete(photo)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 hover:bg-black/80 transition-colors">
                   <Trash2 className="h-3 w-3" />
                 </button>
                 {photo.moderation_status === "rejected" && photo.moderation_reason && (
