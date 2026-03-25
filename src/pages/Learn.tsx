@@ -354,6 +354,28 @@ const Learn = () => {
           </CardContent>
         </Card>
 
+        {/* VIP Upsell for curriculum completion */}
+        {earnedCount >= 20 && subscriptionTier !== "vip" && (
+          <Card className="animate-fade-in bg-gradient-to-r from-amber-500/10 to-accent/10 border-amber-500/20">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <div className="rounded-full bg-amber-500/10 p-2">
+                  <Star className="h-5 w-5 text-amber-500" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-sm">You've completed the full curriculum! 🎓</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Upgrade to VIP to earn your Verified Educator badge and host community events.
+                  </p>
+                  <Button size="sm" className="mt-3" onClick={() => navigate("/premium")}>
+                    Upgrade to VIP
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <Card className="bg-muted/50 border border-border">
           <CardContent className="pt-6">
             <h3 className="font-semibold mb-2">Why Education First?</h3>
