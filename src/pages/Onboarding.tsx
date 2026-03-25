@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -160,6 +161,12 @@ const Onboarding = () => {
     loadUserData();
   }, []);
 
+  // Track step views
+  useEffect(() => {
+    const phase = PHASES.find(p => p.steps.includes(step));
+    trackEvent('onboarding_step_viewed', { step, phase: phase?.label || 'Welcome' });
+  }, [step]);
+
   const loadUserData = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { navigate("/auth"); return; }
@@ -246,10 +253,15 @@ const Onboarding = () => {
 
   const goNext = () => {
     if (!validateStep()) return;
+
+    const phase = PHASES.find(p => p.steps.includes(step));
+    trackEvent('onboarding_step_completed', { step, phase: phase?.label || 'Welcome' });
+
     setCelebrationTrigger(t => t + 1);
     
     const phaseTransition = isPhaseTransition(step);
     if (phaseTransition !== null && phaseTransition < PHASE_INTERSTITIALS.length) {
+      trackEvent('onboarding_phase_completed', { phase: phase?.label || 'Welcome' });
       const data = PHASE_INTERSTITIALS[phaseTransition];
       setInterstitialData(data);
       setShowInterstitial(true);
@@ -347,6 +359,7 @@ const Onboarding = () => {
         .eq("id", session.user.id);
 
       if (error) throw error;
+      trackEvent('onboarding_completed', {});
       toast.success("Welcome to Positive Thots! 💕");
       navigate("/learn");
     } catch (error: any) {
@@ -817,7 +830,7 @@ const Onboarding = () => {
                 {step < TOTAL_STEPS ? (
                   <>
                     {isOptionalStep && (
-                      <Button onClick={goNext} variant="ghost" className="px-3" title="Skip this step">
+                      <Button onClick={() => { trackEvent('onboarding_skipped', { step }); goNext(); }} variant="ghost" className="px-3" title="Skip this step">
                         <SkipForward className="h-4 w-4" />
                       </Button>
                     )}
