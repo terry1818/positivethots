@@ -132,7 +132,7 @@ const Learn = () => {
     return acc;
   }, {} as Record<string, Module[]>);
 
-  const toggleTier = (tier: string) => { setOpenTiers(prev => ({ ...prev, [tier]: !prev[tier] })); };
+  
 
   if (loading) {
     return <PageSkeleton variant="learn" />;
