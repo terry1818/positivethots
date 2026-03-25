@@ -17,7 +17,7 @@ import { ReadingProgress } from "@/components/education/ReadingProgress";
 import { useAntiCheat } from "@/hooks/useAntiCheat";
 import { useModuleProgress } from "@/hooks/useModuleProgress";
 import { useLearningStats } from "@/hooks/useLearningStats";
-import { ChevronLeft, CheckCircle, Award, BookOpen, Lock, Zap, Flame } from "lucide-react";
+import { ChevronLeft, CheckCircle, CheckCircle2, XCircle, Award, BookOpen, Lock, Zap, Flame } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/PageSkeleton";
