@@ -769,9 +769,9 @@ const Onboarding = () => {
                   <StepHeader emoji="👑" title="Unlock More" subtitle="Get the most out of Positive Thots" />
                   <div className="space-y-3 animate-stagger-1">
                     {[
-                      { icon: Crown, name: "Plus", price: "$4.99/mo", features: ["See who likes you", "5 Super Likes/day"] },
+                      { icon: Crown, name: "Plus", price: "$4.99/mo", features: ["See who likes you", "5 Thots/day"] },
                       { icon: Star, name: "Premium", price: "$9.99/mo", features: ["Everything in Plus", "Priority visibility", "Advanced filters"], highlight: true },
-                      { icon: Zap, name: "VIP", price: "$19.99/mo", features: ["Everything in Premium", "Unlimited Super Likes", "Mentor badge"] },
+                      { icon: Zap, name: "VIP", price: "$19.99/mo", features: ["Everything in Premium", "Unlimited Thots", "Mentor badge"] },
                     ].map((tier) => (
                       <div
                         key={tier.name}

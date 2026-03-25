@@ -105,7 +105,7 @@ const LikesYou = () => {
     const { data: matchId } = await supabase.rpc("check_match", { user1: user.id, user2: likerId });
     if (matchId) {
       setCelebrationTrigger(prev => prev + 1);
-      toast({ title: "It's a match! 🎉", description: "You can now start chatting." });
+      toast({ title: "You Both Said Yes 💜", description: "You can now start chatting." });
       setLikers(prev => prev.filter(l => l.id !== likerId));
       setLikerCount(prev => Math.max(0, prev - 1));
     }
@@ -186,7 +186,7 @@ const LikesYou = () => {
                     <Card key={liker.id} className={cn("overflow-hidden relative animate-stagger-fade", liker.is_super_like && "ring-2 ring-amber-500/50")} style={{ animationDelay: `${idx * 80}ms` }}>
                       {liker.is_super_like && (
                         <Badge className="absolute top-2 right-2 z-10 bg-amber-500 text-white">
-                          <Star className="h-3 w-3 mr-1 fill-current" />Super Like
+                          <Star className="h-3 w-3 mr-1 fill-current" />Thot
                         </Badge>
                       )}
                       <div className="relative h-44 bg-gradient-to-br from-primary/20 to-secondary/20">

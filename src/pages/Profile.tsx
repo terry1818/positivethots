@@ -381,7 +381,7 @@ const Profile = () => {
                   <h3 className="font-semibold text-sm">Go Premium</h3>
                   <ul className="mt-1.5 space-y-1 text-xs text-muted-foreground">
                     <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />See who likes you</li>
-                    <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Unlimited Super Likes</li>
+                    <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Unlimited Thots</li>
                     <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Priority Visibility</li>
                   </ul>
                   <Button size="sm" className="mt-3" onClick={() => navigate("/premium")}>

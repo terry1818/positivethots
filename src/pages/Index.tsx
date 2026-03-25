@@ -134,11 +134,12 @@ const Index = () => {
   const [previewProfiles, setPreviewProfiles] = useState<EnhancedProfile[]>([]);
   const [requiredCount, setRequiredCount] = useState(5);
   const [detailProfile, setDetailProfile] = useState<EnhancedProfile | null>(null);
+  const [matchCount, setMatchCount] = useState(0);
 
   // Handle super like purchase redirect
   useEffect(() => {
     if (searchParams.get("superlikes") === "purchased") {
-      toast.success("Super Likes purchased! 🌟", { description: "10 Super Likes added to your balance." });
+      toast.success("Thots purchased! 💜", { description: "10 Thots added to your balance." });
     }
   }, [searchParams]);
 
@@ -203,6 +204,7 @@ const Index = () => {
     ]);
 
     const matchedUserIds = new Set(matchesResult.data?.flatMap(m => [m.user1_id, m.user2_id]) || []);
+    setMatchCount(matchesResult.data?.length || 0);
     matchedUserIds.add(userId);
 
     const blockedUserIds = new Set<string>();
@@ -268,7 +270,7 @@ const Index = () => {
       trackEvent("match", { matched_user_id: otherUserId });
       const matchedProfile = suggestions.find(s => s.id === otherUserId);
       if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
-      toast.success("It's a Match! 💕", { description: "You can now start chatting!" });
+      toast.success("You Both Said Yes 💜", { description: "You can now start chatting!" });
     } else {
       toast.success("Connection Sent", { description: "They'll be notified of your interest!" });
     }
@@ -288,7 +290,7 @@ const Index = () => {
     if (!currentUser) return;
     const success = await sendSuperLike(otherUserId);
     if (!success) {
-      toast.error("No Super Likes left", { description: "Purchase more or wait until tomorrow." });
+      toast.error("No Thots left", { description: "Purchase more or wait until tomorrow." });
       return;
     }
 
@@ -302,9 +304,9 @@ const Index = () => {
       trackEvent("match", { matched_user_id: otherUserId });
       const matchedProfile = suggestions.find(s => s.id === otherUserId);
       if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
-      toast.success("It's a Match! 💕", { description: "Your Super Like worked!" });
+      toast.success("You Both Said Yes 💜", { description: "Your Thot worked!" });
     } else {
-      toast.success("Super Like Sent! ⭐", { description: "They'll see you stand out!" });
+      toast.success("Thot Sent! 💜", { description: "They'll see you stand out!" });
     }
     setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
   }, [currentUser, suggestions, sendSuperLike]);
@@ -443,8 +445,8 @@ const Index = () => {
             <Logo size="md" showText={false} />
             <div className="flex items-center gap-2">
               {canSuperLike && (
-                <Badge variant="outline" className="text-amber-500 border-amber-500/30">
-                  <Star className="h-3 w-3 mr-1 fill-current" />
+                <Badge variant="outline" className="text-primary border-primary/30" title="Thots remaining" aria-label="Thots remaining">
+                  <Heart className="h-3 w-3 mr-1 fill-current" />
                   {isUnlimited ? "∞" : superLikeBalance}
                 </Badge>
               )}
@@ -484,7 +486,7 @@ const Index = () => {
       {/* Compact Progress Strip */}
       {tiers.length > 0 && (
         <div className="container max-w-7xl mx-auto px-4 py-3">
-          <CompactProgressBar tiers={tiers} badgeCount={userBadgeCount} suggestionCount={suggestions.length} />
+          <CompactProgressBar tiers={tiers} badgeCount={userBadgeCount} connectionCount={matchCount} />
         </div>
       )}
 

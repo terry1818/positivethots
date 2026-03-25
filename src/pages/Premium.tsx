@@ -256,7 +256,7 @@ const Premium = () => {
           </CardHeader>
           <CardContent className="pt-0">
             <ul className="space-y-2 mb-4">
-              {["Browse profiles", "1 daily Super Like", "Education access", "Real-time chat", "Basic matching"].map((feature) => (
+              {["Browse profiles", "1 daily Thot", "Education access", "Real-time chat", "Basic matching"].map((feature) => (
                 <li key={feature} className="flex items-center gap-2 text-sm">
                   <Check className="h-4 w-4 text-primary flex-shrink-0" />
                   <span>{feature}</span>

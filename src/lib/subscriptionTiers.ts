@@ -112,11 +112,11 @@ export const ANNUAL_TIERS = SUBSCRIPTION_TIERS.filter((t) => t.billingPeriod ===
 
 export const FEATURE_LABELS: Record<FeatureKey, string> = {
   see_likes: "See Who Likes You",
-  super_likes: "5 Super Likes/day",
+  super_likes: "5 Thots/day",
   priority_visibility: "Priority Visibility",
   advanced_filters: "Advanced Filters",
   profile_boost: "1 Profile Boost/mo",
-  unlimited_super_likes: "Unlimited Super Likes",
+  unlimited_super_likes: "Unlimited Thots",
   mentor_badge: "Mentor Badge",
   verified_educator: "Verified Educator Badge",
   community_host: "Host Community Events",
@@ -161,14 +161,14 @@ export const ONE_TIME_PRODUCTS = {
     productId: "prod_SbSVkKVkIvYeSB",
     priceId: "price_1TOGT3AEIVQtquY2Zxm1pWeN",
     price: 1.99,
-    name: "Super Like Pack (5)",
+    name: "Thot Pack (5)",
     packSize: 5,
   },
   super_like_pack_10: {
     productId: "prod_UC8stYS4Xx9hot",
     priceId: "price_1TDkaqAEIVQtquY2l8yO6Xf3",
     price: 3.99,
-    name: "Super Like Pack (10)",
+    name: "Thot Pack (10)",
     packSize: 10,
   },
 } as const;
