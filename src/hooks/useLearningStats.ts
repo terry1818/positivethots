@@ -41,6 +41,20 @@ export const isStreakMilestone = (streak: number) => STREAK_MILESTONES.includes(
 // Levels that grant rewards
 const REWARD_LEVELS = [3, 5, 7, 10];
 
+export const LEVEL_REWARDS: Record<number, { label: string; icon: string }> = {
+  3:  { label: "+1 Super Like",     icon: "💜" },
+  5:  { label: "Streak Freeze",     icon: "❄️" },
+  7:  { label: "+2 Super Likes",    icon: "💜💜" },
+  10: { label: "Free Profile Boost", icon: "🚀" },
+};
+
+export const getNextReward = (currentLevel: number): { level: number; label: string; icon: string } | null => {
+  const rewardLevels = Object.keys(LEVEL_REWARDS).map(Number).sort((a, b) => a - b);
+  const next = rewardLevels.find(l => l > currentLevel);
+  if (!next) return null;
+  return { level: next, ...LEVEL_REWARDS[next] };
+};
+
 export const useLearningStats = () => {
   const [stats, setStats] = useState<LearningStats | null>(null);
   const [loading, setLoading] = useState(true);
