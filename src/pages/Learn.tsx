@@ -376,16 +376,79 @@ const Learn = () => {
           </Card>
         )}
 
-        <Card className="bg-muted/50 border border-border">
-          <CardContent className="pt-6">
-            <h3 className="font-semibold mb-2">Why Education First?</h3>
-            <p className="text-sm text-muted-foreground">
-              At Positive Thots, we believe informed connections are better connections. 
-              Complete the 5 foundation modules to unlock discovery, then continue learning 
-              with 24 additional courses on sexual health, identity, relationships, and more.
-            </p>
-          </CardContent>
-        </Card>
+        <LeaderboardCard />
+      </main>
+
+      <BottomNav />
+    </div>
+  );
+};
+
+// Leaderboard component
+const LeaderboardCard = () => {
+  const [leaderboard, setLeaderboard] = useState<Array<{ rank: number; display_name: string; sections_completed: number; user_id: string }>>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) setCurrentUserId(session.user.id);
+
+      const { data, error } = await supabase.rpc("get_weekly_leaderboard");
+      if (!error && data && data.length >= 3) {
+        setLeaderboard(data.map((r: any) => ({
+          rank: Number(r.rank),
+          display_name: r.display_name,
+          sections_completed: Number(r.sections_completed),
+          user_id: r.user_id,
+        })));
+      }
+    };
+    load();
+  }, []);
+
+  if (leaderboard.length < 3) return null;
+
+  const medals = ["🥇", "🥈", "🥉"];
+
+  return (
+    <Card className="bg-muted/50 border border-border">
+      <CardContent className="pt-6">
+        <h3 className="font-semibold mb-3 flex items-center gap-2">
+          <Star className="h-4 w-4 text-accent" />
+          Top Learners This Week
+        </h3>
+        <div className="space-y-2">
+          {leaderboard.map((entry) => {
+            const isMe = entry.user_id === currentUserId;
+            return (
+              <div
+                key={entry.user_id}
+                className={cn(
+                  "flex items-center gap-3 p-2 rounded-lg transition-colors",
+                  isMe ? "bg-primary/10 border border-primary/20" : "bg-background"
+                )}
+              >
+                <span className="text-lg w-6 text-center">{medals[entry.rank - 1] || entry.rank}</span>
+                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
+                  {entry.display_name.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className={cn("text-sm font-medium truncate", isMe && "text-primary")}>
+                    {entry.display_name} {isMe && "(You)"}
+                  </p>
+                </div>
+                <Badge variant="secondary" className="text-xs">
+                  {entry.sections_completed} sections
+                </Badge>
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
       </main>
 
       <BottomNav />

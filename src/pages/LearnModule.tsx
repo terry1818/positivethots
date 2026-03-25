@@ -141,6 +141,12 @@ const LearnModule = () => {
       setTimeout(() => setCelebration({ type: "level_up", level: stats?.current_level ? stats.current_level + 1 : 2 }), 1600);
     } else if (result.streakMilestone) {
       setTimeout(() => setCelebration({ type: "streak_milestone", streak: result.newStreak }), 1600);
+      // Grant streak milestone reward
+      try {
+        await supabase.functions.invoke('grant-streak-reward', { body: { streak: result.newStreak } });
+      } catch (e) {
+        console.error("Failed to grant streak reward:", e);
+      }
     }
   }, [markComplete, awardXP, stats]);
 
