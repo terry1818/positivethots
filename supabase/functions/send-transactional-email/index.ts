@@ -2,17 +2,13 @@ import * as React from 'npm:react@18.3.1'
 import { renderAsync } from 'npm:@react-email/components@0.0.22'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
+import { getCorsHeaders } from '../_shared/cors.ts'
+import { rateLimit, rateLimitResponse } from '../_shared/rate-limit.ts'
 
 // Configuration baked in at scaffold time
 const SITE_NAME = "positivethots"
 const SENDER_DOMAIN = "notify.positivethots.app"
 const FROM_DOMAIN = "positivethots.app"
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type',
-}
 
 // Generate a cryptographically random 32-byte hex token
 function generateToken(): string {
@@ -28,10 +24,16 @@ function generateToken(): string {
 // reaches this code. No in-function auth check is needed.
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req)
+
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
+
+  // IP rate limit (20 per minute)
+  const { limited } = rateLimit(req, 20)
+  if (limited) return rateLimitResponse(corsHeaders)
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
@@ -117,6 +119,22 @@ Deno.serve(async (req) => {
 
   // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+  // Per-user rate limit: max 5 emails to same recipient per hour
+  const oneHourAgo = new Date(Date.now() - 3600_000).toISOString()
+  const { count: recentEmailCount } = await supabase
+    .from('email_send_log')
+    .select('id', { count: 'exact', head: true })
+    .eq('recipient_email', effectiveRecipient.toLowerCase())
+    .gte('created_at', oneHourAgo)
+
+  if (recentEmailCount && recentEmailCount >= 5) {
+    console.warn('Per-user email rate limit exceeded', { recipient: effectiveRecipient, count: recentEmailCount })
+    return new Response(
+      JSON.stringify({ error: 'Too many emails to this recipient. Please try again later.' }),
+      { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '3600' } }
+    )
+  }
 
   // 2. Check suppression list (fail-closed: if we can't verify, don't send)
   const { data: suppressed, error: suppressionError } = await supabase
@@ -341,6 +359,12 @@ Deno.serve(async (req) => {
   }
 
   console.log('Transactional email enqueued', { templateName, effectiveRecipient })
+
+  // Log email_sent analytics event for rate limiting and tracking
+  await supabase.from('analytics_events').insert({
+    event_name: 'email_sent',
+    event_data: { template: templateName },
+  }).then(() => {}) // fire and forget
 
   return new Response(
     JSON.stringify({ success: true, queued: true }),

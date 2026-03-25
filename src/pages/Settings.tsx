@@ -550,6 +550,39 @@ const Settings = () => {
               </Button>
             </div>
 
+            {/* Referral Stats Summary */}
+            {(() => {
+              const userCodes = myCodes.filter(c => c.created_by === user?.id);
+              const totalReferrals = userCodes.filter(c => c.type === 'referral' && c.redeemed_by).length;
+              const convertedToPaid = userCodes.filter(c => c.referred_subscribed).length;
+              const rewardsEarned = userCodes.filter(c => c.reward_granted).length;
+
+              if (userCodes.length > 0) {
+                return (
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    <Card className="p-2 text-center">
+                      <p className="text-lg font-bold">{totalReferrals}</p>
+                      <p className="text-xs text-muted-foreground">Referrals</p>
+                    </Card>
+                    <Card className="p-2 text-center">
+                      <p className="text-lg font-bold">{convertedToPaid}</p>
+                      <p className="text-xs text-muted-foreground">Converted</p>
+                    </Card>
+                    <Card className="p-2 text-center">
+                      <p className="text-lg font-bold">{rewardsEarned}</p>
+                      <p className="text-xs text-muted-foreground">Rewards</p>
+                    </Card>
+                  </div>
+                );
+              }
+              return null;
+            })()}
+            {myCodes.filter(c => c.created_by === user?.id).length > 0 && (
+              <p className="text-xs text-muted-foreground mb-2">
+                Share more — you earn a free boost for every friend who subscribes.
+              </p>
+            )}
+
             <div className="space-y-2">
               <p className="text-sm font-medium flex items-center gap-1">
                 <Users className="h-4 w-4" /> My Codes
@@ -559,7 +592,13 @@ const Settings = () => {
                   <Loader2 className="h-3 w-3 animate-spin" /> Loading…
                 </div>
               ) : myCodes.filter(c => c.created_by === user?.id).length === 0 ? (
-                <p className="text-sm text-muted-foreground">No codes yet. Create one above!</p>
+                <Card className="p-4 text-center border-dashed">
+                  <Users className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-sm font-medium">Start earning rewards</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Create a referral code and share it. Every friend who subscribes earns you a free 24-hour Profile Boost.
+                  </p>
+                </Card>
               ) : (
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                   {myCodes.filter(c => c.created_by === user?.id).map((code) => (

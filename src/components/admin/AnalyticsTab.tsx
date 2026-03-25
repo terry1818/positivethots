@@ -27,23 +27,11 @@ export const AnalyticsTab = () => {
   const loadStats = async () => {
     setLoading(true);
 
-    // Parallel queries for funnel metrics + event stats
     const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
 
-    const [
-      eventsResult,
-      totalUsersResult,
-      onboardedResult,
-      badgesResult,
-      swipesResult,
-      subscribersResult,
-    ] = await Promise.all([
+    const [eventsResult, funnelResult] = await Promise.all([
       supabase.from("analytics_events").select("event_name", { count: "exact" }).gte("created_at", sevenDaysAgo),
-      supabase.from("profiles").select("id", { count: "exact", head: true }),
-      supabase.from("profiles").select("id", { count: "exact", head: true }).eq("onboarding_completed", true),
-      supabase.from("user_badges").select("id", { count: "exact", head: true }),
-      supabase.from("swipes").select("id", { count: "exact", head: true }),
-      supabase.from("subscriptions").select("id", { count: "exact", head: true }).eq("status", "active"),
+      supabase.rpc("get_funnel_metrics").single(),
     ]);
 
     // Process event stats
@@ -59,15 +47,17 @@ export const AnalyticsTab = () => {
       setTotalEvents(eventsResult.count || eventsResult.data.length);
     }
 
-    // Process funnel metrics
-    const totalUsers = totalUsersResult.count || 0;
-    setFunnel({
-      totalUsers,
-      onboardedUsers: onboardedResult.count || 0,
-      usersWithBadges: badgesResult.count || 0,
-      usersInDiscovery: swipesResult.count || 0,
-      paidSubscribers: subscribersResult.count || 0,
-    });
+    // Process funnel metrics from single RPC
+    if (funnelResult.data) {
+      const d = funnelResult.data as any;
+      setFunnel({
+        totalUsers: Number(d.total_users) || 0,
+        onboardedUsers: Number(d.onboarded_users) || 0,
+        usersWithBadges: Number(d.users_with_badges) || 0,
+        usersInDiscovery: Number(d.users_in_discovery) || 0,
+        paidSubscribers: Number(d.paid_subscribers) || 0,
+      });
+    }
 
     setLoading(false);
   };
@@ -114,7 +104,7 @@ export const AnalyticsTab = () => {
           <div className="flex items-center gap-2">
             <Award className="h-4 w-4 text-accent" />
             <div>
-              <p className="text-xs text-muted-foreground">Users w/ Badges</p>
+              <p className="text-xs text-muted-foreground">Users w/ 1+ Badge</p>
               <p className="text-lg font-bold">{funnel.usersWithBadges}</p>
             </div>
           </div>

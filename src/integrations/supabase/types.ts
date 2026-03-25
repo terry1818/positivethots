@@ -568,6 +568,7 @@ export type Database = {
           looking_for: string | null
           name: string
           onboarding_completed: boolean | null
+          onboarding_started_at: string | null
           photos: string[] | null
           profile_image: string | null
           pronouns: string | null
@@ -601,6 +602,7 @@ export type Database = {
           looking_for?: string | null
           name: string
           onboarding_completed?: boolean | null
+          onboarding_started_at?: string | null
           photos?: string[] | null
           profile_image?: string | null
           pronouns?: string | null
@@ -634,6 +636,7 @@ export type Database = {
           looking_for?: string | null
           name?: string
           onboarding_completed?: boolean | null
+          onboarding_started_at?: string | null
           photos?: string[] | null
           profile_image?: string | null
           pronouns?: string | null
@@ -1304,6 +1307,16 @@ export type Database = {
           relationship_status: string
           relationship_style: string
           zodiac_sign: string
+        }[]
+      }
+      get_funnel_metrics: {
+        Args: never
+        Returns: {
+          onboarded_users: number
+          paid_subscribers: number
+          total_users: number
+          users_in_discovery: number
+          users_with_badges: number
         }[]
       }
       get_likers_for_user: {
