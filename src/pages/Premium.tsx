@@ -2,28 +2,29 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ShimmerButton } from "@/components/ShimmerButton";
 import { StaggerChildren } from "@/components/StaggerChildren";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Crown,
   Heart,
-  Eye,
   Zap,
   ArrowLeft,
   Loader2,
   Check,
   X,
   Star,
-  Shield,
   Gift,
-  Ticket,
+  Send,
 } from "lucide-react";
 import {
-  SUBSCRIPTION_TIERS,
+  MONTHLY_TIERS,
+  ANNUAL_TIERS,
   ALL_FEATURES,
   FEATURE_LABELS,
   type FeatureKey,
@@ -41,9 +42,17 @@ const Premium = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isPremium, tier: currentTier } = useSubscription();
+  const { user } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
   const [promoCode, setPromoCode] = useState("");
   const [redeemingCode, setRedeemingCode] = useState(false);
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
+
+  // Gift state
+  const [giftEmail, setGiftEmail] = useState("");
+  const [giftTier, setGiftTier] = useState("premium");
+  const [giftDays, setGiftDays] = useState("14");
+  const [sendingGift, setSendingGift] = useState(false);
 
   // Pre-fill from sessionStorage (referral flow)
   useEffect(() => {
@@ -96,8 +105,52 @@ const Premium = () => {
     }
   };
 
+  const generateCode = () => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let result = "";
+    for (let i = 0; i < 8; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+    return result;
+  };
+
+  const handleSendGift = async () => {
+    if (!giftEmail.trim() || !user) return;
+    setSendingGift(true);
+    try {
+      const code = generateCode();
+      const { error } = await supabase.from("promo_codes").insert({
+        code,
+        type: "gift",
+        tier: giftTier,
+        trial_days: parseInt(giftDays),
+        created_by: user.id,
+      });
+      if (error) throw error;
+
+      await supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "gift-code",
+          recipientEmail: giftEmail.trim(),
+          idempotencyKey: `gift-${code}`,
+          templateData: {
+            code,
+            tier: giftTier.charAt(0).toUpperCase() + giftTier.slice(1),
+            days: giftDays,
+            senderName: user?.user_metadata?.name || "A friend",
+          },
+        },
+      });
+
+      toast.success(`Gift sent to ${giftEmail}!`);
+      setGiftEmail("");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to send gift");
+    } finally {
+      setSendingGift(false);
+    }
+  };
+
   if (isPremium) {
-    const currentConfig = SUBSCRIPTION_TIERS.find((t) => t.tier === currentTier);
+    const currentConfig = MONTHLY_TIERS.find((t) => t.tier === currentTier);
     const TierIcon = tierIcons[currentTier as keyof typeof tierIcons] ?? Crown;
 
     return (
@@ -118,6 +171,8 @@ const Premium = () => {
       </div>
     );
   }
+
+  const displayTiers = billingPeriod === "monthly" ? MONTHLY_TIERS : ANNUAL_TIERS;
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
@@ -166,6 +221,27 @@ const Premium = () => {
           </CardContent>
         </Card>
 
+        {/* Billing Period Toggle */}
+        <div className="flex items-center justify-center gap-1 mb-6 animate-fade-in">
+          <Button
+            variant={billingPeriod === "monthly" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setBillingPeriod("monthly")}
+            className="rounded-r-none"
+          >
+            Monthly
+          </Button>
+          <Button
+            variant={billingPeriod === "annual" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setBillingPeriod("annual")}
+            className="rounded-l-none"
+          >
+            Annual
+            <Badge className="ml-1.5 bg-accent text-accent-foreground text-[10px] px-1.5 py-0">Save 20%</Badge>
+          </Button>
+        </div>
+
         {/* Free Tier */}
         <Card className="mb-6 animate-fade-in border-muted">
           <CardHeader className="text-center pb-2">
@@ -194,13 +270,15 @@ const Premium = () => {
         </Card>
 
         <StaggerChildren className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8" stagger={100}>
-          {SUBSCRIPTION_TIERS.map((config) => {
+          {displayTiers.map((config) => {
             const Icon = tierIcons[config.tier as keyof typeof tierIcons];
             const isHighlighted = config.highlight;
+            const isAnnual = config.billingPeriod === "annual";
+            const isVip = config.tier === "vip";
 
             return (
               <Card
-                key={config.tier}
+                key={`${config.tier}-${config.billingPeriod}`}
                 className={cn(
                   "relative transition-all hover:-translate-y-1",
                   isHighlighted && "border-primary shadow-lg ring-2 ring-primary/20"
@@ -211,18 +289,33 @@ const Premium = () => {
                     Most Popular
                   </div>
                 )}
+                {isAnnual && (
+                  <div className="absolute top-3 right-3">
+                    <Badge className="bg-accent text-accent-foreground text-[10px]">Save 20%</Badge>
+                  </div>
+                )}
                 <CardHeader className="text-center pb-2">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mx-auto mb-2">
                     <Icon className="h-6 w-6 text-primary" />
                   </div>
                   <CardTitle className="text-lg">{config.name}</CardTitle>
                   <div className="mt-2">
-                    <span className="text-3xl font-bold">${config.price}</span>
-                    <span className="text-muted-foreground text-sm">/mo</span>
+                    {isAnnual ? (
+                      <>
+                        <span className="text-3xl font-bold">${config.annualMonthlyEquivalent?.toFixed(2)}</span>
+                        <span className="text-muted-foreground text-sm">/mo</span>
+                        <p className="text-xs text-muted-foreground mt-1">Billed ${config.price}/year</p>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-3xl font-bold">${config.price}</span>
+                        <span className="text-muted-foreground text-sm">/mo</span>
+                      </>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <ul className="space-y-2 mb-6">
+                  <ul className="space-y-2 mb-4">
                     {ALL_FEATURES.map((feature) => {
                       const has = config.features.includes(feature);
                       return (
@@ -239,6 +332,11 @@ const Premium = () => {
                       );
                     })}
                   </ul>
+                  {isVip && (
+                    <p className="text-xs text-muted-foreground italic mb-4">
+                      VIP is for members who've completed the full curriculum and want to give back to the community.
+                    </p>
+                  )}
                   <ShimmerButton
                     className={cn(
                       "w-full",
@@ -261,8 +359,65 @@ const Premium = () => {
           })}
         </StaggerChildren>
 
+        {/* Gift Subscription Section */}
+        <Card className="mb-6 animate-fade-in border-dashed border-accent/30">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-2 mb-2">
+              <Gift className="h-5 w-5 text-accent" />
+              <span className="font-semibold">Give the Gift of Growth</span>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Send a membership to a partner or friend. They'll get full access instantly — no account needed to receive it.
+            </p>
+            <div className="space-y-3">
+              <Input
+                type="email"
+                placeholder="their@email.com"
+                value={giftEmail}
+                onChange={(e) => setGiftEmail(e.target.value)}
+                maxLength={100}
+              />
+              <div className="flex gap-2">
+                <Select value={giftTier} onValueChange={setGiftTier}>
+                  <SelectTrigger className="flex-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="plus">Plus</SelectItem>
+                    <SelectItem value="premium">Premium</SelectItem>
+                    <SelectItem value="vip">VIP</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={giftDays} onValueChange={setGiftDays}>
+                  <SelectTrigger className="flex-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="7">7 days</SelectItem>
+                    <SelectItem value="14">14 days</SelectItem>
+                    <SelectItem value="30">30 days</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                className="w-full"
+                onClick={handleSendGift}
+                disabled={sendingGift || !giftEmail.trim()}
+              >
+                {sendingGift ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Send className="h-4 w-4 mr-1" /> Send Gift
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         <p className="text-center text-xs text-muted-foreground">
-          Cancel anytime · Billed monthly · Secure checkout via Stripe
+          Cancel anytime · {billingPeriod === "annual" ? "Billed annually" : "Billed monthly"} · Secure checkout via Stripe
         </p>
       </div>
     </div>

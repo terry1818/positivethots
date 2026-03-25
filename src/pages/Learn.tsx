@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
@@ -14,8 +15,9 @@ import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
+import { useSubscription } from "@/hooks/useSubscription";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { BookOpen, CheckCircle, Lock, ChevronRight, ChevronDown, Award, Users } from "lucide-react";
+import { BookOpen, CheckCircle, Lock, ChevronRight, ChevronDown, Award, Users, Star } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -48,6 +50,7 @@ const Learn = () => {
   const navigate = useNavigate();
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
+  const { tier: subscriptionTier } = useSubscription();
 
   useEffect(() => { loadData(); }, []);
 
@@ -350,6 +353,28 @@ const Learn = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* VIP Upsell for curriculum completion */}
+        {earnedCount >= 20 && subscriptionTier !== "vip" && (
+          <Card className="animate-fade-in bg-gradient-to-r from-amber-500/10 to-accent/10 border-amber-500/20">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <div className="rounded-full bg-amber-500/10 p-2">
+                  <Star className="h-5 w-5 text-amber-500" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-sm">You've completed the full curriculum! 🎓</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Upgrade to VIP to earn your Verified Educator badge and host community events.
+                  </p>
+                  <Button size="sm" className="mt-3" onClick={() => navigate("/premium")}>
+                    Upgrade to VIP
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="bg-muted/50 border border-border">
           <CardContent className="pt-6">

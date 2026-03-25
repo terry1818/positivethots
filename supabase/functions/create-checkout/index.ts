@@ -32,6 +32,9 @@ serve(async (req) => {
       "price_1TDkQ9AEIVQtquY2C4kfHe4d",
       "price_1TDjjHQL8g2unk5Zfe9VvytG",
       "price_1TDkQpAEIVQtquY2s6feqEgV",
+      "ANNUAL_PLUS_PRICE_ID",
+      "ANNUAL_PREMIUM_PRICE_ID",
+      "ANNUAL_VIP_PRICE_ID",
     ]);
     if (!ALLOWED_PRICES.has(price_id)) throw new Error("Invalid price_id");
 

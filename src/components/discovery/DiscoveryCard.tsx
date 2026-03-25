@@ -2,7 +2,7 @@ import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Clock, Users, Shield, BookOpen, Star, Rocket } from "lucide-react";
+import { Heart, MapPin, Clock, Users, Shield, BookOpen, Star, Rocket, Award } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -82,7 +82,12 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
             <Shield className="h-3 w-3 mr-1" />Verified
           </Badge>
         )}
-        {profile.badge_count && profile.badge_count >= 10 && (
+        {profile.badge_count && profile.badge_count >= 20 && (
+          <Badge className="bg-amber-500/90 text-white">
+            <Award className="h-3 w-3 mr-1" />Verified Educator
+          </Badge>
+        )}
+        {profile.badge_count && profile.badge_count >= 10 && profile.badge_count < 20 && (
           <Badge className="bg-secondary text-secondary-foreground">
             <BookOpen className="h-3 w-3 mr-1" />Educator
           </Badge>
