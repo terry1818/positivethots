@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
+import { encode as base64Encode } from "https://deno.land/std@0.208.0/encoding/base64.ts";
 
 function parseAIJson(content: string): Record<string, unknown> | null {
   if (!content) return null;
@@ -15,6 +16,18 @@ function parseAIJson(content: string): Record<string, unknown> | null {
   return null;
 }
 
+async function fetchImageAsDataUrl(url: string): Promise<string> {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch image (${response.status}): ${url}`);
+  }
+  const arrayBuffer = await response.arrayBuffer();
+  const bytes = new Uint8Array(arrayBuffer);
+  const contentType = response.headers.get("content-type") || "image/jpeg";
+  const b64 = base64Encode(bytes);
+  return `data:${contentType};base64,${b64}`;
+}
+
 async function callAI(apiKey: string, messages: unknown[]) {
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -23,7 +36,7 @@ async function callAI(apiKey: string, messages: unknown[]) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "google/gemini-2.5-flash",
+      model: "google/gemini-2.5-pro",
       messages,
     }),
   });
@@ -36,7 +49,7 @@ async function callAI(apiKey: string, messages: unknown[]) {
 
   const data = await response.json();
   const content = data.choices?.[0]?.message?.content || "";
-  console.log("Raw AI response:", content);
+  console.log("Raw AI response length:", content.length, "preview:", content.slice(0, 200));
   return content;
 }
 
@@ -57,7 +70,15 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY")!;
+
+    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
+    if (!lovableApiKey) {
+      console.error("LOVABLE_API_KEY is not configured in Supabase secrets");
+      return new Response(
+        JSON.stringify({ error: "Service not configured" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -145,6 +166,15 @@ async function handleVerification(
   let reason = "Could not process verification";
 
   try {
+    // Convert all images to base64 data URLs (AI gateway cannot fetch Supabase storage URLs)
+    console.log("Converting selfie to base64...");
+    const selfieDataUrl = await fetchImageAsDataUrl(selfieUrl);
+
+    console.log(`Converting ${photoUrls.length} profile photos to base64...`);
+    const photoDataUrls = await Promise.all(
+      photoUrls.map((url: string) => fetchImageAsDataUrl(url))
+    );
+
     const content = await callAI(apiKey, [
       {
         role: "user",
@@ -164,10 +194,10 @@ Rules:
 
 Respond with JSON only, no other text: {"verified": true/false, "reason": "brief helpful explanation"}`,
           },
-          { type: "image_url", image_url: { url: selfieUrl } },
-          ...photoUrls.map((url: string) => ({
+          { type: "image_url", image_url: { url: selfieDataUrl } },
+          ...photoDataUrls.map((dataUrl: string) => ({
             type: "image_url",
-            image_url: { url },
+            image_url: { url: dataUrl },
           })),
         ],
       },
@@ -179,7 +209,7 @@ Respond with JSON only, no other text: {"verified": true/false, "reason": "brief
       reason = (parsed.reason as string) || reason;
     }
   } catch (err) {
-    console.error("AI call failed for verification:", err);
+    console.error("AI call failed for verification. Error:", err instanceof Error ? err.message : String(err));
     reason = "Verification service temporarily unavailable";
   }
 
@@ -223,6 +253,9 @@ async function handleModeration(
   let moderationReason: string | null = null;
 
   try {
+    // Convert photo to base64 data URL (AI gateway cannot fetch Supabase storage URLs)
+    const photoDataUrl = await fetchImageAsDataUrl(photo.photo_url);
+
     const content = await callAI(apiKey, [
       {
         role: "user",
@@ -231,7 +264,7 @@ async function handleModeration(
             type: "text",
             text: `You are a content moderation system for a relationship wellness community app. Review this image and determine if it's appropriate. Reject images that contain: explicit nudity, violence, hate symbols, spam/ads, or images of minors. Tasteful/artistic content and swimwear are OK. Respond with JSON only: {"approved": true/false, "reason": "brief explanation if rejected"}`,
           },
-          { type: "image_url", image_url: { url: photo.photo_url } },
+          { type: "image_url", image_url: { url: photoDataUrl } },
         ],
       },
     ]);
@@ -242,7 +275,7 @@ async function handleModeration(
       moderationReason = approved ? null : ((parsed.reason as string) || "Content policy violation");
     }
   } catch (err) {
-    console.error("AI call failed for moderation:", err);
+    console.error("AI call failed for moderation. Error:", err instanceof Error ? err.message : String(err));
     approved = true;
     moderationReason = null;
   }
