@@ -160,20 +160,67 @@ const Profile = () => {
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-24 space-y-4">
         {/* Profile Card */}
         <Card className="overflow-hidden animate-fade-in">
-          <div className="relative h-64 bg-gradient-to-br from-primary/20 to-secondary/20">
-            {profile?.profile_image ? (
-              <img src={profile.profile_image} alt={profile?.name} className="absolute inset-0 w-full h-full object-cover" loading="eager" decoding="async" />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Heart className="h-16 w-16 text-primary/30" />
+          <div className="relative h-72 bg-gradient-to-br from-primary/20 to-secondary/20 overflow-hidden">
+            {/* Photo display */}
+            {(() => {
+              const displayUrl = userPhotos.length > 0
+                ? userPhotos[currentPhotoIndex]?.photo_url
+                : profile?.profile_image;
+              return displayUrl ? (
+                <img
+                  src={displayUrl}
+                  alt={`${profile?.name} photo ${currentPhotoIndex + 1}`}
+                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                  loading="eager"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Heart className="h-16 w-16 text-primary/30" />
+                </div>
+              );
+            })()}
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+            {/* Tap zones */}
+            {userPhotos.length > 1 && (
+              <>
+                <button
+                  className="absolute left-0 top-0 w-1/3 h-full z-10 cursor-pointer"
+                  aria-label="Previous photo"
+                  onClick={() => setCurrentPhotoIndex(i => Math.max(0, i - 1))}
+                />
+                <button
+                  className="absolute right-0 top-0 w-2/3 h-full z-10 cursor-pointer"
+                  aria-label="Next photo"
+                  onClick={() => setCurrentPhotoIndex(i => Math.min(userPhotos.length - 1, i + 1))}
+                />
+              </>
+            )}
+
+            {/* Dot indicators */}
+            {userPhotos.length > 1 && (
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-1 z-20">
+                {userPhotos.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentPhotoIndex(idx)}
+                    aria-label={`Go to photo ${idx + 1}`}
+                    className={cn(
+                      "h-1 rounded-full transition-all duration-300",
+                      idx === currentPhotoIndex
+                        ? "w-6 bg-white"
+                        : "w-2 bg-white/50"
+                    )}
+                  />
+                ))}
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            
-            {/* Badges with shimmer */}
-            <div className="absolute top-3 left-3 flex items-center gap-1">
+
+            {/* Education badges overlay */}
+            <div className="absolute top-3 left-3 flex items-center gap-1 z-20">
               {badges.length >= 20 && (
-                <Badge className="bg-amber-500/90 text-white animate-stagger-fade">
+                <Badge className="bg-amber-500/90 text-white">
                   <Award className="h-3 w-3 mr-1" />Verified Educator
                 </Badge>
               )}
@@ -191,7 +238,15 @@ const Profile = () => {
               )}
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 p-4 text-primary-foreground">
+            {/* Photo count badge */}
+            {userPhotos.length > 1 && (
+              <div className="absolute top-3 right-3 z-20 bg-black/40 text-white text-xs px-2 py-0.5 rounded-full">
+                {currentPhotoIndex + 1}/{userPhotos.length}
+              </div>
+            )}
+
+            {/* Name/location overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 text-primary-foreground z-20">
               <h2 className="text-3xl font-bold flex items-center gap-2">
                 {profile?.name}, {profile?.age}
                 {profile?.is_verified && <ShieldCheck className="h-6 w-6 text-accent" />}
@@ -201,19 +256,14 @@ const Profile = () => {
                 {profile?.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{profile.location}</span>}
               </div>
             </div>
-
-            {userPhotos.length > 1 && (
-              <div className="px-4 py-3 border-t border-border">
-                <div className="flex gap-2 overflow-x-auto pb-1">
-                  {userPhotos.map((photo) => (
-                    <img key={photo.id} src={photo.photo_url} alt="Profile photo"
-                      className="h-16 w-16 rounded-lg object-cover flex-shrink-0 border border-border"
-                      loading="lazy" decoding="async" />
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
+
+          {/* Pending photos message */}
+          {userPhotos.length === 0 && hasPendingPhotos && (
+            <p className="text-xs text-muted-foreground text-center py-2">
+              Photos pending review — approved photos will appear here.
+            </p>
+          )}
 
           {/* Learning Stats with animated counters */}
           {stats && (
