@@ -72,9 +72,9 @@ export const MatchModal = ({ isOpen, onClose, matchedProfile, matchedUser, onSen
           <div className="relative z-10">
             <div className="mb-6 animate-bounce-in">
               <Heart className="h-20 w-20 mx-auto text-white fill-current mb-4 animate-pulse" />
-              <h2 className="text-4xl font-bold text-white mb-2">It's a Match!</h2>
+              <h2 className="text-4xl font-bold text-white mb-2">You Both Said Yes</h2>
               <p className="text-white/90 text-lg">
-                You and {user.name} liked each other
+                You and {user.name} connected 💜
               </p>
             </div>
 

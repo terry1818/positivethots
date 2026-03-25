@@ -168,7 +168,7 @@ export const ONE_TIME_PRODUCTS = {
     productId: "prod_UC8stYS4Xx9hot",
     priceId: "price_1TDkaqAEIVQtquY2l8yO6Xf3",
     price: 3.99,
-    name: "Super Like Pack (10)",
+    name: "Thot Pack (10)",
     packSize: 10,
   },
 } as const;

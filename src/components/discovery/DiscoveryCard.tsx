@@ -174,7 +174,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
             size="icon"
             className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
             onClick={handleSuperLikeClick}
-            title={superLikeBalance !== undefined ? `${superLikeBalance} Super Likes left` : "Super Like"}
+            title={superLikeBalance !== undefined ? `${superLikeBalance} Thots left` : "Send a Thot"}
           >
             <Star className="h-4 w-4 fill-current" />
           </Button>

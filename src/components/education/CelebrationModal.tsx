@@ -24,9 +24,9 @@ const streakMessages: Record<number, string> = {
 };
 
 const streakRewards: Record<number, string> = {
-  7: "You earned a bonus Super Like! ⭐",
+  7: "You earned a bonus Thot! 💜",
   30: "You earned a free 24-hour Profile Boost! ⚡",
-  100: "You earned 3 Super Likes for this incredible milestone! 🏆",
+  100: "You earned 3 Thots for this incredible milestone! 🏆",
 };
 
 const tierTopics: Record<string, string> = {
