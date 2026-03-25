@@ -23,6 +23,12 @@ const streakMessages: Record<number, string> = {
   100: "100 DAYS! Absolute legend! 👑",
 };
 
+const streakRewards: Record<number, string> = {
+  7: "You earned a bonus Super Like! ⭐",
+  30: "You earned a free 24-hour Profile Boost! ⚡",
+  100: "You earned 3 Super Likes for this incredible milestone! 🏆",
+};
+
 const tierTopics: Record<string, string> = {
   Foundation: "consent, communication, boundaries, trust, and relationship basics",
   "Sexual Health": "STI prevention, safer sex practices, sexual wellness, and testing awareness",
