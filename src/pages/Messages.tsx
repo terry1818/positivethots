@@ -96,7 +96,7 @@ const Messages = () => {
           <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="text-muted-foreground" aria-label="Go back">
             <ChevronLeft className="h-6 w-6" />
           </Button>
-          <Logo size="md" />
+          <Logo size="md" showText={false} />
           <div className="w-10" />
         </div>
       </header>

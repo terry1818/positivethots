@@ -13,7 +13,7 @@ const TermsOfService = () => {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} aria-label="Go back">
             <ChevronLeft className="h-6 w-6" />
           </Button>
-          <Logo size="md" />
+          <Logo size="md" showText={false} />
           <h1 className="text-xl font-bold">Terms of Service</h1>
         </div>
       </header>

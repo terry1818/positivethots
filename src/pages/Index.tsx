@@ -437,7 +437,7 @@ const Index = () => {
       <div className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="container max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Logo size="md" />
+            <Logo size="md" showText={false} />
             <div className="flex items-center gap-2">
               {canSuperLike && (
                 <Badge variant="outline" className="text-amber-500 border-amber-500/30">

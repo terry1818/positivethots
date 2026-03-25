@@ -169,7 +169,7 @@ const Learn = () => {
       <header className="border-b border-border bg-card">
         <div className="container max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Logo size="md" />
+            <Logo size="md" showText={false} />
             <div className="flex items-center gap-3">
               <StreakBadge
                 streak={stats?.current_streak || 0}
