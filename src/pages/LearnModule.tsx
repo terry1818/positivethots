@@ -346,6 +346,21 @@ const LearnModule = () => {
                   onSelect={setCurrentSectionIndex}
                 />
 
+                {/* Session Intro Overlay */}
+                {showSessionIntro && sections[currentSectionIndex] && module && (
+                  <SessionIntro
+                    moduleTitle={module.title}
+                    sectionTitle={sections[currentSectionIndex].title}
+                    estimatedMinutes={sections[currentSectionIndex].estimated_minutes}
+                    xpAvailable={10 + (sections[currentSectionIndex].reflection_prompt ? 5 : 0)}
+                    sectionNumber={currentSectionIndex + 1}
+                    totalSections={sections.length}
+                    onStart={() => setShowSessionIntro(false)}
+                    badgeSlug={module.slug}
+                    badgeTier={module.tier || "foundation"}
+                  />
+                )}
+
                 {/* Current section */}
                 {sections[currentSectionIndex] && (
                   <SectionContent
@@ -360,6 +375,9 @@ const LearnModule = () => {
                     isFirst={currentSectionIndex === 0}
                     isLast={currentSectionIndex === sections.length - 1}
                     totalSections={sections.length}
+                    reflectionPrompt={sections[currentSectionIndex].reflection_prompt}
+                    userId={userId || undefined}
+                    onReflectionSaved={() => handleReflectionSaved(sections[currentSectionIndex].id)}
                     checkpointQuestions={checkpointQuestions
                       .filter(q => q.section_id === sections[currentSectionIndex].id)
                       .map(q => ({
