@@ -73,6 +73,23 @@ export const useLocationSharing = () => {
       const earned = (badges || []).length;
       setIsUnlocked(earned >= FOUNDATION_BADGE_COUNT);
 
+      // Check advanced tier completion for event location sharing
+      const { data: advancedModules } = await supabase
+        .from("education_modules")
+        .select("id")
+        .eq("tier", "advanced");
+
+      const advancedIds = (advancedModules || []).map(m => m.id);
+
+      const { data: advancedBadges } = await supabase
+        .from("user_badges")
+        .select("module_id")
+        .eq("user_id", session.user.id)
+        .in("module_id", advancedIds.length > 0 ? advancedIds : ["__none__"]);
+
+      const advancedEarned = (advancedBadges || []).length;
+      setIsEventLocationUnlocked(advancedEarned >= advancedIds.length && advancedIds.length > 0);
+
       // Check current sharing status
       const { data: loc } = await supabase
         .from("user_locations" as any)
