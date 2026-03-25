@@ -272,7 +272,24 @@ const Onboarding = () => {
 
   const advanceStep = async () => {
     setDirection("forward");
-    setStep(s => Math.min(s + 1, TOTAL_STEPS));
+    const nextStep = Math.min(step + 1, TOTAL_STEPS);
+    setStep(nextStep);
+
+    // Track onboarding_started_at when reaching step 3
+    if (nextStep === 3 && userId) {
+      supabase.from("profiles")
+        .select("onboarding_started_at")
+        .eq("id", userId)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data && !data.onboarding_started_at) {
+            supabase.from("profiles")
+              .update({ onboarding_started_at: new Date().toISOString() } as any)
+              .eq("id", userId)
+              .then(() => {});
+          }
+        });
+    }
 
     // Save progress after each step
     if (userId) {

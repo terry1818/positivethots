@@ -56,8 +56,9 @@ export const DailyChallenge = () => {
     if (data) {
       setChallenge(data as DailyChallengeData);
     } else {
-      // Create a random challenge
-      const template = CHALLENGE_TYPES[Math.floor(Math.random() * CHALLENGE_TYPES.length)];
+      // Personalized challenge type selection
+      const selectedType = await selectChallengeType(session.user.id);
+      const template = CHALLENGE_TYPES.find(t => t.type === selectedType) || CHALLENGE_TYPES[0];
       const target = template.targets[Math.floor(Math.random() * template.targets.length)];
       const xpReward = 15 + Math.floor(Math.random() * 16); // 15-30 (variable ratio)
 
@@ -78,6 +79,44 @@ export const DailyChallenge = () => {
         .single();
 
       if (inserted) setChallenge(inserted as DailyChallengeData);
+    }
+  };
+
+  const selectChallengeType = async (userId: string): Promise<string> => {
+    try {
+      const threeDaysAgo = new Date(Date.now() - 3 * 86400000).toISOString();
+
+      const [statsResult, progressResult, badgesResult] = await Promise.all([
+        supabase.from("user_learning_stats").select("total_xp, current_streak, last_activity_date").eq("user_id", userId).maybeSingle(),
+        supabase.from("user_section_progress").select("section_id, completed").eq("user_id", userId).gte("last_accessed", threeDaysAgo),
+        supabase.from("user_badges").select("id").eq("user_id", userId),
+      ]);
+
+      const stats = statsResult.data;
+      const recentProgress = progressResult.data || [];
+      const badgeCount = badgesResult.data?.length || 0;
+
+      // Inactive learner: no sections completed in last 3 days
+      const recentCompleted = recentProgress.filter(p => p.completed).length;
+      if (recentCompleted === 0) {
+        return "sections"; // Low barrier to re-engagement
+      }
+
+      // Low XP per badge ratio: user may be rushing
+      if (stats && badgeCount > 0 && (stats.total_xp / badgeCount) < 50) {
+        return "xp";
+      }
+
+      // Active streak: push harder with quiz challenges
+      if (stats && stats.current_streak >= 3) {
+        return "quiz_correct";
+      }
+
+      // Default: random
+      return CHALLENGE_TYPES[Math.floor(Math.random() * CHALLENGE_TYPES.length)].type;
+    } catch {
+      // Fallback to random on any error
+      return CHALLENGE_TYPES[Math.floor(Math.random() * CHALLENGE_TYPES.length)].type;
     }
   };
 

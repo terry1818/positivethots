@@ -120,6 +120,22 @@ Deno.serve(async (req) => {
   // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
+  // Per-user rate limit: max 5 emails to same recipient per hour
+  const oneHourAgo = new Date(Date.now() - 3600_000).toISOString()
+  const { count: recentEmailCount } = await supabase
+    .from('email_send_log')
+    .select('id', { count: 'exact', head: true })
+    .eq('recipient_email', effectiveRecipient.toLowerCase())
+    .gte('created_at', oneHourAgo)
+
+  if (recentEmailCount && recentEmailCount >= 5) {
+    console.warn('Per-user email rate limit exceeded', { recipient: effectiveRecipient, count: recentEmailCount })
+    return new Response(
+      JSON.stringify({ error: 'Too many emails to this recipient. Please try again later.' }),
+      { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '3600' } }
+    )
+  }
+
   // 2. Check suppression list (fail-closed: if we can't verify, don't send)
   const { data: suppressed, error: suppressionError } = await supabase
     .from('suppressed_emails')
