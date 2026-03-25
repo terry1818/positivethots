@@ -17,7 +17,7 @@ import { ReadingProgress } from "@/components/education/ReadingProgress";
 import { useAntiCheat } from "@/hooks/useAntiCheat";
 import { useModuleProgress } from "@/hooks/useModuleProgress";
 import { useLearningStats } from "@/hooks/useLearningStats";
-import { ChevronLeft, CheckCircle, Award, BookOpen, Lock, Zap, Flame } from "lucide-react";
+import { ChevronLeft, CheckCircle, CheckCircle2, XCircle, Award, BookOpen, Lock, Zap, Flame } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/PageSkeleton";
@@ -37,6 +37,21 @@ interface Question {
   question: string;
   options: string[];
   order_index: number;
+  explanation_correct?: string | null;
+  explanation_wrong?: string | null;
+  is_checkpoint?: boolean | null;
+  position_in_section?: number | null;
+  section_id?: string | null;
+}
+
+export interface CheckpointQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correct_answer: number;
+  explanation_correct: string;
+  explanation_wrong: string;
+  position_in_section: number;
 }
 
 const LearnModule = () => {
@@ -45,6 +60,7 @@ const LearnModule = () => {
   
   const [module, setModule] = useState<Module | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [checkpointQuestions, setCheckpointQuestions] = useState<Question[]>([]);
   const [isAlreadyCompleted, setIsAlreadyCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -56,6 +72,7 @@ const LearnModule = () => {
   // Quiz enhancements
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(new Set());
+  const [showFeedback, setShowFeedback] = useState(false);
 
   // XP & celebrations
   const { stats, awardXP } = useLearningStats();
@@ -120,7 +137,11 @@ const LearnModule = () => {
         ...q,
         options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options
       }));
-      setQuestions(parsedQuestions);
+      // Split into badge quiz questions and checkpoint questions
+      const badge = parsedQuestions.filter(q => !q.is_checkpoint);
+      const checkpoints = parsedQuestions.filter(q => q.is_checkpoint);
+      setQuestions(badge);
+      setCheckpointQuestions(checkpoints);
       setIsAlreadyCompleted(!!badgeResult.data);
     } catch (error: any) {
       console.error("Error loading module:", error);
@@ -150,20 +171,21 @@ const LearnModule = () => {
     }
   }, [markComplete, awardXP, stats]);
 
-  // Quiz: store answer locally (no server-side validation per question)
+  // Quiz: store answer locally, show feedback instead of auto-advancing
   const handleAnswerQuestion = (questionId: string, answerIndex: number) => {
     const question = questions.find(q => q.id === questionId);
     if (!question || answeredQuestions.has(questionId)) return;
 
     setAnswers(prev => ({ ...prev, [questionId]: answerIndex }));
     setAnsweredQuestions(prev => new Set(prev).add(questionId));
+    setShowFeedback(true);
+  };
 
-    // Auto-advance after brief delay
-    setTimeout(() => {
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      }
-    }, 400);
+  const handleNextQuestion = () => {
+    setShowFeedback(false);
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
   };
 
   const handleSubmitQuiz = async () => {
@@ -316,6 +338,17 @@ const LearnModule = () => {
                     isFirst={currentSectionIndex === 0}
                     isLast={currentSectionIndex === sections.length - 1}
                     totalSections={sections.length}
+                    checkpointQuestions={checkpointQuestions
+                      .filter(q => q.section_id === sections[currentSectionIndex].id)
+                      .map(q => ({
+                        id: q.id,
+                        question: q.question,
+                        options: q.options,
+                        correct_answer: (q as any).correct_answer ?? 0,
+                        explanation_correct: q.explanation_correct || "That's right!",
+                        explanation_wrong: q.explanation_wrong || "Not quite — review the section above for more context.",
+                        position_in_section: q.position_in_section ?? 0,
+                      }))}
                   />
                 )}
 
@@ -422,36 +455,97 @@ const LearnModule = () => {
                           {currentQuestionIndex + 1}. {currentQuestion.question}
                         </CardTitle>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="space-y-4">
                         <RadioGroup
                           value={answers[currentQuestion.id] !== undefined ? answers[currentQuestion.id].toString() : ""}
                           onValueChange={(value) => handleAnswerQuestion(currentQuestion.id, parseInt(value))}
                           disabled={answeredQuestions.has(currentQuestion.id)}
                         >
                           {currentQuestion.options.map((option: string, oIndex: number) => {
-                            const isSelected = answers[currentQuestion.id] === oIndex;
+                            const isAnswered = answeredQuestions.has(currentQuestion.id);
+                            const selectedAnswer = answers[currentQuestion.id];
+                            const isSelected = selectedAnswer === oIndex;
+                            // Note: correct_answer is only available for admin users who fetch from quiz_questions
+                            // For regular users, we show feedback text but can't highlight the correct answer
+                            const correctAnswer = (currentQuestion as any).correct_answer;
+                            const isCorrectOption = correctAnswer !== undefined && correctAnswer === oIndex;
+                            const userWasWrong = isAnswered && correctAnswer !== undefined && selectedAnswer !== correctAnswer;
+
                             return (
                               <div key={oIndex} className={cn(
-                                "flex items-center space-x-2 py-2 px-2 rounded-md transition-colors",
-                                isSelected && "bg-primary/10"
+                                "flex items-center space-x-2 py-2 px-3 rounded-md transition-colors border",
+                                !isAnswered && "border-transparent hover:bg-muted/50",
+                                isAnswered && isSelected && isCorrectOption && "bg-green-500/10 border-green-500/30",
+                                isAnswered && isSelected && !isCorrectOption && correctAnswer !== undefined && "bg-destructive/10 border-destructive/30",
+                                isAnswered && isSelected && correctAnswer === undefined && "bg-primary/10 border-primary/30",
+                                isAnswered && !isSelected && isCorrectOption && userWasWrong && "bg-green-500/10 border-green-500/30",
+                                isAnswered && !isSelected && !isCorrectOption && "opacity-50"
                               )}>
                                 <RadioGroupItem value={oIndex.toString()} id={`${currentQuestion.id}-${oIndex}`} />
                                 <Label htmlFor={`${currentQuestion.id}-${oIndex}`} className="flex-1 cursor-pointer">{option}</Label>
+                                {isAnswered && isSelected && isCorrectOption && <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />}
+                                {isAnswered && isSelected && !isCorrectOption && correctAnswer !== undefined && <XCircle className="h-4 w-4 text-destructive shrink-0" />}
+                                {isAnswered && !isSelected && isCorrectOption && userWasWrong && <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />}
                               </div>
                             );
                           })}
                         </RadioGroup>
+
+                        {/* Feedback card */}
+                        {showFeedback && answeredQuestions.has(currentQuestion.id) && (() => {
+                          const correctAnswer = (currentQuestion as any).correct_answer;
+                          const isCorrect = correctAnswer !== undefined && answers[currentQuestion.id] === correctAnswer;
+                          const explanationText = isCorrect
+                            ? currentQuestion.explanation_correct
+                            : currentQuestion.explanation_wrong;
+
+                          return explanationText ? (
+                            <div className={cn(
+                              "rounded-lg p-4 text-sm space-y-1",
+                              isCorrect ? "bg-green-500/10 border border-green-500/20" : "bg-destructive/10 border border-destructive/20"
+                            )}>
+                              <p className="font-semibold flex items-center gap-1.5">
+                                {isCorrect ? (
+                                  <><CheckCircle2 className="h-4 w-4 text-green-500" /> Correct!</>
+                                ) : (
+                                  <><XCircle className="h-4 w-4 text-destructive" /> Not quite</>
+                                )}
+                              </p>
+                              {!isCorrect && correctAnswer !== undefined && (
+                                <p className="text-xs text-muted-foreground">
+                                  Correct answer: <span className="font-medium text-foreground">{currentQuestion.options[correctAnswer]}</span>
+                                </p>
+                              )}
+                              <p className="text-muted-foreground">{explanationText}</p>
+                            </div>
+                          ) : null;
+                        })()}
                       </CardContent>
                     </Card>
 
-                    {/* Navigation dots with fire trail */}
+                    {/* Next Question button (replaces auto-advance) */}
+                    {showFeedback && answeredQuestions.has(currentQuestion.id) && (
+                      <div className="flex justify-end">
+                        {currentQuestionIndex < questions.length - 1 ? (
+                          <Button onClick={handleNextQuestion}>
+                            Next Question →
+                          </Button>
+                        ) : (
+                          <Button onClick={handleSubmitQuiz} disabled={answeredQuestions.size !== questions.length}>
+                            Review & Submit
+                          </Button>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Navigation dots */}
                     <div className="flex justify-center gap-1.5 flex-wrap">
                       {questions.map((q, i) => {
                         const isAnswered = answeredQuestions.has(q.id);
                         return (
                           <button
                             key={q.id}
-                            onClick={() => setCurrentQuestionIndex(i)}
+                            onClick={() => { setShowFeedback(false); setCurrentQuestionIndex(i); }}
                             className={cn(
                               "w-3 h-3 rounded-full transition-all",
                               i === currentQuestionIndex ? "bg-primary scale-125" :
@@ -526,6 +620,7 @@ const LearnModule = () => {
                       setShowQuiz(false); setSubmitted(false); setAnswers({});
                       setCurrentQuestionIndex(0);
                       setAnsweredQuestions(new Set());
+                      setShowFeedback(false);
                     }} className="flex-1">
                       Review Material
                     </Button>
