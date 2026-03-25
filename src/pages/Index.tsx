@@ -14,6 +14,8 @@ import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { NearbyUsers } from "@/components/NearbyUsers";
 import { DiscoveryCard } from "@/components/discovery/DiscoveryCard";
+import { SwipeDiscoveryCard } from "@/components/discovery/SwipeDiscoveryCard";
+import { ProfileDetailSheet } from "@/components/discovery/ProfileDetailSheet";
 import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
@@ -131,6 +133,7 @@ const Index = () => {
   const [previewMode, setPreviewMode] = useState(false);
   const [previewProfiles, setPreviewProfiles] = useState<EnhancedProfile[]>([]);
   const [requiredCount, setRequiredCount] = useState(5);
+  const [detailProfile, setDetailProfile] = useState<EnhancedProfile | null>(null);
 
   // Handle super like purchase redirect
   useEffect(() => {
@@ -528,17 +531,19 @@ const Index = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {suggestions.map((profile, idx) => (
-              <DiscoveryCard
+          <div className="relative flex justify-center items-start px-4 pt-2 pb-32" style={{ minHeight: '520px' }}>
+            {suggestions.slice(0, 3).map((profile, stackIdx) => (
+              <SwipeDiscoveryCard
                 key={profile.id}
                 profile={profile}
-                index={idx}
+                isTop={stackIdx === 0}
+                stackIndex={stackIdx}
                 onConnect={handleConnect}
                 onPass={handlePass}
                 onSuperLike={handleSuperLike}
                 canSuperLike={canSuperLike}
                 superLikeBalance={isUnlimited ? 999 : superLikeBalance}
+                onViewProfile={() => setDetailProfile(profile)}
               />
             ))}
           </div>
@@ -553,6 +558,15 @@ const Index = () => {
           onSendMessage={() => { setShowMatchModal(false); navigate("/messages"); }}
         />
       )}
+
+      <ProfileDetailSheet
+        profile={detailProfile}
+        onClose={() => setDetailProfile(null)}
+        onConnect={(id) => { handleConnect(id); setDetailProfile(null); }}
+        onPass={(id) => { handlePass(id); setDetailProfile(null); }}
+        onSuperLike={handleSuperLike}
+        canSuperLike={canSuperLike}
+      />
 
       <BottomNav />
     </div>
