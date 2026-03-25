@@ -10,6 +10,7 @@ import { isNative, takeNativePhoto } from "@/lib/capacitor";
 interface VerificationCardProps {
   userId: string;
   isVerified: boolean;
+  hasApprovedPhotos: boolean;
   latestRequest?: { status: string; reason?: string | null } | null;
   onVerificationChange: () => void;
 }
