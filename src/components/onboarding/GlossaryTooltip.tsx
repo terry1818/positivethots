@@ -1,5 +1,6 @@
+import { useState, useRef, useEffect } from "react";
+import { HelpCircle, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { HelpCircle } from "lucide-react";
 
 const GLOSSARY: Record<string, string> = {
   "ENM": "Ethical Non-Monogamy — any relationship structure where all partners agree to non-exclusive relationships.",
@@ -25,7 +26,56 @@ interface GlossaryTooltipProps {
 
 export const GlossaryTooltip = ({ term }: GlossaryTooltipProps) => {
   const definition = GLOSSARY[term];
+  const [showSheet, setShowSheet] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const sheetRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   if (!definition) return null;
+
+  if (isMobile) {
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => setShowSheet(true)}
+          className="inline-flex items-center ml-1 text-muted-foreground hover:text-primary transition-colors"
+        >
+          <HelpCircle className="h-3.5 w-3.5" />
+        </button>
+
+        {showSheet && (
+          <div
+            className="fixed inset-0 z-[60] flex items-end"
+            onClick={() => setShowSheet(false)}
+          >
+            <div className="absolute inset-0 bg-black/20" />
+            <div
+              ref={sheetRef}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full bg-card border-t border-border rounded-t-2xl p-5 pb-8 animate-in slide-in-from-bottom duration-200"
+            >
+              <button
+                type="button"
+                onClick={() => setShowSheet(false)}
+                className="absolute top-3 right-3 p-1 rounded-full hover:bg-muted transition-colors"
+              >
+                <X className="h-4 w-4 text-muted-foreground" />
+              </button>
+              <p className="font-semibold text-foreground text-base">{term}</p>
+              <p className="text-muted-foreground text-sm mt-1.5 leading-relaxed">{definition}</p>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
 
   return (
     <Tooltip>

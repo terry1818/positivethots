@@ -46,6 +46,7 @@ const DESIRE_OPTIONS = [
 ].map(d => ({ value: d.toLowerCase(), label: d }));
 
 const RELATIONSHIP_STYLE_OPTIONS = [
+  { value: "monogamous", label: "Monogamous", description: "One committed partner" },
   { value: "polyamory", label: "Polyamory", description: "Multiple loving relationships" },
   { value: "open-relationship", label: "Open Relationship", description: "Primary partner + outside connections" },
   { value: "swinging", label: "Swinging", description: "Recreational experiences with others" },
@@ -114,10 +115,10 @@ const PHASE_GRADIENTS: Record<number, string> = {
 };
 
 const PHASE_INTERSTITIALS = [
-  { emoji: "🔥", message: "Identity locked in!", nextPhase: "Now let's explore your desires..." },
-  { emoji: "💜", message: "Looking good so far!", nextPhase: "Tell us about your relationships..." },
-  { emoji: "⭐", message: "Almost there!", nextPhase: "A few more things about you..." },
-  { emoji: "📖", message: "The fun part!", nextPhase: "Share your story..." },
+  { emoji: "🔥", message: "Identity locked in!", nextPhase: "Now let's explore your desires...", nextUp: "Next up: Tell us about your sexuality and desires" },
+  { emoji: "💜", message: "Looking good so far!", nextPhase: "Tell us about your relationships...", nextUp: "Next up: Your relationship style and status" },
+  { emoji: "⭐", message: "Almost there!", nextPhase: "A few more things about you...", nextUp: "Next up: The fun stuff — height, lifestyle, and interests" },
+  { emoji: "📖", message: "The fun part!", nextPhase: "Share your story...", nextUp: "Next up: Share your story and add photos" },
 ];
 
 const TOTAL_STEPS = 13;
@@ -135,7 +136,7 @@ const Onboarding = () => {
   const [loading, setLoading] = useState(false);
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
   const [showInterstitial, setShowInterstitial] = useState(false);
-  const [interstitialData, setInterstitialData] = useState({ emoji: "", message: "", nextPhase: "" });
+  const [interstitialData, setInterstitialData] = useState({ emoji: "", message: "", nextPhase: "", nextUp: "" });
 
   const [formData, setFormData] = useState({
     gender: "",
@@ -416,6 +417,7 @@ const Onboarding = () => {
         emoji={interstitialData.emoji}
         message={interstitialData.message}
         nextPhase={interstitialData.nextPhase}
+        nextUp={interstitialData.nextUp}
         onComplete={() => { setShowInterstitial(false); advanceStep(); }}
       />
 
@@ -537,6 +539,7 @@ const Onboarding = () => {
                       onToggle={(v) => updateField("sexuality", formData.sexuality === v ? "" : v)}
                       max={1}
                       columns={2}
+                      popularOptions={["Bisexual", "Pansexual", "Straight", "Queer", "Heteroflexible"]}
                     />
                   </div>
                 </div>
@@ -557,6 +560,7 @@ const Onboarding = () => {
                       selected={formData.desires}
                       onToggle={(v) => toggleArray("desires", v)}
                       max={10}
+                      popularOptions={["Casual", "Friendship", "Poly", "Kink", "Connection", "Group"]}
                     />
                   </div>
                   <p className="text-xs text-muted-foreground text-center">{formData.desires.length}/10 selected</p>
@@ -572,23 +576,29 @@ const Onboarding = () => {
                     <GlossaryTooltip term="Relationship Anarchy" />
                   </div>
                   <div className="space-y-2 animate-stagger-2">
-                    {RELATIONSHIP_STYLE_OPTIONS.map(opt => (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => updateField("relationshipStyle", opt.value)}
-                        className={`w-full text-left rounded-xl px-4 py-3 border transition-all duration-200
-                          ${formData.relationshipStyle === opt.value
-                            ? "bg-primary text-primary-foreground border-primary shadow-md"
-                            : "bg-card text-foreground border-border hover:border-primary/50 active:scale-[0.98]"
-                          }`}
-                      >
-                        <span className="font-medium">{opt.label}</span>
-                        <span className={`block text-sm mt-0.5 ${formData.relationshipStyle === opt.value ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-                          {opt.description}
-                        </span>
-                      </button>
-                    ))}
+                    {RELATIONSHIP_STYLE_OPTIONS.map(opt => {
+                      const isPopular = ["polyamory", "open-relationship", "monogamous"].includes(opt.value);
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => updateField("relationshipStyle", opt.value)}
+                          className={`relative w-full text-left rounded-xl px-4 py-3 border transition-all duration-200
+                            ${formData.relationshipStyle === opt.value
+                              ? "bg-primary text-primary-foreground border-primary shadow-md"
+                              : "bg-card text-foreground border-border hover:border-primary/50 active:scale-[0.98]"
+                            }`}
+                        >
+                          <span className="font-medium">{opt.label}</span>
+                          <span className={`block text-sm mt-0.5 ${formData.relationshipStyle === opt.value ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                            {opt.description}
+                          </span>
+                          {isPopular && formData.relationshipStyle !== opt.value && (
+                            <span className="absolute top-2.5 right-3 text-[10px] text-primary/60 font-medium">Popular</span>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -700,24 +710,14 @@ const Onboarding = () => {
               {step === 10 && (
                 <div className="space-y-4">
                   <StepHeader emoji="🎨" title="Your interests" subtitle="Select at least 3" />
-                  <div className="flex flex-wrap gap-2 animate-stagger-2">
-                    {INTERESTS_OPTIONS.map(interest => {
-                      const sel = formData.interests.includes(interest);
-                      return (
-                        <button
-                          key={interest}
-                          type="button"
-                          onClick={() => toggleArray("interests", interest)}
-                          className={`rounded-full px-3 py-1.5 text-sm font-medium border transition-all duration-200
-                            ${sel
-                              ? "bg-primary text-primary-foreground border-primary scale-105 animate-chip-select"
-                              : "bg-card text-foreground border-border hover:border-primary/50 active:scale-95"
-                            }`}
-                        >
-                          {interest}
-                        </button>
-                      );
-                    })}
+                  <div className="animate-stagger-2">
+                    <ChipSelector
+                      options={INTERESTS_OPTIONS.map(i => ({ value: i, label: i }))}
+                      selected={formData.interests}
+                      onToggle={(v) => toggleArray("interests", v)}
+                      popularOptions={["Travel", "Music", "Fitness", "Cooking", "Hiking", "Movies", "Yoga", "Nightlife", "Concerts", "Festivals"]}
+                      groupPopularFirst
+                    />
                   </div>
                   <p className="text-xs text-muted-foreground text-center">{formData.interests.length} selected (min 3)</p>
                 </div>
