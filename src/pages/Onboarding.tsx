@@ -21,6 +21,7 @@ import { PhaseInterstitial } from "@/components/onboarding/PhaseInterstitial";
 import { ProgressRing } from "@/components/onboarding/ProgressRing";
 import { MiniProfilePreview } from "@/components/onboarding/MiniProfilePreview";
 import { StepHeader } from "@/components/onboarding/StepHeader";
+import { PromptPicker } from "@/components/onboarding/PromptPicker";
 
 // ── Option Data ──
 
