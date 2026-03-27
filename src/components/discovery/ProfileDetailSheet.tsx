@@ -200,7 +200,7 @@ export const ProfileDetailSheet = ({
             )}
 
             {/* Prompts */}
-            <ProfilePromptsInSheet userId={profile.id} />
+            <ProfilePromptsDisplay userId={profile.id} />
 
             {/* About */}
             {profile.bio && (
