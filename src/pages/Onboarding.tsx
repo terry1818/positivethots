@@ -394,8 +394,8 @@ const Onboarding = () => {
   const phaseIndex = PHASES.findIndex(p => p.steps.includes(step));
   const currentPhase = PHASES[phaseIndex];
   const progress = Math.round((step / TOTAL_STEPS) * 100);
-  const isOptionalStep = [4, 5, 8, 9, 12].includes(step);
-  const showMiniPreview = step >= 8 && step < 13;
+  const isOptionalStep = [4, 5, 8, 9].includes(step);
+  const showMiniPreview = step >= 8 && step < 12;
 
   // Mini-preview fields
   const miniFields = [
