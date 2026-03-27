@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
-import { ChevronRight, ChevronLeft, SkipForward, Crown, Zap, Star, Check } from "lucide-react";
+import { ChevronRight, ChevronLeft, SkipForward, Check } from "lucide-react";
 import { toast } from "sonner";
 import { StepTransition } from "@/components/onboarding/StepTransition";
 import { ChipSelector } from "@/components/onboarding/ChipSelector";
