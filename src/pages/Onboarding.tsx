@@ -46,6 +46,7 @@ const DESIRE_OPTIONS = [
 ].map(d => ({ value: d.toLowerCase(), label: d }));
 
 const RELATIONSHIP_STYLE_OPTIONS = [
+  { value: "monogamous", label: "Monogamous", description: "One committed partner" },
   { value: "polyamory", label: "Polyamory", description: "Multiple loving relationships" },
   { value: "open-relationship", label: "Open Relationship", description: "Primary partner + outside connections" },
   { value: "swinging", label: "Swinging", description: "Recreational experiences with others" },
