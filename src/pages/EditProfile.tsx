@@ -1,19 +1,28 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StaggerChildren } from "@/components/StaggerChildren";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { PhotoUploadGrid } from "@/components/PhotoUploadGrid";
 import { VerificationCard } from "@/components/VerificationCard";
 import { BdsmTestSection } from "@/components/BdsmTestSection";
 import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/PageSkeleton";
+import { PROMPT_QUESTIONS } from "@/lib/promptQuestions";
+
+interface PromptRow {
+  id?: string;
+  prompt_question: string;
+  prompt_response: string;
+  display_order: number;
+}
 
 const EditProfile = () => {
   const [profile, setProfile] = useState<any>(null);
@@ -23,6 +32,7 @@ const EditProfile = () => {
   const [latestVerification, setLatestVerification] = useState<any>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
@@ -36,6 +46,11 @@ const EditProfile = () => {
   const [bdsmTestUrl, setBdsmTestUrl] = useState("");
   const [bdsmTestScreenshot, setBdsmTestScreenshot] = useState("");
 
+  // Prompts state
+  const [prompts, setPrompts] = useState<PromptRow[]>([]);
+  const [editingPromptIdx, setEditingPromptIdx] = useState<number | null>(null);
+  const [changingQuestionIdx, setChangingQuestionIdx] = useState<number | null>(null);
+
   useEffect(() => { loadProfile(); }, []);
 
   const markChanged = () => setHasChanges(true);
@@ -44,10 +59,11 @@ const EditProfile = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/auth"); return; }
-      const [profileResult, photosResult, verResult] = await Promise.all([
+      const [profileResult, photosResult, verResult, promptsResult] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", session.user.id).single(),
         supabase.from("user_photos").select("*").eq("user_id", session.user.id),
         supabase.from("verification_requests").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }).limit(1),
+        supabase.from("profile_prompts" as any).select("*").eq("user_id", session.user.id).order("display_order", { ascending: true }),
       ]);
       if (profileResult.error) throw profileResult.error;
       const data = profileResult.data;
@@ -59,6 +75,12 @@ const EditProfile = () => {
       setBdsmTestUrl(data.bdsm_test_url || ""); setBdsmTestScreenshot(data.bdsm_test_screenshot || "");
       setPhotos(photosResult.data || []);
       setLatestVerification(verResult.data?.[0] || null);
+      setPrompts((promptsResult.data || []).map((p: any) => ({
+        id: p.id,
+        prompt_question: p.prompt_question,
+        prompt_response: p.prompt_response,
+        display_order: p.display_order,
+      })));
     } catch (error) {
       console.error("Error loading profile:", error);
       toast.error("Failed to load profile");
@@ -92,6 +114,23 @@ const EditProfile = () => {
         bdsm_test_url: bdsmTestUrl.trim() || null, bdsm_test_screenshot: bdsmTestScreenshot || null,
       } as any).eq("id", profile.id);
       if (error) throw error;
+
+      // Save prompts
+      await supabase.from("profile_prompts" as any).delete().eq("user_id", profile.id);
+      const validPrompts = prompts.filter(p => p.prompt_response.trim());
+      if (validPrompts.length > 0) {
+        await supabase.from("profile_prompts" as any).insert(
+          validPrompts.map((p, i) => ({
+            user_id: profile.id,
+            prompt_question: p.prompt_question,
+            prompt_response: p.prompt_response.trim(),
+            display_order: i,
+          }))
+        );
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["profile-prompts"] });
+      queryClient.invalidateQueries({ queryKey: ["profile-prompt-count"] });
       toast.success("Profile updated!");
       navigate("/profile");
     } catch (error) {
@@ -101,6 +140,38 @@ const EditProfile = () => {
       setSaving(false);
     }
   };
+
+  const addPrompt = () => {
+    const usedQuestions = prompts.map(p => p.prompt_question);
+    const available = PROMPT_QUESTIONS.filter(q => !usedQuestions.includes(q));
+    if (available.length === 0) return;
+    setPrompts([...prompts, {
+      prompt_question: available[0],
+      prompt_response: "",
+      display_order: prompts.length,
+    }]);
+    setEditingPromptIdx(prompts.length);
+    markChanged();
+  };
+
+  const removePrompt = (idx: number) => {
+    setPrompts(prompts.filter((_, i) => i !== idx));
+    setEditingPromptIdx(null);
+    markChanged();
+  };
+
+  const updatePromptResponse = (idx: number, response: string) => {
+    setPrompts(prompts.map((p, i) => i === idx ? { ...p, prompt_response: response.slice(0, 150) } : p));
+    markChanged();
+  };
+
+  const changePromptQuestion = (idx: number, newQuestion: string) => {
+    setPrompts(prompts.map((p, i) => i === idx ? { ...p, prompt_question: newQuestion } : p));
+    setChangingQuestionIdx(null);
+    markChanged();
+  };
+
+  const usedQuestions = prompts.map(p => p.prompt_question);
 
   if (loading) {
     return <PageSkeleton variant="profile" />;
@@ -127,6 +198,72 @@ const EditProfile = () => {
         <StaggerChildren className="space-y-4" stagger={100}>
           {profile?.id && <PhotoUploadGrid userId={profile.id} photos={photos} onPhotosChange={reloadPhotos} />}
 
+          {/* Prompts Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Your Prompts</CardTitle>
+              <p className="text-xs text-muted-foreground">Answer prompts so people get to know the real you</p>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {prompts.map((prompt, idx) => (
+                <div key={idx} className="bg-muted/30 rounded-xl p-3 border border-border/50 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setChangingQuestionIdx(changingQuestionIdx === idx ? null : idx)}
+                      className="text-sm font-medium text-primary hover:text-primary/80 text-left flex-1"
+                    >
+                      {prompt.prompt_question}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removePrompt(idx)}
+                      className="p-1 text-muted-foreground hover:text-destructive transition-colors"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+
+                  {changingQuestionIdx === idx && (
+                    <div className="space-y-1 max-h-32 overflow-y-auto">
+                      {PROMPT_QUESTIONS.filter(q => !usedQuestions.includes(q) || q === prompt.prompt_question).map(q => (
+                        <button
+                          key={q}
+                          type="button"
+                          onClick={() => changePromptQuestion(idx, q)}
+                          className={cn(
+                            "block w-full text-left text-xs px-2 py-1.5 rounded-lg transition-colors",
+                            q === prompt.prompt_question
+                              ? "bg-primary/10 text-primary"
+                              : "hover:bg-muted text-muted-foreground"
+                          )}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  <Textarea
+                    value={prompt.prompt_response}
+                    onChange={(e) => updatePromptResponse(idx, e.target.value)}
+                    placeholder="Your answer..."
+                    maxLength={150}
+                    rows={2}
+                    className="text-sm resize-none"
+                  />
+                  <p className="text-[10px] text-muted-foreground text-right">{prompt.prompt_response.length}/150</p>
+                </div>
+              ))}
+
+              {prompts.length < 3 && (
+                <Button variant="outline" size="sm" onClick={addPrompt} className="w-full">
+                  <Plus className="h-4 w-4 mr-1" /> Add {prompts.length === 0 ? "a" : "another"} prompt
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader><CardTitle className="text-lg">Basic Info</CardTitle></CardHeader>
             <CardContent className="space-y-4">
@@ -143,7 +280,7 @@ const EditProfile = () => {
                 <Input id="location" value={location} onChange={(e) => { setLocation(e.target.value); markChanged(); }} placeholder="e.g., Portland" maxLength={100} className="focus-glow" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="bio">Bio</Label>
+                <Label htmlFor="bio">About Me (Optional)</Label>
                 <Textarea id="bio" value={bio} onChange={(e) => { setBio(e.target.value); markChanged(); }} rows={4} maxLength={500} placeholder="Tell people about yourself..." className="focus-glow" />
               </div>
             </CardContent>
@@ -175,6 +312,11 @@ const EditProfile = () => {
                   <option value="Dating">Dating</option>
                   <option value="In a relationship">In a relationship</option>
                   <option value="Married">Married</option>
+                  <option value="Partnered">Partnered</option>
+                  <option value="In a polycule">In a polycule</option>
+                  <option value="Nesting partner">Nesting partner</option>
+                  <option value="Separated">Separated</option>
+                  <option value="It's complicated">It's complicated</option>
                 </select>
               </div>
               <div className="space-y-2">

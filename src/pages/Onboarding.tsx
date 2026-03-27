@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
-import { ChevronRight, ChevronLeft, SkipForward, Crown, Zap, Star, Check } from "lucide-react";
+import { ChevronRight, ChevronLeft, SkipForward, Check } from "lucide-react";
 import { toast } from "sonner";
 import { StepTransition } from "@/components/onboarding/StepTransition";
 import { ChipSelector } from "@/components/onboarding/ChipSelector";
@@ -21,6 +21,7 @@ import { PhaseInterstitial } from "@/components/onboarding/PhaseInterstitial";
 import { ProgressRing } from "@/components/onboarding/ProgressRing";
 import { MiniProfilePreview } from "@/components/onboarding/MiniProfilePreview";
 import { StepHeader } from "@/components/onboarding/StepHeader";
+import { PromptPicker } from "@/components/onboarding/PromptPicker";
 
 // ── Option Data ──
 
@@ -97,13 +98,13 @@ const PHASES = [
   { label: "Sexuality", steps: [4, 5], emoji: "🔥" },
   { label: "Relationship", steps: [6, 7], emoji: "🔗" },
   { label: "About You", steps: [8, 9, 10], emoji: "✨" },
-  { label: "Your Story", steps: [11, 12, 13], emoji: "📖" },
+  { label: "Your Story", steps: [11, 12], emoji: "📖" },
 ];
 
 const STEP_EMOJIS: Record<number, string> = {
   1: "👋", 2: "🌈", 3: "💬", 4: "🔥", 5: "⭐",
   6: "🔗", 7: "💜", 8: "📏", 9: "🌿", 10: "🎨",
-  11: "✍️", 12: "👑", 13: "📸",
+  11: "✍️", 12: "📸",
 };
 
 const PHASE_GRADIENTS: Record<number, string> = {
@@ -121,7 +122,7 @@ const PHASE_INTERSTITIALS = [
   { emoji: "📖", message: "The fun part!", nextPhase: "Share your story...", nextUp: "Next up: Share your story and add photos" },
 ];
 
-const TOTAL_STEPS = 13;
+const TOTAL_STEPS = 12;
 
 // ── Component ──
 
@@ -155,6 +156,7 @@ const Onboarding = () => {
     bio: "",
     boundaries: "",
     location: "",
+    prompts: [] as { question: string; response: string }[],
   });
   const navigate = useNavigate();
 
@@ -339,6 +341,7 @@ const Onboarding = () => {
         return true;
       case 11:
         if (!formData.location.trim()) { toast.error("Please enter your location"); return false; }
+        if (formData.prompts.filter(p => p.response.trim()).length < 2) { toast.error("Please answer at least 2 prompts"); return false; }
         return true;
       default:
         return true;
@@ -377,6 +380,24 @@ const Onboarding = () => {
         .eq("id", session.user.id);
 
       if (error) throw error;
+
+      // Save prompts
+      if (formData.prompts.length > 0) {
+        // Delete existing prompts first
+        await supabase.from("profile_prompts" as any).delete().eq("user_id", session.user.id);
+        const promptRows = formData.prompts
+          .filter(p => p.response.trim())
+          .map((p, i) => ({
+            user_id: session.user.id,
+            prompt_question: p.question,
+            prompt_response: p.response.trim(),
+            display_order: i,
+          }));
+        if (promptRows.length > 0) {
+          await supabase.from("profile_prompts" as any).insert(promptRows);
+        }
+      }
+
       trackEvent('onboarding_completed', {});
       toast.success("Welcome to Positive Thots! 💕");
       navigate("/learn");
@@ -391,8 +412,8 @@ const Onboarding = () => {
   const phaseIndex = PHASES.findIndex(p => p.steps.includes(step));
   const currentPhase = PHASES[phaseIndex];
   const progress = Math.round((step / TOTAL_STEPS) * 100);
-  const isOptionalStep = [4, 5, 8, 9, 12].includes(step);
-  const showMiniPreview = step >= 8 && step < 13;
+  const isOptionalStep = [4, 5, 8, 9].includes(step);
+  const showMiniPreview = step >= 8 && step < 12;
 
   // Mini-preview fields
   const miniFields = [
@@ -723,7 +744,7 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 11: Bio, Boundaries, Location */}
+              {/* Step 11: Prompts, Boundaries, Location */}
               {step === 11 && (
                 <div className="space-y-4">
                   <StepHeader emoji="✍️" title="Tell your story" />
@@ -737,17 +758,12 @@ const Onboarding = () => {
                       maxLength={100}
                     />
                   </div>
-                  <div className="space-y-2 animate-stagger-2">
-                    <Label htmlFor="bio">About You</Label>
-                    <Textarea
-                      id="bio"
-                      placeholder="Share your journey, what excites you, what makes you unique..."
-                      value={formData.bio}
-                      onChange={(e) => updateField("bio", e.target.value)}
-                      maxLength={500}
-                      rows={4}
+                  <div className="animate-stagger-2">
+                    <Label className="text-sm font-medium mb-2 block">💬 Profile Prompts</Label>
+                    <PromptPicker
+                      answers={formData.prompts}
+                      onChange={(prompts) => updateField("prompts", prompts)}
                     />
-                    <p className="text-xs text-muted-foreground text-right">{formData.bio.length}/500</p>
                   </div>
                   <div className="space-y-2 animate-stagger-3">
                     <Label htmlFor="boundaries">🛡️ Boundaries & Preferences (Optional)</Label>
@@ -763,46 +779,8 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 12: Premium Upsell (Optional) */}
+              {/* Step 12: Photos & Preview */}
               {step === 12 && (
-                <div className="space-y-5">
-                  <StepHeader emoji="👑" title="Unlock More" subtitle="Get the most out of Positive Thots" />
-                  <div className="space-y-3 animate-stagger-1">
-                    {[
-                      { icon: Crown, name: "Plus", price: "$4.99/mo", features: ["See who likes you", "5 Thots/day"] },
-                      { icon: Star, name: "Premium", price: "$9.99/mo", features: ["Everything in Plus", "Priority visibility", "Advanced filters"], highlight: true },
-                      { icon: Zap, name: "VIP", price: "$19.99/mo", features: ["Everything in Premium", "Unlimited Thots", "Mentor badge"] },
-                    ].map((tier) => (
-                      <div
-                        key={tier.name}
-                        className={`rounded-xl border p-4 transition-all ${tier.highlight ? "border-primary bg-primary/5 shadow-md" : "border-border"}`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <tier.icon className="h-5 w-5 text-primary" />
-                            <span className="font-semibold">{tier.name}</span>
-                          </div>
-                          <span className="text-sm font-bold text-primary">{tier.price}</span>
-                        </div>
-                        <ul className="space-y-1">
-                          {tier.features.map((f) => (
-                            <li key={f} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                              <Check className="h-3 w-3 text-primary flex-shrink-0" />
-                              {f}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-xs text-center text-muted-foreground animate-stagger-2">
-                    You can always upgrade later from Settings. Skip to continue for free.
-                  </p>
-                </div>
-              )}
-
-              {/* Step 13: Photos & Preview */}
-              {step === 13 && (
                 <div className="space-y-6">
                   <StepHeader emoji="📸" title="Photos & Preview" subtitle="Add photos and see how your profile looks" />
 

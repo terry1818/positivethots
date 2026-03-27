@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,9 @@ import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
 import { PageSkeleton } from "@/components/PageSkeleton";
+import { ProfilePromptsDisplay } from "@/components/profile/ProfilePrompts";
+import { ProfileCompletionMeter } from "@/components/profile/ProfileCompletionMeter";
+import { useProfileCompletion } from "@/hooks/useProfileCompletion";
 
 interface UserBadge {
   module_id: string;
@@ -22,8 +26,10 @@ interface UserBadge {
 }
 
 const relationshipStyleLabels: Record<string, string> = {
+  monogamous: "Monogamous",
   polyamory: "Polyamorous", "open-relationship": "Open Relationship", swinging: "Swinging",
   "relationship-anarchy": "Relationship Anarchist", monogamish: "Monogamish", exploring: "Exploring ENM",
+  "hierarchical-poly": "Hierarchical Poly", "solo-poly": "Solo Poly",
 };
 
 const Profile = () => {
@@ -40,6 +46,26 @@ const Profile = () => {
   const { stats } = useLearningStats();
   const { tiers } = useFeatureUnlocks();
   const { hasFeature, tier } = useSubscription();
+
+  const { data: promptCount = 0 } = useQuery({
+    queryKey: ["profile-prompt-count", profile?.id],
+    queryFn: async () => {
+      if (!profile?.id) return 0;
+      const { count } = await supabase
+        .from("profile_prompts" as any)
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", profile.id);
+      return count || 0;
+    },
+    enabled: !!profile?.id,
+  });
+
+  const { percentage, nudges } = useProfileCompletion({
+    profile,
+    userPhotos,
+    badges,
+    promptCount,
+  });
 
   useEffect(() => {
     if (searchParams.get("boost") === "success") {
@@ -64,7 +90,6 @@ const Profile = () => {
       setProfile(profileResult.data);
       setBadges(badgesResult.data || []);
       setUserPhotos(photosResult.data || []);
-      // Check for pending photos
       const { count: pendingCount } = await supabase
         .from("user_photos")
         .select("id", { count: "exact", head: true })
@@ -92,7 +117,6 @@ const Profile = () => {
   };
 
   const handleBoostProfile = async () => {
-    // VIP gets one free boost/month — validated server-side
     if (hasFeature("profile_boost")) {
       setBoostLoading(true);
       try {
@@ -116,7 +140,6 @@ const Profile = () => {
         return;
       }
     }
-    // Otherwise pay via Stripe
     setBoostLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-boost-payment");
@@ -158,10 +181,12 @@ const Profile = () => {
       </header>
 
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-24 space-y-4">
+        {/* Profile Completion Meter */}
+        <ProfileCompletionMeter percentage={percentage} nudges={nudges} />
+
         {/* Profile Card */}
         <Card className="overflow-hidden animate-fade-in">
           <div className="relative h-72 bg-gradient-to-br from-primary/20 to-secondary/20 overflow-hidden">
-            {/* Photo display */}
             {(() => {
               const displayUrl = userPhotos.length > 0
                 ? userPhotos[currentPhotoIndex]?.photo_url
@@ -182,7 +207,6 @@ const Profile = () => {
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-            {/* Tap zones */}
             {userPhotos.length > 1 && (
               <>
                 <button
@@ -198,7 +222,6 @@ const Profile = () => {
               </>
             )}
 
-            {/* Dot indicators */}
             {userPhotos.length > 1 && (
               <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-1 z-20">
                 {userPhotos.map((_, idx) => (
@@ -217,7 +240,6 @@ const Profile = () => {
               </div>
             )}
 
-            {/* Education badges overlay */}
             <div className="absolute top-3 left-3 flex items-center gap-1 z-20">
               {badges.length >= 20 && (
                 <Badge className="bg-amber-500/90 text-white">
@@ -238,14 +260,12 @@ const Profile = () => {
               )}
             </div>
 
-            {/* Photo count badge */}
             {userPhotos.length > 1 && (
               <div className="absolute top-3 right-3 z-20 bg-black/40 text-white text-xs px-2 py-0.5 rounded-full">
                 {currentPhotoIndex + 1}/{userPhotos.length}
               </div>
             )}
 
-            {/* Name/location overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-4 text-primary-foreground z-20">
               <h2 className="text-3xl font-bold flex items-center gap-2">
                 {profile?.name}, {profile?.age}
@@ -258,14 +278,12 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Pending photos message */}
           {userPhotos.length === 0 && hasPendingPhotos && (
             <p className="text-xs text-muted-foreground text-center py-2">
               Photos pending review — approved photos will appear here.
             </p>
           )}
 
-          {/* Learning Stats with animated counters */}
           {stats && (
             <div className="flex items-center gap-4 px-4 py-3 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-1">
@@ -283,7 +301,17 @@ const Profile = () => {
               )}
             </div>
           )}
+
           <CardContent className="p-4 space-y-4">
+            {/* Profile Prompts */}
+            {profile?.id && (
+              <ProfilePromptsDisplay
+                userId={profile.id}
+                isOwnProfile
+                onAddPrompts={() => navigate("/profile/edit")}
+              />
+            )}
+
             <div className="flex flex-wrap gap-2">
               {profile?.relationship_style && (
                 <Badge variant="outline" className="border-secondary text-secondary">
