@@ -156,11 +156,14 @@ const EditProfile = () => {
                 <Label htmlFor="style">Relationship Style</Label>
                 <select id="style" value={relationshipStyle} onChange={(e) => { setRelationshipStyle(e.target.value); markChanged(); }} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                   <option value="">Select...</option>
+                  <option value="monogamous">Monogamous</option>
                   <option value="polyamory">Polyamorous</option>
                   <option value="open-relationship">Open Relationship</option>
                   <option value="swinging">Swinging</option>
                   <option value="relationship-anarchy">Relationship Anarchy</option>
                   <option value="monogamish">Monogamish</option>
+                  <option value="hierarchical-poly">Hierarchical Poly</option>
+                  <option value="solo-poly">Solo Poly</option>
                   <option value="exploring">Exploring ENM</option>
                 </select>
               </div>
