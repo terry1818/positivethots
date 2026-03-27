@@ -199,6 +199,9 @@ export const ProfileDetailSheet = ({
               </div>
             )}
 
+            {/* Prompts */}
+            <ProfilePromptsInSheet userId={profile.id} />
+
             {/* About */}
             {profile.bio && (
               <div>
