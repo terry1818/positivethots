@@ -97,13 +97,13 @@ const PHASES = [
   { label: "Sexuality", steps: [4, 5], emoji: "🔥" },
   { label: "Relationship", steps: [6, 7], emoji: "🔗" },
   { label: "About You", steps: [8, 9, 10], emoji: "✨" },
-  { label: "Your Story", steps: [11, 12, 13], emoji: "📖" },
+  { label: "Your Story", steps: [11, 12], emoji: "📖" },
 ];
 
 const STEP_EMOJIS: Record<number, string> = {
   1: "👋", 2: "🌈", 3: "💬", 4: "🔥", 5: "⭐",
   6: "🔗", 7: "💜", 8: "📏", 9: "🌿", 10: "🎨",
-  11: "✍️", 12: "👑", 13: "📸",
+  11: "✍️", 12: "📸",
 };
 
 const PHASE_GRADIENTS: Record<number, string> = {
