@@ -709,24 +709,14 @@ const Onboarding = () => {
               {step === 10 && (
                 <div className="space-y-4">
                   <StepHeader emoji="🎨" title="Your interests" subtitle="Select at least 3" />
-                  <div className="flex flex-wrap gap-2 animate-stagger-2">
-                    {INTERESTS_OPTIONS.map(interest => {
-                      const sel = formData.interests.includes(interest);
-                      return (
-                        <button
-                          key={interest}
-                          type="button"
-                          onClick={() => toggleArray("interests", interest)}
-                          className={`rounded-full px-3 py-1.5 text-sm font-medium border transition-all duration-200
-                            ${sel
-                              ? "bg-primary text-primary-foreground border-primary scale-105 animate-chip-select"
-                              : "bg-card text-foreground border-border hover:border-primary/50 active:scale-95"
-                            }`}
-                        >
-                          {interest}
-                        </button>
-                      );
-                    })}
+                  <div className="animate-stagger-2">
+                    <ChipSelector
+                      options={INTERESTS_OPTIONS.map(i => ({ value: i, label: i }))}
+                      selected={formData.interests}
+                      onToggle={(v) => toggleArray("interests", v)}
+                      popularOptions={["Travel", "Music", "Fitness", "Cooking", "Hiking", "Movies", "Yoga", "Nightlife", "Concerts", "Festivals"]}
+                      groupPopularFirst
+                    />
                   </div>
                   <p className="text-xs text-muted-foreground text-center">{formData.interests.length} selected (min 3)</p>
                 </div>
