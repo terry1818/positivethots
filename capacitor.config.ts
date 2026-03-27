@@ -1,12 +1,12 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.e9a42b4b28b1420896a22ed7d317b095',
-  appName: 'positivethots',
+  appId: 'app.positivethots.main',
+  appName: 'Positive Thots',
   webDir: 'dist',
   server: {
-    url: 'https://e9a42b4b-28b1-4208-96a2-2ed7d317b095.lovableproject.com?forceHideBadge=true',
-    cleartext: true,
+    url: 'https://positivethots.app',
+    cleartext: false,
   },
   plugins: {
     PushNotifications: {
@@ -24,7 +24,7 @@ const config: CapacitorConfig = {
     },
   },
   android: {
-    allowMixedContent: true,
+    allowMixedContent: false,
     captureInput: true,
     webContentsDebuggingEnabled: false,
     // Deep linking: handle positivethots.app URLs
