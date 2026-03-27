@@ -11,34 +11,39 @@ import type { Resource } from "@/components/resources/ResourceCard";
 
 /* ── helpers ── */
 
-const buildAmazonImageUrl = (asin: string) => `https://m.media-amazon.com/images/P/${asin}.jpg`;
-const buildProxyImageUrl = (imageUrl: string) => {
-  const encoded = encodeURIComponent(imageUrl);
-  return `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/resource-image-proxy?src=${encoded}`;
+const LOCAL_IMAGE_OVERRIDES: Record<string, string> = {
+  B08948WMF9: "/resource-images/B08948WMF9.svg",
+  B093BCC4VP: "/resource-images/B093BCC4VP.svg",
+  B0DT2JYR59: "/resource-images/B0DT2JYR59.svg",
+  B0018PJMLA: "/resource-images/B0018PJMLA.svg",
+  B0BJHQVMFJ: "/resource-images/B0BJHQVMFJ.svg",
+  "6199142705": "/resource-images/6199142705.svg",
+  "0991846206": "/resource-images/0991846206.svg",
+  B0CVD4J3PR: "/resource-images/B0CVD4J3PR.svg",
 };
 
-const normalizeAmazonImageUrl = (imageUrl: string | null | undefined) => {
-  if (!imageUrl) return null;
-
-  let directUrl = imageUrl;
-
+const buildAmazonImageUrl = (asin: string) => LOCAL_IMAGE_OVERRIDES[asin] || `/resource-images/${asin}.jpg`;
+const extractAsin = (value?: string | null) => {
+  if (!value) return null;
   try {
-    const parsed = new URL(imageUrl);
+    const parsed = new URL(value);
     const asinFromQuery = parsed.searchParams.get("ASIN");
-
-    if (asinFromQuery) {
-      directUrl = buildAmazonImageUrl(asinFromQuery);
-    } else {
-      const pathMatch = parsed.pathname.match(/\/images\/P\/([^./?]+)/i);
-      if (pathMatch?.[1]) {
-        directUrl = buildAmazonImageUrl(pathMatch[1]);
-      }
-    }
+    if (asinFromQuery) return asinFromQuery;
+    const dpMatch = parsed.pathname.match(/\/dp\/([A-Z0-9]{10}|\d{10}[A-Z]?)/i);
+    if (dpMatch?.[1]) return dpMatch[1];
+    const imageMatch = parsed.pathname.match(/\/images\/P\/([^./?]+)/i);
+    if (imageMatch?.[1]) return imageMatch[1];
   } catch {
-    directUrl = imageUrl;
+    const rawMatch = value.match(/([A-Z0-9]{10}|\d{10}[A-Z]?)/i);
+    if (rawMatch?.[1]) return rawMatch[1];
   }
+  return null;
+};
 
-  return buildProxyImageUrl(directUrl);
+const normalizeAmazonImageUrl = (imageUrl: string | null | undefined, productUrl?: string | null) => {
+  const asin = extractAsin(imageUrl) || extractAsin(productUrl);
+  if (asin) return buildAmazonImageUrl(asin);
+  return imageUrl || null;
 };
 
 const makeProduct = (
@@ -47,7 +52,7 @@ const makeProduct = (
 ): Resource => ({
   id, title, author, description: null, category, tag,
   url: `https://www.amazon.com/dp/${asin}?tag=positivethots-20`,
-  image_url: normalizeAmazonImageUrl(buildAmazonImageUrl(asin)),
+  image_url: buildAmazonImageUrl(asin),
   price, rating,
   is_featured: tag === "Top Pick" || tag === "Essential",
   order_index,
