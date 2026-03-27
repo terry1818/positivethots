@@ -538,6 +538,7 @@ const Onboarding = () => {
                       onToggle={(v) => updateField("sexuality", formData.sexuality === v ? "" : v)}
                       max={1}
                       columns={2}
+                      popularOptions={["Bisexual", "Pansexual", "Straight", "Queer", "Heteroflexible"]}
                     />
                   </div>
                 </div>
