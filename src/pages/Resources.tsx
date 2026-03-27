@@ -17,7 +17,7 @@ const makeProduct = (
 ): Resource => ({
   id, title, author, description: null, category, tag,
   url: `https://www.amazon.com/dp/${asin}?tag=positivethots-20`,
-  image_url: `https://m.media-amazon.com/images/P/${asin}.jpg`,
+  image_url: `https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=${asin}&Format=_SL250_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=positivethots-20`,
   price, rating,
   is_featured: tag === "Top Pick" || tag === "Essential",
   order_index,
