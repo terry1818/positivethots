@@ -575,23 +575,29 @@ const Onboarding = () => {
                     <GlossaryTooltip term="Relationship Anarchy" />
                   </div>
                   <div className="space-y-2 animate-stagger-2">
-                    {RELATIONSHIP_STYLE_OPTIONS.map(opt => (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => updateField("relationshipStyle", opt.value)}
-                        className={`w-full text-left rounded-xl px-4 py-3 border transition-all duration-200
-                          ${formData.relationshipStyle === opt.value
-                            ? "bg-primary text-primary-foreground border-primary shadow-md"
-                            : "bg-card text-foreground border-border hover:border-primary/50 active:scale-[0.98]"
-                          }`}
-                      >
-                        <span className="font-medium">{opt.label}</span>
-                        <span className={`block text-sm mt-0.5 ${formData.relationshipStyle === opt.value ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-                          {opt.description}
-                        </span>
-                      </button>
-                    ))}
+                    {RELATIONSHIP_STYLE_OPTIONS.map(opt => {
+                      const isPopular = ["polyamory", "open-relationship", "monogamous"].includes(opt.value);
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => updateField("relationshipStyle", opt.value)}
+                          className={`relative w-full text-left rounded-xl px-4 py-3 border transition-all duration-200
+                            ${formData.relationshipStyle === opt.value
+                              ? "bg-primary text-primary-foreground border-primary shadow-md"
+                              : "bg-card text-foreground border-border hover:border-primary/50 active:scale-[0.98]"
+                            }`}
+                        >
+                          <span className="font-medium">{opt.label}</span>
+                          <span className={`block text-sm mt-0.5 ${formData.relationshipStyle === opt.value ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                            {opt.description}
+                          </span>
+                          {isPopular && formData.relationshipStyle !== opt.value && (
+                            <span className="absolute top-2.5 right-3 text-[10px] text-primary/60 font-medium">Popular</span>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
