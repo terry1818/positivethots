@@ -156,6 +156,7 @@ const Onboarding = () => {
     bio: "",
     boundaries: "",
     location: "",
+    prompts: [] as { question: string; response: string }[],
   });
   const navigate = useNavigate();
 
