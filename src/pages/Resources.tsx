@@ -228,7 +228,7 @@ const Resources = () => {
       </div>
 
       {/* Sticky tabs */}
-      <div className="sticky top-16 z-30 w-full bg-gray-950/95 backdrop-blur-md border-b border-gray-800/60 shadow-lg shadow-black/20">
+      <div className="sticky top-0 z-40 w-full bg-gray-950 border-b border-gray-800/60 shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
         <div className="max-w-6xl mx-auto px-4 py-3">
           <div className="flex items-center justify-center gap-2 overflow-x-auto scrollbar-hide">
             {CATEGORIES.map((cat) => {
