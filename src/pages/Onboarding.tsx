@@ -726,7 +726,7 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 11: Bio, Boundaries, Location */}
+              {/* Step 11: Prompts, Boundaries, Location */}
               {step === 11 && (
                 <div className="space-y-4">
                   <StepHeader emoji="✍️" title="Tell your story" />
@@ -740,17 +740,12 @@ const Onboarding = () => {
                       maxLength={100}
                     />
                   </div>
-                  <div className="space-y-2 animate-stagger-2">
-                    <Label htmlFor="bio">About You</Label>
-                    <Textarea
-                      id="bio"
-                      placeholder="Share your journey, what excites you, what makes you unique..."
-                      value={formData.bio}
-                      onChange={(e) => updateField("bio", e.target.value)}
-                      maxLength={500}
-                      rows={4}
+                  <div className="animate-stagger-2">
+                    <Label className="text-sm font-medium mb-2 block">💬 Profile Prompts</Label>
+                    <PromptPicker
+                      answers={formData.prompts}
+                      onChange={(prompts) => updateField("prompts", prompts)}
                     />
-                    <p className="text-xs text-muted-foreground text-right">{formData.bio.length}/500</p>
                   </div>
                   <div className="space-y-2 animate-stagger-3">
                     <Label htmlFor="boundaries">🛡️ Boundaries & Preferences (Optional)</Label>
@@ -763,44 +758,6 @@ const Onboarding = () => {
                       rows={3}
                     />
                   </div>
-                </div>
-              )}
-
-              {/* Step 12: Premium Upsell (Optional) */}
-              {step === 12 && (
-                <div className="space-y-5">
-                  <StepHeader emoji="👑" title="Unlock More" subtitle="Get the most out of Positive Thots" />
-                  <div className="space-y-3 animate-stagger-1">
-                    {[
-                      { icon: Crown, name: "Plus", price: "$4.99/mo", features: ["See who likes you", "5 Thots/day"] },
-                      { icon: Star, name: "Premium", price: "$9.99/mo", features: ["Everything in Plus", "Priority visibility", "Advanced filters"], highlight: true },
-                      { icon: Zap, name: "VIP", price: "$19.99/mo", features: ["Everything in Premium", "Unlimited Thots", "Mentor badge"] },
-                    ].map((tier) => (
-                      <div
-                        key={tier.name}
-                        className={`rounded-xl border p-4 transition-all ${tier.highlight ? "border-primary bg-primary/5 shadow-md" : "border-border"}`}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <tier.icon className="h-5 w-5 text-primary" />
-                            <span className="font-semibold">{tier.name}</span>
-                          </div>
-                          <span className="text-sm font-bold text-primary">{tier.price}</span>
-                        </div>
-                        <ul className="space-y-1">
-                          {tier.features.map((f) => (
-                            <li key={f} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                              <Check className="h-3 w-3 text-primary flex-shrink-0" />
-                              {f}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-xs text-center text-muted-foreground animate-stagger-2">
-                    You can always upgrade later from Settings. Skip to continue for free.
-                  </p>
                 </div>
               )}
 
