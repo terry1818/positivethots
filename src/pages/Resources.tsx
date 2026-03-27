@@ -228,27 +228,29 @@ const Resources = () => {
       </div>
 
       {/* Sticky tabs */}
-      <div className="sticky top-16 z-30 bg-gray-950/95 backdrop-blur-sm py-3 border-b border-gray-800/50">
-        <div className="flex justify-center gap-2 overflow-x-auto px-4 scrollbar-hide">
-          {CATEGORIES.map((cat) => {
-            const isActive = activeTab === cat.key;
-            const count = cat.key === "All" ? products.length : (countByCategory[cat.key] || 0);
-            return (
-              <button
-                key={cat.key}
-                onClick={() => setActiveTab(cat.key)}
-                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
-                  isActive
-                    ? "bg-purple-600 text-white"
-                    : "bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-gray-200"
-                }`}
-              >
-                {cat.icon}
-                {cat.label}
-                <span className="text-xs opacity-70">({count})</span>
-              </button>
-            );
-          })}
+      <div className="sticky top-16 z-30 w-full bg-gray-950/95 backdrop-blur-md border-b border-gray-800/60 shadow-lg shadow-black/20">
+        <div className="max-w-6xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-center gap-2 overflow-x-auto scrollbar-hide">
+            {CATEGORIES.map((cat) => {
+              const isActive = activeTab === cat.key;
+              const count = cat.key === "All" ? products.length : (countByCategory[cat.key] || 0);
+              return (
+                <button
+                  key={cat.key}
+                  onClick={() => setActiveTab(cat.key)}
+                  className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+                    isActive
+                      ? "bg-purple-600 text-white"
+                      : "bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-gray-200"
+                  }`}
+                >
+                  {cat.icon}
+                  {cat.label}
+                  <span className="text-xs opacity-70">({count})</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
