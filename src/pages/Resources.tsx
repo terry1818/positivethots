@@ -16,16 +16,22 @@ const LOCAL_IMAGE_OVERRIDES: Record<string, string> = {
   B093BCC4VP: "/resource-images/B093BCC4VP.svg",
   B0DT2JYR59: "/resource-images/B0DT2JYR59.svg",
   B0018PJMLA: "/resource-images/B0018PJMLA.svg",
+  B000FN69PC: "/resource-images/B0018PJMLA.svg",
   B0BJHQVMFJ: "/resource-images/B0BJHQVMFJ.svg",
+  B0B7V56B7H: "/resource-images/B0BJHQVMFJ.svg",
   "6199142705": "/resource-images/6199142705.svg",
   "0991846206": "/resource-images/0991846206.svg",
   B0CVD4J3PR: "/resource-images/B0CVD4J3PR.svg",
+  "1452169950": "/resource-images/B0CVD4J3PR.svg",
 };
 
 const PRODUCT_URL_OVERRIDES: Record<string, string> = {
-  B0BJHQVMFJ: "https://www.amazon.com/WERE-NOT-REALLY-STRANGERS-Strangers/dp/B0B7V56B7H?tag=positivethots-20",
-  B0018PJMLA: "https://www.amazon.com/TABLETOPICS-Couples-Questions-Start-Conversations/dp/B000FN69PC?tag=positivethots-20",
-  B0CVD4J3PR: "https://www.amazon.com/Calm-Chaos-Journal-Practice-Peaceful/dp/1452169950?tag=positivethots-20",
+  B0BJHQVMFJ: "https://www.amazon.com/dp/B0B7V56B7H?tag=forsale18od-20",
+  B0B7V56B7H: "https://www.amazon.com/dp/B0B7V56B7H?tag=forsale18od-20",
+  B0018PJMLA: "https://www.amazon.com/dp/B000FN69PC?tag=forsale18od-20",
+  B000FN69PC: "https://www.amazon.com/dp/B000FN69PC?tag=forsale18od-20",
+  B0CVD4J3PR: "https://www.amazon.com/dp/1452169950?tag=forsale18od-20",
+  "1452169950": "https://www.amazon.com/dp/1452169950?tag=forsale18od-20",
 };
 
 const RESOURCE_TITLE_OVERRIDES: Record<string, Partial<Resource>> = {
@@ -45,25 +51,26 @@ const RESOURCE_TITLE_OVERRIDES: Record<string, Partial<Resource>> = {
     image_url: LOCAL_IMAGE_OVERRIDES["6199142705"],
   },
   "We're Not Really Strangers Couples Edition": {
-    image_url: LOCAL_IMAGE_OVERRIDES.B0BJHQVMFJ,
-    url: PRODUCT_URL_OVERRIDES.B0BJHQVMFJ,
+    image_url: LOCAL_IMAGE_OVERRIDES.B0B7V56B7H,
+    url: PRODUCT_URL_OVERRIDES.B0B7V56B7H,
   },
   "We're Not Really Strangers — Couples Edition": {
-    image_url: LOCAL_IMAGE_OVERRIDES.B0BJHQVMFJ,
-    url: PRODUCT_URL_OVERRIDES.B0BJHQVMFJ,
+    image_url: LOCAL_IMAGE_OVERRIDES.B0B7V56B7H,
+    url: PRODUCT_URL_OVERRIDES.B0B7V56B7H,
   },
   "TableTopics Couples Edition": {
-    image_url: LOCAL_IMAGE_OVERRIDES.B0018PJMLA,
-    url: PRODUCT_URL_OVERRIDES.B0018PJMLA,
+    image_url: LOCAL_IMAGE_OVERRIDES.B000FN69PC,
+    url: PRODUCT_URL_OVERRIDES.B000FN69PC,
   },
   "Calm the Chaos Journal": {
-    image_url: LOCAL_IMAGE_OVERRIDES.B0CVD4J3PR,
-    url: PRODUCT_URL_OVERRIDES.B0CVD4J3PR,
+    image_url: LOCAL_IMAGE_OVERRIDES["1452169950"],
+    url: PRODUCT_URL_OVERRIDES["1452169950"],
+    author: "Nicola Ries Taggart",
   },
 };
 
 const buildAmazonImageUrl = (asin: string) => LOCAL_IMAGE_OVERRIDES[asin] || `/resource-images/${asin}.jpg`;
-const buildAmazonProductUrl = (asin: string) => PRODUCT_URL_OVERRIDES[asin] || `https://www.amazon.com/dp/${asin}?tag=positivethots-20`;
+const buildAmazonProductUrl = (asin: string) => PRODUCT_URL_OVERRIDES[asin] || `https://www.amazon.com/dp/${asin}?tag=forsale18od-20`;
 
 const extractAsin = (value?: string | null) => {
   if (!value) return null;
@@ -119,12 +126,12 @@ const FALLBACK: Resource[] = [
   makeProduct("c4","Why Don't We — Spice IT UP","Why Don't We","B093BCC4VP","$19.99",4.5,"Spicy","connection",4),
   makeProduct("c5","The Ultimate Date Night Game","Zeitgeist","0593435729","$12.99",4.4,"Classic","connection",5),
   makeProduct("c6","InDeep Couples Game","InDeep","B0DT2JYR59","$19.99",4.5,"New","connection",6),
-  makeProduct("c7","TableTopics Couples Edition","TableTopics","B0018PJMLA","$25.00",4.5,"Original","connection",7),
-  makeProduct("c8","We're Not Really Strangers Couples Edition","WNRS","B0BJHQVMFJ","$24.99",4.6,"Viral","connection",8),
+  makeProduct("c7","TableTopics Couples Edition","TableTopics","B000FN69PC","$25.00",4.5,"Original","connection",7),
+  makeProduct("c8","We're Not Really Strangers Couples Edition","WNRS","B0B7V56B7H","$24.99",4.6,"Viral","connection",8),
   makeProduct("s1","Self-Care & Gratitude Journal (90-Day)","Love Yourself Softly","B0G3PMTKB8","$12.99",4.6,"Top Pick","selfcare",1),
   makeProduct("s2","Find Your Own Magic Mental Health Journal","FYMJ","6199142705","$16.99",4.5,"12-Month","selfcare",2),
   makeProduct("s3","The Five Minute Journal","Intelligent Change","0991846206","$29.99",4.7,"Classic","selfcare",3),
-  makeProduct("s4","Calm the Chaos Journal","Daisy Waugh","B0CVD4J3PR","$14.99",4.4,"Anxiety","selfcare",4),
+  makeProduct("s4","Calm the Chaos Journal","Nicola Ries Taggart","1452169950","$14.99",4.4,"Anxiety","selfcare",4),
   makeProduct("s5","Mindfulness Cards","Rohan Gunatillake","1786489880","$14.49",4.5,"Mindfulness","selfcare",5),
   makeProduct("s6","Self-Love Workbook for Women","Megan Logan","1647397294","$11.99",4.5,"Self-Love","selfcare",6),
 ];
