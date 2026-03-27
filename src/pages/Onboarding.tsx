@@ -136,7 +136,7 @@ const Onboarding = () => {
   const [loading, setLoading] = useState(false);
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
   const [showInterstitial, setShowInterstitial] = useState(false);
-  const [interstitialData, setInterstitialData] = useState({ emoji: "", message: "", nextPhase: "" });
+  const [interstitialData, setInterstitialData] = useState({ emoji: "", message: "", nextPhase: "", nextUp: "" });
 
   const [formData, setFormData] = useState({
     gender: "",
