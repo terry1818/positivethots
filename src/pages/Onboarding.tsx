@@ -417,6 +417,7 @@ const Onboarding = () => {
         emoji={interstitialData.emoji}
         message={interstitialData.message}
         nextPhase={interstitialData.nextPhase}
+        nextUp={(interstitialData as any).nextUp}
         onComplete={() => { setShowInterstitial(false); advanceStep(); }}
       />
 
