@@ -23,9 +23,43 @@ const LOCAL_IMAGE_OVERRIDES: Record<string, string> = {
 };
 
 const PRODUCT_URL_OVERRIDES: Record<string, string> = {
-  B0BJHQVMFJ: "https://www.amazon.com/s?k=we%27re+not+really+strangers+couples+edition&tag=positivethots-20",
-  B0018PJMLA: "https://www.amazon.com/s?k=tabletopics+couples+edition&tag=positivethots-20",
-  B0CVD4J3PR: "https://www.amazon.com/s?k=calm+the+chaos+journal+daisy+waugh&tag=positivethots-20",
+  B0BJHQVMFJ: "https://www.amazon.com/WERE-NOT-REALLY-STRANGERS-Strangers/dp/B0B7V56B7H?tag=positivethots-20",
+  B0018PJMLA: "https://www.amazon.com/TABLETOPICS-Couples-Questions-Start-Conversations/dp/B000FN69PC?tag=positivethots-20",
+  B0CVD4J3PR: "https://www.amazon.com/Calm-Chaos-Journal-Practice-Peaceful/dp/1452169950?tag=positivethots-20",
+};
+
+const RESOURCE_TITLE_OVERRIDES: Record<string, Partial<Resource>> = {
+  "BETTER TOGETHER Conversation Cards": {
+    image_url: LOCAL_IMAGE_OVERRIDES.B08948WMF9,
+  },
+  "Why Don't We — Spice IT UP": {
+    image_url: LOCAL_IMAGE_OVERRIDES.B093BCC4VP,
+  },
+  "InDeep Couples Game": {
+    image_url: LOCAL_IMAGE_OVERRIDES.B0DT2JYR59,
+  },
+  "The Five Minute Journal": {
+    image_url: LOCAL_IMAGE_OVERRIDES["0991846206"],
+  },
+  "Find Your Own Magic Mental Health Journal": {
+    image_url: LOCAL_IMAGE_OVERRIDES["6199142705"],
+  },
+  "We're Not Really Strangers Couples Edition": {
+    image_url: LOCAL_IMAGE_OVERRIDES.B0BJHQVMFJ,
+    url: PRODUCT_URL_OVERRIDES.B0BJHQVMFJ,
+  },
+  "We're Not Really Strangers — Couples Edition": {
+    image_url: LOCAL_IMAGE_OVERRIDES.B0BJHQVMFJ,
+    url: PRODUCT_URL_OVERRIDES.B0BJHQVMFJ,
+  },
+  "TableTopics Couples Edition": {
+    image_url: LOCAL_IMAGE_OVERRIDES.B0018PJMLA,
+    url: PRODUCT_URL_OVERRIDES.B0018PJMLA,
+  },
+  "Calm the Chaos Journal": {
+    image_url: LOCAL_IMAGE_OVERRIDES.B0CVD4J3PR,
+    url: PRODUCT_URL_OVERRIDES.B0CVD4J3PR,
+  },
 };
 
 const buildAmazonImageUrl = (asin: string) => LOCAL_IMAGE_OVERRIDES[asin] || `/resource-images/${asin}.jpg`;
@@ -125,22 +159,23 @@ const Resources = () => {
         .select("*")
         .order("order_index", { ascending: true });
       if (error || !data || data.length === 0) return FALLBACK;
-      return (data as any[]).map((r: any) => ({
-        ...FALLBACK_BY_ASIN[extractAsin(r.url) || extractAsin(r.image_url) || ""],
-        ...r,
-        url: (() => {
-          const asin = extractAsin(r.url) || extractAsin(r.image_url);
-          return asin ? buildAmazonProductUrl(asin) : r.url;
-        })(),
-        image_url: (() => {
-          const asin = extractAsin(r.url) || extractAsin(r.image_url);
-          return asin ? buildAmazonImageUrl(asin) : normalizeAmazonImageUrl(r.image_url, r.url);
-        })(),
-        author: r.author || FALLBACK_BY_ASIN[extractAsin(r.url) || extractAsin(r.image_url) || ""]?.author || "",
-        price: r.price || FALLBACK_BY_ASIN[extractAsin(r.url) || extractAsin(r.image_url) || ""]?.price || "",
-        rating: r.rating || FALLBACK_BY_ASIN[extractAsin(r.url) || extractAsin(r.image_url) || ""]?.rating || 0,
-        tag: r.tag || FALLBACK_BY_ASIN[extractAsin(r.url) || extractAsin(r.image_url) || ""]?.tag || "",
-      })) as Resource[];
+      return (data as any[]).map((r: any) => {
+        const asin = extractAsin(r.url) || extractAsin(r.image_url);
+        const fallback = FALLBACK_BY_ASIN[asin || ""];
+        const titleOverride = RESOURCE_TITLE_OVERRIDES[r.title] || RESOURCE_TITLE_OVERRIDES[fallback?.title || ""];
+
+        return {
+          ...fallback,
+          ...r,
+          ...titleOverride,
+          url: titleOverride?.url || (asin ? buildAmazonProductUrl(asin) : r.url),
+          image_url: titleOverride?.image_url || (asin ? buildAmazonImageUrl(asin) : normalizeAmazonImageUrl(r.image_url, r.url)),
+          author: r.author || fallback?.author || "",
+          price: r.price || fallback?.price || "",
+          rating: r.rating || fallback?.rating || 0,
+          tag: r.tag || fallback?.tag || "",
+        } as Resource;
+      });
     },
     staleTime: 1000 * 60 * 10,
   });
