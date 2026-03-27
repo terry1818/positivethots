@@ -11,13 +11,41 @@ import type { Resource } from "@/components/resources/ResourceCard";
 
 /* ── helpers ── */
 
+const buildAmazonImageUrl = (asin: string) => `https://m.media-amazon.com/images/P/${asin}.jpg`;
+
+const normalizeAmazonImageUrl = (imageUrl: string | null | undefined) => {
+  if (!imageUrl) return null;
+
+  if (imageUrl.includes("m.media-amazon.com/images/P/")) {
+    return imageUrl;
+  }
+
+  try {
+    const parsed = new URL(imageUrl);
+    const asinFromQuery = parsed.searchParams.get("ASIN");
+
+    if (asinFromQuery) {
+      return buildAmazonImageUrl(asinFromQuery);
+    }
+
+    const pathMatch = parsed.pathname.match(/\/images\/P\/([^./?]+)/i);
+    if (pathMatch?.[1]) {
+      return buildAmazonImageUrl(pathMatch[1]);
+    }
+  } catch {
+    return imageUrl;
+  }
+
+  return imageUrl;
+};
+
 const makeProduct = (
   id: string, title: string, author: string, asin: string,
   price: string, rating: number, tag: string, category: string, order_index: number
 ): Resource => ({
   id, title, author, description: null, category, tag,
   url: `https://www.amazon.com/dp/${asin}?tag=positivethots-20`,
-  image_url: `https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=${asin}&Format=_SL250_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=positivethots-20`,
+  image_url: buildAmazonImageUrl(asin),
   price, rating,
   is_featured: tag === "Top Pick" || tag === "Essential",
   order_index,
