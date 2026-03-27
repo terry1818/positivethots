@@ -115,10 +115,10 @@ const PHASE_GRADIENTS: Record<number, string> = {
 };
 
 const PHASE_INTERSTITIALS = [
-  { emoji: "🔥", message: "Identity locked in!", nextPhase: "Now let's explore your desires..." },
-  { emoji: "💜", message: "Looking good so far!", nextPhase: "Tell us about your relationships..." },
-  { emoji: "⭐", message: "Almost there!", nextPhase: "A few more things about you..." },
-  { emoji: "📖", message: "The fun part!", nextPhase: "Share your story..." },
+  { emoji: "🔥", message: "Identity locked in!", nextPhase: "Now let's explore your desires...", nextUp: "Next up: Tell us about your sexuality and desires" },
+  { emoji: "💜", message: "Looking good so far!", nextPhase: "Tell us about your relationships...", nextUp: "Next up: Your relationship style and status" },
+  { emoji: "⭐", message: "Almost there!", nextPhase: "A few more things about you...", nextUp: "Next up: The fun stuff — height, lifestyle, and interests" },
+  { emoji: "📖", message: "The fun part!", nextPhase: "Share your story...", nextUp: "Next up: Share your story and add photos" },
 ];
 
 const TOTAL_STEPS = 13;
