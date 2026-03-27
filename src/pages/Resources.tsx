@@ -34,9 +34,11 @@ const extractAsin = (value?: string | null) => {
     const imageMatch = parsed.pathname.match(/\/images\/P\/([^./?]+)/i);
     if (imageMatch?.[1]) return imageMatch[1];
   } catch {
-    const rawMatch = value.match(/([A-Z0-9]{10}|\d{10}[A-Z]?)/i);
-    if (rawMatch?.[1]) return rawMatch[1];
   }
+
+  const rawMatch = value.match(/([A-Z0-9]{10}|\d{10}[A-Z]?)/i);
+  if (rawMatch?.[1]) return rawMatch[1];
+
   return null;
 };
 
