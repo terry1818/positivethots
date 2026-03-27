@@ -110,7 +110,7 @@ const Resources = () => {
       if (error || !data || data.length === 0) return FALLBACK;
       return (data as any[]).map((r: any) => ({
         ...r,
-        image_url: normalizeAmazonImageUrl(r.image_url),
+        image_url: normalizeAmazonImageUrl(r.image_url, r.url),
         author: r.author || "",
         price: r.price || "",
         rating: r.rating || 0,
