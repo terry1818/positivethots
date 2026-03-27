@@ -12,17 +12,17 @@ import type { Resource } from "@/components/resources/ResourceCard";
 /* ── helpers ── */
 
 const LOCAL_IMAGE_OVERRIDES: Record<string, string> = {
-  B08948WMF9: "https://m.media-amazon.com/images/I/815w6EiqrtL._SL500_.jpg",
-  B093BCC4VP: "https://m.media-amazon.com/images/I/615iwYx2ZIL._SL500_.jpg",
-  B0DT2JYR59: "https://m.media-amazon.com/images/I/61yaZOJvPAL._SL500_.jpg",
-  B0018PJMLA: "https://m.media-amazon.com/images/I/71D7Xkeq2JL._SL500_.jpg",
-  B000FN69PC: "https://m.media-amazon.com/images/I/71D7Xkeq2JL._SL500_.jpg",
-  B0BJHQVMFJ: "https://m.media-amazon.com/images/I/71duzO5%2BxAL._SL500_.jpg",
-  B0B7V56B7H: "https://m.media-amazon.com/images/I/71duzO5%2BxAL._SL500_.jpg",
-  "6199142705": "https://m.media-amazon.com/images/I/71uPJdF1PUL._SL500_.jpg",
-  "0991846206": "https://m.media-amazon.com/images/I/71Iy6xCEzDL._SL500_.jpg",
-  B0CVD4J3PR: "https://m.media-amazon.com/images/I/71nMSb82oNL._SL500_.jpg",
-  "1452169950": "https://m.media-amazon.com/images/I/71nMSb82oNL._SL500_.jpg",
+  B08948WMF9: "https://m.media-amazon.com/images/I/71ZlBiC3HNL._SL500_.jpg",
+  B093BCC4VP: "https://m.media-amazon.com/images/I/71kc-aiTJtL._SL500_.jpg",
+  B0DT2JYR59: "https://m.media-amazon.com/images/I/51Tne9x5-JL._SL500_.jpg",
+  B0018PJMLA: "https://m.media-amazon.com/images/I/71CZXaXCeXL._SL500_.jpg",
+  B000FN69PC: "https://m.media-amazon.com/images/I/71CZXaXCeXL._SL500_.jpg",
+  B0BJHQVMFJ: "https://m.media-amazon.com/images/I/61gaYxYk9SL._SL500_.jpg",
+  B0B7V56B7H: "https://m.media-amazon.com/images/I/61gaYxYk9SL._SL500_.jpg",
+  "6199142705": "https://m.media-amazon.com/images/I/718906kDpxL._SL500_.jpg",
+  "0991846206": "https://m.media-amazon.com/images/I/81q%2BFi0i9L._SL500_.jpg",
+  B0CVD4J3PR: "https://m.media-amazon.com/images/I/81PMKdMinbL._SL500_.jpg",
+  "1452169950": "https://m.media-amazon.com/images/I/81PMKdMinbL._SL500_.jpg",
 };
 
 const PRODUCT_URL_OVERRIDES: Record<string, string> = {
