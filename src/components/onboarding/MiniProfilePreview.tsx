@@ -11,7 +11,7 @@ export const MiniProfilePreview = ({ name, profileImage, fields, visible }: Mini
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 animate-slide-up">
+    <div className="fixed bottom-4 right-4 z-40 animate-slide-up">
       <div className="bg-card border border-border rounded-2xl shadow-[var(--shadow-elevated)] px-4 py-3 flex items-center gap-3 max-w-xs">
         <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden shrink-0">
           {profileImage ? (
