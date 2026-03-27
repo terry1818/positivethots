@@ -380,6 +380,24 @@ const Onboarding = () => {
         .eq("id", session.user.id);
 
       if (error) throw error;
+
+      // Save prompts
+      if (formData.prompts.length > 0) {
+        // Delete existing prompts first
+        await supabase.from("profile_prompts" as any).delete().eq("user_id", session.user.id);
+        const promptRows = formData.prompts
+          .filter(p => p.response.trim())
+          .map((p, i) => ({
+            user_id: session.user.id,
+            prompt_question: p.question,
+            prompt_response: p.response.trim(),
+            display_order: i,
+          }));
+        if (promptRows.length > 0) {
+          await supabase.from("profile_prompts" as any).insert(promptRows);
+        }
+      }
+
       trackEvent('onboarding_completed', {});
       toast.success("Welcome to Positive Thots! 💕");
       navigate("/learn");
