@@ -761,8 +761,8 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 13: Photos & Preview */}
-              {step === 13 && (
+              {/* Step 12: Photos & Preview */}
+              {step === 12 && (
                 <div className="space-y-6">
                   <StepHeader emoji="📸" title="Photos & Preview" subtitle="Add photos and see how your profile looks" />
 
