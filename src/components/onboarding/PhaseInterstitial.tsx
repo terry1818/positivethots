@@ -5,10 +5,11 @@ interface PhaseInterstitialProps {
   emoji: string;
   message: string;
   nextPhase: string;
+  nextUp?: string;
   onComplete: () => void;
 }
 
-export const PhaseInterstitial = ({ show, emoji, message, nextPhase, onComplete }: PhaseInterstitialProps) => {
+export const PhaseInterstitial = ({ show, emoji, message, nextPhase, nextUp, onComplete }: PhaseInterstitialProps) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ export const PhaseInterstitial = ({ show, emoji, message, nextPhase, onComplete 
       const timer = setTimeout(() => {
         setVisible(false);
         setTimeout(onComplete, 300);
-      }, 1800);
+      }, 2200);
       return () => clearTimeout(timer);
     }
   }, [show]);
@@ -36,6 +37,9 @@ export const PhaseInterstitial = ({ show, emoji, message, nextPhase, onComplete 
       <p className="text-2xl font-bold text-foreground animate-stagger-2">
         {nextPhase}
       </p>
+      {nextUp && (
+        <p className="text-sm text-muted-foreground mt-2 animate-stagger-3">{nextUp}</p>
+      )}
       <p className="text-xs text-muted-foreground mt-6 animate-stagger-3">Tap to continue</p>
     </div>
   );
