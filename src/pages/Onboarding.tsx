@@ -818,7 +818,7 @@ const Onboarding = () => {
 
             {/* Navigation buttons */}
             {step > 1 && (
-              <div className="flex gap-2 mt-6">
+              <div className="flex gap-2 mt-6 pb-16 relative z-50">
                 <Button onClick={goBack} variant="outline" className="flex-1">
                   <ChevronLeft className="h-4 w-4 mr-1" /> Back
                 </Button>
