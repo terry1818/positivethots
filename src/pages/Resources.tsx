@@ -22,7 +22,15 @@ const LOCAL_IMAGE_OVERRIDES: Record<string, string> = {
   B0CVD4J3PR: "/resource-images/B0CVD4J3PR.svg",
 };
 
+const PRODUCT_URL_OVERRIDES: Record<string, string> = {
+  B0BJHQVMFJ: "https://www.amazon.com/s?k=we%27re+not+really+strangers+couples+edition&tag=positivethots-20",
+  B0018PJMLA: "https://www.amazon.com/s?k=tabletopics+couples+edition&tag=positivethots-20",
+  B0CVD4J3PR: "https://www.amazon.com/s?k=calm+the+chaos+journal+daisy+waugh&tag=positivethots-20",
+};
+
 const buildAmazonImageUrl = (asin: string) => LOCAL_IMAGE_OVERRIDES[asin] || `/resource-images/${asin}.jpg`;
+const buildAmazonProductUrl = (asin: string) => PRODUCT_URL_OVERRIDES[asin] || `https://www.amazon.com/dp/${asin}?tag=positivethots-20`;
+
 const extractAsin = (value?: string | null) => {
   if (!value) return null;
   try {
@@ -53,7 +61,7 @@ const makeProduct = (
   price: string, rating: number, tag: string, category: string, order_index: number
 ): Resource => ({
   id, title, author, description: null, category, tag,
-  url: `https://www.amazon.com/dp/${asin}?tag=positivethots-20`,
+  url: buildAmazonProductUrl(asin),
   image_url: buildAmazonImageUrl(asin),
   price, rating,
   is_featured: tag === "Top Pick" || tag === "Essential",
@@ -87,6 +95,13 @@ const FALLBACK: Resource[] = [
   makeProduct("s6","Self-Love Workbook for Women","Megan Logan","1647397294","$11.99",4.5,"Self-Love","selfcare",6),
 ];
 
+const FALLBACK_BY_ASIN = Object.fromEntries(
+  FALLBACK.map((resource) => {
+    const asin = extractAsin(resource.url) ?? resource.id;
+    return [asin, resource];
+  })
+) as Record<string, Resource>;
+
 const CATEGORIES = [
   { key: "All", label: "All", icon: null },
   { key: "books", label: "Books & Education", icon: <BookOpen className="w-4 h-4" /> },
@@ -111,12 +126,20 @@ const Resources = () => {
         .order("order_index", { ascending: true });
       if (error || !data || data.length === 0) return FALLBACK;
       return (data as any[]).map((r: any) => ({
+        ...FALLBACK_BY_ASIN[extractAsin(r.url) || extractAsin(r.image_url) || ""],
         ...r,
-        image_url: normalizeAmazonImageUrl(r.image_url, r.url),
-        author: r.author || "",
-        price: r.price || "",
-        rating: r.rating || 0,
-        tag: r.tag || "",
+        url: (() => {
+          const asin = extractAsin(r.url) || extractAsin(r.image_url);
+          return asin ? buildAmazonProductUrl(asin) : r.url;
+        })(),
+        image_url: (() => {
+          const asin = extractAsin(r.url) || extractAsin(r.image_url);
+          return asin ? buildAmazonImageUrl(asin) : normalizeAmazonImageUrl(r.image_url, r.url);
+        })(),
+        author: r.author || FALLBACK_BY_ASIN[extractAsin(r.url) || extractAsin(r.image_url) || ""]?.author || "",
+        price: r.price || FALLBACK_BY_ASIN[extractAsin(r.url) || extractAsin(r.image_url) || ""]?.price || "",
+        rating: r.rating || FALLBACK_BY_ASIN[extractAsin(r.url) || extractAsin(r.image_url) || ""]?.rating || 0,
+        tag: r.tag || FALLBACK_BY_ASIN[extractAsin(r.url) || extractAsin(r.image_url) || ""]?.tag || "",
       })) as Resource[];
     },
     staleTime: 1000 * 60 * 10,
