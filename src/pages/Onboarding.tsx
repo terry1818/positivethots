@@ -341,6 +341,7 @@ const Onboarding = () => {
         return true;
       case 11:
         if (!formData.location.trim()) { toast.error("Please enter your location"); return false; }
+        if (formData.prompts.filter(p => p.response.trim()).length < 2) { toast.error("Please answer at least 2 prompts"); return false; }
         return true;
       default:
         return true;
