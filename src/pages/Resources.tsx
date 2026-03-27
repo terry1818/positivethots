@@ -12,31 +12,33 @@ import type { Resource } from "@/components/resources/ResourceCard";
 /* ── helpers ── */
 
 const buildAmazonImageUrl = (asin: string) => `https://m.media-amazon.com/images/P/${asin}.jpg`;
+const buildProxyImageUrl = (imageUrl: string) => {
+  const encoded = encodeURIComponent(imageUrl);
+  return `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/resource-image-proxy?src=${encoded}`;
+};
 
 const normalizeAmazonImageUrl = (imageUrl: string | null | undefined) => {
   if (!imageUrl) return null;
 
-  if (imageUrl.includes("m.media-amazon.com/images/P/")) {
-    return imageUrl;
-  }
+  let directUrl = imageUrl;
 
   try {
     const parsed = new URL(imageUrl);
     const asinFromQuery = parsed.searchParams.get("ASIN");
 
     if (asinFromQuery) {
-      return buildAmazonImageUrl(asinFromQuery);
-    }
-
-    const pathMatch = parsed.pathname.match(/\/images\/P\/([^./?]+)/i);
-    if (pathMatch?.[1]) {
-      return buildAmazonImageUrl(pathMatch[1]);
+      directUrl = buildAmazonImageUrl(asinFromQuery);
+    } else {
+      const pathMatch = parsed.pathname.match(/\/images\/P\/([^./?]+)/i);
+      if (pathMatch?.[1]) {
+        directUrl = buildAmazonImageUrl(pathMatch[1]);
+      }
     }
   } catch {
-    return imageUrl;
+    directUrl = imageUrl;
   }
 
-  return imageUrl;
+  return buildProxyImageUrl(directUrl);
 };
 
 const makeProduct = (
@@ -45,7 +47,7 @@ const makeProduct = (
 ): Resource => ({
   id, title, author, description: null, category, tag,
   url: `https://www.amazon.com/dp/${asin}?tag=positivethots-20`,
-  image_url: buildAmazonImageUrl(asin),
+  image_url: normalizeAmazonImageUrl(buildAmazonImageUrl(asin)),
   price, rating,
   is_featured: tag === "Top Pick" || tag === "Essential",
   order_index,
