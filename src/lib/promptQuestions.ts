@@ -1,0 +1,17 @@
+export const PROMPT_QUESTIONS = [
+  "My love language looks like...",
+  "The thing I wish people understood about ENM is...",
+  "A boundary I'm proud of setting...",
+  "My ideal date night involves...",
+  "I feel most connected when...",
+  "The book/podcast that changed my relationships...",
+  "I'm looking for someone who...",
+  "My friends would describe me as...",
+  "A green flag I always notice...",
+  "The most spontaneous thing I've done...",
+  "I geek out about...",
+  "My communication style is...",
+  "What ethical non-monogamy means to me...",
+  "I knew I was non-traditional when...",
+  "On a Sunday morning you'll find me...",
+] as const;
