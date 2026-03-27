@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { ExternalLink, BookOpen, Heart, Sparkles, Star } from "lucide-react";
 
 interface Resource {
@@ -53,6 +54,12 @@ const categoryLabel: Record<string, string> = {
 };
 
 export const ResourceCard = ({ resource, featured = false }: { resource: Resource; featured?: boolean }) => {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [resource.image_url]);
+
   return (
     <a
       href={resource.url}
@@ -64,24 +71,22 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
           : "bg-gray-900/60 border border-gray-800/50"
       }`}
     >
-      {/* Hover external link icon */}
       <ExternalLink className="absolute top-3 right-3 w-4 h-4 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity z-10" />
 
-      {/* Featured badge */}
       {featured && (
         <span className="absolute top-3 left-3 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full font-medium z-10">
           Recommended
         </span>
       )}
 
-      {/* Image */}
       <div className="h-48 w-full bg-white/5 flex items-center justify-center p-4">
-        {resource.image_url ? (
+        {resource.image_url && !imageFailed ? (
           <img
             src={resource.image_url}
             alt={resource.title}
             className="max-h-full max-w-full object-contain"
             loading="lazy"
+            onError={() => setImageFailed(true)}
           />
         ) : (
           <div className="flex items-center justify-center bg-gray-800/50 rounded-lg w-full h-full">
@@ -90,27 +95,21 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
         )}
       </div>
 
-      {/* Content */}
       <div className="flex flex-col flex-1 p-4">
-        {/* Title */}
         <h3 className="text-base font-semibold text-white line-clamp-2 leading-snug">
           {resource.title}
         </h3>
 
-        {/* Author */}
         {resource.author && (
           <p className="text-xs text-muted-foreground mt-1">{resource.author}</p>
         )}
 
-        {/* Description */}
         {resource.description && (
           <p className="text-sm text-gray-400 line-clamp-2 mt-1">{resource.description}</p>
         )}
 
-        {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Bottom row: category tag + rating */}
         <div className="flex items-center justify-between mt-auto pt-3">
           <div className="flex items-center gap-2">
             <span className="bg-purple-500/20 text-purple-300 text-xs px-2 py-0.5 rounded-full">
@@ -125,7 +124,6 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
           )}
         </div>
 
-        {/* Affiliate transparency */}
         <p className="text-[10px] text-gray-600 text-right mt-2">Affiliate link</p>
       </div>
     </a>
