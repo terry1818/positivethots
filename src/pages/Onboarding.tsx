@@ -559,6 +559,7 @@ const Onboarding = () => {
                       selected={formData.desires}
                       onToggle={(v) => toggleArray("desires", v)}
                       max={10}
+                      popularOptions={["Casual", "Friendship", "Poly", "Kink", "Connection", "Group"]}
                     />
                   </div>
                   <p className="text-xs text-muted-foreground text-center">{formData.desires.length}/10 selected</p>
