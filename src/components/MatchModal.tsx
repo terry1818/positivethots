@@ -51,7 +51,7 @@ export const MatchModal = ({ isOpen, onClose, matchedProfile, matchedUser, onSen
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md border-0 bg-gradient-to-br from-primary to-secondary p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-md border-0 bg-gradient-to-br from-primary to-secondary p-0 overflow-hidden" aria-live="assertive" aria-label={`Match celebration: You and ${user.name} connected`}>
         {/* Confetti overlay */}
         <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
           {confetti.map((p) => (
