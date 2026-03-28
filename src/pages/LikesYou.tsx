@@ -191,7 +191,7 @@ const LikesYou = () => {
                       )}
                       <div className="relative h-44 bg-gradient-to-br from-primary/20 to-secondary/20">
                         {liker.profile_image ? (
-                          <img src={liker.profile_image} alt={liker.name} className="absolute inset-0 w-full h-full object-cover" />
+                          <BlurImage src={liker.profile_image} alt={liker.name} className="absolute inset-0 w-full h-full" loading="lazy" />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center">
                             <Heart className="h-10 w-10 text-primary/30" />

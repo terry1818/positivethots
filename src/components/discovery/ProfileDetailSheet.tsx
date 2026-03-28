@@ -80,11 +80,11 @@ export const ProfileDetailSheet = ({
         <div className="overflow-y-auto flex-1">
           {/* Photo carousel */}
           <div className="relative h-56 w-full overflow-hidden">
-            <img
+            <BlurImage
               src={photos[photoIndex] || "/placeholder.svg"}
               alt={displayName}
-              className="h-full w-full object-cover"
-              draggable={false}
+              className="h-full w-full"
+              loading="eager"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
