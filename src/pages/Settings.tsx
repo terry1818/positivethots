@@ -24,6 +24,33 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 
+const PreferencesCard = () => {
+  const { soundEnabled, hapticEnabled, setSoundEnabled, setHapticEnabled } = useSoundEffects();
+  return (
+    <Card className="animate-fade-in" style={{ animationDelay: "20ms" }}>
+      <CardHeader>
+        <CardTitle className="text-lg">Preferences</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Volume2 className="h-4 w-4 text-muted-foreground" />
+            <Label>Sound Effects</Label>
+          </div>
+          <Switch checked={soundEnabled} onCheckedChange={setSoundEnabled} />
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Vibrate className="h-4 w-4 text-muted-foreground" />
+            <Label>Haptic Feedback</Label>
+          </div>
+          <Switch checked={hapticEnabled} onCheckedChange={setHapticEnabled} />
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 const Settings = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
