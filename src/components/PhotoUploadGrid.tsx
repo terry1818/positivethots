@@ -326,6 +326,52 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
     setDragOverIndex(null);
   };
 
+  const handleSetAsMain = async (photo: UserPhoto, currentIndex: number) => {
+    if (currentIndex === 0) return;
+    const list = [...publicPhotos];
+    list.splice(currentIndex, 1);
+    list.unshift(photo);
+    try {
+      const updates = list.map((p, i) =>
+        supabase.from("user_photos").update({ order_index: i }).eq("id", p.id)
+      );
+      await Promise.all(updates);
+      if (photo.moderation_status === "approved") {
+        await supabase.from("profiles").update({ profile_image: photo.photo_url }).eq("id", userId);
+      }
+      toast.success("Main photo updated!");
+      onPhotosChange();
+    } catch {
+      toast.error("Failed to set main photo");
+    }
+  };
+
+  const handleSmartOrder = async () => {
+    const approvedPublic = publicPhotos.filter(p => p.moderation_status === "approved");
+    if (approvedPublic.length < 2) {
+      toast.info("Need at least 2 approved photos for smart ordering");
+      return;
+    }
+    const sorted = [...publicPhotos].sort((a, b) => {
+      const sa = photoStats[a.id]?.score || 0;
+      const sb = photoStats[b.id]?.score || 0;
+      return sb - sa;
+    });
+    try {
+      const updates = sorted.map((p, i) =>
+        supabase.from("user_photos").update({ order_index: i }).eq("id", p.id)
+      );
+      await Promise.all(updates);
+      if (sorted[0]?.moderation_status === "approved") {
+        await supabase.from("profiles").update({ profile_image: sorted[0].photo_url }).eq("id", userId);
+      }
+      toast.success("Photos reordered by performance!");
+      onPhotosChange();
+    } catch {
+      toast.error("Failed to reorder photos");
+    }
+  };
+
   const statusIcon = (status: string) => {
     switch (status) {
       case "pending": return <Clock className="h-3.5 w-3.5" />;
