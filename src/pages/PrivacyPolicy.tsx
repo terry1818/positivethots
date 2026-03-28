@@ -96,8 +96,17 @@ const PrivacyPolicy = () => {
           </ul>
 
           <h2 className="text-lg font-bold mt-6 mb-3">8. Data Retention</h2>
+          <p className="mb-2 leading-relaxed text-muted-foreground">
+            We retain your personal data for as long as your account is active. Upon account deletion, personal data is permanently removed within 30 days. Specific retention periods by data type:
+          </p>
+          <ul className="list-disc list-inside space-y-1 mb-4 text-muted-foreground">
+            <li><strong>Account and profile data</strong> — deleted within 30 days of account closure</li>
+            <li><strong>Messages and chat logs</strong> — deleted within 30 days of account closure</li>
+            <li><strong>Payment records</strong> — retained for 7 years as required by tax law; payment data is held by Stripe and governed by their retention policies</li>
+            <li><strong>Verification photos</strong> — deleted immediately after AI moderation is complete</li>
+          </ul>
           <p className="mb-4 leading-relaxed text-muted-foreground">
-            We retain your data for as long as your account is active. Upon account deletion, all personal data is permanently removed within 30 days. Anonymized usage statistics may be retained for service improvement.
+            Anonymized, non-identifiable usage statistics may be retained indefinitely for service improvement.
           </p>
 
           <h2 className="text-lg font-bold mt-6 mb-3">9. Age Requirement</h2>

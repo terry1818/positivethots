@@ -97,17 +97,22 @@ const TermsOfService = () => {
             We may suspend or terminate your account at any time for violation of these Terms. You may delete your account at any time through the Settings page. Upon deletion, your personal data will be permanently removed in accordance with our Privacy Policy.
           </p>
 
-          <h2 className="text-lg font-bold mt-6 mb-3">12. Changes to Terms</h2>
+          <h2 className="text-lg font-bold mt-6 mb-3">12. DMCA Copyright Policy</h2>
+          <p className="mb-4 leading-relaxed text-muted-foreground">
+            We respect intellectual property rights. If you believe content on the App infringes your copyright, submit a written notice to our designated DMCA agent at legal@positivethots.com with: (1) identification of the copyrighted work claimed to be infringed; (2) identification of the infringing material and its location within the App; (3) your contact information including name, address, phone number, and email; (4) a statement that you have a good faith belief the use is not authorized by the copyright owner; (5) a statement that the information in your notice is accurate and, under penalty of perjury, that you are authorized to act on behalf of the copyright owner; and (6) your physical or electronic signature. We will respond to valid notices promptly and may remove or disable access to infringing content.
+          </p>
+
+          <h2 className="text-lg font-bold mt-6 mb-3">13. Changes to Terms</h2>
           <p className="mb-4 leading-relaxed text-muted-foreground">
             We may update these Terms from time to time. Material changes will be communicated via email or in-app notification. Continued use constitutes acceptance of the updated Terms.
           </p>
 
-          <h2 className="text-lg font-bold mt-6 mb-3">13. Governing Law</h2>
+          <h2 className="text-lg font-bold mt-6 mb-3">14. Governing Law & Dispute Resolution</h2>
           <p className="mb-4 leading-relaxed text-muted-foreground">
-            These Terms shall be governed by and construed in accordance with applicable law. Any disputes shall be resolved through binding arbitration, except where prohibited by law.
+            These Terms are governed by the laws of the State of Ohio, without regard to conflict of law principles. Any dispute arising from these Terms or your use of the App shall be resolved by binding arbitration administered by the American Arbitration Association (AAA) under its Consumer Arbitration Rules. Arbitration shall be conducted in Cuyahoga County, Ohio, or via video conference at either party's request. Each party waives the right to a jury trial and to participate in any class action lawsuit or class-wide arbitration. Nothing in this section prevents either party from seeking injunctive relief in a court of competent jurisdiction.
           </p>
 
-          <h2 className="text-lg font-bold mt-6 mb-3">14. Contact</h2>
+          <h2 className="text-lg font-bold mt-6 mb-3">15. Contact</h2>
           <p className="mb-4 leading-relaxed text-muted-foreground">
             Questions about these Terms? Contact us at legal@positivethots.com.
           </p>
