@@ -13,6 +13,8 @@ import { PageSkeleton } from "@/components/PageSkeleton";
 import { useCartSync } from "@/hooks/useCartSync";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
+import { useNPSSurvey } from "@/hooks/useNPSSurvey";
+import { NpsModal } from "@/components/NpsModal";
 
 // Lazy-loaded route pages
 const Index = lazy(() => import("./pages/Index"));
