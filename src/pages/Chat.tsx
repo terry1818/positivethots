@@ -372,13 +372,15 @@ const Chat = () => {
               </Button>
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center overflow-hidden">
-                    {otherUser.profile_image ? (
-                      <img src={otherUser.profile_image} alt={otherUser.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-lg font-semibold">{otherUser.name?.[0] || "?"}</span>
-                    )}
-                  </div>
+                  <ProfileFrame frameId={(otherUser as any).selected_frame} size="sm">
+                    <div className="w-full h-full rounded-full bg-muted flex items-center justify-center overflow-hidden">
+                      {otherUser.profile_image ? (
+                        <img src={otherUser.profile_image} alt={otherUser.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-lg font-semibold">{otherUser.name?.[0] || "?"}</span>
+                      )}
+                    </div>
+                  </ProfileFrame>
                   {onlineStatus === "online" && (
                     <div className="absolute bottom-0 right-0 w-3 h-3 bg-success rounded-full border-2 border-background animate-pulse"></div>
                   )}
