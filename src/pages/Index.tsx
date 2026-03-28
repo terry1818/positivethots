@@ -169,28 +169,7 @@ const Index = () => {
     const requiredFoundationCount = foundationResult.data?.length || 5;
     setRequiredCount(requiredFoundationCount);
 
-    if (badgeCount < requiredFoundationCount) {
-      // Show blurred preview instead of redirecting
-      setPreviewMode(true);
-      trackEvent('discovery_preview_shown', { badge_count: badgeCount });
-
-      // Load preview profiles
-      const { data: previewData } = await supabase.rpc("get_discovery_profiles", { _exclude_ids: [session.user.id] });
-      if (previewData) {
-        const enhanced: EnhancedProfile[] = previewData.slice(0, 6).map(p => ({
-          ...p,
-          compatibility_score: null,
-          compatibility_reasons: [],
-          verified: false,
-          distance: null,
-          is_boosted: false,
-        }));
-        setPreviewProfiles(enhanced);
-      }
-      setLoading(false);
-      return;
-    }
-
+    // No longer gate Discovery behind Foundation badges — allow full browsing
     await loadSuggestions(session.user.id, profile);
     setLoading(false);
   };
