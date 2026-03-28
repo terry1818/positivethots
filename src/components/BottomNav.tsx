@@ -21,9 +21,44 @@ export const BottomNav = () => {
   const location = useLocation();
   const [tapped, setTapped] = useState<string | null>(null);
   const { unreadCount } = useUnreadMessages();
+  const qc = useQueryClient();
+
+  const prefetchMessages = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    qc.prefetchQuery({
+      queryKey: ["matches-list", session.user.id],
+      queryFn: async () => {
+        const { data } = await supabase
+          .from("matches")
+          .select("id, user1_id, user2_id")
+          .or(`user1_id.eq.${session.user.id},user2_id.eq.${session.user.id}`);
+        return data || [];
+      },
+      staleTime: 60 * 1000,
+    });
+  }, [qc]);
+
+  const prefetchLearn = useCallback(async () => {
+    qc.prefetchQuery({
+      queryKey: ["education-modules"],
+      queryFn: async () => {
+        const { data } = await supabase
+          .from("education_modules")
+          .select("id, slug, title, description, order_index, tier, badge_number, estimated_minutes")
+          .order("order_index")
+          .limit(6);
+        return data || [];
+      },
+      staleTime: 30 * 60 * 1000,
+    });
+  }, [qc]);
 
   const handleTap = (path: string) => {
     setTapped(path);
+    // Prefetch data for the target page
+    if (path === "/messages") prefetchMessages();
+    if (path === "/learn") prefetchLearn();
     navigate(path);
     setTimeout(() => setTapped(null), 200);
   };
