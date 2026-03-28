@@ -9,6 +9,7 @@ import { MessageCircle, ChevronLeft } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 
 interface Match {
   id: string;
