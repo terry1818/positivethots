@@ -20,6 +20,7 @@ import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";

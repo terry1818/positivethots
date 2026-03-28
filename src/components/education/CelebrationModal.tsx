@@ -98,11 +98,12 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
   }, [type]);
 
   useEffect(() => {
-    if (type === "tier_complete" && !soundPlayed.current) {
-      soundPlayed.current = true;
-      playCelebrationSound();
-    }
-  }, [type]);
+    if (!type || soundPlayed.current) return;
+    soundPlayed.current = true;
+    if (type === "streak_milestone") playStreakMilestone();
+    else if (type === "badge_earned" || type === "level_up") playBadgeUnlock();
+    else if (type === "tier_complete") playBadgeUnlock();
+  }, [type, playStreakMilestone, playBadgeUnlock]);
 
   if (!type) return null;
 
