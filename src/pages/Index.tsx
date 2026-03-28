@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Lock, Copy } from "lucide-react";
+import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { MatchModal } from "@/components/MatchModal";
@@ -169,28 +169,7 @@ const Index = () => {
     const requiredFoundationCount = foundationResult.data?.length || 5;
     setRequiredCount(requiredFoundationCount);
 
-    if (badgeCount < requiredFoundationCount) {
-      // Show blurred preview instead of redirecting
-      setPreviewMode(true);
-      trackEvent('discovery_preview_shown', { badge_count: badgeCount });
-
-      // Load preview profiles
-      const { data: previewData } = await supabase.rpc("get_discovery_profiles", { _exclude_ids: [session.user.id] });
-      if (previewData) {
-        const enhanced: EnhancedProfile[] = previewData.slice(0, 6).map(p => ({
-          ...p,
-          compatibility_score: null,
-          compatibility_reasons: [],
-          verified: false,
-          distance: null,
-          is_boosted: false,
-        }));
-        setPreviewProfiles(enhanced);
-      }
-      setLoading(false);
-      return;
-    }
-
+    // No longer gate Discovery behind Foundation badges — allow full browsing
     await loadSuggestions(session.user.id, profile);
     setLoading(false);
   };
@@ -358,64 +337,8 @@ const Index = () => {
     return <PageSkeleton variant="discovery" />;
   }
 
-  // Discovery Preview Mode (badge gate)
-  if (previewMode) {
-    return (
-      <div className="min-h-screen bg-background pb-20">
-        <div className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-          <div className="container max-w-7xl mx-auto px-4 py-4">
-            <Logo size="md" showText={false} />
-          </div>
-        </div>
-
-        <div className="container max-w-7xl mx-auto px-4 py-4 relative">
-          {/* Blurred profile grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 filter blur-[8px] pointer-events-none select-none" aria-hidden="true">
-            {previewProfiles.map((profile, idx) => (
-              <DiscoveryCard
-                key={profile.id}
-                profile={profile}
-                index={idx}
-                onConnect={() => {}}
-                onPass={() => {}}
-              />
-            ))}
-          </div>
-
-          {/* Overlay card */}
-          <div className="absolute inset-0 flex items-center justify-center p-4">
-            <Card className="max-w-sm w-full p-8 text-center shadow-xl bg-card/95 backdrop-blur-sm border-primary/20">
-              <Lock className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Unlock Discovery</h2>
-              <p className="text-muted-foreground mb-6">
-                Complete {requiredCount - userBadgeCount} Foundation module{requiredCount - userBadgeCount !== 1 ? "s" : ""} to see who's here
-              </p>
-              <div className="mb-6">
-                <div className="flex justify-between text-sm text-muted-foreground mb-2">
-                  <span>{userBadgeCount} of {requiredCount} complete</span>
-                  <span>{Math.round((userBadgeCount / requiredCount) * 100)}%</span>
-                </div>
-                <Progress value={(userBadgeCount / requiredCount) * 100} className="h-3" />
-              </div>
-              <Button
-                className="w-full"
-                size="lg"
-                onClick={() => {
-                  trackEvent('discovery_preview_cta_clicked', {});
-                  navigate('/learn');
-                }}
-              >
-                <BookOpen className="h-4 w-4 mr-2" />
-                Start Learning →
-              </Button>
-            </Card>
-          </div>
-        </div>
-
-        <BottomNav />
-      </div>
-    );
-  }
+  // Incomplete profile banner (Quick Start users)
+  const showProfileBanner = currentUser && userBadgeCount < requiredCount;
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -465,6 +388,22 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* Profile completion banner for Quick Start users */}
+      {showProfileBanner && (
+        <div className="max-w-sm mx-auto px-4 py-2">
+          <button
+            onClick={() => navigate("/learn")}
+            className="w-full flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3 py-2 text-sm"
+          >
+            <BookOpen className="h-4 w-4 text-primary shrink-0" />
+            <span className="text-left">
+              <span className="font-medium text-foreground">Complete your profile</span>
+              <span className="text-muted-foreground"> — earn badges to unlock more matches</span>
+            </span>
+          </button>
+        </div>
+      )}
 
       {/* Compact Progress Strip */}
       {tiers.length > 0 && (

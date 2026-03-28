@@ -113,6 +113,32 @@ const Chat = () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { navigate("/auth"); return; }
 
+    // Check if user has the Consent badge (first Foundation module)
+    const { data: consentModule } = await supabase
+      .from("education_modules")
+      .select("id")
+      .eq("slug", "consent-basics")
+      .single();
+
+    if (consentModule) {
+      const { data: badge } = await supabase
+        .from("user_badges")
+        .select("id")
+        .eq("user_id", session.user.id)
+        .eq("module_id", consentModule.id)
+        .maybeSingle();
+
+      if (!badge) {
+        toast.error("Complete the Consent badge to unlock messaging 💬", {
+          description: "Learn about consent basics first — it only takes a few minutes.",
+          action: { label: "Start Learning", onClick: () => navigate("/learn") },
+          duration: 8000,
+        });
+        navigate("/messages");
+        return;
+      }
+    }
+
     const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
     if (!profile) return;
     setCurrentUser(profile);

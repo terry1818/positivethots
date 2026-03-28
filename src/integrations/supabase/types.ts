@@ -588,6 +588,7 @@ export type Database = {
           created_at: string
           desires: string[] | null
           display_name: string | null
+          enm_experience_level: string | null
           experience_level: string | null
           gender: string | null
           gender_preference: string | null
@@ -623,6 +624,7 @@ export type Database = {
           created_at?: string
           desires?: string[] | null
           display_name?: string | null
+          enm_experience_level?: string | null
           experience_level?: string | null
           gender?: string | null
           gender_preference?: string | null
@@ -658,6 +660,7 @@ export type Database = {
           created_at?: string
           desires?: string[] | null
           display_name?: string | null
+          enm_experience_level?: string | null
           experience_level?: string | null
           gender?: string | null
           gender_preference?: string | null
