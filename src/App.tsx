@@ -52,33 +52,31 @@ export const queryClient = new QueryClient({
 const AppContent = () => {
   useCartSync();
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/likes" element={<LikesYou />} />
-        <Route path="/premium" element={<Premium />} />
-        <Route path="/learn" element={<Learn />} />
-        <Route path="/learn/:slug" element={<LearnModule />} />
-        <Route path="/messages" element={<Messages />} />
-        <Route path="/chat/:matchId" element={<Chat />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/profile/edit" element={<EditProfile />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/product/:handle" element={<ProductDetail />} />
-        <Route path="/resources" element={<Resources />} />
-        <Route path="/events" element={<Events />} />
-        <Route path="/journal" element={<LearningJournal />} />
-        <Route path="/unsubscribe" element={<Unsubscribe />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsOfService />} />
-        <Route path="/celebration-demo" element={<CelebrationDemo />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Suspense>
+    <Routes>
+      <Route path="/" element={<Suspense fallback={<PageSkeleton variant="discovery" />}><Index /></Suspense>} />
+      <Route path="/auth" element={<Suspense fallback={<PageLoader />}><Auth /></Suspense>} />
+      <Route path="/reset-password" element={<Suspense fallback={<PageLoader />}><ResetPassword /></Suspense>} />
+      <Route path="/onboarding" element={<Suspense fallback={<PageLoader />}><Onboarding /></Suspense>} />
+      <Route path="/likes" element={<Suspense fallback={<PageSkeleton variant="likes" />}><LikesYou /></Suspense>} />
+      <Route path="/premium" element={<Suspense fallback={<PageLoader />}><Premium /></Suspense>} />
+      <Route path="/learn" element={<Suspense fallback={<PageSkeleton variant="learn" />}><Learn /></Suspense>} />
+      <Route path="/learn/:slug" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnModule /></Suspense>} />
+      <Route path="/messages" element={<Suspense fallback={<PageSkeleton variant="messages" />}><Messages /></Suspense>} />
+      <Route path="/chat/:matchId" element={<Suspense fallback={<PageSkeleton variant="chat" />}><Chat /></Suspense>} />
+      <Route path="/profile" element={<Suspense fallback={<PageSkeleton variant="profile" />}><Profile /></Suspense>} />
+      <Route path="/profile/edit" element={<Suspense fallback={<PageSkeleton variant="profile" />}><EditProfile /></Suspense>} />
+      <Route path="/settings" element={<Suspense fallback={<PageLoader />}><Settings /></Suspense>} />
+      <Route path="/shop" element={<Suspense fallback={<PageLoader />}><Shop /></Suspense>} />
+      <Route path="/product/:handle" element={<Suspense fallback={<PageLoader />}><ProductDetail /></Suspense>} />
+      <Route path="/resources" element={<Suspense fallback={<PageLoader />}><Resources /></Suspense>} />
+      <Route path="/events" element={<Suspense fallback={<PageLoader />}><Events /></Suspense>} />
+      <Route path="/journal" element={<Suspense fallback={<PageLoader />}><LearningJournal /></Suspense>} />
+      <Route path="/unsubscribe" element={<Suspense fallback={<PageLoader />}><Unsubscribe /></Suspense>} />
+      <Route path="/privacy" element={<Suspense fallback={<PageLoader />}><PrivacyPolicy /></Suspense>} />
+      <Route path="/terms" element={<Suspense fallback={<PageLoader />}><TermsOfService /></Suspense>} />
+      <Route path="/celebration-demo" element={<Suspense fallback={<PageLoader />}><CelebrationDemo /></Suspense>} />
+      <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
+    </Routes>
   );
 };
 

@@ -218,7 +218,7 @@ const Chat = () => {
         setMessages(prev => prev.map(msg => msg.sender_id === currentUser.id && !msg.read ? { ...msg, read: true } : msg));
       }, 2000 + Math.random() * 3000);
     }
-  };
+  }, [newMessage, currentUser, matchId]);
 
   const handleTyping = (value: string) => {
     setNewMessage(value);
