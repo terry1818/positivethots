@@ -610,6 +610,53 @@ export type Database = {
         }
         Relationships: []
       }
+      photo_performance: {
+        Row: {
+          id: string
+          impressions: number
+          left_swipes: number
+          period_start: string
+          photo_id: string
+          right_swipes: number
+          score: number
+          super_likes: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          impressions?: number
+          left_swipes?: number
+          period_start?: string
+          photo_id: string
+          right_swipes?: number
+          score?: number
+          super_likes?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          impressions?: number
+          left_swipes?: number
+          period_start?: string
+          photo_id?: string
+          right_swipes?: number
+          score?: number
+          super_likes?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photo_performance_photo_id_fkey"
+            columns: ["photo_id"]
+            isOneToOne: false
+            referencedRelation: "user_photos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       private_photo_access: {
         Row: {
           granted_at: string
@@ -1665,6 +1712,10 @@ export type Database = {
       submit_quiz: {
         Args: { _answers: Json; _module_id: string }
         Returns: Json
+      }
+      track_photo_engagement: {
+        Args: { _action: string; _photo_id: string; _photo_owner_id: string }
+        Returns: undefined
       }
       validate_quiz_answer: {
         Args: { _question_id: string; _selected_answer: number }
