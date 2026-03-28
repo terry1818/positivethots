@@ -59,6 +59,41 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_games: {
+        Row: {
+          created_at: string
+          created_by: string
+          game_state: Json
+          game_type: string
+          id: string
+          match_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          game_state?: Json
+          game_type: string
+          id?: string
+          match_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          game_state?: Json
+          game_type?: string
+          id?: string
+          match_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_games_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       daily_challenges: {
         Row: {
           challenge_date: string
@@ -394,6 +429,30 @@ export type Database = {
           reviewed_by?: string | null
           sender_id?: string
           status?: string
+        }
+        Relationships: []
+      }
+      game_questions: {
+        Row: {
+          created_at: string
+          game_type: string
+          id: string
+          options: Json | null
+          question_text: string
+        }
+        Insert: {
+          created_at?: string
+          game_type: string
+          id?: string
+          options?: Json | null
+          question_text: string
+        }
+        Update: {
+          created_at?: string
+          game_type?: string
+          id?: string
+          options?: Json | null
+          question_text?: string
         }
         Relationships: []
       }
