@@ -169,6 +169,7 @@ const Chat = () => {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
         (payload) => {
           const newMsg = payload.new as Message;
+          if (newMsg.sender_id !== currentUser?.id) playMessage();
           setMessages(prev => [...prev, { ...newMsg, delivered: true, read: newMsg.sender_id === session.user.id }]);
         })
       .on('presence', { event: 'sync' }, () => {
