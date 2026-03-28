@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles } from "lucide-react";
+import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { calculateCompatibilityBreakdown, type CompatibilityBreakdownResult } from "@/lib/compatibility";
 import { CompatibilityBreakdown } from "@/components/discovery/CompatibilityBreakdown";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -503,6 +504,14 @@ const Index = () => {
       <div className="max-w-sm mx-auto px-4">
         {suggestions.length === 0 ? (
           <div className="space-y-4">
+            <BrandedEmptyState
+              mascot="binoculars"
+              headline="You've seen everyone nearby! 🔭"
+              description="Try expanding your distance or check back tomorrow for new faces."
+              ctaLabel="Adjust Filters"
+              onCtaClick={() => navigate("/settings")}
+            />
+
             {/* Boost upsell card */}
             <Card className="p-6 text-center max-w-sm mx-auto w-full">
               <Zap className="h-12 w-12 text-amber-500 mx-auto mb-3" />
@@ -529,10 +538,6 @@ const Index = () => {
                 Copy Referral Link
               </Button>
             </Card>
-
-            <p className="text-center text-xs text-muted-foreground">
-              New profiles added daily — check back tomorrow
-            </p>
           </div>
         ) : (
           <div className="relative flex justify-center items-start px-4 pt-2 pb-32" style={{ minHeight: '520px' }}>
