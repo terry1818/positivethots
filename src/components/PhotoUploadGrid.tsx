@@ -423,9 +423,25 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
                 <div className={`absolute top-1 left-1 rounded-full p-0.5 text-white ${statusColor(photo.moderation_status)}`}>
                   {statusIcon(photo.moderation_status)}
                 </div>
-                <button onClick={() => handleDelete(photo)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 hover:bg-black/80 transition-colors">
+                <button onClick={() => handleDelete(photo)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 hover:bg-black/80 transition-colors min-h-0 min-w-0">
                   <Trash2 className="h-3 w-3" />
                 </button>
+                {/* Set as Main button for non-first public approved photos */}
+                {activeTab === "public" && i > 0 && photo.moderation_status === "approved" && (
+                  <button
+                    onClick={() => handleSetAsMain(photo, i)}
+                    className="absolute bottom-1 left-1 bg-primary/80 text-primary-foreground rounded-full p-0.5 hover:bg-primary transition-colors min-h-0 min-w-0"
+                    title="Set as main photo"
+                  >
+                    <Star className="h-3 w-3" />
+                  </button>
+                )}
+                {/* Best photo badge */}
+                {bestPhotoId === photo.id && (
+                  <div className="absolute bottom-1 right-1 bg-amber-500/90 text-white text-[8px] font-bold px-1 py-0.5 rounded-full flex items-center gap-0.5">
+                    🔥 Best
+                  </div>
+                )}
                 {photo.moderation_status === "rejected" && photo.moderation_reason && (
                   <div className="absolute bottom-0 left-0 right-0 bg-destructive/90 text-destructive-foreground text-[10px] px-1 py-0.5 truncate">
                     {photo.moderation_reason}
