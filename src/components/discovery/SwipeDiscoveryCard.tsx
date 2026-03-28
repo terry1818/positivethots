@@ -313,6 +313,7 @@ export const SwipeDiscoveryCard = memo(({
         <button
           className="w-full text-left p-4 space-y-2"
           onClick={(e) => { e.stopPropagation(); onViewProfile(); }}
+          aria-label={`View full profile of ${displayName}`}
         >
           {profile.bio && (
             <p className="text-sm text-muted-foreground line-clamp-2">{profile.bio}</p>
