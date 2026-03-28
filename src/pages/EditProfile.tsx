@@ -117,6 +117,7 @@ const EditProfile = () => {
         boundaries: boundaries.trim(), looking_for: lookingFor, relationship_style: relationshipStyle,
         relationship_status: relationshipStatus, experience_level: experienceLevel,
         bdsm_test_url: bdsmTestUrl.trim() || null, bdsm_test_screenshot: bdsmTestScreenshot || null,
+        selected_frame: selectedFrame,
       } as any).eq("id", profile.id);
       if (error) throw error;
 
