@@ -72,6 +72,7 @@ const TermsOfService = () => {
           <ul className="list-disc list-inside space-y-1 mb-4 text-muted-foreground">
             <li>Premium features are available via paid subscription through Stripe</li>
             <li>Subscriptions auto-renew unless cancelled before the renewal date</li>
+            <li>You may cancel your subscription at any time through Settings → Subscription within the App, or by emailing support@positivethots.com. Cancellation takes effect at the end of the current billing period. No partial-period refunds are issued except where required by applicable law.</li>
             <li>Refunds are handled in accordance with applicable law and Stripe's policies</li>
             <li>We reserve the right to modify pricing with reasonable notice</li>
           </ul>
