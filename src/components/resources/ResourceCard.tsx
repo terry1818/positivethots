@@ -88,8 +88,8 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
           <BlurImage
             src={resource.image_url}
             alt={resource.title}
-            className="max-h-full max-w-full"
-            style={{ objectFit: "contain" }}
+            className="h-full w-full"
+            imgClassName="object-contain"
             loading="lazy"
             onError={() => setImageFailed(true)}
           />

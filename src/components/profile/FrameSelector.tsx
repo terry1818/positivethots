@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Lock, Check } from "lucide-react";
 import { FRAME_DEFINITIONS, type FrameId, ProfileFrame } from "./ProfileFrame";
 import { toast } from "sonner";
+import { BlurImage } from "@/components/BlurImage";
 
 interface FrameSelectorProps {
   earnedFrames: string[];
@@ -26,7 +27,7 @@ export const FrameSelector = memo(({ earnedFrames, selectedFrame, onSelect, prof
         <div className="flex justify-center mb-4">
           <ProfileFrame frameId={selectedFrame} size="xl">
             {profileImage ? (
-              <img src={profileImage} alt="Preview" className="h-full w-full object-cover" />
+              <BlurImage src={profileImage} alt="Profile frame preview" className="h-full w-full" />
             ) : (
               <div className="h-full w-full bg-muted flex items-center justify-center text-2xl">?</div>
             )}
