@@ -39,12 +39,12 @@ const CelebrationDemo = lazy(() => import("./pages/CelebrationDemo"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // Aggressive caching for native — data stays fresh longer
-      staleTime: 5 * 60 * 1000, // 5 min
-      gcTime: 30 * 60 * 1000,   // 30 min garbage collection
-      refetchOnWindowFocus: false, // Native apps don't have window focus events the same way
-      retry: 2,
-      networkMode: 'offlineFirst', // Use cache first, fetch in background
+      staleTime: 5 * 60 * 1000,      // 5 min default
+      gcTime: 10 * 60 * 1000,         // 10 min cache lifetime
+      refetchOnWindowFocus: false,
+      retry: 1,
+      retryDelay: 1000,
+      networkMode: 'offlineFirst',
     },
   },
 });

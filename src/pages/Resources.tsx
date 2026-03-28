@@ -184,7 +184,7 @@ const Resources = () => {
         } as Resource;
       });
     },
-    staleTime: 1000 * 60 * 10,
+    staleTime: 60 * 60 * 1000, // 1 hour — very static content
   });
 
   const sorted = useMemo(() =>

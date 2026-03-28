@@ -59,6 +59,7 @@ const Profile = () => {
       return count || 0;
     },
     enabled: !!profile?.id,
+    staleTime: 10 * 60 * 1000, // 10 min — own profile rarely changes
   });
 
   const { percentage, nudges } = useProfileCompletion({
