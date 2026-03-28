@@ -154,6 +154,9 @@ const Index = () => {
   const [matchCount, setMatchCount] = useState(0);
   const [mysteryRevealsUsed, setMysteryRevealsUsed] = useState(0);
   const [mysteryProfiles, setMysteryProfiles] = useState<Set<string>>(new Set());
+  const [matchBreakdown, setMatchBreakdown] = useState<CompatibilityBreakdownResult | null>(null);
+  const [showBreakdown, setShowBreakdown] = useState(false);
+  const [breakdownName, setBreakdownName] = useState("");
 
   // Handle super like purchase redirect
   useEffect(() => {
