@@ -423,6 +423,56 @@ const Profile = () => {
           </Card>
         )}
 
+        {/* Safety & Trust */}
+        <Card className="animate-fade-in">
+          <CardContent className="p-4">
+            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+              🛡️ Safety & Trust
+            </h3>
+            <div className="space-y-2.5">
+              {/* Verification Status */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm">
+                  <ShieldCheck className="h-4 w-4 text-primary" />
+                  <span>Identity Verification</span>
+                </div>
+                {profile?.is_verified ? (
+                  <Badge className="bg-success/10 text-success border-success/20 text-xs">
+                    <CheckCircle className="h-3 w-3 mr-1" />Verified
+                  </Badge>
+                ) : (
+                  <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => navigate("/profile/edit")}>
+                    Verify Now
+                  </Button>
+                )}
+              </div>
+              {/* Education Level */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm">
+                  <BookOpen className="h-4 w-4 text-primary" />
+                  <span>Education Level</span>
+                </div>
+                <span className="text-xs text-muted-foreground">{badges.length}/20 badges</span>
+              </div>
+              {/* Community Standing */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm">
+                  <Heart className="h-4 w-4 text-primary" />
+                  <span>Community Standing</span>
+                </div>
+                <Badge variant="secondary" className="text-xs">Good Standing</Badge>
+              </div>
+              {/* Guidelines Link */}
+              <button
+                onClick={() => navigate("/terms-of-service")}
+                className="text-xs text-primary hover:underline w-full text-left pt-1"
+              >
+                View Community Guidelines →
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Boost */}
         <Card className="animate-fade-in">
           <CardContent className="p-4">
