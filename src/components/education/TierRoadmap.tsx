@@ -410,11 +410,18 @@ export const BadgePathMap = ({
                     state === "completed" && "text-success font-medium",
                     state === "current" && cn(config.color, "font-semibold"),
                     state === "unlocked" && "text-foreground",
+                    state === "premium-locked" && "text-amber-500",
                     state === "locked" && "text-muted-foreground"
                   )}
                 >
                   {module.title}
                 </span>
+
+                {state === "premium-locked" && (
+                  <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-amber-500">
+                    <Crown className="h-3 w-3" /> Premium Required
+                  </span>
+                )}
 
                 {isContinueModule && continueSectionNumber && continueProgressPercent != null && (
                   <button
