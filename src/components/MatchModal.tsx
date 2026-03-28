@@ -77,16 +77,16 @@ export const MatchModal = ({ isOpen, onClose, matchedProfile, matchedUser, onSen
           </div>
 
           <div className="relative z-10">
-            <div className="mb-6 animate-bounce-in">
-              <Heart className="h-20 w-20 mx-auto text-white fill-current mb-4 animate-pulse" />
-              <h2 className="text-4xl font-bold text-white mb-2">You Both Said Yes</h2>
-              <p className="text-white/90 text-lg">
+            <div className="mb-6">
+              <Heart className="h-20 w-20 mx-auto text-white fill-current mb-4 animate-bounce-in" />
+              <h2 className="text-4xl font-bold text-white mb-2 animate-fade-in" style={{ animationDelay: "0.15s", animationFillMode: "both" }}>You Both Said Yes</h2>
+              <p className="text-white/90 text-lg animate-fade-in" style={{ animationDelay: "0.3s", animationFillMode: "both" }}>
                 You and {user.name} connected 💜
               </p>
             </div>
 
             <div className="flex justify-center mb-6">
-              <div className="relative animate-bounce-in" style={{ animationDelay: "0.2s" }}>
+              <div className="animate-match-slide-right">
                 <img
                   src={imageUrl}
                   alt={user.name}
