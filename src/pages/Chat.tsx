@@ -27,6 +27,7 @@ import { PageSkeleton } from "@/components/PageSkeleton";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { calculateCompatibilityBreakdown, type CompatibilityBreakdownResult } from "@/lib/compatibility";
 import { CompatibilityBreakdown } from "@/components/discovery/CompatibilityBreakdown";
+import { ProfileFrame } from "@/components/profile/ProfileFrame";
 
 type Message = Database['public']['Tables']['messages']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
