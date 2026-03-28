@@ -16,6 +16,8 @@ import { BdsmTestSection } from "@/components/BdsmTestSection";
 import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { PROMPT_QUESTIONS } from "@/lib/promptQuestions";
+import { FrameSelector } from "@/components/profile/FrameSelector";
+import { syncEarnedFrames } from "@/hooks/useEarnedFrames";
 
 interface PromptRow {
   id?: string;
@@ -45,6 +47,8 @@ const EditProfile = () => {
   const [experienceLevel, setExperienceLevel] = useState("");
   const [bdsmTestUrl, setBdsmTestUrl] = useState("");
   const [bdsmTestScreenshot, setBdsmTestScreenshot] = useState("");
+  const [selectedFrame, setSelectedFrame] = useState("newbie");
+  const [earnedFrames, setEarnedFrames] = useState<string[]>(["newbie"]);
 
   // Prompts state
   const [prompts, setPrompts] = useState<PromptRow[]>([]);
@@ -73,6 +77,10 @@ const EditProfile = () => {
       setLookingFor(data.looking_for || ""); setRelationshipStyle(data.relationship_style || "");
       setRelationshipStatus(data.relationship_status || ""); setExperienceLevel(data.experience_level || "");
       setBdsmTestUrl(data.bdsm_test_url || ""); setBdsmTestScreenshot(data.bdsm_test_screenshot || "");
+      setSelectedFrame((data as any).selected_frame || "newbie");
+      setEarnedFrames((data as any).earned_frames || ["newbie"]);
+      // Sync earned frames based on current achievements
+      syncEarnedFrames(session.user.id).then(frames => setEarnedFrames(frames));
       setPhotos(photosResult.data || []);
       setLatestVerification(verResult.data?.[0] || null);
       setPrompts((promptsResult.data || []).map((p: any) => ({
@@ -112,6 +120,7 @@ const EditProfile = () => {
         boundaries: boundaries.trim(), looking_for: lookingFor, relationship_style: relationshipStyle,
         relationship_status: relationshipStatus, experience_level: experienceLevel,
         bdsm_test_url: bdsmTestUrl.trim() || null, bdsm_test_screenshot: bdsmTestScreenshot || null,
+        selected_frame: selectedFrame,
       } as any).eq("id", profile.id);
       if (error) throw error;
 
@@ -197,6 +206,14 @@ const EditProfile = () => {
       <main className="container max-w-md mx-auto px-4 py-6 pb-24">
         <StaggerChildren className="space-y-4" stagger={100}>
           {profile?.id && <PhotoUploadGrid userId={profile.id} photos={photos} onPhotosChange={reloadPhotos} />}
+
+          {/* Frame Selector */}
+          <FrameSelector
+            earnedFrames={earnedFrames}
+            selectedFrame={selectedFrame}
+            onSelect={(f) => { setSelectedFrame(f); markChanged(); }}
+            profileImage={profile?.profile_image}
+          />
 
           {/* Prompts Section */}
           <Card>

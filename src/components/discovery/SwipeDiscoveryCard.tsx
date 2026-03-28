@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { EducationTierBadge } from "@/components/EducationTierBadge";
+import { FlairBadges } from "@/components/profile/FlairBadges";
+import { ProfileFrame } from "@/components/profile/ProfileFrame";
 
 interface EnhancedProfile {
   id: string;
@@ -271,17 +273,34 @@ export const SwipeDiscoveryCard = memo(({
 
           {/* Info over photo */}
           <div className="absolute bottom-0 left-0 right-0 p-5 text-white z-10">
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold">
-                {displayName}, {profile.age}
-              </h2>
-              {profile.badge_count != null && profile.badge_count >= 5 && (
-                <EducationTierBadge badgeCount={profile.badge_count} size="sm" />
-              )}
+            <div className="flex items-center gap-3">
+              {/* Small framed avatar */}
+              <ProfileFrame frameId={(profile as any).selected_frame} size="sm">
+                <img
+                  src={profile.profile_image || "/placeholder.svg"}
+                  alt=""
+                  className="h-full w-full object-cover rounded-full"
+                />
+              </ProfileFrame>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-2xl font-bold truncate">
+                    {displayName}, {profile.age}
+                  </h2>
+                  {profile.badge_count != null && profile.badge_count >= 5 && (
+                    <EducationTierBadge badgeCount={profile.badge_count} size="sm" />
+                  )}
+                </div>
+                {profile.pronouns && (
+                  <p className="text-sm opacity-80">{profile.pronouns}</p>
+                )}
+              </div>
             </div>
-            {profile.pronouns && (
-              <p className="text-sm opacity-80">{profile.pronouns}</p>
-            )}
+            {/* Flair badges */}
+            <FlairBadges
+              badgeCount={profile.badge_count}
+              className="mt-1.5"
+            />
             {profile.relationship_style && (
               <Badge variant="outline" className="mt-1 border-white/30 text-white/90 text-[10px]">
                 {profile.relationship_style.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}

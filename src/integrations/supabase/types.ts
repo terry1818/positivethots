@@ -616,6 +616,7 @@ export type Database = {
           created_at: string
           desires: string[] | null
           display_name: string | null
+          earned_frames: string[]
           enm_experience_level: string | null
           experience_level: string | null
           gender: string | null
@@ -641,6 +642,7 @@ export type Database = {
           pronouns: string | null
           relationship_status: string | null
           relationship_style: string | null
+          selected_frame: string
           sexuality: string | null
           sti_last_tested: string | null
           sti_status: string | null
@@ -658,6 +660,7 @@ export type Database = {
           created_at?: string
           desires?: string[] | null
           display_name?: string | null
+          earned_frames?: string[]
           enm_experience_level?: string | null
           experience_level?: string | null
           gender?: string | null
@@ -683,6 +686,7 @@ export type Database = {
           pronouns?: string | null
           relationship_status?: string | null
           relationship_style?: string | null
+          selected_frame?: string
           sexuality?: string | null
           sti_last_tested?: string | null
           sti_status?: string | null
@@ -700,6 +704,7 @@ export type Database = {
           created_at?: string
           desires?: string[] | null
           display_name?: string | null
+          earned_frames?: string[]
           enm_experience_level?: string | null
           experience_level?: string | null
           gender?: string | null
@@ -725,6 +730,7 @@ export type Database = {
           pronouns?: string | null
           relationship_status?: string | null
           relationship_style?: string | null
+          selected_frame?: string
           sexuality?: string | null
           sti_last_tested?: string | null
           sti_status?: string | null
@@ -1455,6 +1461,7 @@ export type Database = {
           pronouns: string
           relationship_status: string
           relationship_style: string
+          selected_frame: string
           zodiac_sign: string
         }[]
       }
