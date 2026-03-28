@@ -148,7 +148,15 @@ const LikesYou = () => {
             <TabsContent value="likes-you">
               {loading ? (
                 <div className="grid grid-cols-2 gap-3">
-                  {[1,2,3,4].map(i => <Skeleton key={i} className="h-52 rounded-xl" />)}
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="rounded-xl overflow-hidden border border-border">
+                      <Skeleton className="h-44 w-full rounded-none" />
+                      <div className="flex">
+                        <Skeleton className="h-10 flex-1 rounded-none" />
+                        <Skeleton className="h-10 flex-1 rounded-none" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : likerCount === 0 ? (
                 <div className="text-center py-16 text-muted-foreground">

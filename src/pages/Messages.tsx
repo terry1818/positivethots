@@ -105,8 +105,15 @@ const Messages = () => {
       <main className="flex-1 container max-w-md mx-auto px-4 py-6">
         {loading ? (
           <div className="space-y-3">
-            {[1,2,3,4].map(i => (
-              <Skeleton key={i} className="h-20 rounded-xl" />
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} className="flex items-center gap-4 p-4 rounded-xl border border-border">
+                <Skeleton className="h-14 w-14 rounded-full shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-3 w-40" />
+                </div>
+                <Skeleton className="h-5 w-5 rounded-full shrink-0" />
+              </div>
             ))}
           </div>
         ) : matches.length === 0 ? (

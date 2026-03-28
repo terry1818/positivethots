@@ -21,6 +21,7 @@ import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -354,25 +355,7 @@ const Index = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background pb-20">
-        <div className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
-          <div className="container max-w-7xl mx-auto px-4 py-4">
-            <Logo size="md" showText={false} />
-          </div>
-        </div>
-        <div className="container max-w-7xl mx-auto px-4 py-4">
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            {[1,2,3].map(i => <Skeleton key={i} className="h-20 rounded-xl" />)}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1,2,3,4,5,6].map(i => (
-              <Skeleton key={i} className="h-96 rounded-xl" />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <PageSkeleton variant="discovery" />;
   }
 
   // Discovery Preview Mode (badge gate)
