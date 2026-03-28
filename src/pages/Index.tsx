@@ -17,6 +17,7 @@ import { DiscoveryCard } from "@/components/discovery/DiscoveryCard";
 import { SwipeDiscoveryCard } from "@/components/discovery/SwipeDiscoveryCard";
 import { ProfileDetailSheet } from "@/components/discovery/ProfileDetailSheet";
 import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
+import { MysteryMatchCard } from "@/components/discovery/MysteryMatchCard";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
