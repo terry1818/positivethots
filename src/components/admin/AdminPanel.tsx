@@ -82,6 +82,7 @@ export const AdminPanel = ({ module, questions, onUpdate, standalone }: AdminPan
           </TabsContent>
         )}
         <TabsContent value="analytics"><AnalyticsTab /></TabsContent>
+        <TabsContent value="nps"><NpsTab /></TabsContent>
         <TabsContent value="errors"><ErrorLogsTab /></TabsContent>
         <TabsContent value="moderation"><ModerationTab /></TabsContent>
       </Tabs>

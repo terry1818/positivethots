@@ -57,9 +57,11 @@ export const queryClient = new QueryClient({
 const AppContent = () => {
   useCartSync();
   const { previousChurnStatus } = useActivityTracker();
+  const { pendingTrigger, dismiss } = useNPSSurvey();
   return (
     <>
       <WelcomeBackModal previousChurnStatus={previousChurnStatus} />
+      {pendingTrigger && <NpsModal triggerEvent={pendingTrigger} onClose={dismiss} />}
       <Routes>
         <Route path="/" element={<Suspense fallback={<PageSkeleton variant="discovery" />}><Index /></Suspense>} />
         <Route path="/auth" element={<Suspense fallback={<PageLoader />}><Auth /></Suspense>} />
