@@ -503,6 +503,14 @@ const Index = () => {
       <div className="max-w-sm mx-auto px-4">
         {suggestions.length === 0 ? (
           <div className="space-y-4">
+            <BrandedEmptyState
+              mascot="binoculars"
+              headline="You've seen everyone nearby! 🔭"
+              description="Try expanding your distance or check back tomorrow for new faces."
+              ctaLabel="Adjust Filters"
+              onCtaClick={() => navigate("/settings")}
+            />
+
             {/* Boost upsell card */}
             <Card className="p-6 text-center max-w-sm mx-auto w-full">
               <Zap className="h-12 w-12 text-amber-500 mx-auto mb-3" />
@@ -529,10 +537,6 @@ const Index = () => {
                 Copy Referral Link
               </Button>
             </Card>
-
-            <p className="text-center text-xs text-muted-foreground">
-              New profiles added daily — check back tomorrow
-            </p>
           </div>
         ) : (
           <div className="relative flex justify-center items-start px-4 pt-2 pb-32" style={{ minHeight: '520px' }}>
