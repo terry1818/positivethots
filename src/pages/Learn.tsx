@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -136,15 +136,15 @@ const Learn = () => {
     }
   };
 
-  const earnedModuleIds = new Set(userBadges.map(b => b.module_id));
-  const earnedSlugs = new Set(modules.filter(m => earnedModuleIds.has(m.id)).map(m => m.slug));
+  const earnedModuleIds = useMemo(() => new Set(userBadges.map(b => b.module_id)), [userBadges]);
+  const earnedSlugs = useMemo(() => new Set(modules.filter(m => earnedModuleIds.has(m.id)).map(m => m.slug)), [modules, earnedModuleIds]);
   const totalBadges = modules.length;
   const earnedCount = userBadges.length;
-  const requiredModules = modules.filter(m => m.is_required);
-  const requiredEarned = requiredModules.filter(m => earnedModuleIds.has(m.id)).length;
+  const requiredModules = useMemo(() => modules.filter(m => m.is_required), [modules]);
+  const requiredEarned = useMemo(() => requiredModules.filter(m => earnedModuleIds.has(m.id)).length, [requiredModules, earnedModuleIds]);
   const progressPercent = totalBadges > 0 ? (earnedCount / totalBadges) * 100 : 0;
 
-  const isModuleUnlocked = (module: Module) => {
+  const isModuleUnlocked = useCallback((module: Module) => {
     if (module.tier === 'foundation') {
       const foundationModules = modules.filter(m => m.tier === 'foundation').sort((a, b) => a.order_index - b.order_index);
       const idx = foundationModules.findIndex(m => m.id === module.id);
@@ -153,12 +153,12 @@ const Learn = () => {
     if (requiredEarned < requiredModules.length) return false;
     if (!module.prerequisite_badges || module.prerequisite_badges.length === 0) return true;
     return module.prerequisite_badges.every(slug => earnedSlugs.has(slug));
-  };
+  }, [modules, earnedModuleIds, earnedSlugs, requiredEarned, requiredModules]);
 
-  const modulesByTier = tierOrder.reduce((acc, tier) => {
+  const modulesByTier = useMemo(() => tierOrder.reduce((acc, tier) => {
     acc[tier] = modules.filter(m => m.tier === tier).sort((a, b) => a.order_index - b.order_index);
     return acc;
-  }, {} as Record<string, Module[]>);
+  }, {} as Record<string, Module[]>), [modules]);
 
   if (loading) {
     return <PageSkeleton variant="learn" />;

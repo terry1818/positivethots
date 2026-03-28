@@ -70,6 +70,23 @@ export const SwipeDiscoveryCard = memo(({
     setPhotoIndex(0);
   }, [profile.id]);
 
+  // Passive touch listeners for smoother scrolling
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el || !isTop) return;
+    const onTouchStart = (e: TouchEvent) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
+    const onTouchMove = (e: TouchEvent) => handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
+    const onTouchEnd = () => handleDragEnd();
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: true });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [isTop]);
+
   // Drag handlers
   const handleDragStart = (clientX: number, clientY: number) => {
     if (!isTop) return;
@@ -140,9 +157,7 @@ export const SwipeDiscoveryCard = memo(({
       onMouseMove={(e) => handleDragMove(e.clientX, e.clientY)}
       onMouseUp={handleDragEnd}
       onMouseLeave={handleDragEnd}
-      onTouchStart={(e) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY)}
-      onTouchMove={(e) => handleDragMove(e.touches[0].clientX, e.touches[0].clientY)}
-      onTouchEnd={handleDragEnd}
+      /* touch handlers added via passive useEffect above */
     >
       <div className="rounded-3xl overflow-hidden shadow-xl border border-border bg-card">
         {/* Photo area */}

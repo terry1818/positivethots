@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
@@ -159,7 +159,7 @@ const Chat = () => {
     setLoading(false);
   };
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!newMessage.trim() || !currentUser || !matchId) return;
 
     // 500ms debounce
@@ -218,7 +218,7 @@ const Chat = () => {
         setMessages(prev => prev.map(msg => msg.sender_id === currentUser.id && !msg.read ? { ...msg, read: true } : msg));
       }, 2000 + Math.random() * 3000);
     }
-  };
+  }, [newMessage, currentUser, matchId]);
 
   const handleTyping = (value: string) => {
     setNewMessage(value);
