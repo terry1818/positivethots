@@ -218,7 +218,7 @@ const Index = () => {
         badge_count: badgeCounts.get(p.id) || 0,
         compatibility_score: calculateCompatibility(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0),
         compatibility_reasons: calculateCompatibilityReasons(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0, isSharing),
-        verified: (badgeCounts.get(p.id) || 0) >= 3,
+        verified: p.is_verified,
         distance: null,
         is_boosted: boostedUserIds.has(p.id),
       }))
