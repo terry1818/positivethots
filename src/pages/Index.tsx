@@ -530,20 +530,39 @@ const Index = () => {
           </div>
         ) : (
           <div className="relative flex justify-center items-start px-4 pt-2 pb-32" style={{ minHeight: '520px' }}>
-            {suggestions.slice(0, 3).map((profile, stackIdx) => (
-              <SwipeDiscoveryCard
-                key={profile.id}
-                profile={profile}
-                isTop={stackIdx === 0}
-                stackIndex={stackIdx}
-                onConnect={handleConnect}
-                onPass={handlePass}
-                onSuperLike={handleSuperLike}
-                canSuperLike={canSuperLike}
-                superLikeBalance={isUnlimited ? 999 : superLikeBalance}
-                onViewProfile={() => setDetailProfile(profile)}
-              />
-            ))}
+            {suggestions.slice(0, 3).map((profile, stackIdx) => {
+              const isMystery = mysteryProfiles.has(profile.id);
+              if (isMystery && stackIdx === 0) {
+                return (
+                  <MysteryMatchCard
+                    key={profile.id}
+                    profile={profile}
+                    canReveal={canRevealMystery}
+                    onReveal={handleMysteryReveal}
+                    onConnect={handleConnect}
+                    onPass={handlePass}
+                    onSuperLike={handleSuperLike}
+                    canSuperLike={canSuperLike}
+                    superLikeBalance={isUnlimited ? 999 : superLikeBalance}
+                    onUpgrade={handleMysteryUpgrade}
+                  />
+                );
+              }
+              return (
+                <SwipeDiscoveryCard
+                  key={profile.id}
+                  profile={profile}
+                  isTop={stackIdx === 0}
+                  stackIndex={stackIdx}
+                  onConnect={handleConnect}
+                  onPass={handlePass}
+                  onSuperLike={handleSuperLike}
+                  canSuperLike={canSuperLike}
+                  superLikeBalance={isUnlimited ? 999 : superLikeBalance}
+                  onViewProfile={() => setDetailProfile(profile)}
+                />
+              );
+            })}
           </div>
         )}
       </div>
