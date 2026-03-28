@@ -95,6 +95,8 @@ export const BadgePathMap = ({
   modulesByTier,
   earnedModuleIds,
   isModuleUnlocked,
+  isAdvancedPremiumLocked,
+  isPremium,
   moduleProgress,
   onModuleClick,
   tierFeatures,
