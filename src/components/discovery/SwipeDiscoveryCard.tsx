@@ -70,6 +70,23 @@ export const SwipeDiscoveryCard = memo(({
     setPhotoIndex(0);
   }, [profile.id]);
 
+  // Passive touch listeners for smoother scrolling
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el || !isTop) return;
+    const onTouchStart = (e: TouchEvent) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
+    const onTouchMove = (e: TouchEvent) => handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
+    const onTouchEnd = () => handleDragEnd();
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: true });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [isTop]);
+
   // Drag handlers
   const handleDragStart = (clientX: number, clientY: number) => {
     if (!isTop) return;
