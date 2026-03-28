@@ -21,7 +21,8 @@ interface MatchModalProps {
 
 const confettiEmojis = ["💜", "💕", "✨", "🔥", "💫", "❤️", "🌟", "💖"];
 
-export const MatchModal = ({ isOpen, onClose, matchedProfile, matchedUser, onSendMessage }: MatchModalProps) => {
+export const MatchModal = ({ isOpen, onClose, matchedProfile, matchedUser, onSendMessage, isFirstMatch = false }: MatchModalProps) => {
+  const navigate = useNavigate();
   const user = matchedUser || matchedProfile;
   const [confetti, setConfetti] = useState<{ id: number; emoji: string; x: number; delay: number; duration: number }[]>([]);
 
