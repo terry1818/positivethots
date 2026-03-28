@@ -480,6 +480,7 @@ const Index = () => {
           onClose={() => setShowMatchModal(false)}
           matchedUser={matchedUser}
           onSendMessage={() => { setShowMatchModal(false); navigate("/messages"); }}
+          isFirstMatch={matchCount === 0}
         />
       )}
 
