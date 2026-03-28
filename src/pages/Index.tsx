@@ -254,8 +254,8 @@ const Index = () => {
     const enhancedProfiles: EnhancedProfile[] = profilesResult.data
       .map(p => ({
         ...p,
-        profile_image: p.profile_image || (photosByUser.get(p.id)?.[0]) || null,
-        photos: (p.photos && p.photos.length > 0) ? p.photos : (photosByUser.get(p.id)?.slice(1) || null),
+        profile_image: photosByUser.get(p.id)?.[0] || p.profile_image || null,
+        photos: photosByUser.get(p.id)?.slice(1) || p.photos || null,
         badge_count: badgeCounts.get(p.id) || 0,
         compatibility_score: calculateCompatibility(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0),
         compatibility_reasons: calculateCompatibilityReasons(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0, isSharing),

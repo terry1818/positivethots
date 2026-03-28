@@ -66,13 +66,31 @@ export const SwipeDiscoveryCard = memo(({
   const [isDragging, setIsDragging] = useState(false);
   const [animate, setAnimate] = useState<"left" | "right" | "up" | null>(null);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [failedPhotos, setFailedPhotos] = useState<Set<string>>(new Set());
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const photos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
+  const allPhotos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
+  const photos = allPhotos.filter(url => !failedPhotos.has(url));
+
+  const handlePhotoError = useCallback((url: string) => {
+    setFailedPhotos(prev => {
+      const next = new Set(prev);
+      next.add(url);
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     setPhotoIndex(0);
+    setFailedPhotos(new Set());
   }, [profile.id]);
+
+  // Clamp photoIndex when photos change due to failures
+  useEffect(() => {
+    if (photos.length > 0 && photoIndex >= photos.length) {
+      setPhotoIndex(Math.max(0, photos.length - 1));
+    }
+  }, [photos.length, photoIndex]);
 
   // Passive touch listeners for smoother scrolling
   useEffect(() => {
@@ -177,13 +195,20 @@ export const SwipeDiscoveryCard = memo(({
       <div className="rounded-3xl overflow-hidden shadow-xl border border-border bg-card">
         {/* Photo area */}
         <div className="relative h-96 w-full overflow-hidden">
-          <BlurImage
-            src={photos[photoIndex] || "/placeholder.svg"}
-            alt={displayName}
-            className="h-full w-full"
-            loading={isTop ? "eager" : "lazy"}
-            fetchPriority={isTop ? "high" : undefined}
-          />
+          {photos.length > 0 ? (
+            <BlurImage
+              src={photos[photoIndex] || "/placeholder.svg"}
+              alt={displayName}
+              className="h-full w-full"
+              loading={isTop ? "eager" : "lazy"}
+              fetchPriority={isTop ? "high" : undefined}
+              onError={() => handlePhotoError(photos[photoIndex])}
+            />
+          ) : (
+            <div className="h-full w-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <span className="text-6xl font-bold text-primary-foreground">{displayName?.[0] || "?"}</span>
+            </div>
+          )}
 
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -276,11 +301,12 @@ export const SwipeDiscoveryCard = memo(({
             <div className="flex items-center gap-3">
               {/* Small framed avatar */}
               <ProfileFrame frameId={(profile as any).selected_frame} size="sm">
-                {profile.profile_image ? (
+                {photos.length > 0 ? (
                   <BlurImage
-                    src={profile.profile_image}
+                    src={photos[0]}
                     alt={`Profile photo of ${displayName}`}
                     className="h-full w-full rounded-full"
+                    onError={() => handlePhotoError(photos[0])}
                   />
                 ) : (
                   <div className="h-full w-full rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground text-xs font-bold">

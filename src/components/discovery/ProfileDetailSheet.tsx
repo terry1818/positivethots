@@ -61,14 +61,28 @@ export const ProfileDetailSheet = ({
   canSuperLike,
 }: ProfileDetailSheetProps) => {
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [failedPhotos, setFailedPhotos] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     setPhotoIndex(0);
+    setFailedPhotos(new Set());
   }, [profile?.id]);
 
   if (!profile) return null;
 
-  const photos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
+  const allPhotos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
+  const photos = allPhotos.filter(url => !failedPhotos.has(url));
+
+  const handlePhotoError = (url: string) => {
+    setFailedPhotos(prev => {
+      const next = new Set(prev);
+      next.add(url);
+      return next;
+    });
+  };
+
+  // Clamp index
+  const safePhotoIndex = photos.length > 0 ? Math.min(photoIndex, photos.length - 1) : 0;
   const displayName = profile.display_name || profile.name;
   const badgeCount = profile.badge_count || 0;
 
@@ -81,23 +95,30 @@ export const ProfileDetailSheet = ({
         <div className="overflow-y-auto flex-1">
           {/* Photo carousel */}
           <div className="relative h-56 w-full overflow-hidden">
-            <BlurImage
-              src={photos[photoIndex] || "/placeholder.svg"}
-              alt={displayName}
-              className="h-full w-full"
-              loading="eager"
-            />
+            {photos.length > 0 ? (
+              <BlurImage
+                src={photos[safePhotoIndex] || "/placeholder.svg"}
+                alt={displayName}
+                className="h-full w-full"
+                loading="eager"
+                onError={() => handlePhotoError(photos[safePhotoIndex])}
+              />
+            ) : (
+              <div className="h-full w-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <span className="text-5xl font-bold text-primary-foreground">{displayName?.[0] || "?"}</span>
+              </div>
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
             {/* Dot indicators */}
             {photos.length > 1 && (
               <div className="absolute top-3 left-0 right-0 flex justify-center gap-1 z-10">
-                {photos.slice(0, 6).map((_, i) => (
+            {photos.slice(0, 6).map((_, i) => (
                   <div
                     key={i}
                     className={cn(
                       "h-1 rounded-full transition-all",
-                      i === photoIndex ? "w-4 bg-white" : "w-2 bg-white/40"
+                      i === safePhotoIndex ? "w-4 bg-white" : "w-2 bg-white/40"
                     )}
                   />
                 ))}

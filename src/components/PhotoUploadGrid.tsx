@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2, Users } from "lucide-react";
+import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2, Users, Star, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { isNative, pickNativePhoto } from "@/lib/capacitor";
 
@@ -127,11 +127,44 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
   const [activeTab, setActiveTab] = useState("public");
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [photoStats, setPhotoStats] = useState<Record<string, { score: number; impressions: number }>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const publicPhotos = photos.filter((p) => p.visibility === "public").sort((a, b) => a.order_index - b.order_index);
   const privatePhotos = photos.filter((p) => p.visibility === "private").sort((a, b) => a.order_index - b.order_index);
   const currentPhotos = activeTab === "public" ? publicPhotos : privatePhotos;
+
+  // Load photo performance stats
+  useEffect(() => {
+    const loadStats = async () => {
+      const photoIds = photos.filter(p => p.visibility === "public" && p.moderation_status === "approved").map(p => p.id);
+      if (photoIds.length === 0) return;
+      const { data } = await supabase
+        .from("photo_performance")
+        .select("photo_id, score, impressions")
+        .in("photo_id", photoIds);
+      if (data) {
+        const stats: Record<string, { score: number; impressions: number }> = {};
+        data.forEach(row => {
+          const existing = stats[row.photo_id];
+          if (existing) {
+            existing.score += Number(row.score);
+            existing.impressions += row.impressions;
+          } else {
+            stats[row.photo_id] = { score: Number(row.score), impressions: row.impressions };
+          }
+        });
+        setPhotoStats(stats);
+      }
+    };
+    loadStats();
+  }, [photos]);
+
+  const bestPhotoId = Object.entries(photoStats).reduce<string | null>((best, [id, s]) => {
+    if (s.impressions < 5) return best;
+    if (!best) return id;
+    return s.score > (photoStats[best]?.score || 0) ? id : best;
+  }, null);
 
   const handleUpload = async (e?: React.ChangeEvent<HTMLInputElement>) => {
     if (currentPhotos.length >= MAX_PHOTOS) {
@@ -293,6 +326,52 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
     setDragOverIndex(null);
   };
 
+  const handleSetAsMain = async (photo: UserPhoto, currentIndex: number) => {
+    if (currentIndex === 0) return;
+    const list = [...publicPhotos];
+    list.splice(currentIndex, 1);
+    list.unshift(photo);
+    try {
+      const updates = list.map((p, i) =>
+        supabase.from("user_photos").update({ order_index: i }).eq("id", p.id)
+      );
+      await Promise.all(updates);
+      if (photo.moderation_status === "approved") {
+        await supabase.from("profiles").update({ profile_image: photo.photo_url }).eq("id", userId);
+      }
+      toast.success("Main photo updated!");
+      onPhotosChange();
+    } catch {
+      toast.error("Failed to set main photo");
+    }
+  };
+
+  const handleSmartOrder = async () => {
+    const approvedPublic = publicPhotos.filter(p => p.moderation_status === "approved");
+    if (approvedPublic.length < 2) {
+      toast.info("Need at least 2 approved photos for smart ordering");
+      return;
+    }
+    const sorted = [...publicPhotos].sort((a, b) => {
+      const sa = photoStats[a.id]?.score || 0;
+      const sb = photoStats[b.id]?.score || 0;
+      return sb - sa;
+    });
+    try {
+      const updates = sorted.map((p, i) =>
+        supabase.from("user_photos").update({ order_index: i }).eq("id", p.id)
+      );
+      await Promise.all(updates);
+      if (sorted[0]?.moderation_status === "approved") {
+        await supabase.from("profiles").update({ profile_image: sorted[0].photo_url }).eq("id", userId);
+      }
+      toast.success("Photos reordered by performance!");
+      onPhotosChange();
+    } catch {
+      toast.error("Failed to reorder photos");
+    }
+  };
+
   const statusIcon = (status: string) => {
     switch (status) {
       case "pending": return <Clock className="h-3.5 w-3.5" />;
@@ -344,9 +423,25 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
                 <div className={`absolute top-1 left-1 rounded-full p-0.5 text-white ${statusColor(photo.moderation_status)}`}>
                   {statusIcon(photo.moderation_status)}
                 </div>
-                <button onClick={() => handleDelete(photo)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 hover:bg-black/80 transition-colors">
+                <button onClick={() => handleDelete(photo)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 hover:bg-black/80 transition-colors min-h-0 min-w-0">
                   <Trash2 className="h-3 w-3" />
                 </button>
+                {/* Set as Main button for non-first public approved photos */}
+                {activeTab === "public" && i > 0 && photo.moderation_status === "approved" && (
+                  <button
+                    onClick={() => handleSetAsMain(photo, i)}
+                    className="absolute bottom-1 left-1 bg-primary/80 text-primary-foreground rounded-full p-0.5 hover:bg-primary transition-colors min-h-0 min-w-0"
+                    title="Set as main photo"
+                  >
+                    <Star className="h-3 w-3" />
+                  </button>
+                )}
+                {/* Best photo badge */}
+                {bestPhotoId === photo.id && (
+                  <div className="absolute bottom-1 right-1 bg-amber-500/90 text-white text-[8px] font-bold px-1 py-0.5 rounded-full flex items-center gap-0.5">
+                    🔥 Best
+                  </div>
+                )}
                 {photo.moderation_status === "rejected" && photo.moderation_reason && (
                   <div className="absolute bottom-0 left-0 right-0 bg-destructive/90 text-destructive-foreground text-[10px] px-1 py-0.5 truncate">
                     {photo.moderation_reason}
@@ -392,8 +487,15 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
             <TabsTrigger value="private" className="flex-1">Private</TabsTrigger>
           </TabsList>
           <TabsContent value="public">
-            <p className="text-xs text-muted-foreground mb-2">Visible to everyone. First photo is your main profile image. Drag to reorder.</p>
+            <p className="text-xs text-muted-foreground mb-2">
+              Tap ⭐ on any photo to set it as your main profile photo. Drag to reorder.
+            </p>
             {renderGrid(publicPhotos)}
+            {Object.keys(photoStats).length > 0 && publicPhotos.length >= 2 && (
+              <Button variant="outline" size="sm" className="w-full mt-3 gap-2" onClick={handleSmartOrder}>
+                <Sparkles className="h-4 w-4" /> Smart Order
+              </Button>
+            )}
           </TabsContent>
           <TabsContent value="private">
             <p className="text-xs text-muted-foreground mb-2">Private photos are not shared by default. You control who can see them.</p>
