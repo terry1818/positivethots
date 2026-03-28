@@ -285,10 +285,12 @@ const Index = () => {
 
     if (matchData) {
       trackEvent("match", { matched_user_id: otherUserId });
+      playMatch();
       const matchedProfile = suggestions.find(s => s.id === otherUserId);
       if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
       toast.success("You Both Said Yes 💜", { description: "Your Thot worked!" });
     } else {
+      playThot();
       toast.success("Thot Sent! 💜", { description: "They'll see you stand out!" });
     }
     setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
