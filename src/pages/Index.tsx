@@ -21,6 +21,7 @@ import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
 
