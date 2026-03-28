@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { EducationTierBadge } from "@/components/EducationTierBadge";
+import { FlairBadges } from "@/components/profile/FlairBadges";
+import { ProfileFrame } from "@/components/profile/ProfileFrame";
 
 interface EnhancedProfile {
   id: string;
