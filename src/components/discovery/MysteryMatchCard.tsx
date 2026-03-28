@@ -156,7 +156,7 @@ export const MysteryMatchCard = memo(({
 
         {/* Badges */}
         <div className="absolute top-3 right-3 flex flex-col gap-1.5">
-          {profile.is_verified && <VerifiedBadgeOverlay size="md" />}
+          {profile.is_verified && <VerifiedBadgeOverlay isVerified={true} size="md" />}
           {(profile.badge_count || 0) > 0 && <EducationTierBadge badgeCount={profile.badge_count || 0} size="sm" />}
         </div>
 
