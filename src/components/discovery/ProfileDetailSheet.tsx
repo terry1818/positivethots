@@ -113,12 +113,12 @@ export const ProfileDetailSheet = ({
             {/* Dot indicators */}
             {photos.length > 1 && (
               <div className="absolute top-3 left-0 right-0 flex justify-center gap-1 z-10">
-                {photos.slice(0, 6).map((_, i) => (
+            {photos.slice(0, 6).map((_, i) => (
                   <div
                     key={i}
                     className={cn(
                       "h-1 rounded-full transition-all",
-                      i === photoIndex ? "w-4 bg-white" : "w-2 bg-white/40"
+                      i === safePhotoIndex ? "w-4 bg-white" : "w-2 bg-white/40"
                     )}
                   />
                 ))}

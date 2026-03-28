@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2, Users } from "lucide-react";
+import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2, Users, Star, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { isNative, pickNativePhoto } from "@/lib/capacitor";
 

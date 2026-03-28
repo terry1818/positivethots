@@ -195,13 +195,20 @@ export const SwipeDiscoveryCard = memo(({
       <div className="rounded-3xl overflow-hidden shadow-xl border border-border bg-card">
         {/* Photo area */}
         <div className="relative h-96 w-full overflow-hidden">
-          <BlurImage
-            src={photos[photoIndex] || "/placeholder.svg"}
-            alt={displayName}
-            className="h-full w-full"
-            loading={isTop ? "eager" : "lazy"}
-            fetchPriority={isTop ? "high" : undefined}
-          />
+          {photos.length > 0 ? (
+            <BlurImage
+              src={photos[photoIndex] || "/placeholder.svg"}
+              alt={displayName}
+              className="h-full w-full"
+              loading={isTop ? "eager" : "lazy"}
+              fetchPriority={isTop ? "high" : undefined}
+              onError={() => handlePhotoError(photos[photoIndex])}
+            />
+          ) : (
+            <div className="h-full w-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <span className="text-6xl font-bold text-primary-foreground">{displayName?.[0] || "?"}</span>
+            </div>
+          )}
 
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
