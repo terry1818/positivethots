@@ -1,8 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { isNative, pickNativePhoto } from "@/lib/capacitor";
 
