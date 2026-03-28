@@ -15,6 +15,7 @@ export const BlurImage = ({
   aspectRatio,
   fallbackClassName,
   style,
+  onError: onErrorProp,
   ...props
 }: BlurImageProps) => {
   const [loaded, setLoaded] = useState(false);
