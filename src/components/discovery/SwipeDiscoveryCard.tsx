@@ -243,11 +243,21 @@ export const SwipeDiscoveryCard = memo(({
             </div>
           )}
 
+          {/* Verified badge overlay on photo */}
+          <div className="absolute bottom-16 right-4 z-20">
+            <VerifiedBadgeOverlay isVerified={!!profile.verified} size="lg" />
+          </div>
+
           {/* Info over photo */}
           <div className="absolute bottom-0 left-0 right-0 p-5 text-white z-10">
-            <h2 className="text-2xl font-bold">
-              {displayName}, {profile.age}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl font-bold">
+                {displayName}, {profile.age}
+              </h2>
+              {profile.badge_count != null && profile.badge_count >= 5 && (
+                <EducationTierBadge badgeCount={profile.badge_count} size="sm" />
+              )}
+            </div>
             {profile.pronouns && (
               <p className="text-sm opacity-80">{profile.pronouns}</p>
             )}

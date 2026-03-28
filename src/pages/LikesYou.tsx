@@ -12,6 +12,7 @@ import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
 import { Lock, Heart, Crown, Check, X, Star, MapPin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 
 interface LikerProfile {
   id: string; name: string; age: number; profile_image?: string; location?: string; bio?: string;
