@@ -10,6 +10,7 @@ import { Logo } from "@/components/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
+import { ProfileFrame } from "@/components/profile/ProfileFrame";
 
 interface Match {
   id: string;
