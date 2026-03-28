@@ -1,10 +1,11 @@
-import { useState, ImgHTMLAttributes } from "react";
+import { useEffect, useState, ImgHTMLAttributes } from "react";
 import { User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BlurImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "onLoad" | "onError"> {
   aspectRatio?: string;
   fallbackClassName?: string;
+  imgClassName?: string;
   onError?: () => void;
 }
 
@@ -14,12 +15,19 @@ export const BlurImage = ({
   className,
   aspectRatio,
   fallbackClassName,
+  imgClassName,
   style,
   onError: onErrorProp,
+  fetchPriority,
   ...props
 }: BlurImageProps) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
+
+  useEffect(() => {
+    setLoaded(false);
+    setError(false);
+  }, [src]);
 
   return (
     <div
@@ -41,9 +49,10 @@ export const BlurImage = ({
         <img
           src={src}
           alt={alt || ""}
-          className="absolute inset-0 h-full w-full object-cover transition-opacity duration-300"
+          className={cn("absolute inset-0 h-full w-full object-cover transition-opacity duration-300", imgClassName)}
           style={{ opacity: loaded ? 1 : 0 }}
           decoding="async"
+          {...(fetchPriority ? ({ fetchpriority: fetchPriority } as Record<string, string>) : {})}
           onLoad={() => setLoaded(true)}
           onError={() => { setError(true); onErrorProp?.(); }}
           draggable={false}
