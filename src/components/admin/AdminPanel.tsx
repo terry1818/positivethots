@@ -4,9 +4,10 @@ import { QuizEditor } from "./QuizEditor";
 import { ErrorLogsTab } from "./ErrorLogsTab";
 import { AnalyticsTab } from "./AnalyticsTab";
 import { ModerationTab } from "./ModerationTab";
+import { NpsTab } from "./NpsTab";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, BookOpen, AlertTriangle, BarChart3, MessageSquareWarning } from "lucide-react";
+import { Shield, BookOpen, AlertTriangle, BarChart3, MessageSquareWarning, Star } from "lucide-react";
 
 interface Module {
   id: string;
