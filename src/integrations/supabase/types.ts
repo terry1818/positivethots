@@ -610,6 +610,30 @@ export type Database = {
         }
         Relationships: []
       }
+      private_photo_access: {
+        Row: {
+          granted_at: string
+          grantee_id: string
+          granter_id: string
+          id: string
+          revoked_at: string | null
+        }
+        Insert: {
+          granted_at?: string
+          grantee_id: string
+          granter_id: string
+          id?: string
+          revoked_at?: string | null
+        }
+        Update: {
+          granted_at?: string
+          grantee_id?: string
+          granter_id?: string
+          id?: string
+          revoked_at?: string | null
+        }
+        Relationships: []
+      }
       profile_boosts: {
         Row: {
           activated_at: string
