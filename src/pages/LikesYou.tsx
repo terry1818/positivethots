@@ -161,14 +161,16 @@ const LikesYou = () => {
                   ))}
                 </div>
               ) : likerCount === 0 ? (
-                <div className="text-center py-16 text-muted-foreground">
-                  <div className="animate-bounce-in">
-                    <Heart className="h-12 w-12 mx-auto mb-3 opacity-30 animate-pulse" />
-                  </div>
-                  <p className="text-lg font-medium">No likes yet</p>
-                  <p className="text-sm mb-6">Keep swiping — they'll show up here!</p>
+                <div>
+                  <BrandedEmptyState
+                    mascot="heart"
+                    headline="Your admirers are on their way! 💜"
+                    description="Complete more badges to boost your profile visibility."
+                    ctaLabel="Continue Learning"
+                    onCtaClick={() => navigate("/learn")}
+                  />
                   {!isPremium && (
-                    <Card className="animate-pulse-border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-left">
+                    <Card className="animate-pulse-border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-left mt-4">
                       <CardContent className="p-4 text-center">
                         <Crown className="h-8 w-8 text-primary mx-auto mb-2 animate-wiggle" />
                         <p className="font-semibold text-foreground mb-1">Unlock Premium</p>

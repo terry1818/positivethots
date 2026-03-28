@@ -121,16 +121,13 @@ const Messages = () => {
             ))}
           </div>
         ) : matches.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center px-8">
-            <div className="animate-bounce-in">
-              <MessageCircle className="h-24 w-24 text-muted-foreground mb-6 animate-pulse" />
-            </div>
-            <h2 className="text-2xl font-bold mb-3">No Matches Yet</h2>
-            <p className="text-muted-foreground mb-6">Start swiping to find your matches!</p>
-            <Button onClick={() => navigate("/")} className="bg-gradient-to-r from-primary to-secondary">
-              Start Swiping
-            </Button>
-          </div>
+          <BrandedEmptyState
+            mascot="waving"
+            headline="No messages yet! 💬"
+            description="When you and someone both say yes, you can start chatting here."
+            ctaLabel="Go to Discovery"
+            onCtaClick={() => navigate("/")}
+          />
         ) : (
           <div className="space-y-3">
             {matches.map((match, idx) => (
