@@ -76,6 +76,7 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
   const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string; size: number; shape: string }>>([]);
   const [copied, setCopied] = useState(false);
   const soundPlayed = useRef(false);
+  const { playBadgeUnlock, playStreakMilestone } = useSoundEffects();
 
   useEffect(() => {
     if (type) {
