@@ -142,9 +142,10 @@ export const BadgePathMap = ({
     modules.forEach((module) => {
       const earned = earnedModuleIds.has(module.id);
       const unlocked = isModuleUnlocked(module);
+      const premiumLocked = isAdvancedPremiumLocked(module);
       const isFirstUnearned = !earned && unlocked && !foundFirstUnearned;
       if (isFirstUnearned) foundFirstUnearned = true;
-      const state = getNodeState(module, earned, unlocked, isFirstUnearned);
+      const state = getNodeState(module, earned, unlocked, isFirstUnearned, premiumLocked);
       const icon = badgeIcons[module.slug] || "★";
       const progress = moduleProgress[module.id];
 
