@@ -16,6 +16,7 @@ interface MatchModalProps {
   matchedProfile?: MatchedUser | null;
   matchedUser?: MatchedUser | null;
   onSendMessage: () => void;
+  isFirstMatch?: boolean;
 }
 
 const confettiEmojis = ["💜", "💕", "✨", "🔥", "💫", "❤️", "🌟", "💖"];
