@@ -36,7 +36,7 @@ const PrivacyPolicy = () => {
             <li><strong>Health Information:</strong> STI testing status and date (voluntarily provided)</li>
             <li><strong>Communication Data:</strong> Messages sent to other users</li>
             <li><strong>Education Data:</strong> Quiz responses, module progress, XP and learning stats</li>
-            <li><strong>Verification Data:</strong> Selfie photos for identity verification</li>
+            <li><strong>Verification Data:</strong> Selfie photos submitted for identity and photo moderation are processed by AI and are not retained after moderation is complete. We do not store facial scans or biometric data.</li>
           </ul>
 
           <h3 className="text-base font-semibold mt-4 mb-2">2.2 Information Collected Automatically</h3>
