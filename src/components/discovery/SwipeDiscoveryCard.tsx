@@ -62,7 +62,7 @@ export const SwipeDiscoveryCard = memo(({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const [animate, setAnimate] = useState<"left" | "right" | null>(null);
+  const [animate, setAnimate] = useState<"left" | "right" | "up" | null>(null);
   const [photoIndex, setPhotoIndex] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -126,7 +126,17 @@ export const SwipeDiscoveryCard = memo(({
     }, 400);
   };
 
+  const handleSuperLikeTap = () => {
+    if (!isTop) return;
+    setAnimate("up");
+    setTimeout(() => {
+      onSuperLike?.(profile.id);
+    }, 400);
+  };
+
   const rotation = isDragging ? dragOffset.x / 20 : 0;
+  const dragProgress = isDragging ? Math.min(Math.abs(dragOffset.x) / 100, 1) : 0;
+  const isRight = dragOffset.x > 0;
 
   // Stack transforms
   const stackTransforms: Record<number, string> = {
@@ -145,12 +155,14 @@ export const SwipeDiscoveryCard = memo(({
         "absolute w-full max-w-sm select-none",
         animate === "left" && "animate-swipe-left",
         animate === "right" && "animate-swipe-right",
+        animate === "up" && "animate-swipe-fly-up",
+        !animate && stackIndex === 0 && "animate-card-enter",
       )}
       style={{
         transform: isDragging
           ? `translateX(${dragOffset.x}px) translateY(${dragOffset.y}px) rotate(${rotation}deg)`
           : stackTransforms[stackIndex] || "",
-        transition: isDragging ? "none" : "transform 0.3s ease",
+        transition: isDragging ? "none" : "transform 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)",
         cursor: isTop ? "grab" : "default",
         zIndex: stackZ[stackIndex] || 1,
         pointerEvents: isTop ? "auto" : "none",
@@ -159,7 +171,6 @@ export const SwipeDiscoveryCard = memo(({
       onMouseMove={(e) => handleDragMove(e.clientX, e.clientY)}
       onMouseUp={handleDragEnd}
       onMouseLeave={handleDragEnd}
-      /* touch handlers added via passive useEffect above */
     >
       <div className="rounded-3xl overflow-hidden shadow-xl border border-border bg-card">
         {/* Photo area */}
@@ -205,6 +216,16 @@ export const SwipeDiscoveryCard = memo(({
           {/* LIKE / NOPE overlays */}
           {isDragging && (
             <>
+              {/* Green tint overlay for right swipe */}
+              <div
+                className="absolute inset-0 bg-success/20 z-15 pointer-events-none transition-opacity"
+                style={{ opacity: isRight ? dragProgress * 0.6 : 0 }}
+              />
+              {/* Gray tint overlay for left swipe */}
+              <div
+                className="absolute inset-0 bg-muted-foreground/20 z-15 pointer-events-none transition-opacity"
+                style={{ opacity: !isRight ? dragProgress * 0.5 : 0 }}
+              />
               <div
                 className="absolute top-8 left-6 text-4xl font-bold text-success border-4 border-success rounded-2xl px-4 py-2 rotate-[-20deg] z-20"
                 style={{ opacity: Math.max(0, Math.min(dragOffset.x / 100, 1)) }}
@@ -306,10 +327,10 @@ export const SwipeDiscoveryCard = memo(({
           {canSuperLike && (
             <Button
               variant="outline"
-              className="h-[38px] w-[38px] rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white"
+              className="h-[38px] w-[38px] rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white active:scale-110"
               onClick={(e) => {
                 e.stopPropagation();
-                onSuperLike?.(profile.id);
+                handleSuperLikeTap();
               }}
             >
               <Star className="h-4 w-4" />

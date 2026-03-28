@@ -274,6 +274,20 @@
   border-color: hsl(var(--primary));
 }
 
+/* Global button press micro-interaction */
+button:not([disabled]):active,
+[role="button"]:not([disabled]):active {
+  transform: scale(0.96);
+}
+button, [role="button"] {
+  transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Page transition wrapper */
+.page-enter {
+  animation: page-fade 0.2s ease-out both;
+}
+
 /* Screen flash overlay on XP awards */
 @keyframes screen-flash {
   0% { opacity: 0.6; }
@@ -331,36 +345,15 @@
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .animate-emoji-burst,
-  .animate-bounce-in,
-  .animate-slide-up,
-  .animate-pulse-glow,
-  .animate-chip-select,
-  .animate-stagger-1,
-  .animate-stagger-2,
-  .animate-stagger-3,
-  .animate-shimmer-sweep,
-  .animate-slide-in-left,
-  .animate-slide-in-right-msg,
-  .animate-pulse-border,
-  .animate-peek-unblur,
-  .animate-wiggle,
-  .animate-glow-ring,
-  .animate-typing-wave,
-  .animate-tap-bounce,
-  .animate-confetti-heart,
-  .animate-screen-flash,
-  .animate-shake-wrong,
-  .animate-ripple-complete,
-  .animate-heartbeat,
-  .animate-fire-trail,
-  .animate-crown-spin,
-  .animate-streak-glow,
-  .animate-banner-slide {
-    animation: none !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
-  .animate-stagger-fade {
-    animation: none !important;
-    opacity: 1 !important;
+  button:not([disabled]):active,
+  [role="button"]:not([disabled]):active {
+    transform: none;
   }
 }

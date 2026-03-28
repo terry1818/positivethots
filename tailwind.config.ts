@@ -185,6 +185,41 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-6px)" },
         },
+        "swipe-fly-up": {
+          "0%": { transform: "translateY(0) scale(1)", opacity: "1" },
+          "100%": { transform: "translateY(-120%) scale(1.05)", opacity: "0" },
+        },
+        "card-enter": {
+          "0%": { transform: "scale(0.95)", opacity: "0.5" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        "match-slide-left": {
+          "0%": { transform: "translateX(-120%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        "match-slide-right": {
+          "0%": { transform: "translateX(120%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
+        "badge-unlock": {
+          "0%": { transform: "scale(0)", opacity: "0" },
+          "60%": { transform: "scale(1.15)", opacity: "1" },
+          "80%": { transform: "scale(0.95)" },
+          "100%": { transform: "scale(1)" },
+        },
+        "tab-bounce": {
+          "0%": { transform: "translateY(0)" },
+          "40%": { transform: "translateY(-3px)" },
+          "100%": { transform: "translateY(0)" },
+        },
+        "msg-send": {
+          "0%": { transform: "translateY(12px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        "page-fade": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -224,6 +259,14 @@ export default {
         "banner-slide": "banner-slide 2.5s ease-in-out forwards",
         "mascot-entrance": "mascot-entrance 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
         "float-gentle": "float-gentle 3s ease-in-out infinite",
+        "swipe-fly-up": "swipe-fly-up 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+        "card-enter": "card-enter 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both",
+        "match-slide-left": "match-slide-left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both",
+        "match-slide-right": "match-slide-right 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both",
+        "badge-unlock": "badge-unlock 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "tab-bounce": "tab-bounce 0.25s ease-out",
+        "msg-send": "msg-send 0.25s ease-out both",
+        "page-fade": "page-fade 0.2s ease-out both",
       },
     },
   },
