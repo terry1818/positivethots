@@ -127,11 +127,44 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
   const [activeTab, setActiveTab] = useState("public");
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [photoStats, setPhotoStats] = useState<Record<string, { score: number; impressions: number }>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const publicPhotos = photos.filter((p) => p.visibility === "public").sort((a, b) => a.order_index - b.order_index);
   const privatePhotos = photos.filter((p) => p.visibility === "private").sort((a, b) => a.order_index - b.order_index);
   const currentPhotos = activeTab === "public" ? publicPhotos : privatePhotos;
+
+  // Load photo performance stats
+  useEffect(() => {
+    const loadStats = async () => {
+      const photoIds = photos.filter(p => p.visibility === "public" && p.moderation_status === "approved").map(p => p.id);
+      if (photoIds.length === 0) return;
+      const { data } = await supabase
+        .from("photo_performance")
+        .select("photo_id, score, impressions")
+        .in("photo_id", photoIds);
+      if (data) {
+        const stats: Record<string, { score: number; impressions: number }> = {};
+        data.forEach(row => {
+          const existing = stats[row.photo_id];
+          if (existing) {
+            existing.score += Number(row.score);
+            existing.impressions += row.impressions;
+          } else {
+            stats[row.photo_id] = { score: Number(row.score), impressions: row.impressions };
+          }
+        });
+        setPhotoStats(stats);
+      }
+    };
+    loadStats();
+  }, [photos]);
+
+  const bestPhotoId = Object.entries(photoStats).reduce<string | null>((best, [id, s]) => {
+    if (s.impressions < 5) return best;
+    if (!best) return id;
+    return s.score > (photoStats[best]?.score || 0) ? id : best;
+  }, null);
 
   const handleUpload = async (e?: React.ChangeEvent<HTMLInputElement>) => {
     if (currentPhotos.length >= MAX_PHOTOS) {
