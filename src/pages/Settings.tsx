@@ -312,6 +312,9 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* Preferences */}
+        <PreferencesCard />
+
         {/* Admin Tools */}
         {isAdmin && (
           <Card className="animate-fade-in border-primary/30" style={{ animationDelay: "40ms" }}>
