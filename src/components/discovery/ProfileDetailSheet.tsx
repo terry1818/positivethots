@@ -61,14 +61,28 @@ export const ProfileDetailSheet = ({
   canSuperLike,
 }: ProfileDetailSheetProps) => {
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [failedPhotos, setFailedPhotos] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     setPhotoIndex(0);
+    setFailedPhotos(new Set());
   }, [profile?.id]);
 
   if (!profile) return null;
 
-  const photos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
+  const allPhotos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
+  const photos = allPhotos.filter(url => !failedPhotos.has(url));
+
+  const handlePhotoError = (url: string) => {
+    setFailedPhotos(prev => {
+      const next = new Set(prev);
+      next.add(url);
+      return next;
+    });
+  };
+
+  // Clamp index
+  const safePhotoIndex = photos.length > 0 ? Math.min(photoIndex, photos.length - 1) : 0;
   const displayName = profile.display_name || profile.name;
   const badgeCount = profile.badge_count || 0;
 
