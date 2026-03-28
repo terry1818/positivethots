@@ -23,6 +23,8 @@ interface BadgePathMapProps {
   modulesByTier: Record<string, Module[]>;
   earnedModuleIds: Set<string>;
   isModuleUnlocked: (module: Module) => boolean;
+  isAdvancedPremiumLocked: (module: Module) => boolean;
+  isPremium: boolean;
   moduleProgress: Record<string, { completed: number; total: number }>;
   onModuleClick: (slug: string) => void;
   tierFeatures: TierUnlock[];
