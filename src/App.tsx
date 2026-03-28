@@ -54,8 +54,10 @@ export const queryClient = new QueryClient({
 
 const AppContent = () => {
   useCartSync();
+  const { previousChurnStatus } = useActivityTracker();
   return (
-    <Routes>
+    <>
+      <WelcomeBackModal previousChurnStatus={previousChurnStatus} />
       <Route path="/" element={<Suspense fallback={<PageSkeleton variant="discovery" />}><Index /></Suspense>} />
       <Route path="/auth" element={<Suspense fallback={<PageLoader />}><Auth /></Suspense>} />
       <Route path="/reset-password" element={<Suspense fallback={<PageLoader />}><ResetPassword /></Suspense>} />
