@@ -16,6 +16,7 @@ import { BdsmTestSection } from "@/components/BdsmTestSection";
 import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { PROMPT_QUESTIONS } from "@/lib/promptQuestions";
+import { FrameSelector } from "@/components/profile/FrameSelector";
 
 interface PromptRow {
   id?: string;
