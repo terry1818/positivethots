@@ -157,9 +157,7 @@ export const SwipeDiscoveryCard = memo(({
       onMouseMove={(e) => handleDragMove(e.clientX, e.clientY)}
       onMouseUp={handleDragEnd}
       onMouseLeave={handleDragEnd}
-      onTouchStart={(e) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY)}
-      onTouchMove={(e) => handleDragMove(e.touches[0].clientX, e.touches[0].clientY)}
-      onTouchEnd={handleDragEnd}
+      /* touch handlers added via passive useEffect above */
     >
       <div className="rounded-3xl overflow-hidden shadow-xl border border-border bg-card">
         {/* Photo area */}
