@@ -303,8 +303,9 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
             {renderGrid(publicPhotos)}
           </TabsContent>
           <TabsContent value="private">
-            <p className="text-xs text-muted-foreground mb-2">Only shared with your matches. Drag to reorder.</p>
+            <p className="text-xs text-muted-foreground mb-2">Private photos are not shared by default. You control who can see them.</p>
             {renderGrid(privatePhotos)}
+            <PrivatePhotoAccessManager userId={userId} />
           </TabsContent>
         </Tabs>
         <input

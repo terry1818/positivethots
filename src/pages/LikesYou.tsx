@@ -241,9 +241,28 @@ const LikesYou = () => {
                   <p className="text-sm">Profiles you swipe right on will appear here.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                   {sentLikes.map((profile, idx) => (
-                    <Card key={profile.id} className="overflow-hidden relative animate-stagger-fade" style={{ animationDelay: `${idx * 80}ms` }}>
+                    <Card
+                      key={profile.id}
+                      className="overflow-hidden relative animate-stagger-fade cursor-pointer"
+                      style={{ animationDelay: `${idx * 80}ms` }}
+                      onClick={() => navigate("/profile/" + profile.id)}
+                    >
+                      <button
+                        className="absolute top-2 left-2 z-10 bg-destructive/80 rounded-full p-1.5 hover:bg-destructive transition-colors"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          const { data: { user } } = await supabase.auth.getUser();
+                          if (!user) return;
+                          await supabase.from("swipes").delete().eq("swiper_id", user.id).eq("swiped_id", profile.id).eq("direction", "right");
+                          setSentLikes(prev => prev.filter(p => p.id !== profile.id));
+                          toast({ title: "Like removed" });
+                        }}
+                        aria-label="Unlike"
+                      >
+                        <X className="h-3.5 w-3.5 text-destructive-foreground" />
+                      </button>
                       <div className="absolute top-2 right-2 z-10 bg-primary/80 rounded-full p-1.5">
                         <Heart className="h-3.5 w-3.5 text-primary-foreground fill-current" />
                       </div>

@@ -91,10 +91,11 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
             className="max-h-full max-w-full"
             style={{ objectFit: "contain" }}
             loading="lazy"
+            onError={() => setImageFailed(true)}
           />
         ) : (
-          <div className="flex items-center justify-center bg-gray-800/50 rounded-lg w-full h-full">
-            {categoryIcon(resource.category)}
+          <div className="flex items-center justify-center bg-gradient-to-br from-purple-600 to-pink-500 rounded-lg w-full h-full">
+            <span className="text-4xl font-bold text-white">{fallbackLetter}</span>
           </div>
         )}
       </div>

@@ -169,7 +169,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
         </div>
       )}
       <div className="flex gap-2">
-        <Button variant="outline" className="flex-1" onClick={() => onPass(profile.id)}>
+        <Button variant="outline" className="flex-1" onClick={(e) => { e.stopPropagation(); onPass(profile.id); }}>
           Pass
         </Button>
         {canSuperLike && onSuperLike && (
@@ -177,7 +177,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
             variant="outline"
             size="icon"
             className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
-            onClick={handleSuperLikeClick}
+            onClick={(e) => { e.stopPropagation(); handleSuperLikeClick(); }}
             title={superLikeBalance !== undefined ? `${superLikeBalance} Thots left` : "Send a Thot"}
           >
             <Star className="h-4 w-4 fill-current" />
@@ -185,7 +185,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
         )}
         <Button
           className="flex-1 bg-gradient-primary text-primary-foreground animate-pulse-glow"
-          onClick={() => onConnect(profile.id)}
+          onClick={(e) => { e.stopPropagation(); onConnect(profile.id); }}
         >
           <Heart className="h-4 w-4 mr-2" />Connect
         </Button>
