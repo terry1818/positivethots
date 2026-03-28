@@ -216,6 +216,16 @@ export const SwipeDiscoveryCard = memo(({
           {/* LIKE / NOPE overlays */}
           {isDragging && (
             <>
+              {/* Green tint overlay for right swipe */}
+              <div
+                className="absolute inset-0 bg-success/20 z-15 pointer-events-none transition-opacity"
+                style={{ opacity: isRight ? dragProgress * 0.6 : 0 }}
+              />
+              {/* Gray tint overlay for left swipe */}
+              <div
+                className="absolute inset-0 bg-muted-foreground/20 z-15 pointer-events-none transition-opacity"
+                style={{ opacity: !isRight ? dragProgress * 0.5 : 0 }}
+              />
               <div
                 className="absolute top-8 left-6 text-4xl font-bold text-success border-4 border-success rounded-2xl px-4 py-2 rotate-[-20deg] z-20"
                 style={{ opacity: Math.max(0, Math.min(dragOffset.x / 100, 1)) }}
