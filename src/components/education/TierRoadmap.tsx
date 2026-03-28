@@ -341,7 +341,9 @@ export const BadgePathMap = ({
 
               <button
                 onClick={() => {
-                  if (state === "locked") {
+                  if (state === "premium-locked") {
+                    navigate("/premium");
+                  } else if (state === "locked") {
                     toast.info("Complete previous badges first", { duration: 2000 });
                   } else {
                     onModuleClick(module.slug);
