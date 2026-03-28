@@ -576,12 +576,50 @@ const Index = () => {
       {matchedUser && (
         <MatchModal
           isOpen={showMatchModal}
-          onClose={() => setShowMatchModal(false)}
+          onClose={() => {
+            setShowMatchModal(false);
+            // Show compatibility breakdown after match celebration
+            if (matchedUser && currentUser) {
+              const bd = calculateCompatibilityBreakdown(
+                currentUser, matchedUser, userBadgeCount, matchedUser.badge_count || 0
+              );
+              setMatchBreakdown(bd);
+              setBreakdownName(matchedUser.name);
+              setShowBreakdown(true);
+            }
+          }}
           matchedUser={matchedUser}
-          onSendMessage={() => { setShowMatchModal(false); navigate("/messages"); }}
+          onSendMessage={() => {
+            setShowMatchModal(false);
+            if (matchedUser && currentUser) {
+              const bd = calculateCompatibilityBreakdown(
+                currentUser, matchedUser, userBadgeCount, matchedUser.badge_count || 0
+              );
+              setMatchBreakdown(bd);
+              setBreakdownName(matchedUser.name);
+              setShowBreakdown(true);
+            }
+            navigate("/messages");
+          }}
           isFirstMatch={matchCount === 0}
         />
       )}
+
+      {/* Compatibility Breakdown Sheet */}
+      <Sheet open={showBreakdown} onOpenChange={setShowBreakdown}>
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Compatibility</SheetTitle>
+          </SheetHeader>
+          {matchBreakdown && (
+            <CompatibilityBreakdown
+              breakdown={matchBreakdown}
+              otherName={breakdownName}
+              className="pb-6"
+            />
+          )}
+        </SheetContent>
+      </Sheet>
 
       <ProfileDetailSheet
         profile={detailProfile}
