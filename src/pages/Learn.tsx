@@ -206,8 +206,17 @@ const Learn = () => {
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
         {/* Streak Calendar */}
         {stats && (
-          <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} />
+          <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} freezeCount={stats.streak_freezes} />
         )}
+
+        {/* Streak Restore Modal */}
+        <StreakRestoreModal
+          open={showStreakRestore}
+          streakCount={brokenStreakCount}
+          currentXP={stats?.total_xp || 0}
+          onRestore={restoreStreak}
+          onDismiss={() => {}}
+        />
 
         {/* Daily Challenge */}
         <DailyChallenge />

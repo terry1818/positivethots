@@ -22,7 +22,7 @@ serve(async (req) => {
     // Find users whose last activity was yesterday and have an active streak
     const { data: atRiskUsers, error } = await supabaseAdmin
       .from("user_learning_stats")
-      .select("user_id, current_streak")
+      .select("user_id, current_streak, streak_freezes")
       .eq("last_activity_date", yesterdayStr)
       .gt("current_streak", 0);
 
@@ -41,13 +41,21 @@ serve(async (req) => {
         .eq("user_id", user.user_id);
 
       if (tokens && tokens.length > 0) {
-        console.log(`Push: Streak risk to ${user.user_id} - ${user.current_streak} day streak`);
+        const freezeMsg = user.streak_freezes > 0
+          ? ` You have ${user.streak_freezes} streak freeze${user.streak_freezes !== 1 ? 's' : ''} available.`
+          : " You have no streak freezes left!";
+
+        console.log(`Push: Streak risk to ${user.user_id} - ${user.current_streak} day streak.${freezeMsg}`);
         sentCount++;
 
         await supabaseAdmin.from("analytics_events").insert({
           user_id: user.user_id,
           event_name: "push_notification_sent",
-          event_data: { type: "streak_risk", streak: user.current_streak },
+          event_data: {
+            type: "streak_risk",
+            streak: user.current_streak,
+            freezes_available: user.streak_freezes,
+          },
         });
       }
     }
