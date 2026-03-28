@@ -120,11 +120,20 @@ const calculateCompatibilityReasons = (
   return reasons.slice(0, 3);
 };
 
+const MYSTERY_INTERVAL = 10; // Insert mystery card every N cards
+
+const getMysteryRevealLimit = (tier: string): number => {
+  if (tier === "vip" || tier === "premium") return 999;
+  if (tier === "plus") return 3;
+  return 1;
+};
+
 const Index = () => {
   const { isSharing, nearbyUsers } = useLocationSharing();
   const { balance: superLikeBalance, canSuperLike, sendSuperLike, isUnlimited } = useSuperLikes();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const { playMatch, playThot, playButtonTap } = useSoundEffects();
+  const { tier: subTier } = useSubscription();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
@@ -140,6 +149,8 @@ const Index = () => {
   const [requiredCount, setRequiredCount] = useState(5);
   const [detailProfile, setDetailProfile] = useState<EnhancedProfile | null>(null);
   const [matchCount, setMatchCount] = useState(0);
+  const [mysteryRevealsUsed, setMysteryRevealsUsed] = useState(0);
+  const [mysteryProfiles, setMysteryProfiles] = useState<Set<string>>(new Set());
 
   // Handle super like purchase redirect
   useEffect(() => {
