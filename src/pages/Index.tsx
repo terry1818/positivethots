@@ -389,6 +389,22 @@ const Index = () => {
         </div>
       </div>
 
+      {/* Profile completion banner for Quick Start users */}
+      {showProfileBanner && (
+        <div className="max-w-sm mx-auto px-4 py-2">
+          <button
+            onClick={() => navigate("/learn")}
+            className="w-full flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3 py-2 text-sm"
+          >
+            <BookOpen className="h-4 w-4 text-primary shrink-0" />
+            <span className="text-left">
+              <span className="font-medium text-foreground">Complete your profile</span>
+              <span className="text-muted-foreground"> — earn badges to unlock more matches</span>
+            </span>
+          </button>
+        </div>
+      )}
+
       {/* Compact Progress Strip */}
       {tiers.length > 0 && (
         <div className="max-w-sm mx-auto px-4 py-3">
