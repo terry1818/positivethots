@@ -77,15 +77,17 @@ const badgeIcons: Record<string, string> = {
 
 const TIER_ORDER = ["foundation", "sexual_health", "identity", "relationships", "advanced"];
 
-type NodeState = "completed" | "current" | "unlocked" | "locked";
+type NodeState = "completed" | "current" | "unlocked" | "locked" | "premium-locked";
 
 function getNodeState(
   module: Module,
   earned: boolean,
   unlocked: boolean,
-  isFirstUnearned: boolean
+  isFirstUnearned: boolean,
+  premiumLocked: boolean
 ): NodeState {
   if (earned) return "completed";
+  if (premiumLocked) return "premium-locked";
   if (unlocked && isFirstUnearned) return "current";
   if (unlocked) return "unlocked";
   return "locked";
