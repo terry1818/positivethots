@@ -227,6 +227,23 @@ const Index = () => {
 
     if (!profilesResult.data) return;
 
+    // Enrich with actual approved photos from user_photos table
+    const profileIds = profilesResult.data.map(p => p.id);
+    const { data: userPhotos } = await supabase
+      .from("user_photos")
+      .select("user_id, photo_url, order_index")
+      .in("user_id", profileIds)
+      .eq("visibility", "public")
+      .eq("moderation_status", "approved")
+      .order("order_index", { ascending: true });
+
+    const photosByUser = new Map<string, string[]>();
+    userPhotos?.forEach(photo => {
+      const existing = photosByUser.get(photo.user_id) || [];
+      existing.push(photo.photo_url);
+      photosByUser.set(photo.user_id, existing);
+    });
+
     const badgeCounts = new Map<string, number>();
     allBadgesResult.data?.forEach(badge => {
       badgeCounts.set(badge.user_id, (badgeCounts.get(badge.user_id) || 0) + 1);
@@ -237,6 +254,8 @@ const Index = () => {
     const enhancedProfiles: EnhancedProfile[] = profilesResult.data
       .map(p => ({
         ...p,
+        profile_image: p.profile_image || (photosByUser.get(p.id)?.[0]) || null,
+        photos: (p.photos && p.photos.length > 0) ? p.photos : (photosByUser.get(p.id)?.slice(1) || null),
         badge_count: badgeCounts.get(p.id) || 0,
         compatibility_score: calculateCompatibility(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0),
         compatibility_reasons: calculateCompatibilityReasons(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0, isSharing),

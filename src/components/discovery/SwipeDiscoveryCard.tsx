@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, memo } from "react";
+import { useState, useRef, useEffect, memo, useCallback } from "react";
 import { BlurImage } from "@/components/BlurImage";
 import { Heart, X, Star, Zap, Shield, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -276,11 +276,17 @@ export const SwipeDiscoveryCard = memo(({
             <div className="flex items-center gap-3">
               {/* Small framed avatar */}
               <ProfileFrame frameId={(profile as any).selected_frame} size="sm">
-                <img
-                  src={profile.profile_image || "/placeholder.svg"}
-                  alt={`Profile photo of ${displayName}`}
-                  className="h-full w-full object-cover rounded-full"
-                />
+                {profile.profile_image ? (
+                  <BlurImage
+                    src={profile.profile_image}
+                    alt={`Profile photo of ${displayName}`}
+                    className="h-full w-full rounded-full"
+                  />
+                ) : (
+                  <div className="h-full w-full rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground text-xs font-bold">
+                    {displayName?.[0] || "?"}
+                  </div>
+                )}
               </ProfileFrame>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
