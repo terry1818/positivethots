@@ -276,7 +276,7 @@ const Chat = () => {
       supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", currentUser.id),
       supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", otherUser.id),
     ]);
-    const bd = calculateCompatibilityBreakdown(currentUser, otherUser, myBadges || 0, theirBadges || 0);
+    const bd = calculateCompatibilityBreakdown(currentUser as any, otherUser as any, myBadges || 0, theirBadges || 0);
     setCompatBreakdown(bd);
     setShowCompatibility(true);
   }, [currentUser, otherUser]);
