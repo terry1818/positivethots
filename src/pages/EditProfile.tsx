@@ -46,6 +46,8 @@ const EditProfile = () => {
   const [experienceLevel, setExperienceLevel] = useState("");
   const [bdsmTestUrl, setBdsmTestUrl] = useState("");
   const [bdsmTestScreenshot, setBdsmTestScreenshot] = useState("");
+  const [selectedFrame, setSelectedFrame] = useState("newbie");
+  const [earnedFrames, setEarnedFrames] = useState<string[]>(["newbie"]);
 
   // Prompts state
   const [prompts, setPrompts] = useState<PromptRow[]>([]);
