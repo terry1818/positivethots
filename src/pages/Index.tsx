@@ -337,64 +337,8 @@ const Index = () => {
     return <PageSkeleton variant="discovery" />;
   }
 
-  // Discovery Preview Mode (badge gate)
-  if (previewMode) {
-    return (
-      <div className="min-h-screen bg-background pb-20">
-        <div className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-          <div className="container max-w-7xl mx-auto px-4 py-4">
-            <Logo size="md" showText={false} />
-          </div>
-        </div>
-
-        <div className="container max-w-7xl mx-auto px-4 py-4 relative">
-          {/* Blurred profile grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 filter blur-[8px] pointer-events-none select-none" aria-hidden="true">
-            {previewProfiles.map((profile, idx) => (
-              <DiscoveryCard
-                key={profile.id}
-                profile={profile}
-                index={idx}
-                onConnect={() => {}}
-                onPass={() => {}}
-              />
-            ))}
-          </div>
-
-          {/* Overlay card */}
-          <div className="absolute inset-0 flex items-center justify-center p-4">
-            <Card className="max-w-sm w-full p-8 text-center shadow-xl bg-card/95 backdrop-blur-sm border-primary/20">
-              <Lock className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Unlock Discovery</h2>
-              <p className="text-muted-foreground mb-6">
-                Complete {requiredCount - userBadgeCount} Foundation module{requiredCount - userBadgeCount !== 1 ? "s" : ""} to see who's here
-              </p>
-              <div className="mb-6">
-                <div className="flex justify-between text-sm text-muted-foreground mb-2">
-                  <span>{userBadgeCount} of {requiredCount} complete</span>
-                  <span>{Math.round((userBadgeCount / requiredCount) * 100)}%</span>
-                </div>
-                <Progress value={(userBadgeCount / requiredCount) * 100} className="h-3" />
-              </div>
-              <Button
-                className="w-full"
-                size="lg"
-                onClick={() => {
-                  trackEvent('discovery_preview_cta_clicked', {});
-                  navigate('/learn');
-                }}
-              >
-                <BookOpen className="h-4 w-4 mr-2" />
-                Start Learning →
-              </Button>
-            </Card>
-          </div>
-        </div>
-
-        <BottomNav />
-      </div>
-    );
-  }
+  // Incomplete profile banner (Quick Start users)
+  const showProfileBanner = currentUser && userBadgeCount < requiredCount;
 
   return (
     <div className="min-h-screen bg-background pb-20">
