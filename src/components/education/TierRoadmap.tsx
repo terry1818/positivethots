@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Lock, CheckCircle } from "lucide-react";
+import { Lock, CheckCircle, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
