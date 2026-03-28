@@ -155,12 +155,14 @@ export const SwipeDiscoveryCard = memo(({
         "absolute w-full max-w-sm select-none",
         animate === "left" && "animate-swipe-left",
         animate === "right" && "animate-swipe-right",
+        animate === "up" && "animate-swipe-fly-up",
+        !animate && stackIndex === 0 && "animate-card-enter",
       )}
       style={{
         transform: isDragging
           ? `translateX(${dragOffset.x}px) translateY(${dragOffset.y}px) rotate(${rotation}deg)`
           : stackTransforms[stackIndex] || "",
-        transition: isDragging ? "none" : "transform 0.3s ease",
+        transition: isDragging ? "none" : "transform 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)",
         cursor: isTop ? "grab" : "default",
         zIndex: stackZ[stackIndex] || 1,
         pointerEvents: isTop ? "auto" : "none",
@@ -169,7 +171,6 @@ export const SwipeDiscoveryCard = memo(({
       onMouseMove={(e) => handleDragMove(e.clientX, e.clientY)}
       onMouseUp={handleDragEnd}
       onMouseLeave={handleDragEnd}
-      /* touch handlers added via passive useEffect above */
     >
       <div className="rounded-3xl overflow-hidden shadow-xl border border-border bg-card">
         {/* Photo area */}
