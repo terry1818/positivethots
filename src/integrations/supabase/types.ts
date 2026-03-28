@@ -1053,6 +1053,8 @@ export type Database = {
           last_activity_date: string | null
           longest_streak: number
           streak_freeze_available: boolean
+          streak_freeze_used_at: string | null
+          streak_freezes: number
           streak_recovered_at: string | null
           total_xp: number
           updated_at: string
@@ -1065,6 +1067,8 @@ export type Database = {
           last_activity_date?: string | null
           longest_streak?: number
           streak_freeze_available?: boolean
+          streak_freeze_used_at?: string | null
+          streak_freezes?: number
           streak_recovered_at?: string | null
           total_xp?: number
           updated_at?: string
@@ -1077,6 +1081,8 @@ export type Database = {
           last_activity_date?: string | null
           longest_streak?: number
           streak_freeze_available?: boolean
+          streak_freeze_used_at?: string | null
+          streak_freezes?: number
           streak_recovered_at?: string | null
           total_xp?: number
           updated_at?: string
