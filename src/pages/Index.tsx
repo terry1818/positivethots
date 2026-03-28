@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy } from "lucide-react";
+import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { MatchModal } from "@/components/MatchModal";
@@ -17,10 +17,12 @@ import { DiscoveryCard } from "@/components/discovery/DiscoveryCard";
 import { SwipeDiscoveryCard } from "@/components/discovery/SwipeDiscoveryCard";
 import { ProfileDetailSheet } from "@/components/discovery/ProfileDetailSheet";
 import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
+import { MysteryMatchCard } from "@/components/discovery/MysteryMatchCard";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { useSubscription } from "@/hooks/useSubscription";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";
@@ -118,11 +120,20 @@ const calculateCompatibilityReasons = (
   return reasons.slice(0, 3);
 };
 
+const MYSTERY_INTERVAL = 10; // Insert mystery card every N cards
+
+const getMysteryRevealLimit = (tier: string): number => {
+  if (tier === "vip" || tier === "premium") return 999;
+  if (tier === "plus") return 3;
+  return 1;
+};
+
 const Index = () => {
   const { isSharing, nearbyUsers } = useLocationSharing();
   const { balance: superLikeBalance, canSuperLike, sendSuperLike, isUnlimited } = useSuperLikes();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const { playMatch, playThot, playButtonTap } = useSoundEffects();
+  const { tier: subTier } = useSubscription();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
@@ -138,6 +149,8 @@ const Index = () => {
   const [requiredCount, setRequiredCount] = useState(5);
   const [detailProfile, setDetailProfile] = useState<EnhancedProfile | null>(null);
   const [matchCount, setMatchCount] = useState(0);
+  const [mysteryRevealsUsed, setMysteryRevealsUsed] = useState(0);
+  const [mysteryProfiles, setMysteryProfiles] = useState<Set<string>>(new Set());
 
   // Handle super like purchase redirect
   useEffect(() => {
@@ -229,10 +242,66 @@ const Index = () => {
         if (!a.is_boosted && b.is_boosted) return 1;
         return (b.compatibility_score || 0) - (a.compatibility_score || 0);
       })
-      .slice(0, 12);
+      .slice(0, 20); // fetch more to have mystery candidates
 
-    setSuggestions(enhancedProfiles);
+    // Pick high-compatibility profiles as mystery matches (every MYSTERY_INTERVAL-th)
+    const mysteryIds = new Set<string>();
+    const highCompat = enhancedProfiles.filter(p => (p.compatibility_score || 0) >= 75);
+    // Mark every 10th card position as mystery, using high-compat profiles
+    let mysteryPool = [...highCompat];
+    for (let i = MYSTERY_INTERVAL - 1; i < enhancedProfiles.length && mysteryPool.length > 0; i += MYSTERY_INTERVAL) {
+      const candidate = mysteryPool.shift();
+      if (candidate) {
+        mysteryIds.add(candidate.id);
+        // Move this profile to position i if it's not already there
+        const currentIdx = enhancedProfiles.findIndex(p => p.id === candidate.id);
+        if (currentIdx !== i && currentIdx !== -1) {
+          enhancedProfiles.splice(currentIdx, 1);
+          enhancedProfiles.splice(i, 0, candidate);
+        }
+      }
+    }
+    setMysteryProfiles(mysteryIds);
+
+    // Load today's reveal count
+    const { data: revealData } = await supabase
+      .from("profiles")
+      .select("mystery_reveals_today, mystery_reveals_date")
+      .eq("id", userId)
+      .single();
+    if (revealData) {
+      const today = new Date().toISOString().split("T")[0];
+      setMysteryRevealsUsed(
+        (revealData as any).mystery_reveals_date === today ? (revealData as any).mystery_reveals_today : 0
+      );
+    }
+
+    setSuggestions(enhancedProfiles.slice(0, 15));
   };
+
+  const mysteryRevealLimit = getMysteryRevealLimit(subTier);
+  const canRevealMystery = mysteryRevealsUsed < mysteryRevealLimit;
+
+  const handleMysteryReveal = useCallback(async (): Promise<boolean> => {
+    if (!currentUser || !canRevealMystery) return false;
+    const today = new Date().toISOString().split("T")[0];
+    const newCount = mysteryRevealsUsed + 1;
+    await supabase.from("profiles").update({
+      mystery_reveals_today: newCount,
+      mystery_reveals_date: today,
+    } as any).eq("id", currentUser.id);
+    setMysteryRevealsUsed(newCount);
+    trackEvent("mystery_match_reveal", {});
+    return true;
+  }, [currentUser, canRevealMystery, mysteryRevealsUsed]);
+
+  const handleMysteryUpgrade = useCallback(() => {
+    toast("Want to reveal more Mystery Matches?", {
+      description: "Upgrade to Plus for 3 daily reveals! 💜",
+      action: { label: "Upgrade", onClick: () => navigate("/premium") },
+      duration: 5000,
+    });
+  }, [navigate]);
 
   const handleConnect = useCallback(async (otherUserId: string) => {
     if (!currentUser) return;
@@ -461,20 +530,39 @@ const Index = () => {
           </div>
         ) : (
           <div className="relative flex justify-center items-start px-4 pt-2 pb-32" style={{ minHeight: '520px' }}>
-            {suggestions.slice(0, 3).map((profile, stackIdx) => (
-              <SwipeDiscoveryCard
-                key={profile.id}
-                profile={profile}
-                isTop={stackIdx === 0}
-                stackIndex={stackIdx}
-                onConnect={handleConnect}
-                onPass={handlePass}
-                onSuperLike={handleSuperLike}
-                canSuperLike={canSuperLike}
-                superLikeBalance={isUnlimited ? 999 : superLikeBalance}
-                onViewProfile={() => setDetailProfile(profile)}
-              />
-            ))}
+            {suggestions.slice(0, 3).map((profile, stackIdx) => {
+              const isMystery = mysteryProfiles.has(profile.id);
+              if (isMystery && stackIdx === 0) {
+                return (
+                  <MysteryMatchCard
+                    key={profile.id}
+                    profile={profile}
+                    canReveal={canRevealMystery}
+                    onReveal={handleMysteryReveal}
+                    onConnect={handleConnect}
+                    onPass={handlePass}
+                    onSuperLike={handleSuperLike}
+                    canSuperLike={canSuperLike}
+                    superLikeBalance={isUnlimited ? 999 : superLikeBalance}
+                    onUpgrade={handleMysteryUpgrade}
+                  />
+                );
+              }
+              return (
+                <SwipeDiscoveryCard
+                  key={profile.id}
+                  profile={profile}
+                  isTop={stackIdx === 0}
+                  stackIndex={stackIdx}
+                  onConnect={handleConnect}
+                  onPass={handlePass}
+                  onSuperLike={handleSuperLike}
+                  canSuperLike={canSuperLike}
+                  superLikeBalance={isUnlimited ? 999 : superLikeBalance}
+                  onViewProfile={() => setDetailProfile(profile)}
+                />
+              );
+            })}
           </div>
         )}
       </div>
