@@ -487,8 +487,15 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
             <TabsTrigger value="private" className="flex-1">Private</TabsTrigger>
           </TabsList>
           <TabsContent value="public">
-            <p className="text-xs text-muted-foreground mb-2">Visible to everyone. First photo is your main profile image. Drag to reorder.</p>
+            <p className="text-xs text-muted-foreground mb-2">
+              Tap ⭐ on any photo to set it as your main profile photo. Drag to reorder.
+            </p>
             {renderGrid(publicPhotos)}
+            {Object.keys(photoStats).length > 0 && publicPhotos.length >= 2 && (
+              <Button variant="outline" size="sm" className="w-full mt-3 gap-2" onClick={handleSmartOrder}>
+                <Sparkles className="h-4 w-4" /> Smart Order
+              </Button>
+            )}
           </TabsContent>
           <TabsContent value="private">
             <p className="text-xs text-muted-foreground mb-2">Private photos are not shared by default. You control who can see them.</p>
