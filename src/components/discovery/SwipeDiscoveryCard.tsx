@@ -301,11 +301,12 @@ export const SwipeDiscoveryCard = memo(({
             <div className="flex items-center gap-3">
               {/* Small framed avatar */}
               <ProfileFrame frameId={(profile as any).selected_frame} size="sm">
-                {profile.profile_image ? (
+                {photos.length > 0 ? (
                   <BlurImage
-                    src={profile.profile_image}
+                    src={photos[0]}
                     alt={`Profile photo of ${displayName}`}
                     className="h-full w-full rounded-full"
+                    onError={() => handlePhotoError(photos[0])}
                   />
                 ) : (
                   <div className="h-full w-full rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground text-xs font-bold">
