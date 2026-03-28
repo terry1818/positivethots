@@ -552,6 +552,11 @@ const Chat = () => {
         <div className="container max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-end gap-2">
             <div className="flex gap-1">
+              <GameMenu
+                matchId={matchId || ""}
+                currentUserId={currentUser?.id || ""}
+                otherUserId={otherUser?.id || ""}
+              />
               <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Attach image"><ImageIcon className="h-5 w-5" /></Button>
               <Button variant="ghost" size="icon" className="h-10 w-10 hidden sm:flex" aria-label="Send gift"><Gift className="h-5 w-5" /></Button>
             </div>
