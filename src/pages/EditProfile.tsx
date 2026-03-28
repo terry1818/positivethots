@@ -79,6 +79,8 @@ const EditProfile = () => {
       setBdsmTestUrl(data.bdsm_test_url || ""); setBdsmTestScreenshot(data.bdsm_test_screenshot || "");
       setSelectedFrame((data as any).selected_frame || "newbie");
       setEarnedFrames((data as any).earned_frames || ["newbie"]);
+      // Sync earned frames based on current achievements
+      syncEarnedFrames(session.user.id).then(frames => setEarnedFrames(frames));
       setPhotos(photosResult.data || []);
       setLatestVerification(verResult.data?.[0] || null);
       setPrompts((promptsResult.data || []).map((p: any) => ({
