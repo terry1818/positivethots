@@ -82,7 +82,15 @@ export const SwipeDiscoveryCard = memo(({
 
   useEffect(() => {
     setPhotoIndex(0);
+    setFailedPhotos(new Set());
   }, [profile.id]);
+
+  // Clamp photoIndex when photos change due to failures
+  useEffect(() => {
+    if (photos.length > 0 && photoIndex >= photos.length) {
+      setPhotoIndex(Math.max(0, photos.length - 1));
+    }
+  }, [photos.length, photoIndex]);
 
   // Passive touch listeners for smoother scrolling
   useEffect(() => {
