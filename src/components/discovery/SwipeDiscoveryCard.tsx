@@ -66,9 +66,19 @@ export const SwipeDiscoveryCard = memo(({
   const [isDragging, setIsDragging] = useState(false);
   const [animate, setAnimate] = useState<"left" | "right" | "up" | null>(null);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [failedPhotos, setFailedPhotos] = useState<Set<string>>(new Set());
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const photos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
+  const allPhotos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
+  const photos = allPhotos.filter(url => !failedPhotos.has(url));
+
+  const handlePhotoError = useCallback((url: string) => {
+    setFailedPhotos(prev => {
+      const next = new Set(prev);
+      next.add(url);
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     setPhotoIndex(0);
