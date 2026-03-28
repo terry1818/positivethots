@@ -363,6 +363,8 @@ export const BadgePathMap = ({
                         `w-14 h-14 bg-background ${config.border} ${config.color} shadow-lg text-xl`,
                       state === "unlocked" &&
                         `w-11 h-11 bg-background ${config.border} ${config.color} text-base`,
+                      state === "premium-locked" &&
+                        "w-10 h-10 bg-amber-500/10 border-amber-500/40 text-amber-500 text-sm",
                       state === "locked" &&
                         "w-9 h-9 bg-muted border-muted text-muted-foreground text-sm"
                     )}
