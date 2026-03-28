@@ -81,14 +81,16 @@
     --popover: 270 20% 15%;
     --popover-foreground: 270 15% 95%;
 
-    --primary: 270 55% 58%;
+    /* Lightened for 4.5:1 contrast on dark bg */
+    --primary: 270 55% 62%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 320 65% 55%;
+    --secondary: 320 65% 60%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 270 15% 20%;
-    --muted-foreground: 270 10% 68%;
+    /* Raised from 68% to 75% for 4.5:1 on card bg */
+    --muted-foreground: 270 10% 75%;
 
     --accent: 280 75% 62%;
     --accent-foreground: 0 0% 100%;
