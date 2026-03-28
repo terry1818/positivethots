@@ -524,6 +524,33 @@ export type Database = {
           },
         ]
       }
+      nps_responses: {
+        Row: {
+          created_at: string
+          feedback: string | null
+          id: string
+          score: number
+          trigger_event: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          score: number
+          trigger_event: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          score?: number
+          trigger_event?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profile_boosts: {
         Row: {
           activated_at: string

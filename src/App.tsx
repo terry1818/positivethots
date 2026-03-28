@@ -13,6 +13,8 @@ import { PageSkeleton } from "@/components/PageSkeleton";
 import { useCartSync } from "@/hooks/useCartSync";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
+import { useNPSSurvey } from "@/hooks/useNPSSurvey";
+import { NpsModal } from "@/components/NpsModal";
 
 // Lazy-loaded route pages
 const Index = lazy(() => import("./pages/Index"));
@@ -55,9 +57,11 @@ export const queryClient = new QueryClient({
 const AppContent = () => {
   useCartSync();
   const { previousChurnStatus } = useActivityTracker();
+  const { pendingTrigger, dismiss } = useNPSSurvey();
   return (
     <>
       <WelcomeBackModal previousChurnStatus={previousChurnStatus} />
+      {pendingTrigger && <NpsModal triggerEvent={pendingTrigger} onClose={dismiss} />}
       <Routes>
         <Route path="/" element={<Suspense fallback={<PageSkeleton variant="discovery" />}><Index /></Suspense>} />
         <Route path="/auth" element={<Suspense fallback={<PageLoader />}><Auth /></Suspense>} />
