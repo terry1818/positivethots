@@ -522,6 +522,18 @@ const Chat = () => {
               );
             })}
 
+            {/* Game Cards */}
+            {chatGames.map((game) => (
+              <div key={game.id} className="my-4 animate-fade-in">
+                <ChatGameCard
+                  game={game}
+                  currentUserId={currentUser?.id || ""}
+                  otherUserName={otherUser?.name || ""}
+                  matchId={matchId || ""}
+                />
+              </div>
+            ))}
+
             {/* Typing Indicator */}
             {isTyping && (
               <div className="flex items-end gap-2 animate-slide-in-left">
