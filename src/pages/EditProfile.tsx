@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { PROMPT_QUESTIONS } from "@/lib/promptQuestions";
 import { FrameSelector } from "@/components/profile/FrameSelector";
+import { syncEarnedFrames } from "@/hooks/useEarnedFrames";
 
 interface PromptRow {
   id?: string;
