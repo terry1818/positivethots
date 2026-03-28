@@ -172,12 +172,28 @@ const Chat = () => {
       })));
     }
 
+    // Load existing games
+    const { data: existingGames } = await supabase
+      .from("chat_games" as any)
+      .select("*")
+      .eq("match_id", matchId)
+      .order("created_at", { ascending: true });
+    if (existingGames) setChatGames(existingGames as any[]);
+
     const channel = supabase.channel(`chat:${matchId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
         (payload) => {
           const newMsg = payload.new as Message;
           if (newMsg.sender_id !== currentUser?.id) playMessage();
           setMessages(prev => [...prev, { ...newMsg, delivered: true, read: newMsg.sender_id === session.user.id }]);
+        })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_games', filter: `match_id=eq.${matchId}` },
+        (payload) => {
+          setChatGames(prev => [...prev, payload.new as any]);
+        })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'chat_games', filter: `match_id=eq.${matchId}` },
+        (payload) => {
+          setChatGames(prev => prev.map(g => g.id === (payload.new as any).id ? payload.new as any : g));
         })
       .on('presence', { event: 'sync' }, () => {
         const state = channel.presenceState();
