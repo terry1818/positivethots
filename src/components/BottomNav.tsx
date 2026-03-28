@@ -79,7 +79,7 @@ export const BottomNav = () => {
               className={cn(
                 "flex flex-col items-center gap-0.5 h-auto py-2 px-2 relative transition-all duration-200",
                 isActive ? "text-primary" : "text-muted-foreground",
-                isTapped && "animate-tap-bounce"
+                isTapped && "animate-tab-bounce"
               )}
             >
               <div className="relative">
