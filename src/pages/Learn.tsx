@@ -175,6 +175,7 @@ const Learn = () => {
               <StreakBadge
                 streak={stats?.current_streak || 0}
                 showFreeze
+                freezeCount={stats?.streak_freezes || 0}
                 freezeAvailable={stats?.streak_freeze_available}
                 atRisk={isStreakAtRisk}
                 hoursLeft={streakHoursLeft}
