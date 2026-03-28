@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { BlurImage } from "@/components/BlurImage";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +40,7 @@ interface DiscoveryCardProps {
 
 export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperLike, canSuperLike, superLikeBalance }: DiscoveryCardProps) => {
   const navigate = useNavigate();
+  const [imageError, setImageError] = useState(false);
 
   const handleSuperLikeClick = () => {
     if (superLikeBalance !== undefined && superLikeBalance <= 0) {
@@ -57,20 +58,22 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
 
   return (
   <Card
-    className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-stagger-fade"
+    className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-stagger-fade cursor-pointer"
     style={{ animationDelay: `${index * 80}ms` }}
+    onClick={() => navigate("/profile/" + profile.id)}
   >
     <div className="relative h-64 bg-muted">
-       {profile.profile_image ? (
+       {profile.profile_image && !imageError ? (
         <BlurImage
           src={profile.profile_image}
           alt={profile.name}
           className="w-full h-full"
           loading={index === 0 ? "eager" : "lazy"}
           fetchPriority={index === 0 ? "high" : undefined}
+          onError={() => setImageError(true)}
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-6xl">
+        <div className="w-full h-full flex items-center justify-center text-6xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
           {profile.name?.[0] || "?"}
         </div>
       )}
@@ -166,7 +169,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
         </div>
       )}
       <div className="flex gap-2">
-        <Button variant="outline" className="flex-1" onClick={() => onPass(profile.id)}>
+        <Button variant="outline" className="flex-1" onClick={(e) => { e.stopPropagation(); onPass(profile.id); }}>
           Pass
         </Button>
         {canSuperLike && onSuperLike && (
@@ -174,7 +177,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
             variant="outline"
             size="icon"
             className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
-            onClick={handleSuperLikeClick}
+            onClick={(e) => { e.stopPropagation(); handleSuperLikeClick(); }}
             title={superLikeBalance !== undefined ? `${superLikeBalance} Thots left` : "Send a Thot"}
           >
             <Star className="h-4 w-4 fill-current" />
@@ -182,7 +185,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
         )}
         <Button
           className="flex-1 bg-gradient-primary text-primary-foreground animate-pulse-glow"
-          onClick={() => onConnect(profile.id)}
+          onClick={(e) => { e.stopPropagation(); onConnect(profile.id); }}
         >
           <Heart className="h-4 w-4 mr-2" />Connect
         </Button>

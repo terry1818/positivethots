@@ -1,8 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2, Users } from "lucide-react";
 import { toast } from "sonner";
 import { isNative, pickNativePhoto } from "@/lib/capacitor";
 
@@ -26,6 +29,99 @@ interface PhotoUploadGridProps {
 
 const MAX_PHOTOS = 8;
 
+interface MatchProfile { id: string; name: string; profile_image: string | null; }
+interface PhotoAccess { grantee_id: string; revoked_at: string | null; }
+
+const PrivatePhotoAccessManager = ({ userId }: { userId: string }) => {
+  const [matches, setMatches] = useState<MatchProfile[]>([]);
+  const [accessMap, setAccessMap] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(false);
+
+  const loadData = async () => {
+    setLoading(true);
+    // Fetch matches
+    const { data: matchRows } = await supabase
+      .from("matches")
+      .select("id, user1_id, user2_id")
+      .or(`user1_id.eq.${userId},user2_id.eq.${userId}`);
+
+    if (matchRows && matchRows.length > 0) {
+      const partnerIds = matchRows.map(m => m.user1_id === userId ? m.user2_id : m.user1_id);
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, name, profile_image")
+        .in("id", partnerIds);
+      setMatches(profiles || []);
+    }
+
+    // Fetch access grants
+    const { data: grants } = await supabase
+      .from("private_photo_access")
+      .select("grantee_id, revoked_at")
+      .eq("granter_id", userId);
+
+    const map: Record<string, boolean> = {};
+    grants?.forEach((g: any) => { map[g.grantee_id] = !g.revoked_at; });
+    setAccessMap(map);
+    setLoading(false);
+  };
+
+  const toggleAccess = async (granteeId: string, granted: boolean) => {
+    if (granted) {
+      await supabase.from("private_photo_access").upsert(
+        { granter_id: userId, grantee_id: granteeId, granted_at: new Date().toISOString(), revoked_at: null },
+        { onConflict: "granter_id,grantee_id" }
+      );
+    } else {
+      await supabase.from("private_photo_access")
+        .update({ revoked_at: new Date().toISOString() })
+        .eq("granter_id", userId)
+        .eq("grantee_id", granteeId);
+    }
+    setAccessMap(prev => ({ ...prev, [granteeId]: granted }));
+  };
+
+  return (
+    <Sheet onOpenChange={(open) => { if (open) loadData(); }}>
+      <SheetTrigger asChild>
+        <Button variant="outline" size="sm" className="w-full mt-3 gap-2">
+          <Users className="h-4 w-4" /> Manage Access
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="bottom" className="max-h-[70vh]">
+        <SheetHeader>
+          <SheetTitle>Private Photo Access</SheetTitle>
+        </SheetHeader>
+        <div className="mt-4 space-y-3 overflow-y-auto">
+          {loading ? (
+            <p className="text-sm text-muted-foreground text-center py-4">Loading...</p>
+          ) : matches.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">No matches yet. Match with someone to share private photos.</p>
+          ) : (
+            matches.map(match => (
+              <div key={match.id} className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-10 w-10 rounded-full bg-muted overflow-hidden flex-shrink-0">
+                    {match.profile_image ? (
+                      <img src={match.profile_image} alt={match.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-sm font-medium">{match.name?.[0]}</div>
+                    )}
+                  </div>
+                  <span className="text-sm font-medium truncate">{match.name}</span>
+                </div>
+                <Switch
+                  checked={!!accessMap[match.id]}
+                  onCheckedChange={(checked) => toggleAccess(match.id, checked)}
+                />
+              </div>
+            ))
+          )}
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+};
 export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadGridProps) => {
   const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState("public");
@@ -300,8 +396,9 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
             {renderGrid(publicPhotos)}
           </TabsContent>
           <TabsContent value="private">
-            <p className="text-xs text-muted-foreground mb-2">Only shared with your matches. Drag to reorder.</p>
+            <p className="text-xs text-muted-foreground mb-2">Private photos are not shared by default. You control who can see them.</p>
             {renderGrid(privatePhotos)}
+            <PrivatePhotoAccessManager userId={userId} />
           </TabsContent>
         </Tabs>
         <input

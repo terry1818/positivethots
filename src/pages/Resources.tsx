@@ -114,7 +114,7 @@ const FALLBACK: Resource[] = [
   makeProduct("b2","Polysecure","Jessica Fern","1944934987","$16.95",4.7,"Top Pick","books",2),
   makeProduct("b3","The Polysecure Workbook","Jessica Fern","1990869041","$21.95",4.6,"Workbook","books",3),
   makeProduct("b4","More Than Two (2nd Edition)","Eve Rickert","0991399706","$19.95",4.4,"Guide","books",4),
-  makeProduct("b5","Stepping Off the Relationship Escalator","Amy Gahran","0998647306","$17.99",4.6,"Stories","books",5),
+  makeProduct("b5","Rewriting the Rules","Meg-John Barker","0415517818","$16.99",4.4,"Modern","books",5),
   makeProduct("b6","Designer Relationships","Mark A. Michaels & Patricia Johnson","1627781471","$14.95",4.3,"Design","books",6),
   makeProduct("b7","The Smart Girl's Guide to Polyamory","Dedeker Winston","1510712089","$15.95",4.5,"Modern","books",7),
   makeProduct("b8","Opening Up","Tristan Taormino","157344295X","$15.00",4.4,"Classic","books",8),
