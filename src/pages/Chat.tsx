@@ -399,7 +399,10 @@ const Chat = () => {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" onClick={handleViewCompatibility} aria-label="View compatibility" title="View Compatibility">
+                <Heart className="h-5 w-5 text-primary" />
+              </Button>
               <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Voice call"><Phone className="h-5 w-5" /></Button>
               <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Video call"><Video className="h-5 w-5" /></Button>
               <DropdownMenu>
