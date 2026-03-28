@@ -255,6 +255,11 @@ export const BadgePathMap = ({
                     )}
                   >
                     <span>{node.config.label}</span>
+                    {node.tier === "advanced" && !isPremium && (
+                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 text-[10px] font-bold">
+                        <Crown className="h-3 w-3" /> Premium
+                      </span>
+                    )}
                     <span className="text-muted-foreground font-normal">
                       {node.completed}/{node.total}
                     </span>
