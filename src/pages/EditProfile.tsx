@@ -204,6 +204,14 @@ const EditProfile = () => {
         <StaggerChildren className="space-y-4" stagger={100}>
           {profile?.id && <PhotoUploadGrid userId={profile.id} photos={photos} onPhotosChange={reloadPhotos} />}
 
+          {/* Frame Selector */}
+          <FrameSelector
+            earnedFrames={earnedFrames}
+            selectedFrame={selectedFrame}
+            onSelect={(f) => { setSelectedFrame(f); markChanged(); }}
+            profileImage={profile?.profile_image}
+          />
+
           {/* Prompts Section */}
           <Card>
             <CardHeader>
