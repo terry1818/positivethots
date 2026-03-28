@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
-import { ChevronRight, ChevronLeft, SkipForward, Check } from "lucide-react";
+import { ChevronRight, ChevronLeft, SkipForward, Check, Sparkles, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { StepTransition } from "@/components/onboarding/StepTransition";
 import { ChipSelector } from "@/components/onboarding/ChipSelector";
@@ -24,6 +24,12 @@ import { StepHeader } from "@/components/onboarding/StepHeader";
 import { PromptPicker } from "@/components/onboarding/PromptPicker";
 
 // ── Option Data ──
+
+const ENM_EXPERIENCE_OPTIONS = [
+  { value: "beginner", label: "I'm brand new to ENM 🌱", description: "Just starting to learn about ethical non-monogamy" },
+  { value: "intermediate", label: "I know the basics 📚", description: "Familiar with core concepts and communication styles" },
+  { value: "experienced", label: "I'm experienced 🎓", description: "Practiced ENM for a while and understand the dynamics" },
+];
 
 const GENDER_OPTIONS = [
   "Woman", "Man", "Non-binary", "Trans Woman", "Trans Man",
@@ -93,18 +99,35 @@ const INTERESTS_OPTIONS = [
   "Crafts", "Tattoos", "Astrology", "Festivals", "Road Trips",
 ];
 
+/*
+ * NEW FLOW (14 steps):
+ * 1  Welcome
+ * 2  ENM Familiarity (NEW)
+ * 3  Gender
+ * 4  Pronouns
+ * 5  Photo Upload (moved from 12)
+ * 6  Sexuality
+ * 7  Desires
+ * 8  Relationship Style
+ * 9  Relationship Status  → Quick Start interstitial after this
+ * 10 Height / Zodiac / Languages
+ * 11 Lifestyle
+ * 12 Interests
+ * 13 Prompts / Location / Boundaries
+ * 14 Preview
+ */
+
 const PHASES = [
-  { label: "Identity", steps: [1, 2, 3], emoji: "🌈" },
-  { label: "Sexuality", steps: [4, 5], emoji: "🔥" },
-  { label: "Relationship", steps: [6, 7], emoji: "🔗" },
-  { label: "About You", steps: [8, 9, 10], emoji: "✨" },
-  { label: "Your Story", steps: [11, 12], emoji: "📖" },
+  { label: "Identity", steps: [1, 2, 3, 4, 5], emoji: "🌈" },
+  { label: "Sexuality", steps: [6, 7], emoji: "🔥" },
+  { label: "Relationship", steps: [8, 9], emoji: "🔗" },
+  { label: "About You", steps: [10, 11, 12], emoji: "✨" },
+  { label: "Your Story", steps: [13, 14], emoji: "📖" },
 ];
 
 const STEP_EMOJIS: Record<number, string> = {
-  1: "👋", 2: "🌈", 3: "💬", 4: "🔥", 5: "⭐",
-  6: "🔗", 7: "💜", 8: "📏", 9: "🌿", 10: "🎨",
-  11: "✍️", 12: "📸",
+  1: "👋", 2: "🧭", 3: "🌈", 4: "💬", 5: "📸", 6: "🔥", 7: "⭐",
+  8: "🔗", 9: "💜", 10: "📏", 11: "🌿", 12: "🎨", 13: "✍️", 14: "✨",
 };
 
 const PHASE_GRADIENTS: Record<number, string> = {
@@ -116,13 +139,13 @@ const PHASE_GRADIENTS: Record<number, string> = {
 };
 
 const PHASE_INTERSTITIALS = [
-  { emoji: "🔥", message: "Identity locked in!", nextPhase: "Now let's explore your desires...", nextUp: "Next up: Tell us about your sexuality and desires" },
-  { emoji: "💜", message: "Looking good so far!", nextPhase: "Tell us about your relationships...", nextUp: "Next up: Your relationship style and status" },
-  { emoji: "⭐", message: "Almost there!", nextPhase: "A few more things about you...", nextUp: "Next up: The fun stuff — height, lifestyle, and interests" },
-  { emoji: "📖", message: "The fun part!", nextPhase: "Share your story...", nextUp: "Next up: Share your story and add photos" },
+  { emoji: "📸", message: "Looking great!", nextPhase: "Now let's explore your desires...", nextUp: "Next up: Tell us about your sexuality and desires" },
+  { emoji: "💜", message: "Almost browsing!", nextPhase: "Tell us about your relationships...", nextUp: "Next up: Your relationship style and status" },
+  { emoji: "⭐", message: "Profile taking shape!", nextPhase: "A few more things about you...", nextUp: "Next up: The fun stuff — height, lifestyle, and interests" },
+  { emoji: "📖", message: "The fun part!", nextPhase: "Share your story...", nextUp: "Next up: Share your story and finalize" },
 ];
 
-const TOTAL_STEPS = 12;
+const TOTAL_STEPS = 14;
 
 // ── Component ──
 
@@ -138,8 +161,10 @@ const Onboarding = () => {
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
   const [showInterstitial, setShowInterstitial] = useState(false);
   const [interstitialData, setInterstitialData] = useState({ emoji: "", message: "", nextPhase: "", nextUp: "" });
+  const [showQuickStart, setShowQuickStart] = useState(false);
 
   const [formData, setFormData] = useState({
+    enmExperienceLevel: "",
     gender: "",
     pronouns: "",
     customPronouns: "",
@@ -164,7 +189,6 @@ const Onboarding = () => {
     loadUserData();
   }, []);
 
-  // Track step views
   useEffect(() => {
     const phase = PHASES.find(p => p.steps.includes(step));
     trackEvent('onboarding_step_viewed', { step, phase: phase?.label || 'Welcome' });
@@ -180,8 +204,8 @@ const Onboarding = () => {
       setUserAge(profile.age);
       setProfileImage(profile.profile_image);
 
-      // Resume onboarding from saved progress
       const saved: Partial<typeof formData> = {};
+      if ((profile as any).enm_experience_level && (profile as any).enm_experience_level !== 'beginner') saved.enmExperienceLevel = (profile as any).enm_experience_level;
       if (profile.gender) saved.gender = profile.gender;
       if (profile.pronouns) saved.pronouns = profile.pronouns;
       if (profile.sexuality) saved.sexuality = profile.sexuality;
@@ -200,21 +224,23 @@ const Onboarding = () => {
 
       if (Object.keys(saved).length > 0) {
         setFormData(prev => ({ ...prev, ...saved }));
-        // Jump to the furthest incomplete step
+        // NEW step mapping for resume
         const stepFields: Record<number, () => boolean> = {
-          2: () => !!saved.gender,
-          3: () => !!saved.pronouns,
-          4: () => !!saved.sexuality,
-          5: () => (saved.desires?.length ?? 0) > 0,
-          6: () => !!saved.relationshipStyle,
-          7: () => !!saved.relationshipStatus,
-          8: () => !!saved.experienceLevel,
-          9: () => !!saved.heightCm || !!saved.zodiacSign,
-          10: () => (saved.interests?.length ?? 0) >= 3,
-          11: () => !!saved.location,
+          2: () => !!saved.enmExperienceLevel,
+          3: () => !!saved.gender,
+          4: () => !!saved.pronouns,
+          // Step 5 (photos) - check if they have photos
+          6: () => !!saved.sexuality,
+          7: () => (saved.desires?.length ?? 0) > 0,
+          8: () => !!saved.relationshipStyle,
+          9: () => !!saved.relationshipStatus,
+          10: () => !!saved.experienceLevel,
+          11: () => !!saved.heightCm || !!saved.zodiacSign,
+          12: () => (saved.interests?.length ?? 0) >= 3,
+          13: () => !!saved.location,
         };
         let resumeStep = 1;
-        for (let s = 2; s <= 11; s++) {
+        for (let s = 2; s <= 13; s++) {
           if (stepFields[s]?.()) resumeStep = s + 1;
           else break;
         }
@@ -244,12 +270,11 @@ const Onboarding = () => {
     }));
   };
 
-  // Check if advancing to next step crosses a phase boundary
   const isPhaseTransition = useCallback((currentStep: number): number | null => {
     const currentPhaseIdx = PHASES.findIndex(p => p.steps.includes(currentStep));
     const nextPhaseIdx = PHASES.findIndex(p => p.steps.includes(currentStep + 1));
     if (currentPhaseIdx !== -1 && nextPhaseIdx !== -1 && currentPhaseIdx !== nextPhaseIdx) {
-      return currentPhaseIdx; // returns the index of the interstitial to show
+      return currentPhaseIdx;
     }
     return null;
   }, []);
@@ -261,7 +286,13 @@ const Onboarding = () => {
     trackEvent('onboarding_step_completed', { step, phase: phase?.label || 'Welcome' });
 
     setCelebrationTrigger(t => t + 1);
-    
+
+    // Show Quick Start after step 9 (Relationship Status)
+    if (step === 9) {
+      setShowQuickStart(true);
+      return;
+    }
+
     const phaseTransition = isPhaseTransition(step);
     if (phaseTransition !== null && phaseTransition < PHASE_INTERSTITIALS.length) {
       trackEvent('onboarding_phase_completed', { phase: phase?.label || 'Welcome' });
@@ -273,12 +304,32 @@ const Onboarding = () => {
     }
   };
 
+  const handleQuickStart = async () => {
+    // Save current progress and go to Discovery
+    trackEvent('onboarding_quick_start', { step: 9 });
+    if (userId) {
+      const pronounsValue = formData.customPronouns.trim() || formData.pronouns;
+      await supabase.from("profiles").update({
+        enm_experience_level: formData.enmExperienceLevel || 'beginner',
+        pronouns: pronounsValue || null,
+        gender: formData.gender || null,
+        sexuality: formData.sexuality || null,
+        desires: formData.desires.length > 0 ? formData.desires : null,
+        relationship_style: formData.relationshipStyle || null,
+        relationship_status: formData.relationshipStatus || null,
+        experience_level: formData.experienceLevel || "curious",
+        onboarding_completed: true,
+      } as any).eq("id", userId);
+    }
+    toast.success("Let's explore! 💜", { description: "Complete your profile anytime for better matches." });
+    navigate("/");
+  };
+
   const advanceStep = async () => {
     setDirection("forward");
     const nextStep = Math.min(step + 1, TOTAL_STEPS);
     setStep(nextStep);
 
-    // Track onboarding_started_at when reaching step 3
     if (nextStep === 3 && userId) {
       supabase.from("profiles")
         .select("onboarding_started_at")
@@ -294,10 +345,10 @@ const Onboarding = () => {
         });
     }
 
-    // Save progress after each step
     if (userId) {
       const pronounsValue = formData.customPronouns.trim() || formData.pronouns;
       await supabase.from("profiles").update({
+        enm_experience_level: formData.enmExperienceLevel || 'beginner',
         pronouns: pronounsValue || null,
         gender: formData.gender || null,
         sexuality: formData.sexuality || null,
@@ -325,21 +376,27 @@ const Onboarding = () => {
   const validateStep = (): boolean => {
     switch (step) {
       case 2:
-        if (!formData.gender) { toast.error("Please select your gender"); return false; }
+        if (!formData.enmExperienceLevel) { toast.error("Please select your experience level"); return false; }
         return true;
       case 3:
+        if (!formData.gender) { toast.error("Please select your gender"); return false; }
+        return true;
+      case 4:
         if (!formData.pronouns && !formData.customPronouns.trim()) { toast.error("Please select or enter your pronouns"); return false; }
         return true;
-      case 6:
+      case 5:
+        if (photos.length === 0) { toast.error("Please upload at least 1 photo"); return false; }
+        return true;
+      case 8:
         if (!formData.relationshipStyle) { toast.error("Please select your relationship style"); return false; }
         return true;
-      case 7:
+      case 9:
         if (!formData.relationshipStatus) { toast.error("Please select your status"); return false; }
         return true;
-      case 10:
+      case 12:
         if (formData.interests.length < 3) { toast.error("Please select at least 3 interests"); return false; }
         return true;
-      case 11:
+      case 13:
         if (!formData.location.trim()) { toast.error("Please enter your location"); return false; }
         if (formData.prompts.filter(p => p.response.trim()).length < 2) { toast.error("Please answer at least 2 prompts"); return false; }
         return true;
@@ -359,6 +416,7 @@ const Onboarding = () => {
       const { error } = await supabase
         .from("profiles")
         .update({
+          enm_experience_level: formData.enmExperienceLevel || 'beginner',
           pronouns: pronounsValue,
           gender: formData.gender || null,
           sexuality: formData.sexuality || null,
@@ -381,9 +439,7 @@ const Onboarding = () => {
 
       if (error) throw error;
 
-      // Save prompts
       if (formData.prompts.length > 0) {
-        // Delete existing prompts first
         await supabase.from("profile_prompts" as any).delete().eq("user_id", session.user.id);
         const promptRows = formData.prompts
           .filter(p => p.response.trim())
@@ -412,10 +468,9 @@ const Onboarding = () => {
   const phaseIndex = PHASES.findIndex(p => p.steps.includes(step));
   const currentPhase = PHASES[phaseIndex];
   const progress = Math.round((step / TOTAL_STEPS) * 100);
-  const isOptionalStep = [4, 5, 8, 9].includes(step);
-  const showMiniPreview = step >= 8 && step < 12;
+  const isOptionalStep = [6, 7, 10, 11].includes(step);
+  const showMiniPreview = step >= 10 && step < 14;
 
-  // Mini-preview fields
   const miniFields = [
     { label: "Gender", value: GENDER_OPTIONS.find(g => g.value === formData.gender)?.label || "" },
     { label: "Sexuality", value: SEXUALITY_OPTIONS.find(s => s.value === formData.sexuality)?.label || "" },
@@ -442,6 +497,36 @@ const Onboarding = () => {
         onComplete={() => { setShowInterstitial(false); advanceStep(); }}
       />
 
+      {/* Quick Start Modal */}
+      {showQuickStart && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
+          <Card className="max-w-sm w-full shadow-2xl border-primary/20 overflow-hidden">
+            <div className="bg-gradient-to-br from-primary/20 to-accent/20 p-6 text-center">
+              <Sparkles className="h-12 w-12 text-primary mx-auto mb-3" />
+              <h2 className="text-2xl font-bold">You're ready to explore!</h2>
+              <p className="text-muted-foreground mt-2 text-sm">
+                Start browsing profiles now, or continue personalizing your profile for better matches.
+              </p>
+            </div>
+            <CardContent className="p-6 space-y-3">
+              <Button onClick={handleQuickStart} className="w-full text-lg h-12" size="lg">
+                Start Exploring <ArrowRight className="h-5 w-5 ml-2" />
+              </Button>
+              <Button
+                onClick={() => { setShowQuickStart(false); advanceStep(); }}
+                variant="outline"
+                className="w-full"
+              >
+                Keep Going — More to share
+              </Button>
+              <p className="text-xs text-muted-foreground text-center">
+                You can always complete your profile later from Settings
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <div className="w-full max-w-md relative z-10">
         {/* Progress ring + phase label */}
         <div className="flex items-center justify-between mb-4">
@@ -459,7 +544,6 @@ const Onboarding = () => {
               </p>
             </div>
           </div>
-          {/* Phase dots */}
           <div className="flex gap-1.5">
             {PHASES.map((phase, i) => (
               <div
@@ -493,7 +577,7 @@ const Onboarding = () => {
                     </p>
                   </div>
                   <p className="text-sm text-muted-foreground animate-stagger-2">
-                    ⏱ Takes about 3 minutes
+                    ⏱ Takes about 3-5 minutes
                   </p>
                   <Button onClick={goNext} className="w-full text-lg h-12 animate-stagger-3">
                     Let's Go <ChevronRight className="h-5 w-5 ml-1" />
@@ -501,8 +585,34 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 2: Gender */}
+              {/* Step 2: ENM Familiarity (NEW) */}
               {step === 2 && (
+                <div className="space-y-4">
+                  <StepHeader emoji="🧭" title="How familiar are you with ethical non-monogamy?" subtitle="This helps us personalize your experience" />
+                  <div className="space-y-2 animate-stagger-2">
+                    {ENM_EXPERIENCE_OPTIONS.map(opt => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => updateField("enmExperienceLevel", opt.value)}
+                        className={`relative w-full text-left rounded-xl px-4 py-3 border transition-all duration-200
+                          ${formData.enmExperienceLevel === opt.value
+                            ? "bg-primary text-primary-foreground border-primary shadow-md"
+                            : "bg-card text-foreground border-border hover:border-primary/50 active:scale-[0.98]"
+                          }`}
+                      >
+                        <span className="font-medium">{opt.label}</span>
+                        <span className={`block text-sm mt-0.5 ${formData.enmExperienceLevel === opt.value ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                          {opt.description}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Gender */}
+              {step === 3 && (
                 <div className="space-y-4">
                   <StepHeader emoji="🌈" title="How do you identify?" subtitle="Select what fits you best" />
                   <div className="animate-stagger-2">
@@ -517,8 +627,8 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 3: Pronouns */}
-              {step === 3 && (
+              {/* Step 4: Pronouns */}
+              {step === 4 && (
                 <div className="space-y-4">
                   <StepHeader emoji="💬" title="Your pronouns" subtitle="Displayed on your profile" />
                   <div className="flex flex-wrap gap-2 animate-stagger-2">
@@ -549,8 +659,27 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 4: Sexuality */}
-              {step === 4 && (
+              {/* Step 5: Photo Upload (moved earlier) */}
+              {step === 5 && (
+                <div className="space-y-4">
+                  <StepHeader emoji="📸" title="Add a photo" subtitle="At least 1 photo required — this is how people see you" />
+                  {userId && (
+                    <div className="animate-stagger-1">
+                      <PhotoUploadGrid
+                        userId={userId}
+                        photos={photos}
+                        onPhotosChange={reloadPhotos}
+                      />
+                    </div>
+                  )}
+                  {photos.length === 0 && (
+                    <p className="text-xs text-destructive text-center">Upload at least 1 photo to continue</p>
+                  )}
+                </div>
+              )}
+
+              {/* Step 6: Sexuality */}
+              {step === 6 && (
                 <div className="space-y-4">
                   <StepHeader emoji="🔥" title="Your sexuality" subtitle="This is shown on your profile" />
                   <div className="animate-stagger-2">
@@ -566,8 +695,8 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 5: Desires */}
-              {step === 5 && (
+              {/* Step 7: Desires */}
+              {step === 7 && (
                 <div className="space-y-4">
                   <StepHeader emoji="⭐" title="What are you looking for?" subtitle="Select up to 10 — be honest!" />
                   <div className="flex gap-1 mb-2 animate-stagger-1">
@@ -588,8 +717,8 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 6: Relationship Style */}
-              {step === 6 && (
+              {/* Step 8: Relationship Style */}
+              {step === 8 && (
                 <div className="space-y-4">
                   <StepHeader emoji="🔗" title="Relationship style" subtitle="How do you approach relationships?" />
                   <div className="flex gap-1 mb-1 animate-stagger-1">
@@ -624,8 +753,8 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 7: Relationship Status */}
-              {step === 7 && (
+              {/* Step 9: Relationship Status */}
+              {step === 9 && (
                 <div className="space-y-4">
                   <StepHeader emoji="💜" title="Current status" subtitle="Where are you right now?" />
                   <div className="flex gap-1 mb-1 animate-stagger-1">
@@ -651,16 +780,14 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 8: Height, Zodiac, Languages */}
-              {step === 8 && (
+              {/* Step 10: Height, Zodiac, Languages */}
+              {step === 10 && (
                 <div className="space-y-6">
                   <StepHeader emoji="📏" title="A bit more about you" subtitle="All optional — share what you like" />
-
                   <div className="space-y-2 animate-stagger-1">
                     <Label className="text-sm font-medium">Height</Label>
                     <HeightSlider value={formData.heightCm} onChange={(v) => updateField("heightCm", v)} />
                   </div>
-
                   <div className="space-y-2 animate-stagger-2">
                     <Label className="text-sm font-medium">♈ Zodiac Sign</Label>
                     <div className="flex flex-wrap gap-1.5">
@@ -680,7 +807,6 @@ const Onboarding = () => {
                       ))}
                     </div>
                   </div>
-
                   <div className="space-y-2 animate-stagger-3">
                     <Label className="text-sm font-medium">🌍 Languages</Label>
                     <ChipSelector
@@ -693,8 +819,8 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 9: Lifestyle */}
-              {step === 9 && (
+              {/* Step 11: Lifestyle */}
+              {step === 11 && (
                 <div className="space-y-5">
                   <StepHeader emoji="🌿" title="Lifestyle" subtitle="These appear as badges on your profile" />
                   {LIFESTYLE_CATEGORIES.map((cat, catIdx) => (
@@ -727,8 +853,8 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 10: Interests */}
-              {step === 10 && (
+              {/* Step 12: Interests */}
+              {step === 12 && (
                 <div className="space-y-4">
                   <StepHeader emoji="🎨" title="Your interests" subtitle="Select at least 3" />
                   <div className="animate-stagger-2">
@@ -744,8 +870,8 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 11: Prompts, Boundaries, Location */}
-              {step === 11 && (
+              {/* Step 13: Prompts, Boundaries, Location */}
+              {step === 13 && (
                 <div className="space-y-4">
                   <StepHeader emoji="✍️" title="Tell your story" />
                   <div className="space-y-2 animate-stagger-1">
@@ -779,23 +905,11 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 12: Photos & Preview */}
-              {step === 12 && (
+              {/* Step 14: Preview */}
+              {step === 14 && (
                 <div className="space-y-6">
-                  <StepHeader emoji="📸" title="Photos & Preview" subtitle="Add photos and see how your profile looks" />
-
-                  {userId && (
-                    <div className="animate-stagger-1">
-                      <PhotoUploadGrid
-                        userId={userId}
-                        photos={photos}
-                        onPhotosChange={reloadPhotos}
-                      />
-                    </div>
-                  )}
-
-                  <div className="pt-4 border-t border-border animate-stagger-2">
-                    <p className="text-sm font-medium text-foreground mb-3">✨ Profile Preview</p>
+                  <StepHeader emoji="✨" title="Your Profile Preview" subtitle="Here's how others will see you" />
+                  <div className="animate-stagger-1">
                     <ProfilePreview
                       name={userName}
                       age={userAge}
