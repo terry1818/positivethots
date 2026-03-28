@@ -18,6 +18,7 @@ interface Match {
     name: string;
     profile_image: string;
     age: number;
+    is_verified?: boolean;
   };
 }
 
