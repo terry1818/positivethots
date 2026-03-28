@@ -631,6 +631,8 @@ export type Database = {
           lifestyle: Json | null
           location: string | null
           looking_for: string | null
+          mystery_reveals_date: string | null
+          mystery_reveals_today: number
           name: string
           onboarding_completed: boolean | null
           onboarding_started_at: string | null
@@ -671,6 +673,8 @@ export type Database = {
           lifestyle?: Json | null
           location?: string | null
           looking_for?: string | null
+          mystery_reveals_date?: string | null
+          mystery_reveals_today?: number
           name: string
           onboarding_completed?: boolean | null
           onboarding_started_at?: string | null
@@ -711,6 +715,8 @@ export type Database = {
           lifestyle?: Json | null
           location?: string | null
           looking_for?: string | null
+          mystery_reveals_date?: string | null
+          mystery_reveals_today?: number
           name?: string
           onboarding_completed?: boolean | null
           onboarding_started_at?: string | null
