@@ -5,6 +5,7 @@ import { getLevelName } from "@/hooks/useLearningStats";
 import { Flame, Zap, Star, Share2, Copy, Check } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import mascotImg from "@/assets/mascot-celebration.png";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 interface CelebrationModalProps {
   type: "level_up" | "streak_milestone" | "badge_earned" | "tier_complete" | null;
