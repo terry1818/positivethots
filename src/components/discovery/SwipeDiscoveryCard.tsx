@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, memo } from "react";
+import { BlurImage } from "@/components/BlurImage";
 import { Heart, X, Star, Zap, Shield, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

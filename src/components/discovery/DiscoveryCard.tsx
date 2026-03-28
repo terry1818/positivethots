@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { BlurImage } from "@/components/BlurImage";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getLevelName, getLevelEmoji } from "@/hooks/useLearningStats";

@@ -1,3 +1,4 @@
+import { BlurImage } from "@/components/BlurImage";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EducationBadge } from "@/components/EducationBadge";
