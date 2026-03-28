@@ -9,6 +9,7 @@ import { MessageCircle, ChevronLeft } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 
 interface Match {
   id: string;
@@ -17,6 +18,7 @@ interface Match {
     name: string;
     profile_image: string;
     age: number;
+    is_verified?: boolean;
   };
 }
 
@@ -145,10 +147,11 @@ const Messages = () => {
                       aspectRatio="1/1"
                       loading="lazy"
                     />
-                    {/* Simulated online dot */}
-                    {idx < 2 && (
+                    {match.profile.is_verified ? (
+                      <VerifiedBadgeOverlay isVerified size="sm" />
+                    ) : idx < 2 ? (
                       <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-success rounded-full border-2 border-card animate-pulse" />
-                    )}
+                    ) : null}
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg">{match.profile.name}, {match.profile.age}</h3>

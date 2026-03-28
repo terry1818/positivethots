@@ -1,7 +1,8 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Heart } from "lucide-react";
+import { Heart, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface MatchedUser {
   name: string;
@@ -15,11 +16,13 @@ interface MatchModalProps {
   matchedProfile?: MatchedUser | null;
   matchedUser?: MatchedUser | null;
   onSendMessage: () => void;
+  isFirstMatch?: boolean;
 }
 
 const confettiEmojis = ["💜", "💕", "✨", "🔥", "💫", "❤️", "🌟", "💖"];
 
-export const MatchModal = ({ isOpen, onClose, matchedProfile, matchedUser, onSendMessage }: MatchModalProps) => {
+export const MatchModal = ({ isOpen, onClose, matchedProfile, matchedUser, onSendMessage, isFirstMatch = false }: MatchModalProps) => {
+  const navigate = useNavigate();
   const user = matchedUser || matchedProfile;
   const [confetti, setConfetti] = useState<{ id: number; emoji: string; x: number; delay: number; duration: number }[]>([]);
 
@@ -107,6 +110,26 @@ export const MatchModal = ({ isOpen, onClose, matchedProfile, matchedUser, onSen
               >
                 Keep Browsing
               </Button>
+
+              {/* First-match safety prompt */}
+              {isFirstMatch && (
+                <div className="mt-3 bg-white/10 rounded-lg p-3 text-left">
+                  <div className="flex items-start gap-2">
+                    <Shield className="h-4 w-4 text-white mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-white/90 text-xs">
+                        Meeting someone new? Check out our safety tips before your first date.
+                      </p>
+                      <button
+                        className="text-white underline text-xs mt-1 hover:text-white/80"
+                        onClick={() => { onClose(); navigate("/privacy-policy"); }}
+                      >
+                        View Safety Tips →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
