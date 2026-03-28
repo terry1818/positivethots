@@ -45,7 +45,7 @@ export const BlurImage = ({
           style={{ opacity: loaded ? 1 : 0 }}
           decoding="async"
           onLoad={() => setLoaded(true)}
-          onError={() => setError(true)}
+          onError={() => { setError(true); onErrorProp?.(); }}
           draggable={false}
           {...props}
         />

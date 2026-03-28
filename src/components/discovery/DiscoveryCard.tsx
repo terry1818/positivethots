@@ -73,7 +73,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
           onError={() => setImageError(true)}
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-6xl bg-gradient-to-br from-primary to-secondary text-primary-foreground">
+        <div className="w-full h-full flex items-center justify-center text-6xl bg-gradient-to-br from-primary to-accent text-primary-foreground">
           {profile.name?.[0] || "?"}
         </div>
       )}
