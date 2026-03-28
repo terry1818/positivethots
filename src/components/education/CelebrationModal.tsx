@@ -5,6 +5,7 @@ import { getLevelName } from "@/hooks/useLearningStats";
 import { Flame, Zap, Star, Share2, Copy, Check } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import mascotImg from "@/assets/mascot-celebration.png";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 interface CelebrationModalProps {
   type: "level_up" | "streak_milestone" | "badge_earned" | "tier_complete" | null;
@@ -50,31 +51,12 @@ const BRAND_COLORS = [
   "hsl(50 90% 60%)",
 ];
 
-function playCelebrationSound() {
-  try {
-    const ctx = new AudioContext();
-    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
-    notes.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = freq;
-      osc.type = "sine";
-      gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.1);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.1 + 0.3);
-      osc.start(ctx.currentTime + i * 0.1);
-      osc.stop(ctx.currentTime + i * 0.1 + 0.3);
-    });
-  } catch {
-    // Audio not supported
-  }
-}
 
 export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, onClose }: CelebrationModalProps) => {
   const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string; size: number; shape: string }>>([]);
   const [copied, setCopied] = useState(false);
   const soundPlayed = useRef(false);
+  const { playBadgeUnlock, playStreakMilestone } = useSoundEffects();
 
   useEffect(() => {
     if (type) {
@@ -96,11 +78,12 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
   }, [type]);
 
   useEffect(() => {
-    if (type === "tier_complete" && !soundPlayed.current) {
-      soundPlayed.current = true;
-      playCelebrationSound();
-    }
-  }, [type]);
+    if (!type || soundPlayed.current) return;
+    soundPlayed.current = true;
+    if (type === "streak_milestone") playStreakMilestone();
+    else if (type === "badge_earned" || type === "level_up") playBadgeUnlock();
+    else if (type === "tier_complete") playBadgeUnlock();
+  }, [type, playStreakMilestone, playBadgeUnlock]);
 
   if (!type) return null;
 

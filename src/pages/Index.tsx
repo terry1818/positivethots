@@ -20,6 +20,7 @@ import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";
@@ -121,6 +122,7 @@ const Index = () => {
   const { isSharing, nearbyUsers } = useLocationSharing();
   const { balance: superLikeBalance, canSuperLike, sendSuperLike, isUnlimited } = useSuperLikes();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
+  const { playMatch, playThot, playButtonTap } = useSoundEffects();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
@@ -248,6 +250,7 @@ const Index = () => {
 
     if (matchData) {
       trackEvent("match", { matched_user_id: otherUserId });
+      playMatch();
       const matchedProfile = suggestions.find(s => s.id === otherUserId);
       if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
       toast.success("You Both Said Yes 💜", { description: "You can now start chatting!" });
@@ -282,10 +285,12 @@ const Index = () => {
 
     if (matchData) {
       trackEvent("match", { matched_user_id: otherUserId });
+      playMatch();
       const matchedProfile = suggestions.find(s => s.id === otherUserId);
       if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
       toast.success("You Both Said Yes 💜", { description: "Your Thot worked!" });
     } else {
+      playThot();
       toast.success("Thot Sent! 💜", { description: "They'll see you stand out!" });
     }
     setSuggestions(prev => prev.filter(s => s.id !== otherUserId));

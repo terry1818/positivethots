@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Database } from "@/integrations/supabase/types";
 import { PageSkeleton } from "@/components/PageSkeleton";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 type Message = Database['public']['Tables']['messages']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -81,6 +82,7 @@ function generateIcebreakers(currentUser: Profile | null, otherUser: PublicProfi
 const Chat = () => {
   const { matchId } = useParams();
   const navigate = useNavigate();
+  const { playMessage } = useSoundEffects();
   const [messages, setMessages] = useState<EnhancedMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
@@ -167,6 +169,7 @@ const Chat = () => {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
         (payload) => {
           const newMsg = payload.new as Message;
+          if (newMsg.sender_id !== currentUser?.id) playMessage();
           setMessages(prev => [...prev, { ...newMsg, delivered: true, read: newMsg.sender_id === session.user.id }]);
         })
       .on('presence', { event: 'sync' }, () => {
