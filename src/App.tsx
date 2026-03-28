@@ -11,6 +11,8 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { PageLoader } from "@/components/PageLoader";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { useCartSync } from "@/hooks/useCartSync";
+import { useActivityTracker } from "@/hooks/useActivityTracker";
+import { WelcomeBackModal } from "@/components/WelcomeBackModal";
 
 // Lazy-loaded route pages
 const Index = lazy(() => import("./pages/Index"));
@@ -52,32 +54,36 @@ export const queryClient = new QueryClient({
 
 const AppContent = () => {
   useCartSync();
+  const { previousChurnStatus } = useActivityTracker();
   return (
-    <Routes>
-      <Route path="/" element={<Suspense fallback={<PageSkeleton variant="discovery" />}><Index /></Suspense>} />
-      <Route path="/auth" element={<Suspense fallback={<PageLoader />}><Auth /></Suspense>} />
-      <Route path="/reset-password" element={<Suspense fallback={<PageLoader />}><ResetPassword /></Suspense>} />
-      <Route path="/onboarding" element={<Suspense fallback={<PageLoader />}><Onboarding /></Suspense>} />
-      <Route path="/likes" element={<Suspense fallback={<PageSkeleton variant="likes" />}><LikesYou /></Suspense>} />
-      <Route path="/premium" element={<Suspense fallback={<PageLoader />}><Premium /></Suspense>} />
-      <Route path="/learn" element={<Suspense fallback={<PageSkeleton variant="learn" />}><Learn /></Suspense>} />
-      <Route path="/learn/:slug" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnModule /></Suspense>} />
-      <Route path="/messages" element={<Suspense fallback={<PageSkeleton variant="messages" />}><Messages /></Suspense>} />
-      <Route path="/chat/:matchId" element={<Suspense fallback={<PageSkeleton variant="chat" />}><Chat /></Suspense>} />
-      <Route path="/profile" element={<Suspense fallback={<PageSkeleton variant="profile" />}><Profile /></Suspense>} />
-      <Route path="/profile/edit" element={<Suspense fallback={<PageSkeleton variant="profile" />}><EditProfile /></Suspense>} />
-      <Route path="/settings" element={<Suspense fallback={<PageLoader />}><Settings /></Suspense>} />
-      <Route path="/shop" element={<Suspense fallback={<PageLoader />}><Shop /></Suspense>} />
-      <Route path="/product/:handle" element={<Suspense fallback={<PageLoader />}><ProductDetail /></Suspense>} />
-      <Route path="/resources" element={<Suspense fallback={<PageLoader />}><Resources /></Suspense>} />
-      <Route path="/events" element={<Suspense fallback={<PageLoader />}><Events /></Suspense>} />
-      <Route path="/journal" element={<Suspense fallback={<PageLoader />}><LearningJournal /></Suspense>} />
-      <Route path="/unsubscribe" element={<Suspense fallback={<PageLoader />}><Unsubscribe /></Suspense>} />
-      <Route path="/privacy" element={<Suspense fallback={<PageLoader />}><PrivacyPolicy /></Suspense>} />
-      <Route path="/terms" element={<Suspense fallback={<PageLoader />}><TermsOfService /></Suspense>} />
-      <Route path="/celebration-demo" element={<Suspense fallback={<PageLoader />}><CelebrationDemo /></Suspense>} />
-      <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
-    </Routes>
+    <>
+      <WelcomeBackModal previousChurnStatus={previousChurnStatus} />
+      <Routes>
+        <Route path="/" element={<Suspense fallback={<PageSkeleton variant="discovery" />}><Index /></Suspense>} />
+        <Route path="/auth" element={<Suspense fallback={<PageLoader />}><Auth /></Suspense>} />
+        <Route path="/reset-password" element={<Suspense fallback={<PageLoader />}><ResetPassword /></Suspense>} />
+        <Route path="/onboarding" element={<Suspense fallback={<PageLoader />}><Onboarding /></Suspense>} />
+        <Route path="/likes" element={<Suspense fallback={<PageSkeleton variant="likes" />}><LikesYou /></Suspense>} />
+        <Route path="/premium" element={<Suspense fallback={<PageLoader />}><Premium /></Suspense>} />
+        <Route path="/learn" element={<Suspense fallback={<PageSkeleton variant="learn" />}><Learn /></Suspense>} />
+        <Route path="/learn/:slug" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnModule /></Suspense>} />
+        <Route path="/messages" element={<Suspense fallback={<PageSkeleton variant="messages" />}><Messages /></Suspense>} />
+        <Route path="/chat/:matchId" element={<Suspense fallback={<PageSkeleton variant="chat" />}><Chat /></Suspense>} />
+        <Route path="/profile" element={<Suspense fallback={<PageSkeleton variant="profile" />}><Profile /></Suspense>} />
+        <Route path="/profile/edit" element={<Suspense fallback={<PageSkeleton variant="profile" />}><EditProfile /></Suspense>} />
+        <Route path="/settings" element={<Suspense fallback={<PageLoader />}><Settings /></Suspense>} />
+        <Route path="/shop" element={<Suspense fallback={<PageLoader />}><Shop /></Suspense>} />
+        <Route path="/product/:handle" element={<Suspense fallback={<PageLoader />}><ProductDetail /></Suspense>} />
+        <Route path="/resources" element={<Suspense fallback={<PageLoader />}><Resources /></Suspense>} />
+        <Route path="/events" element={<Suspense fallback={<PageLoader />}><Events /></Suspense>} />
+        <Route path="/journal" element={<Suspense fallback={<PageLoader />}><LearningJournal /></Suspense>} />
+        <Route path="/unsubscribe" element={<Suspense fallback={<PageLoader />}><Unsubscribe /></Suspense>} />
+        <Route path="/privacy" element={<Suspense fallback={<PageLoader />}><PrivacyPolicy /></Suspense>} />
+        <Route path="/terms" element={<Suspense fallback={<PageLoader />}><TermsOfService /></Suspense>} />
+        <Route path="/celebration-demo" element={<Suspense fallback={<PageLoader />}><CelebrationDemo /></Suspense>} />
+        <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
+      </Routes>
+    </>
   );
 };
 
