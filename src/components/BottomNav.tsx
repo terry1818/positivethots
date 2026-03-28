@@ -2,8 +2,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, BookOpen, MessageCircle, User, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { path: "/", icon: Heart, label: "Discover" },
