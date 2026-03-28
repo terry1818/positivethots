@@ -599,6 +599,28 @@ const Chat = () => {
       </AlertDialog>
     </div>
   );
+
+      {/* Compatibility Breakdown Sheet */}
+      <Sheet open={showCompatibility} onOpenChange={setShowCompatibility}>
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Compatibility</SheetTitle>
+          </SheetHeader>
+          {compatBreakdown && (
+            <CompatibilityBreakdown
+              breakdown={compatBreakdown}
+              otherName={otherUser?.name || ""}
+              onCopyIcebreaker={(text) => {
+                setNewMessage(text);
+                setShowCompatibility(false);
+              }}
+              className="pb-6"
+            />
+          )}
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
 };
 
 export default Chat;
