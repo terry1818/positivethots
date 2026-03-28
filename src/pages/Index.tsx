@@ -279,6 +279,30 @@ const Index = () => {
     setSuggestions(enhancedProfiles.slice(0, 15));
   };
 
+  const mysteryRevealLimit = getMysteryRevealLimit(subTier);
+  const canRevealMystery = mysteryRevealsUsed < mysteryRevealLimit;
+
+  const handleMysteryReveal = useCallback(async (): Promise<boolean> => {
+    if (!currentUser || !canRevealMystery) return false;
+    const today = new Date().toISOString().split("T")[0];
+    const newCount = mysteryRevealsUsed + 1;
+    await supabase.from("profiles").update({
+      mystery_reveals_today: newCount,
+      mystery_reveals_date: today,
+    } as any).eq("id", currentUser.id);
+    setMysteryRevealsUsed(newCount);
+    trackEvent("mystery_match_reveal", {});
+    return true;
+  }, [currentUser, canRevealMystery, mysteryRevealsUsed]);
+
+  const handleMysteryUpgrade = useCallback(() => {
+    toast("Want to reveal more Mystery Matches?", {
+      description: "Upgrade to Plus for 3 daily reveals! 💜",
+      action: { label: "Upgrade", onClick: () => navigate("/premium") },
+      duration: 5000,
+    });
+  }, [navigate]);
+
   const handleConnect = useCallback(async (otherUserId: string) => {
     if (!currentUser) return;
     const { error: swipeError } = await supabase.from("swipes").insert({
