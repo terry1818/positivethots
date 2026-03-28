@@ -122,6 +122,7 @@ const Index = () => {
   const { isSharing, nearbyUsers } = useLocationSharing();
   const { balance: superLikeBalance, canSuperLike, sendSuperLike, isUnlimited } = useSuperLikes();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
+  const { playMatch, playThot, playButtonTap } = useSoundEffects();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
