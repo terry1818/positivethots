@@ -82,6 +82,7 @@ function generateIcebreakers(currentUser: Profile | null, otherUser: PublicProfi
 const Chat = () => {
   const { matchId } = useParams();
   const navigate = useNavigate();
+  const { playMessage } = useSoundEffects();
   const [messages, setMessages] = useState<EnhancedMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
