@@ -76,6 +76,8 @@ const EditProfile = () => {
       setLookingFor(data.looking_for || ""); setRelationshipStyle(data.relationship_style || "");
       setRelationshipStatus(data.relationship_status || ""); setExperienceLevel(data.experience_level || "");
       setBdsmTestUrl(data.bdsm_test_url || ""); setBdsmTestScreenshot(data.bdsm_test_screenshot || "");
+      setSelectedFrame((data as any).selected_frame || "newbie");
+      setEarnedFrames((data as any).earned_frames || ["newbie"]);
       setPhotos(photosResult.data || []);
       setLatestVerification(verResult.data?.[0] || null);
       setPrompts((promptsResult.data || []).map((p: any) => ({
