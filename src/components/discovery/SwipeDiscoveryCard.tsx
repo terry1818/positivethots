@@ -126,7 +126,17 @@ export const SwipeDiscoveryCard = memo(({
     }, 400);
   };
 
+  const handleSuperLikeTap = () => {
+    if (!isTop) return;
+    setAnimate("up");
+    setTimeout(() => {
+      onSuperLike?.(profile.id);
+    }, 400);
+  };
+
   const rotation = isDragging ? dragOffset.x / 20 : 0;
+  const dragProgress = isDragging ? Math.min(Math.abs(dragOffset.x) / 100, 1) : 0;
+  const isRight = dragOffset.x > 0;
 
   // Stack transforms
   const stackTransforms: Record<number, string> = {
