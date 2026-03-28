@@ -14,6 +14,7 @@ import { DailyChallenge } from "@/components/education/DailyChallenge";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
+import { StreakRestoreModal } from "@/components/education/StreakRestoreModal";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
 import { BadgePathMap } from "@/components/education/TierRoadmap";
@@ -51,7 +52,7 @@ const Learn = () => {
   const [continueSectionNumber, setContinueSectionNumber] = useState<number | undefined>();
   const [continueProgressPercent, setContinueProgressPercent] = useState<number | undefined>();
   const navigate = useNavigate();
-  const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft } = useLearningStats();
+  const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const { tier: subscriptionTier } = useSubscription();
 
@@ -174,6 +175,7 @@ const Learn = () => {
               <StreakBadge
                 streak={stats?.current_streak || 0}
                 showFreeze
+                freezeCount={stats?.streak_freezes || 0}
                 freezeAvailable={stats?.streak_freeze_available}
                 atRisk={isStreakAtRisk}
                 hoursLeft={streakHoursLeft}
@@ -204,8 +206,17 @@ const Learn = () => {
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
         {/* Streak Calendar */}
         {stats && (
-          <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} />
+          <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} freezeCount={stats.streak_freezes} />
         )}
+
+        {/* Streak Restore Modal */}
+        <StreakRestoreModal
+          open={showStreakRestore}
+          streakCount={brokenStreakCount}
+          currentXP={stats?.total_xp || 0}
+          onRestore={restoreStreak}
+          onDismiss={() => {}}
+        />
 
         {/* Daily Challenge */}
         <DailyChallenge />
