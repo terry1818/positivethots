@@ -58,20 +58,22 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
 
   return (
   <Card
-    className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-stagger-fade"
+    className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-stagger-fade cursor-pointer"
     style={{ animationDelay: `${index * 80}ms` }}
+    onClick={() => navigate("/profile/" + profile.id)}
   >
     <div className="relative h-64 bg-muted">
-       {profile.profile_image ? (
+       {profile.profile_image && !imageError ? (
         <BlurImage
           src={profile.profile_image}
           alt={profile.name}
           className="w-full h-full"
           loading={index === 0 ? "eager" : "lazy"}
           fetchPriority={index === 0 ? "high" : undefined}
+          onError={() => setImageError(true)}
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-6xl">
+        <div className="w-full h-full flex items-center justify-center text-6xl bg-gradient-to-br from-primary to-secondary text-primary-foreground">
           {profile.name?.[0] || "?"}
         </div>
       )}
