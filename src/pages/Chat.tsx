@@ -266,6 +266,20 @@ const Chat = () => {
 
   const [reportReason, setReportReason] = useState("");
   const [showReportDialog, setShowReportDialog] = useState(false);
+  const [showCompatibility, setShowCompatibility] = useState(false);
+  const [compatBreakdown, setCompatBreakdown] = useState<CompatibilityBreakdownResult | null>(null);
+
+  const handleViewCompatibility = useCallback(async () => {
+    if (!currentUser || !otherUser) return;
+    // Get badge counts for both users
+    const [{ count: myBadges }, { count: theirBadges }] = await Promise.all([
+      supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", currentUser.id),
+      supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", otherUser.id),
+    ]);
+    const bd = calculateCompatibilityBreakdown(currentUser, otherUser, myBadges || 0, theirBadges || 0);
+    setCompatBreakdown(bd);
+    setShowCompatibility(true);
+  }, [currentUser, otherUser]);
 
   const REPORT_REASONS = [
     "Harassment or bullying",
