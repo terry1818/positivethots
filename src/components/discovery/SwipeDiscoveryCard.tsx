@@ -4,6 +4,8 @@ import { Heart, X, Star, Zap, Shield, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
+import { EducationTierBadge } from "@/components/EducationTierBadge";
 
 interface EnhancedProfile {
   id: string;
