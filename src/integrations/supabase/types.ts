@@ -585,6 +585,7 @@ export type Database = {
           bdsm_test_url: string | null
           bio: string | null
           boundaries: string | null
+          churn_status: string
           created_at: string
           desires: string[] | null
           display_name: string | null
@@ -597,6 +598,8 @@ export type Database = {
           interests: string[] | null
           is_verified: boolean
           languages: string[] | null
+          last_active_at: string | null
+          last_winback_sent_at: string | null
           learning_level: number | null
           lifestyle: Json | null
           location: string | null
@@ -613,6 +616,7 @@ export type Database = {
           sti_last_tested: string | null
           sti_status: string | null
           updated_at: string
+          winback_attempts: number
           zodiac_sign: string | null
         }
         Insert: {
@@ -621,6 +625,7 @@ export type Database = {
           bdsm_test_url?: string | null
           bio?: string | null
           boundaries?: string | null
+          churn_status?: string
           created_at?: string
           desires?: string[] | null
           display_name?: string | null
@@ -633,6 +638,8 @@ export type Database = {
           interests?: string[] | null
           is_verified?: boolean
           languages?: string[] | null
+          last_active_at?: string | null
+          last_winback_sent_at?: string | null
           learning_level?: number | null
           lifestyle?: Json | null
           location?: string | null
@@ -649,6 +656,7 @@ export type Database = {
           sti_last_tested?: string | null
           sti_status?: string | null
           updated_at?: string
+          winback_attempts?: number
           zodiac_sign?: string | null
         }
         Update: {
@@ -657,6 +665,7 @@ export type Database = {
           bdsm_test_url?: string | null
           bio?: string | null
           boundaries?: string | null
+          churn_status?: string
           created_at?: string
           desires?: string[] | null
           display_name?: string | null
@@ -669,6 +678,8 @@ export type Database = {
           interests?: string[] | null
           is_verified?: boolean
           languages?: string[] | null
+          last_active_at?: string | null
+          last_winback_sent_at?: string | null
           learning_level?: number | null
           lifestyle?: Json | null
           location?: string | null
@@ -685,6 +696,7 @@ export type Database = {
           sti_last_tested?: string | null
           sti_status?: string | null
           updated_at?: string
+          winback_attempts?: number
           zodiac_sign?: string | null
         }
         Relationships: []
