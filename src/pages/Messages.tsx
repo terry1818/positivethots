@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
+import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 
 interface Match {
   id: string;
