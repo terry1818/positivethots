@@ -62,7 +62,7 @@ export const SwipeDiscoveryCard = memo(({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const [animate, setAnimate] = useState<"left" | "right" | null>(null);
+  const [animate, setAnimate] = useState<"left" | "right" | "up" | null>(null);
   const [photoIndex, setPhotoIndex] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
 
