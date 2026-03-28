@@ -61,6 +61,9 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
     setImageFailed(false);
   }, [resource.image_url]);
 
+  const fallbackLetter = resource.title?.[0]?.toUpperCase() || "?";
+
+
   return (
     <a
       href={resource.url}
