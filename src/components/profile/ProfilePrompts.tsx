@@ -20,6 +20,7 @@ export const ProfilePromptsDisplay = ({ userId, isOwnProfile, onAddPrompts }: Pr
       return data as any[];
     },
     enabled: !!userId,
+    staleTime: 10 * 60 * 1000, // 10 min — profile data
   });
 
   if (prompts.length === 0) {
