@@ -278,7 +278,7 @@ export const SwipeDiscoveryCard = memo(({
               <ProfileFrame frameId={(profile as any).selected_frame} size="sm">
                 <img
                   src={profile.profile_image || "/placeholder.svg"}
-                  alt=""
+                  alt={`Profile photo of ${displayName}`}
                   className="h-full w-full object-cover rounded-full"
                 />
               </ProfileFrame>
@@ -313,6 +313,7 @@ export const SwipeDiscoveryCard = memo(({
         <button
           className="w-full text-left p-4 space-y-2"
           onClick={(e) => { e.stopPropagation(); onViewProfile(); }}
+          aria-label={`View full profile of ${displayName}`}
         >
           {profile.bio && (
             <p className="text-sm text-muted-foreground line-clamp-2">{profile.bio}</p>
@@ -337,8 +338,9 @@ export const SwipeDiscoveryCard = memo(({
         <div className="absolute bottom-[-70px] left-1/2 -translate-x-1/2 flex items-center gap-4">
           <Button
             variant="outline"
-            className="h-[46px] w-[46px] rounded-full border-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+            className="h-12 w-12 rounded-full border-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
             onClick={(e) => { e.stopPropagation(); handleButtonSwipe("left"); }}
+            aria-label={`Pass on ${displayName}`}
           >
             <X className="h-5 w-5" />
           </Button>
@@ -346,19 +348,21 @@ export const SwipeDiscoveryCard = memo(({
           {canSuperLike && (
             <Button
               variant="outline"
-              className="h-[38px] w-[38px] rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white active:scale-110"
+              className="h-11 w-11 rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white active:scale-110"
               onClick={(e) => {
                 e.stopPropagation();
                 handleSuperLikeTap();
               }}
+              aria-label={`Send a Thot to ${displayName}`}
             >
               <Star className="h-4 w-4" />
             </Button>
           )}
 
           <Button
-            className="h-[54px] w-[54px] rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground hover:scale-110 transition-transform shadow-lg"
+            className="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground hover:scale-110 transition-transform shadow-lg"
             onClick={(e) => { e.stopPropagation(); handleButtonSwipe("right"); }}
+            aria-label={`Connect with ${displayName}`}
           >
             <Heart className="h-6 w-6 fill-current" />
           </Button>
