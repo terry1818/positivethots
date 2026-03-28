@@ -327,10 +327,10 @@ export const SwipeDiscoveryCard = memo(({
           {canSuperLike && (
             <Button
               variant="outline"
-              className="h-[38px] w-[38px] rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white"
+              className="h-[38px] w-[38px] rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white active:scale-110"
               onClick={(e) => {
                 e.stopPropagation();
-                onSuperLike?.(profile.id);
+                handleSuperLikeTap();
               }}
             >
               <Star className="h-4 w-4" />
