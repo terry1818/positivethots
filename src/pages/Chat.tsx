@@ -159,7 +159,7 @@ const Chat = () => {
     setLoading(false);
   };
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!newMessage.trim() || !currentUser || !matchId) return;
 
     // 500ms debounce
