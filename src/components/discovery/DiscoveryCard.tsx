@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { BlurImage } from "@/components/BlurImage";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getLevelName, getLevelEmoji } from "@/hooks/useLearningStats";
@@ -60,13 +61,13 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
     style={{ animationDelay: `${index * 80}ms` }}
   >
     <div className="relative h-64 bg-muted">
-      {profile.profile_image ? (
-        <img
+       {profile.profile_image ? (
+        <BlurImage
           src={profile.profile_image}
           alt={profile.name}
-          className="w-full h-full object-cover"
-          loading="lazy"
-          decoding="async"
+          className="w-full h-full"
+          loading={index === 0 ? "eager" : "lazy"}
+          fetchPriority={index === 0 ? "high" : undefined}
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center text-6xl">

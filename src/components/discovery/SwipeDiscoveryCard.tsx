@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, memo } from "react";
+import { BlurImage } from "@/components/BlurImage";
 import { Heart, X, Star, Zap, Shield, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -146,11 +147,12 @@ export const SwipeDiscoveryCard = memo(({
       <div className="rounded-3xl overflow-hidden shadow-xl border border-border bg-card">
         {/* Photo area */}
         <div className="relative h-96 w-full overflow-hidden">
-          <img
+          <BlurImage
             src={photos[photoIndex] || "/placeholder.svg"}
             alt={displayName}
-            className="absolute inset-0 h-full w-full object-cover"
-            draggable={false}
+            className="h-full w-full"
+            loading={isTop ? "eager" : "lazy"}
+            fetchPriority={isTop ? "high" : undefined}
           />
 
           {/* Gradient overlay */}

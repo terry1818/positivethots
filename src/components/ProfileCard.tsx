@@ -1,3 +1,4 @@
+import { BlurImage } from "@/components/BlurImage";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EducationBadge } from "@/components/EducationBadge";
@@ -62,10 +63,11 @@ export const ProfileCard = ({
       {/* Image */}
       <div className="relative h-64 bg-gradient-to-br from-primary/20 to-secondary/20">
         {profile.profile_image ? (
-          <img
+          <BlurImage
             src={profile.profile_image}
             alt={profile.name}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full"
+            loading="lazy"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">

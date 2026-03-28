@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BlurImage } from "@/components/BlurImage";
 import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -192,10 +193,10 @@ const Profile = () => {
                 ? userPhotos[currentPhotoIndex]?.photo_url
                 : profile?.profile_image;
               return displayUrl ? (
-                <img
+                <BlurImage
                   src={displayUrl}
                   alt={`${profile?.name} photo ${currentPhotoIndex + 1}`}
-                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
+                  className="absolute inset-0 w-full h-full"
                   loading="eager"
                 />
               ) : (

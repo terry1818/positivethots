@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BlurImage } from "@/components/BlurImage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -130,11 +131,12 @@ const Messages = () => {
               >
                 <div className="flex items-center gap-4">
                   <div className="relative">
-                    <img
-                      src={match.profile.profile_image} alt={match.profile.name}
-                      className="h-16 w-16 rounded-full object-cover"
+                    <BlurImage
+                      src={match.profile.profile_image}
+                      alt={match.profile.name}
+                      className="h-16 w-16 rounded-full"
+                      aspectRatio="1/1"
                       loading="lazy"
-                      decoding="async"
                     />
                     {/* Simulated online dot */}
                     {idx < 2 && (

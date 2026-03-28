@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ExternalLink, BookOpen, Heart, Sparkles, Star } from "lucide-react";
+import { BlurImage } from "@/components/BlurImage";
 
 interface Resource {
   id: string;
@@ -81,12 +82,12 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
 
       <div className="h-48 w-full bg-white/5 flex items-center justify-center p-4">
         {resource.image_url && !imageFailed ? (
-          <img
+          <BlurImage
             src={resource.image_url}
             alt={resource.title}
-            className="max-h-full max-w-full object-contain"
+            className="max-h-full max-w-full"
+            style={{ objectFit: "contain" }}
             loading="lazy"
-            onError={() => setImageFailed(true)}
           />
         ) : (
           <div className="flex items-center justify-center bg-gray-800/50 rounded-lg w-full h-full">
