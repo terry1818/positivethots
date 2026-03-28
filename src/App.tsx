@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { CookieConsent } from "@/components/CookieConsent";
 import { PageLoader } from "@/components/PageLoader";
+import { PageSkeleton } from "@/components/PageSkeleton";
 import { useCartSync } from "@/hooks/useCartSync";
 
 // Lazy-loaded route pages
