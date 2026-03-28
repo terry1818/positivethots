@@ -242,9 +242,41 @@ const Index = () => {
         if (!a.is_boosted && b.is_boosted) return 1;
         return (b.compatibility_score || 0) - (a.compatibility_score || 0);
       })
-      .slice(0, 12);
+      .slice(0, 20); // fetch more to have mystery candidates
 
-    setSuggestions(enhancedProfiles);
+    // Pick high-compatibility profiles as mystery matches (every MYSTERY_INTERVAL-th)
+    const mysteryIds = new Set<string>();
+    const highCompat = enhancedProfiles.filter(p => (p.compatibility_score || 0) >= 75);
+    // Mark every 10th card position as mystery, using high-compat profiles
+    let mysteryPool = [...highCompat];
+    for (let i = MYSTERY_INTERVAL - 1; i < enhancedProfiles.length && mysteryPool.length > 0; i += MYSTERY_INTERVAL) {
+      const candidate = mysteryPool.shift();
+      if (candidate) {
+        mysteryIds.add(candidate.id);
+        // Move this profile to position i if it's not already there
+        const currentIdx = enhancedProfiles.findIndex(p => p.id === candidate.id);
+        if (currentIdx !== i && currentIdx !== -1) {
+          enhancedProfiles.splice(currentIdx, 1);
+          enhancedProfiles.splice(i, 0, candidate);
+        }
+      }
+    }
+    setMysteryProfiles(mysteryIds);
+
+    // Load today's reveal count
+    const { data: revealData } = await supabase
+      .from("profiles")
+      .select("mystery_reveals_today, mystery_reveals_date")
+      .eq("id", userId)
+      .single();
+    if (revealData) {
+      const today = new Date().toISOString().split("T")[0];
+      setMysteryRevealsUsed(
+        (revealData as any).mystery_reveals_date === today ? (revealData as any).mystery_reveals_today : 0
+      );
+    }
+
+    setSuggestions(enhancedProfiles.slice(0, 15));
   };
 
   const handleConnect = useCallback(async (otherUserId: string) => {
