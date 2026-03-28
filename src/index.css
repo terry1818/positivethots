@@ -343,6 +343,32 @@ button, [role="button"] {
   100% { transform: translateY(-100%); opacity: 0; }
 }
 
+/* Gradient border spin for Scholar frame */
+@keyframes gradient-border-spin {
+  0% { box-shadow: 0 0 0 3px hsl(var(--primary)), 0 0 8px 2px hsl(var(--primary) / 0.3); }
+  50% { box-shadow: 0 0 0 3px hsl(var(--secondary)), 0 0 8px 2px hsl(var(--secondary) / 0.3); }
+  100% { box-shadow: 0 0 0 3px hsl(var(--primary)), 0 0 8px 2px hsl(var(--primary) / 0.3); }
+}
+
+/* Rainbow border spin for Educator frame */
+@keyframes rainbow-border-spin {
+  0% { box-shadow: 0 0 0 3px hsl(0 80% 60%), 0 0 10px 2px hsl(0 80% 60% / 0.3); }
+  16% { box-shadow: 0 0 0 3px hsl(60 80% 55%), 0 0 10px 2px hsl(60 80% 55% / 0.3); }
+  33% { box-shadow: 0 0 0 3px hsl(120 60% 50%), 0 0 10px 2px hsl(120 60% 50% / 0.3); }
+  50% { box-shadow: 0 0 0 3px hsl(180 70% 50%), 0 0 10px 2px hsl(180 70% 50% / 0.3); }
+  66% { box-shadow: 0 0 0 3px hsl(240 70% 60%), 0 0 10px 2px hsl(240 70% 60% / 0.3); }
+  83% { box-shadow: 0 0 0 3px hsl(300 70% 55%), 0 0 10px 2px hsl(300 70% 55% / 0.3); }
+  100% { box-shadow: 0 0 0 3px hsl(360 80% 60%), 0 0 10px 2px hsl(360 80% 60% / 0.3); }
+}
+
+.animate-gradient-border-spin {
+  animation: gradient-border-spin 3s ease-in-out infinite;
+}
+
+.animate-rainbow-border-spin {
+  animation: rainbow-border-spin 4s linear infinite;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
