@@ -274,6 +274,8 @@ const Learn = () => {
             modulesByTier={modulesByTier}
             earnedModuleIds={earnedModuleIds}
             isModuleUnlocked={isModuleUnlocked}
+            isAdvancedPremiumLocked={isAdvancedPremiumLocked}
+            isPremium={isPremium}
             moduleProgress={moduleProgress}
             onModuleClick={(slug) => navigate(`/learn/${slug}`)}
             tierFeatures={tiers}
