@@ -597,8 +597,6 @@ const Chat = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
-  );
 
       {/* Compatibility Breakdown Sheet */}
       <Sheet open={showCompatibility} onOpenChange={setShowCompatibility}>
