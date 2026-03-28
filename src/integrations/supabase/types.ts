@@ -1461,6 +1461,7 @@ export type Database = {
           pronouns: string
           relationship_status: string
           relationship_style: string
+          selected_frame: string
           zodiac_sign: string
         }[]
       }
