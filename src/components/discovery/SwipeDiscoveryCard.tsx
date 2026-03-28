@@ -278,7 +278,7 @@ export const SwipeDiscoveryCard = memo(({
               <ProfileFrame frameId={(profile as any).selected_frame} size="sm">
                 <img
                   src={profile.profile_image || "/placeholder.svg"}
-                  alt=""
+                  alt={`Profile photo of ${displayName}`}
                   className="h-full w-full object-cover rounded-full"
                 />
               </ProfileFrame>
