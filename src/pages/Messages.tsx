@@ -141,13 +141,15 @@ const Messages = () => {
               >
                 <div className="flex items-center gap-4">
                   <div className="relative">
-                    <BlurImage
-                      src={match.profile.profile_image}
-                      alt={match.profile.name}
-                      className="h-16 w-16 rounded-full"
-                      aspectRatio="1/1"
-                      loading="lazy"
-                    />
+                    <ProfileFrame frameId={(match.profile as any).selected_frame} size="md">
+                      <BlurImage
+                        src={match.profile.profile_image}
+                        alt={match.profile.name}
+                        className="h-full w-full"
+                        aspectRatio="1/1"
+                        loading="lazy"
+                      />
+                    </ProfileFrame>
                     {match.profile.is_verified ? (
                       <VerifiedBadgeOverlay isVerified size="sm" />
                     ) : idx < 2 ? (
