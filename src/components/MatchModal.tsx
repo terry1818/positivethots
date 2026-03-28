@@ -36,6 +36,10 @@ export const MatchModal = ({ isOpen, onClose, matchedProfile, matchedUser, onSen
         duration: 2 + Math.random() * 1.5,
       }));
       setConfetti(particles);
+      // Haptic vibration on match
+      if (navigator.vibrate) {
+        navigator.vibrate([50, 50, 100]);
+      }
     } else {
       setConfetti([]);
     }
