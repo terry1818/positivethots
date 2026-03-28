@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 interface BlurImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "onLoad" | "onError"> {
   aspectRatio?: string;
   fallbackClassName?: string;
+  onError?: () => void;
 }
 
 export const BlurImage = ({
