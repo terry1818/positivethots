@@ -95,12 +95,19 @@ export const ProfileDetailSheet = ({
         <div className="overflow-y-auto flex-1">
           {/* Photo carousel */}
           <div className="relative h-56 w-full overflow-hidden">
-            <BlurImage
-              src={photos[photoIndex] || "/placeholder.svg"}
-              alt={displayName}
-              className="h-full w-full"
-              loading="eager"
-            />
+            {photos.length > 0 ? (
+              <BlurImage
+                src={photos[safePhotoIndex] || "/placeholder.svg"}
+                alt={displayName}
+                className="h-full w-full"
+                loading="eager"
+                onError={() => handlePhotoError(photos[safePhotoIndex])}
+              />
+            ) : (
+              <div className="h-full w-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <span className="text-5xl font-bold text-primary-foreground">{displayName?.[0] || "?"}</span>
+              </div>
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
             {/* Dot indicators */}
