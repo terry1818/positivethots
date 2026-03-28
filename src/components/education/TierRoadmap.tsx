@@ -350,8 +350,8 @@ export const BadgePathMap = ({
                   }
                 }}
                 className="flex flex-col items-center gap-1.5 group"
-                style={{ opacity: lockedOpacity }}
-                title={state === "locked" ? "Complete previous badges first" : module.title}
+                style={{ opacity: state === "premium-locked" ? 0.6 : lockedOpacity }}
+                title={state === "premium-locked" ? "Premium Required" : state === "locked" ? "Complete previous badges first" : module.title}
               >
                 <div className="relative">
                   <div
