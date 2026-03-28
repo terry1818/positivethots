@@ -28,6 +28,8 @@ import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { calculateCompatibilityBreakdown, type CompatibilityBreakdownResult } from "@/lib/compatibility";
 import { CompatibilityBreakdown } from "@/components/discovery/CompatibilityBreakdown";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
+import { ChatGameCard } from "@/components/chat/ChatGameCard";
+import { GameMenu } from "@/components/chat/GameMenu";
 
 type Message = Database['public']['Tables']['messages']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
