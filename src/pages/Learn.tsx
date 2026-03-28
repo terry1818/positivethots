@@ -145,6 +145,8 @@ const Learn = () => {
   const requiredEarned = useMemo(() => requiredModules.filter(m => earnedModuleIds.has(m.id)).length, [requiredModules, earnedModuleIds]);
   const progressPercent = totalBadges > 0 ? (earnedCount / totalBadges) * 100 : 0;
 
+  const isPremium = subscriptionTier !== "free";
+
   const isModuleUnlocked = useCallback((module: Module) => {
     if (module.tier === 'foundation') {
       const foundationModules = modules.filter(m => m.tier === 'foundation').sort((a, b) => a.order_index - b.order_index);
@@ -152,9 +154,21 @@ const Learn = () => {
       return idx === 0 || earnedModuleIds.has(foundationModules[idx - 1]?.id);
     }
     if (requiredEarned < requiredModules.length) return false;
+    // Advanced tier requires premium subscription
+    if (module.tier === 'advanced' && !isPremium) return false;
     if (!module.prerequisite_badges || module.prerequisite_badges.length === 0) return true;
     return module.prerequisite_badges.every(slug => earnedSlugs.has(slug));
-  }, [modules, earnedModuleIds, earnedSlugs, requiredEarned, requiredModules]);
+  }, [modules, earnedModuleIds, earnedSlugs, requiredEarned, requiredModules, isPremium]);
+
+  // Check if advanced modules are locked specifically due to no premium (prereqs met but no sub)
+  const isAdvancedPremiumLocked = useCallback((module: Module) => {
+    if (module.tier !== 'advanced' || isPremium) return false;
+    if (requiredEarned < requiredModules.length) return false;
+    if (module.prerequisite_badges && module.prerequisite_badges.length > 0) {
+      return module.prerequisite_badges.every(slug => earnedSlugs.has(slug));
+    }
+    return true;
+  }, [isPremium, requiredEarned, requiredModules, earnedSlugs]);
 
   const modulesByTier = useMemo(() => tierOrder.reduce((acc, tier) => {
     acc[tier] = modules.filter(m => m.tier === tier).sort((a, b) => a.order_index - b.order_index);
@@ -260,6 +274,8 @@ const Learn = () => {
             modulesByTier={modulesByTier}
             earnedModuleIds={earnedModuleIds}
             isModuleUnlocked={isModuleUnlocked}
+            isAdvancedPremiumLocked={isAdvancedPremiumLocked}
+            isPremium={isPremium}
             moduleProgress={moduleProgress}
             onModuleClick={(slug) => navigate(`/learn/${slug}`)}
             tierFeatures={tiers}

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Lock, CheckCircle } from "lucide-react";
+import { Lock, CheckCircle, Crown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +23,8 @@ interface BadgePathMapProps {
   modulesByTier: Record<string, Module[]>;
   earnedModuleIds: Set<string>;
   isModuleUnlocked: (module: Module) => boolean;
+  isAdvancedPremiumLocked: (module: Module) => boolean;
+  isPremium: boolean;
   moduleProgress: Record<string, { completed: number; total: number }>;
   onModuleClick: (slug: string) => void;
   tierFeatures: TierUnlock[];
@@ -75,15 +77,17 @@ const badgeIcons: Record<string, string> = {
 
 const TIER_ORDER = ["foundation", "sexual_health", "identity", "relationships", "advanced"];
 
-type NodeState = "completed" | "current" | "unlocked" | "locked";
+type NodeState = "completed" | "current" | "unlocked" | "locked" | "premium-locked";
 
 function getNodeState(
   module: Module,
   earned: boolean,
   unlocked: boolean,
-  isFirstUnearned: boolean
+  isFirstUnearned: boolean,
+  premiumLocked: boolean
 ): NodeState {
   if (earned) return "completed";
+  if (premiumLocked) return "premium-locked";
   if (unlocked && isFirstUnearned) return "current";
   if (unlocked) return "unlocked";
   return "locked";
@@ -93,6 +97,8 @@ export const BadgePathMap = ({
   modulesByTier,
   earnedModuleIds,
   isModuleUnlocked,
+  isAdvancedPremiumLocked,
+  isPremium,
   moduleProgress,
   onModuleClick,
   tierFeatures,
@@ -136,9 +142,10 @@ export const BadgePathMap = ({
     modules.forEach((module) => {
       const earned = earnedModuleIds.has(module.id);
       const unlocked = isModuleUnlocked(module);
+      const premiumLocked = isAdvancedPremiumLocked(module);
       const isFirstUnearned = !earned && unlocked && !foundFirstUnearned;
       if (isFirstUnearned) foundFirstUnearned = true;
-      const state = getNodeState(module, earned, unlocked, isFirstUnearned);
+      const state = getNodeState(module, earned, unlocked, isFirstUnearned, premiumLocked);
       const icon = badgeIcons[module.slug] || "★";
       const progress = moduleProgress[module.id];
 
@@ -248,6 +255,11 @@ export const BadgePathMap = ({
                     )}
                   >
                     <span>{node.config.label}</span>
+                    {node.tier === "advanced" && !isPremium && (
+                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 text-[10px] font-bold">
+                        <Crown className="h-3 w-3" /> Premium
+                      </span>
+                    )}
                     <span className="text-muted-foreground font-normal">
                       {node.completed}/{node.total}
                     </span>
@@ -329,15 +341,17 @@ export const BadgePathMap = ({
 
               <button
                 onClick={() => {
-                  if (state === "locked") {
+                  if (state === "premium-locked") {
+                    navigate("/premium");
+                  } else if (state === "locked") {
                     toast.info("Complete previous badges first", { duration: 2000 });
                   } else {
                     onModuleClick(module.slug);
                   }
                 }}
                 className="flex flex-col items-center gap-1.5 group"
-                style={{ opacity: lockedOpacity }}
-                title={state === "locked" ? "Complete previous badges first" : module.title}
+                style={{ opacity: state === "premium-locked" ? 0.6 : lockedOpacity }}
+                title={state === "premium-locked" ? "Premium Required" : state === "locked" ? "Complete previous badges first" : module.title}
               >
                 <div className="relative">
                   <div
@@ -349,12 +363,16 @@ export const BadgePathMap = ({
                         `w-14 h-14 bg-background ${config.border} ${config.color} shadow-lg text-xl`,
                       state === "unlocked" &&
                         `w-11 h-11 bg-background ${config.border} ${config.color} text-base`,
+                      state === "premium-locked" &&
+                        "w-10 h-10 bg-amber-500/10 border-amber-500/40 text-amber-500 text-sm",
                       state === "locked" &&
                         "w-9 h-9 bg-muted border-muted text-muted-foreground text-sm"
                     )}
                   >
                     {state === "locked" ? (
                       <Lock className="h-3.5 w-3.5" />
+                    ) : state === "premium-locked" ? (
+                      <Crown className="h-4 w-4" />
                     ) : (
                       <span>{icon}</span>
                     )}
@@ -392,11 +410,18 @@ export const BadgePathMap = ({
                     state === "completed" && "text-success font-medium",
                     state === "current" && cn(config.color, "font-semibold"),
                     state === "unlocked" && "text-foreground",
+                    state === "premium-locked" && "text-amber-500",
                     state === "locked" && "text-muted-foreground"
                   )}
                 >
                   {module.title}
                 </span>
+
+                {state === "premium-locked" && (
+                  <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-amber-500">
+                    <Crown className="h-3 w-3" /> Premium Required
+                  </span>
+                )}
 
                 {isContinueModule && continueSectionNumber && continueProgressPercent != null && (
                   <button
