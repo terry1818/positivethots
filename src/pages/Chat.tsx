@@ -28,6 +28,8 @@ import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { calculateCompatibilityBreakdown, type CompatibilityBreakdownResult } from "@/lib/compatibility";
 import { CompatibilityBreakdown } from "@/components/discovery/CompatibilityBreakdown";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
+import { ChatGameCard } from "@/components/chat/ChatGameCard";
+import { GameMenu } from "@/components/chat/GameMenu";
 
 type Message = Database['public']['Tables']['messages']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -95,6 +97,7 @@ const Chat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [onlineStatus, setOnlineStatus] = useState<"online" | "away" | "offline">("offline");
   const [lastSeen, setLastSeen] = useState<Date | null>(null);
+  const [chatGames, setChatGames] = useState<any[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<any>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -169,12 +172,28 @@ const Chat = () => {
       })));
     }
 
+    // Load existing games
+    const { data: existingGames } = await supabase
+      .from("chat_games" as any)
+      .select("*")
+      .eq("match_id", matchId)
+      .order("created_at", { ascending: true });
+    if (existingGames) setChatGames(existingGames as any[]);
+
     const channel = supabase.channel(`chat:${matchId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
         (payload) => {
           const newMsg = payload.new as Message;
           if (newMsg.sender_id !== currentUser?.id) playMessage();
           setMessages(prev => [...prev, { ...newMsg, delivered: true, read: newMsg.sender_id === session.user.id }]);
+        })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_games', filter: `match_id=eq.${matchId}` },
+        (payload) => {
+          setChatGames(prev => [...prev, payload.new as any]);
+        })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'chat_games', filter: `match_id=eq.${matchId}` },
+        (payload) => {
+          setChatGames(prev => prev.map(g => g.id === (payload.new as any).id ? payload.new as any : g));
         })
       .on('presence', { event: 'sync' }, () => {
         const state = channel.presenceState();
@@ -503,6 +522,18 @@ const Chat = () => {
               );
             })}
 
+            {/* Game Cards */}
+            {chatGames.map((game) => (
+              <div key={game.id} className="my-4 animate-fade-in">
+                <ChatGameCard
+                  game={game}
+                  currentUserId={currentUser?.id || ""}
+                  otherUserName={otherUser?.name || ""}
+                  matchId={matchId || ""}
+                />
+              </div>
+            ))}
+
             {/* Typing Indicator */}
             {isTyping && (
               <div className="flex items-end gap-2 animate-slide-in-left">
@@ -533,6 +564,11 @@ const Chat = () => {
         <div className="container max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-end gap-2">
             <div className="flex gap-1">
+              <GameMenu
+                matchId={matchId || ""}
+                currentUserId={currentUser?.id || ""}
+                otherUserId={otherUser?.id || ""}
+              />
               <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Attach image"><ImageIcon className="h-5 w-5" /></Button>
               <Button variant="ghost" size="icon" className="h-10 w-10 hidden sm:flex" aria-label="Send gift"><Gift className="h-5 w-5" /></Button>
             </div>
