@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles } from "lucide-react";
+import { calculateCompatibilityBreakdown, type CompatibilityBreakdownResult } from "@/lib/compatibility";
+import { CompatibilityBreakdown } from "@/components/discovery/CompatibilityBreakdown";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { MatchModal } from "@/components/MatchModal";
@@ -151,6 +154,9 @@ const Index = () => {
   const [matchCount, setMatchCount] = useState(0);
   const [mysteryRevealsUsed, setMysteryRevealsUsed] = useState(0);
   const [mysteryProfiles, setMysteryProfiles] = useState<Set<string>>(new Set());
+  const [matchBreakdown, setMatchBreakdown] = useState<CompatibilityBreakdownResult | null>(null);
+  const [showBreakdown, setShowBreakdown] = useState(false);
+  const [breakdownName, setBreakdownName] = useState("");
 
   // Handle super like purchase redirect
   useEffect(() => {
@@ -570,12 +576,50 @@ const Index = () => {
       {matchedUser && (
         <MatchModal
           isOpen={showMatchModal}
-          onClose={() => setShowMatchModal(false)}
+          onClose={() => {
+            setShowMatchModal(false);
+            // Show compatibility breakdown after match celebration
+            if (matchedUser && currentUser) {
+              const bd = calculateCompatibilityBreakdown(
+                currentUser, matchedUser, userBadgeCount, matchedUser.badge_count || 0
+              );
+              setMatchBreakdown(bd);
+              setBreakdownName(matchedUser.name);
+              setShowBreakdown(true);
+            }
+          }}
           matchedUser={matchedUser}
-          onSendMessage={() => { setShowMatchModal(false); navigate("/messages"); }}
+          onSendMessage={() => {
+            setShowMatchModal(false);
+            if (matchedUser && currentUser) {
+              const bd = calculateCompatibilityBreakdown(
+                currentUser, matchedUser, userBadgeCount, matchedUser.badge_count || 0
+              );
+              setMatchBreakdown(bd);
+              setBreakdownName(matchedUser.name);
+              setShowBreakdown(true);
+            }
+            navigate("/messages");
+          }}
           isFirstMatch={matchCount === 0}
         />
       )}
+
+      {/* Compatibility Breakdown Sheet */}
+      <Sheet open={showBreakdown} onOpenChange={setShowBreakdown}>
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Compatibility</SheetTitle>
+          </SheetHeader>
+          {matchBreakdown && (
+            <CompatibilityBreakdown
+              breakdown={matchBreakdown}
+              otherName={breakdownName}
+              className="pb-6"
+            />
+          )}
+        </SheetContent>
+      </Sheet>
 
       <ProfileDetailSheet
         profile={detailProfile}

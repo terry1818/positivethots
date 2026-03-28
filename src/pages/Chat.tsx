@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   Send, ArrowLeft, Phone, Video, MoreVertical,
-  Image as ImageIcon, Mic, Smile, Gift, Shield, Flag, UserX, Clock, Check, CheckCheck, MessageCircle
+  Image as ImageIcon, Mic, Smile, Gift, Shield, Flag, UserX, Clock, Check, CheckCheck, MessageCircle, Heart
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -19,11 +19,14 @@ import {
   AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
   AlertDialogDescription, AlertDialogFooter, AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Database } from "@/integrations/supabase/types";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { calculateCompatibilityBreakdown, type CompatibilityBreakdownResult } from "@/lib/compatibility";
+import { CompatibilityBreakdown } from "@/components/discovery/CompatibilityBreakdown";
 
 type Message = Database['public']['Tables']['messages']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -263,6 +266,20 @@ const Chat = () => {
 
   const [reportReason, setReportReason] = useState("");
   const [showReportDialog, setShowReportDialog] = useState(false);
+  const [showCompatibility, setShowCompatibility] = useState(false);
+  const [compatBreakdown, setCompatBreakdown] = useState<CompatibilityBreakdownResult | null>(null);
+
+  const handleViewCompatibility = useCallback(async () => {
+    if (!currentUser || !otherUser) return;
+    // Get badge counts for both users
+    const [{ count: myBadges }, { count: theirBadges }] = await Promise.all([
+      supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", currentUser.id),
+      supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", otherUser.id),
+    ]);
+    const bd = calculateCompatibilityBreakdown(currentUser as any, otherUser as any, myBadges || 0, theirBadges || 0);
+    setCompatBreakdown(bd);
+    setShowCompatibility(true);
+  }, [currentUser, otherUser]);
 
   const REPORT_REASONS = [
     "Harassment or bullying",
@@ -382,7 +399,10 @@ const Chat = () => {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" onClick={handleViewCompatibility} aria-label="View compatibility" title="View Compatibility">
+                <Heart className="h-5 w-5 text-primary" />
+              </Button>
               <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Voice call"><Phone className="h-5 w-5" /></Button>
               <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Video call"><Video className="h-5 w-5" /></Button>
               <DropdownMenu>
@@ -577,6 +597,26 @@ const Chat = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Compatibility Breakdown Sheet */}
+      <Sheet open={showCompatibility} onOpenChange={setShowCompatibility}>
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Compatibility</SheetTitle>
+          </SheetHeader>
+          {compatBreakdown && (
+            <CompatibilityBreakdown
+              breakdown={compatBreakdown}
+              otherName={otherUser?.name || ""}
+              onCopyIcebreaker={(text) => {
+                setNewMessage(text);
+                setShowCompatibility(false);
+              }}
+              className="pb-6"
+            />
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
