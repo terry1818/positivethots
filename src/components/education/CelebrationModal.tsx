@@ -6,6 +6,8 @@ import { Flame, Zap, Star, Share2, Copy, Check } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import mascotImg from "@/assets/mascot-celebration.png";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { ShareableAchievementCard } from "@/components/ShareableAchievementCard";
+import type { AchievementData } from "@/lib/shareableCard";
 
 interface CelebrationModalProps {
   type: "level_up" | "streak_milestone" | "badge_earned" | "tier_complete" | null;
@@ -55,8 +57,19 @@ const BRAND_COLORS = [
 export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, onClose }: CelebrationModalProps) => {
   const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string; size: number; shape: string }>>([]);
   const [copied, setCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const soundPlayed = useRef(false);
   const { playBadgeUnlock, playStreakMilestone } = useSoundEffects();
+
+  const getShareData = (): AchievementData | null => {
+    if (!type) return null;
+    switch (type) {
+      case "level_up": return null; // Level ups don't generate share cards
+      case "streak_milestone": return { type: "streak_milestone", streakDays: streak };
+      case "badge_earned": return { type: "badge_earned", badgeName: badgeTitle };
+      case "tier_complete": return { type: "tier_complete", tierName };
+    }
+  };
 
   useEffect(() => {
     if (type) {
@@ -247,11 +260,28 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
               </div>
             </>
           )}
-          <Button onClick={onClose} className="mt-6 w-full">
+          {getShareData() && (
+            <Button
+              variant="outline"
+              onClick={() => setShareOpen(true)}
+              className="mt-4 w-full gap-2 border-primary/30 text-primary hover:bg-primary/10"
+            >
+              <Share2 className="h-4 w-4" /> Share Achievement Card
+            </Button>
+          )}
+          <Button onClick={onClose} className="mt-2 w-full">
             Continue
           </Button>
         </div>
       </DialogContent>
+
+      {getShareData() && (
+        <ShareableAchievementCard
+          open={shareOpen}
+          onClose={() => setShareOpen(false)}
+          data={getShareData()!}
+        />
+      )}
     </Dialog>
   );
 };
