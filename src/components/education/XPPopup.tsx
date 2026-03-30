@@ -49,7 +49,7 @@ export const XPPopup = ({ amount, show, onDone }: XPPopupProps) => {
         </div>
         
         {/* Particle burst */}
-        {isLarge && (
+        {isLarge && !prefersReducedMotion && (
           <div className="absolute inset-0 pointer-events-none">
             {[...Array(8)].map((_, i) => (
               <div

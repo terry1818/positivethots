@@ -75,22 +75,26 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
 
   useEffect(() => {
     if (type) {
-      const shapes = ["circle", "rect", "star"];
-      const count = type === "tier_complete" ? 80 : 50;
-      setConfetti(
-        Array.from({ length: count }, (_, i) => ({
-          id: i,
-          x: Math.random() * 100,
-          delay: Math.random() * 1.2,
-          color: BRAND_COLORS[i % BRAND_COLORS.length],
-          size: 4 + Math.random() * 8,
-          shape: shapes[i % shapes.length],
-        }))
-      );
+      if (!prefersReducedMotion) {
+        const shapes = ["circle", "rect", "star"];
+        const count = type === "tier_complete" ? 80 : 50;
+        setConfetti(
+          Array.from({ length: count }, (_, i) => ({
+            id: i,
+            x: Math.random() * 100,
+            delay: Math.random() * 1.2,
+            color: BRAND_COLORS[i % BRAND_COLORS.length],
+            size: 4 + Math.random() * 8,
+            shape: shapes[i % shapes.length],
+          }))
+        );
+      } else {
+        setConfetti([]);
+      }
       setCopied(false);
       soundPlayed.current = false;
     }
-  }, [type]);
+  }, [type, prefersReducedMotion]);
 
   useEffect(() => {
     if (!type || soundPlayed.current) return;

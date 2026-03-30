@@ -29,6 +29,14 @@ export const MicroCelebration = ({ trigger, emojis = ["✨", "💜", "🔥", "�
     return () => clearTimeout(timer);
   }, [trigger]);
 
+  if (staticFlash) {
+    return (
+      <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center">
+        <span className="text-4xl">✨</span>
+      </div>
+    );
+  }
+
   if (particles.length === 0) return null;
 
   return (
