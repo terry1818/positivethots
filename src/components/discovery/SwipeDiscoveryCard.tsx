@@ -292,9 +292,11 @@ export const SwipeDiscoveryCard = memo(({
           )}
 
           {/* Verified badge overlay on photo */}
-          <div className="absolute bottom-16 right-4 z-20">
-            <VerifiedBadgeOverlay isVerified={!!profile.verified} size="lg" />
-          </div>
+          {!!profile.verified && (
+            <div className="absolute bottom-16 right-4 z-20 drop-shadow-[0_1px_3px_rgba(255,255,255,0.4)]">
+              <VerifiedBadgeOverlay isVerified size="md" />
+            </div>
+          )}
 
           {/* Info over photo */}
           <div className="absolute bottom-0 left-0 right-0 p-5 text-white z-10">
