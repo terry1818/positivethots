@@ -281,7 +281,7 @@ const Profile = () => {
           </div>
 
           {userPhotos.length === 0 && hasPendingPhotos && (
-            <p className="text-xs text-muted-foreground text-center py-2">
+            <p className="text-sm text-muted-foreground text-center py-2">
               Photos pending review — approved photos will appear here.
             </p>
           )}
