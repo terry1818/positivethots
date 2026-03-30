@@ -14,8 +14,8 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === "development" && componentTagger(),
-    compression({ algorithm: "gzip", ext: ".gz", threshold: 1024 }),
-    compression({ algorithm: "brotliCompress", ext: ".br", threshold: 1024 }),
+    compression({ include: /\.(js|css|html|svg|json)$/i, threshold: 1024, algorithm: "gzip" as any, ext: ".gz" }),
+    compression({ include: /\.(js|css|html|svg|json)$/i, threshold: 1024, algorithm: "brotliCompress" as any, ext: ".br" }),
     visualizer({ open: false, filename: "dist/stats.html" }),
   ].filter(Boolean),
   resolve: {
