@@ -9,6 +9,7 @@ interface XPPopupProps {
 }
 
 export const XPPopup = ({ amount, show, onDone }: XPPopupProps) => {
+  const prefersReducedMotion = useReducedMotion();
   const [visible, setVisible] = useState(false);
   const [showFlash, setShowFlash] = useState(false);
 
