@@ -22,6 +22,10 @@ export const BlurImage = ({
   style,
   onError: onErrorProp,
   fetchPriority,
+  width: widthProp,
+  height: heightProp,
+  sizes,
+  loading = "lazy",
   ...props
 }: BlurImageProps) => {
   const [loaded, setLoaded] = useState(false);
