@@ -2,11 +2,14 @@ import { useEffect, useState, ImgHTMLAttributes } from "react";
 import { User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface BlurImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "onLoad" | "onError"> {
+interface BlurImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "onLoad" | "onError" | "width" | "height"> {
   aspectRatio?: string;
   fallbackClassName?: string;
   imgClassName?: string;
   onError?: () => void;
+  width?: number | string;
+  height?: number | string;
+  sizes?: string;
 }
 
 export const BlurImage = ({
