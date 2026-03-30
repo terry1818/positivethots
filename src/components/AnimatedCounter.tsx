@@ -8,7 +8,7 @@ interface AnimatedCounterProps {
   className?: string;
 }
 
-export const AnimatedCounter = ({ end, duration = 1000, prefix = "", suffix = "", className = "" }: AnimatedCounterProps) => {
+export const AnimatedCounter = memo(({ end, duration = 1000, prefix = "", suffix = "", className = "" }: AnimatedCounterProps) => {
   const [count, setCount] = useState(0);
   const startTime = useRef<number | null>(null);
   const rafRef = useRef<number>(0);

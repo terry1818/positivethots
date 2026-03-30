@@ -12,7 +12,7 @@ interface BlurImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "onLo
   sizes?: string;
 }
 
-export const BlurImage = ({
+export const BlurImage = memo(({
   src,
   alt,
   className,
