@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 interface XPPopupProps {
   amount: number;
@@ -8,6 +9,7 @@ interface XPPopupProps {
 }
 
 export const XPPopup = ({ amount, show, onDone }: XPPopupProps) => {
+  const prefersReducedMotion = useReducedMotion();
   const [visible, setVisible] = useState(false);
   const [showFlash, setShowFlash] = useState(false);
 
@@ -47,7 +49,7 @@ export const XPPopup = ({ amount, show, onDone }: XPPopupProps) => {
         </div>
         
         {/* Particle burst */}
-        {isLarge && (
+        {isLarge && !prefersReducedMotion && (
           <div className="absolute inset-0 pointer-events-none">
             {[...Array(8)].map((_, i) => (
               <div

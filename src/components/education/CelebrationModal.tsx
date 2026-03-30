@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { getLevelName } from "@/hooks/useLearningStats";
@@ -55,6 +56,7 @@ const BRAND_COLORS = [
 
 
 export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, onClose }: CelebrationModalProps) => {
+  const prefersReducedMotion = useReducedMotion();
   const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string; size: number; shape: string }>>([]);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
@@ -73,22 +75,26 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
 
   useEffect(() => {
     if (type) {
-      const shapes = ["circle", "rect", "star"];
-      const count = type === "tier_complete" ? 80 : 50;
-      setConfetti(
-        Array.from({ length: count }, (_, i) => ({
-          id: i,
-          x: Math.random() * 100,
-          delay: Math.random() * 1.2,
-          color: BRAND_COLORS[i % BRAND_COLORS.length],
-          size: 4 + Math.random() * 8,
-          shape: shapes[i % shapes.length],
-        }))
-      );
+      if (!prefersReducedMotion) {
+        const shapes = ["circle", "rect", "star"];
+        const count = type === "tier_complete" ? 80 : 50;
+        setConfetti(
+          Array.from({ length: count }, (_, i) => ({
+            id: i,
+            x: Math.random() * 100,
+            delay: Math.random() * 1.2,
+            color: BRAND_COLORS[i % BRAND_COLORS.length],
+            size: 4 + Math.random() * 8,
+            shape: shapes[i % shapes.length],
+          }))
+        );
+      } else {
+        setConfetti([]);
+      }
       setCopied(false);
       soundPlayed.current = false;
     }
-  }, [type]);
+  }, [type, prefersReducedMotion]);
 
   useEffect(() => {
     if (!type || soundPlayed.current) return;

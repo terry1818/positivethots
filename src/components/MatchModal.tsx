@@ -2,6 +2,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Heart, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useNavigate } from "react-router-dom";
 
 interface MatchedUser {
@@ -23,27 +24,31 @@ const confettiEmojis = ["💜", "💕", "✨", "🔥", "💫", "❤️", "🌟",
 
 export const MatchModal = ({ isOpen, onClose, matchedProfile, matchedUser, onSendMessage, isFirstMatch = false }: MatchModalProps) => {
   const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion();
   const user = matchedUser || matchedProfile;
   const [confetti, setConfetti] = useState<{ id: number; emoji: string; x: number; delay: number; duration: number }[]>([]);
 
   useEffect(() => {
     if (isOpen) {
-      const particles = Array.from({ length: 16 }, (_, i) => ({
-        id: i,
-        emoji: confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)],
-        x: 5 + Math.random() * 90,
-        delay: Math.random() * 1,
-        duration: 2 + Math.random() * 1.5,
-      }));
-      setConfetti(particles);
-      // Haptic vibration on match
-      if (navigator.vibrate) {
-        navigator.vibrate([50, 50, 100]);
+      if (!prefersReducedMotion) {
+        const particles = Array.from({ length: 16 }, (_, i) => ({
+          id: i,
+          emoji: confettiEmojis[Math.floor(Math.random() * confettiEmojis.length)],
+          x: 5 + Math.random() * 90,
+          delay: Math.random() * 1,
+          duration: 2 + Math.random() * 1.5,
+        }));
+        setConfetti(particles);
+        if (navigator.vibrate) {
+          navigator.vibrate([50, 50, 100]);
+        }
+      } else {
+        setConfetti([]);
       }
     } else {
       setConfetti([]);
     }
-  }, [isOpen]);
+  }, [isOpen, prefersReducedMotion]);
 
   if (!user) return null;
 
