@@ -39,6 +39,7 @@ const Events = lazy(() => import("./pages/Events"));
 const LearningJournal = lazy(() => import("./pages/LearningJournal"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const CommunityGuidelines = lazy(() => import("./pages/CommunityGuidelines"));
 const CelebrationDemo = lazy(() => import("./pages/CelebrationDemo"));
 
 export const queryClient = new QueryClient({
