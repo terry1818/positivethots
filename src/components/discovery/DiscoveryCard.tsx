@@ -125,6 +125,12 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
           )}
         </div>
       )}
+      {/* Verified badge overlay on photo */}
+      {profile.verified && (
+        <div className="absolute bottom-3 right-3 z-10 drop-shadow-[0_1px_3px_rgba(255,255,255,0.4)]">
+          <VerifiedBadgeOverlay isVerified size="md" />
+        </div>
+      )}
     </div>
 
     <div className="p-4">
