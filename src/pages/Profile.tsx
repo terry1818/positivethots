@@ -290,15 +290,15 @@ const Profile = () => {
             <div className="flex items-center gap-4 px-4 py-3 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-1">
                 <Zap className="h-4 w-4 text-accent" />
-                <span className="text-sm font-bold"><AnimatedCounter end={stats.total_xp} suffix=" XP" /></span>
+                <span className="text-base font-bold"><AnimatedCounter end={stats.total_xp} suffix=" XP" /></span>
               </div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm font-medium text-muted-foreground">
                 Lv.<AnimatedCounter end={stats.current_level} /> {getLevelName(stats.current_level)}
               </div>
               {stats.current_streak > 0 && (
                 <div className="flex items-center gap-1 ml-auto">
                   <Flame className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-bold"><AnimatedCounter end={stats.current_streak} suffix="d" /></span>
+                  <span className="text-base font-bold"><AnimatedCounter end={stats.current_streak} suffix="d" /></span>
                 </div>
               )}
             </div>
