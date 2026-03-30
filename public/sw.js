@@ -69,6 +69,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Hashed static assets — stale-while-revalidate
+  if (url.origin === self.location.origin && url.pathname.startsWith('/assets/')) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) =>
+        cache.match(request).then((cached) => {
+          const fetchPromise = fetch(request).then((response) => {
+            if (response.ok) cache.put(request, response.clone());
+            return response;
+          });
+          return cached || fetchPromise;
+        })
+      )
+    );
+    return;
+  }
+
   // Everything else — network-first, fall back to cache
   event.respondWith(
     fetch(request)
