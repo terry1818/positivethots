@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Clock, Users, Shield, BookOpen, Star, Rocket, Award } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
+import { EducationTierBadge } from "@/components/EducationTierBadge";
 
 interface DiscoveryProfile {
   id: string;
@@ -123,12 +125,23 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
           )}
         </div>
       )}
+      {/* Verified badge overlay on photo */}
+      {profile.verified && (
+        <div className="absolute bottom-3 right-3 z-10 drop-shadow-[0_1px_3px_rgba(255,255,255,0.4)]">
+          <VerifiedBadgeOverlay isVerified size="md" />
+        </div>
+      )}
     </div>
 
     <div className="p-4">
       <div className="flex items-start justify-between mb-2">
         <div>
-          <h3 className="text-xl font-bold">{profile.name}, {profile.age}</h3>
+          <div className="flex items-center gap-1.5">
+            <h3 className="text-xl font-bold">{profile.name}, {profile.age}</h3>
+            {profile.badge_count != null && profile.badge_count >= 5 && (
+              <EducationTierBadge badgeCount={profile.badge_count} size="sm" />
+            )}
+          </div>
           {profile.pronouns && <p className="text-sm text-muted-foreground">{profile.pronouns}</p>}
           {profile.learning_level && profile.learning_level > 1 && (
             <Badge variant="secondary" className="text-[10px] mt-0.5">

@@ -266,7 +266,10 @@ const Index = () => {
       .sort((a, b) => {
         if (a.is_boosted && !b.is_boosted) return -1;
         if (!a.is_boosted && b.is_boosted) return 1;
-        return (b.compatibility_score || 0) - (a.compatibility_score || 0);
+        // Trust boost: verified +5, badges give up to +5 bonus
+        const trustA = (a.verified ? 5 : 0) + Math.min(5, (a.badge_count || 0));
+        const trustB = (b.verified ? 5 : 0) + Math.min(5, (b.badge_count || 0));
+        return ((b.compatibility_score || 0) + trustB) - ((a.compatibility_score || 0) + trustA);
       })
       .slice(0, 20); // fetch more to have mystery candidates
 
