@@ -59,6 +59,10 @@ export const BlurImage = ({
           className={cn("absolute inset-0 h-full w-full object-cover transition-opacity duration-300", imgClassName)}
           style={{ opacity: loaded ? 1 : 0 }}
           decoding="async"
+          loading={loading}
+          width={widthProp ?? "100%"}
+          height={heightProp ?? "100%"}
+          {...(sizes ? { sizes } : {})}
           {...(fetchPriority ? ({ fetchpriority: fetchPriority } as Record<string, string>) : {})}
           onLoad={() => setLoaded(true)}
           onError={() => { setError(true); onErrorProp?.(); }}
