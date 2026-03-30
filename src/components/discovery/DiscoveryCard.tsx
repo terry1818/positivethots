@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Clock, Users, Shield, BookOpen, Star, Rocket, Award } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
+import { EducationTierBadge } from "@/components/EducationTierBadge";
 
 interface DiscoveryProfile {
   id: string;
