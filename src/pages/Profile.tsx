@@ -258,12 +258,12 @@ const Profile = () => {
                 </div>
               ))}
               {badges.length > 5 && (
-                <span className="text-xs text-white bg-black/40 rounded-full px-1.5 py-0.5">+{badges.length - 5}</span>
+                <span className="text-sm font-semibold text-white bg-black/60 rounded-full px-2 py-1 min-w-[24px] text-center">+{badges.length - 5}</span>
               )}
             </div>
 
             {userPhotos.length > 1 && (
-              <div className="absolute top-3 right-3 z-20 bg-black/40 text-white text-xs px-2 py-0.5 rounded-full">
+              <div className="absolute top-3 right-3 z-20 bg-black/60 text-white text-sm font-medium px-2.5 py-1 rounded-full">
                 {currentPhotoIndex + 1}/{userPhotos.length}
               </div>
             )}
@@ -273,15 +273,15 @@ const Profile = () => {
                 {profile?.name}, {profile?.age}
                 {profile?.is_verified && <ShieldCheck className="h-6 w-6 text-accent" />}
               </h2>
-              <div className="flex items-center gap-2 text-sm opacity-90">
+              <div className="flex items-center gap-2 text-base opacity-95">
                 {profile?.pronouns && <span className="bg-white/20 px-2 py-0.5 rounded">{profile.pronouns}</span>}
-                {profile?.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{profile.location}</span>}
+                {profile?.location && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{profile.location}</span>}
               </div>
             </div>
           </div>
 
           {userPhotos.length === 0 && hasPendingPhotos && (
-            <p className="text-xs text-muted-foreground text-center py-2">
+            <p className="text-sm text-muted-foreground text-center py-2">
               Photos pending review — approved photos will appear here.
             </p>
           )}
@@ -290,15 +290,15 @@ const Profile = () => {
             <div className="flex items-center gap-4 px-4 py-3 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-1">
                 <Zap className="h-4 w-4 text-accent" />
-                <span className="text-sm font-bold"><AnimatedCounter end={stats.total_xp} suffix=" XP" /></span>
+                <span className="text-base font-bold"><AnimatedCounter end={stats.total_xp} suffix=" XP" /></span>
               </div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm font-medium text-muted-foreground">
                 Lv.<AnimatedCounter end={stats.current_level} /> {getLevelName(stats.current_level)}
               </div>
               {stats.current_streak > 0 && (
                 <div className="flex items-center gap-1 ml-auto">
                   <Flame className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-bold"><AnimatedCounter end={stats.current_streak} suffix="d" /></span>
+                  <span className="text-base font-bold"><AnimatedCounter end={stats.current_streak} suffix="d" /></span>
                 </div>
               )}
             </div>
@@ -452,20 +452,20 @@ const Profile = () => {
                   <BookOpen className="h-4 w-4 text-primary" />
                   <span>Education Level</span>
                 </div>
-                <span className="text-xs text-muted-foreground">{badges.length}/20 badges</span>
+                <span className="text-sm text-muted-foreground">{badges.length}/20 badges</span>
               </div>
               {/* Community Standing */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between min-h-[44px]">
                 <div className="flex items-center gap-2 text-sm">
                   <Heart className="h-4 w-4 text-primary" />
                   <span>Community Standing</span>
                 </div>
-                <Badge variant="secondary" className="text-xs">Good Standing</Badge>
+                <Badge variant="secondary" className="text-sm px-3 py-1">Good Standing</Badge>
               </div>
               {/* Guidelines Link */}
               <button
                 onClick={() => navigate("/community-guidelines")}
-                className="text-xs text-primary hover:underline w-full text-left pt-1"
+                className="text-sm text-primary hover:underline w-full text-left pt-1 min-h-[44px] flex items-center"
               >
                 View Community Guidelines →
               </button>
