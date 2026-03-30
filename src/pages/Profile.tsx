@@ -273,9 +273,9 @@ const Profile = () => {
                 {profile?.name}, {profile?.age}
                 {profile?.is_verified && <ShieldCheck className="h-6 w-6 text-accent" />}
               </h2>
-              <div className="flex items-center gap-2 text-sm opacity-90">
+              <div className="flex items-center gap-2 text-base opacity-95">
                 {profile?.pronouns && <span className="bg-white/20 px-2 py-0.5 rounded">{profile.pronouns}</span>}
-                {profile?.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{profile.location}</span>}
+                {profile?.location && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{profile.location}</span>}
               </div>
             </div>
           </div>
