@@ -1,4 +1,4 @@
-import { useEffect, useState, ImgHTMLAttributes } from "react";
+import { useEffect, useState, memo, ImgHTMLAttributes } from "react";
 import { User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +12,7 @@ interface BlurImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "onLo
   sizes?: string;
 }
 
-export const BlurImage = ({
+export const BlurImage = memo(({
   src,
   alt,
   className,
@@ -72,4 +72,12 @@ export const BlurImage = ({
       )}
     </div>
   );
-};
+}, (prev, next) =>
+  prev.src === next.src &&
+  prev.alt === next.alt &&
+  prev.className === next.className &&
+  prev.aspectRatio === next.aspectRatio &&
+  prev.fetchPriority === next.fetchPriority
+);
+
+BlurImage.displayName = "BlurImage";

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 
 interface AnimatedCounterProps {
   end: number;
@@ -8,7 +8,7 @@ interface AnimatedCounterProps {
   className?: string;
 }
 
-export const AnimatedCounter = ({ end, duration = 1000, prefix = "", suffix = "", className = "" }: AnimatedCounterProps) => {
+export const AnimatedCounter = memo(({ end, duration = 1000, prefix = "", suffix = "", className = "" }: AnimatedCounterProps) => {
   const [count, setCount] = useState(0);
   const startTime = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
@@ -35,4 +35,6 @@ export const AnimatedCounter = ({ end, duration = 1000, prefix = "", suffix = ""
   }, [end, duration]);
 
   return <span className={className}>{prefix}{count}{suffix}</span>;
-};
+}, (prev, next) => prev.end === next.end && prev.className === next.className);
+
+AnimatedCounter.displayName = "AnimatedCounter";
