@@ -452,20 +452,20 @@ const Profile = () => {
                   <BookOpen className="h-4 w-4 text-primary" />
                   <span>Education Level</span>
                 </div>
-                <span className="text-xs text-muted-foreground">{badges.length}/20 badges</span>
+                <span className="text-sm text-muted-foreground">{badges.length}/20 badges</span>
               </div>
               {/* Community Standing */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between min-h-[44px]">
                 <div className="flex items-center gap-2 text-sm">
                   <Heart className="h-4 w-4 text-primary" />
                   <span>Community Standing</span>
                 </div>
-                <Badge variant="secondary" className="text-xs">Good Standing</Badge>
+                <Badge variant="secondary" className="text-sm px-3 py-1">Good Standing</Badge>
               </div>
               {/* Guidelines Link */}
               <button
                 onClick={() => navigate("/community-guidelines")}
-                className="text-xs text-primary hover:underline w-full text-left pt-1"
+                className="text-sm text-primary hover:underline w-full text-left pt-1 min-h-[44px] flex items-center"
               >
                 View Community Guidelines →
               </button>
