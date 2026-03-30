@@ -263,7 +263,7 @@ const Profile = () => {
             </div>
 
             {userPhotos.length > 1 && (
-              <div className="absolute top-3 right-3 z-20 bg-black/40 text-white text-xs px-2 py-0.5 rounded-full">
+              <div className="absolute top-3 right-3 z-20 bg-black/60 text-white text-sm font-medium px-2.5 py-1 rounded-full">
                 {currentPhotoIndex + 1}/{userPhotos.length}
               </div>
             )}
