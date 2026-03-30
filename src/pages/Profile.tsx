@@ -258,7 +258,7 @@ const Profile = () => {
                 </div>
               ))}
               {badges.length > 5 && (
-                <span className="text-xs text-white bg-black/40 rounded-full px-1.5 py-0.5">+{badges.length - 5}</span>
+                <span className="text-sm font-semibold text-white bg-black/60 rounded-full px-2 py-1 min-w-[24px] text-center">+{badges.length - 5}</span>
               )}
             </div>
 
