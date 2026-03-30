@@ -464,7 +464,7 @@ const Profile = () => {
               </div>
               {/* Guidelines Link */}
               <button
-                onClick={() => navigate("/terms-of-service")}
+                onClick={() => navigate("/community-guidelines")}
                 className="text-xs text-primary hover:underline w-full text-left pt-1"
               >
                 View Community Guidelines →

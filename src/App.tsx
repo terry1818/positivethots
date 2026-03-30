@@ -39,6 +39,7 @@ const Events = lazy(() => import("./pages/Events"));
 const LearningJournal = lazy(() => import("./pages/LearningJournal"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const CommunityGuidelines = lazy(() => import("./pages/CommunityGuidelines"));
 const CelebrationDemo = lazy(() => import("./pages/CelebrationDemo"));
 
 export const queryClient = new QueryClient({
@@ -84,6 +85,7 @@ const AppContent = () => {
         <Route path="/unsubscribe" element={<Suspense fallback={<PageLoader />}><Unsubscribe /></Suspense>} />
         <Route path="/privacy" element={<Suspense fallback={<PageLoader />}><PrivacyPolicy /></Suspense>} />
         <Route path="/terms" element={<Suspense fallback={<PageLoader />}><TermsOfService /></Suspense>} />
+        <Route path="/community-guidelines" element={<Suspense fallback={<PageLoader />}><CommunityGuidelines /></Suspense>} />
         <Route path="/celebration-demo" element={<Suspense fallback={<PageLoader />}><CelebrationDemo /></Suspense>} />
         <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
       </Routes>
