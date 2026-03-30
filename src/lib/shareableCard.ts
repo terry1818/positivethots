@@ -17,27 +17,40 @@ export interface AchievementData {
   badgeCount?: number;
 }
 
-const APP_URL = "https://positivethots.app";
+const APP_URL = "https://positivethots.com";
 const SHARE_URL = `${APP_URL}?utm_source=achievement_share`;
-const HANDLE = "@think_positiveth0ts";
-const TAGLINE = "Learn first. Connect better.";
-const PITCH = "An education-first dating app for the ethically non-monogamous community";
-
-// Accent colors per achievement type: [primary glow, secondary glow]
-const ACCENT_COLORS: Record<AchievementType, [string, string]> = {
-  badge_earned: ["rgba(139,92,246,0.35)", "rgba(168,85,247,0.20)"],       // purple
-  streak_milestone: ["rgba(245,158,11,0.35)", "rgba(251,146,60,0.20)"],   // amber/orange
-  tier_complete: ["rgba(234,179,8,0.35)", "rgba(250,204,21,0.20)"],       // gold
-  mentor_earned: ["rgba(168,85,247,0.35)", "rgba(236,72,153,0.20)"],      // rainbow-ish
-  compatibility_score: ["rgba(236,72,153,0.35)", "rgba(139,92,246,0.20)"],// pink
+const HANDLE = "@positivethots";
+const HOOK_LINES: Record<AchievementType, string> = {
+  badge_earned: "Think you know everything about intimacy? 🤔",
+  streak_milestone: "Consistency is the real flex 💪",
+  tier_complete: "Education unlocks deeper connections 🔓",
+  mentor_earned: "Knowledge is the ultimate attraction ✨",
+  compatibility_score: "Real connections start with understanding 💜",
 };
 
-const PILL_STYLES: Record<AchievementType, { emoji: string; label: string; bg: string; text: string; border: string }> = {
-  badge_earned: { emoji: "🎓", label: "Badge Earned", bg: "rgba(139,92,246,0.2)", text: "rgb(196,167,255)", border: "rgba(139,92,246,0.4)" },
-  streak_milestone: { emoji: "🔥", label: "Streak!", bg: "rgba(245,158,11,0.2)", text: "rgb(253,186,73)", border: "rgba(245,158,11,0.4)" },
-  tier_complete: { emoji: "🛡️", label: "Tier Complete", bg: "rgba(234,179,8,0.2)", text: "rgb(250,204,21)", border: "rgba(234,179,8,0.4)" },
-  mentor_earned: { emoji: "⭐", label: "Master Scholar", bg: "rgba(168,85,247,0.2)", text: "rgb(196,167,255)", border: "rgba(168,85,247,0.4)" },
-  compatibility_score: { emoji: "💜", label: "First Connection", bg: "rgba(236,72,153,0.2)", text: "rgb(244,114,182)", border: "rgba(236,72,153,0.4)" },
+const BADGE_ICONS: Record<AchievementType, string> = {
+  badge_earned: "🎓",
+  streak_milestone: "🔥",
+  tier_complete: "🛡️",
+  mentor_earned: "⭐",
+  compatibility_score: "💜",
+};
+
+const PILL_LABELS: Record<AchievementType, string> = {
+  badge_earned: "Badge Earned",
+  streak_milestone: "Streak Milestone",
+  tier_complete: "Tier Complete",
+  mentor_earned: "Master Scholar",
+  compatibility_score: "First Connection",
+};
+
+// Brand gradient stops
+const GRADIENT_THEMES: Record<AchievementType, { from: string; via: string; to: string }> = {
+  badge_earned:       { from: "#7C3AED", via: "#6D28D9", to: "#DB2777" },
+  streak_milestone:   { from: "#D97706", via: "#B45309", to: "#7C3AED" },
+  tier_complete:      { from: "#CA8A04", via: "#A16207", to: "#7C3AED" },
+  mentor_earned:      { from: "#7C3AED", via: "#9333EA", to: "#EC4899" },
+  compatibility_score:{ from: "#EC4899", via: "#BE185D", to: "#7C3AED" },
 };
 
 function getTitle(data: AchievementData): string {
@@ -60,197 +73,13 @@ function getDescription(data: AchievementData): string {
   }
 }
 
-function getPillData(data: AchievementData) {
-  const style = PILL_STYLES[data.type];
-  if (data.type === "streak_milestone") {
-    return { ...style, label: `${data.streakDays}-Day Streak!` };
-  }
-  if (data.type === "tier_complete" && data.tierName === "Foundation") {
-    return { ...style, emoji: "🛡️", label: "Foundation Complete" };
-  }
-  return style;
+function getPillLabel(data: AchievementData): string {
+  if (data.type === "streak_milestone") return `${data.streakDays}-Day Streak!`;
+  if (data.type === "tier_complete" && data.tierName) return `${data.tierName} Complete`;
+  return PILL_LABELS[data.type];
 }
 
 // ── Drawing helpers ──
-
-function drawRichBackground(ctx: CanvasRenderingContext2D, w: number, h: number, accentType: AchievementType) {
-  // Rich gradient background (dark purple → near-black → dark purple)
-  const bg = ctx.createLinearGradient(0, 0, 0, h);
-  bg.addColorStop(0, "#1a0533");
-  bg.addColorStop(0.45, "#0d0015");
-  bg.addColorStop(0.55, "#0d0015");
-  bg.addColorStop(1, "#1a0533");
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, w, h);
-
-  // Subtle grid overlay
-  ctx.save();
-  ctx.globalAlpha = 0.04;
-  ctx.strokeStyle = "rgba(255,255,255,1)";
-  ctx.lineWidth = 1;
-  const gridSize = 40;
-  for (let x = 0; x < w; x += gridSize) {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-  }
-  for (let y = 0; y < h; y += gridSize) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-  }
-  ctx.restore();
-
-  // Glow orbs
-  const [accent1, accent2] = ACCENT_COLORS[accentType];
-  const drawOrb = (cx: number, cy: number, r: number, color: string) => {
-    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-    grad.addColorStop(0, color);
-    grad.addColorStop(1, "transparent");
-    ctx.fillStyle = grad;
-    ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
-  };
-  drawOrb(w * 0.8, h * 0.15, 350, "rgba(147,51,234,0.12)");  // upper-right purple
-  drawOrb(w * 0.15, h * 0.8, 300, "rgba(236,72,153,0.08)");   // lower-left pink
-  drawOrb(w * 0.5, h * 0.5, 250, accent1);                     // center accent glow
-  drawOrb(w * 0.3, h * 0.65, 200, accent2);                    // secondary glow
-}
-
-function drawScatteredDots(ctx: CanvasRenderingContext2D, w: number, h: number) {
-  const colors = [
-    "rgba(168,85,247,0.6)", "rgba(236,72,153,0.5)", "rgba(250,204,21,0.5)",
-    "rgba(139,92,246,0.5)", "rgba(244,114,182,0.4)", "rgba(253,186,73,0.4)",
-  ];
-  // 18-22 scattered dots
-  for (let i = 0; i < 20; i++) {
-    const x = Math.random() * w;
-    const y = Math.random() * h;
-    const size = 3 + Math.random() * 4;
-    ctx.save();
-    ctx.fillStyle = colors[i % colors.length];
-    ctx.globalAlpha = 0.3 + Math.random() * 0.5;
-    ctx.beginPath();
-    ctx.arc(x, y, size, 0, Math.PI * 2);
-    ctx.fill();
-    // Glow
-    ctx.shadowColor = colors[i % colors.length];
-    ctx.shadowBlur = 8;
-    ctx.fill();
-    ctx.restore();
-  }
-}
-
-function drawStarSparkles(ctx: CanvasRenderingContext2D, w: number, h: number) {
-  // 5-6 small white star sparkles around the middle
-  const positions = [
-    { x: w * 0.12, y: h * 0.32 }, { x: w * 0.88, y: h * 0.38 },
-    { x: w * 0.15, y: h * 0.58 }, { x: w * 0.85, y: h * 0.55 },
-    { x: w * 0.25, y: h * 0.42 }, { x: w * 0.78, y: h * 0.48 },
-  ];
-  for (const pos of positions) {
-    const size = 3 + Math.random() * 3;
-    ctx.save();
-    ctx.globalAlpha = 0.5 + Math.random() * 0.4;
-    ctx.fillStyle = "white";
-    ctx.shadowColor = "rgba(255,255,255,0.8)";
-    ctx.shadowBlur = 6;
-    // 4-point star
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y - size);
-    ctx.lineTo(pos.x + size * 0.25, pos.y);
-    ctx.lineTo(pos.x, pos.y + size);
-    ctx.lineTo(pos.x - size * 0.25, pos.y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(pos.x - size, pos.y);
-    ctx.lineTo(pos.x, pos.y + size * 0.25);
-    ctx.lineTo(pos.x + size, pos.y);
-    ctx.lineTo(pos.x, pos.y - size * 0.25);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-  }
-}
-
-function drawGradientLine(ctx: CanvasRenderingContext2D, cx: number, y: number, lineWidth: number) {
-  const grad = ctx.createLinearGradient(cx - lineWidth / 2, 0, cx + lineWidth / 2, 0);
-  grad.addColorStop(0, "transparent");
-  grad.addColorStop(0.2, "rgba(139,92,246,0.6)");
-  grad.addColorStop(0.5, "rgba(236,72,153,0.7)");
-  grad.addColorStop(0.8, "rgba(139,92,246,0.6)");
-  grad.addColorStop(1, "transparent");
-  ctx.fillStyle = grad;
-  ctx.fillRect(cx - lineWidth / 2, y, lineWidth, 3);
-}
-
-function drawPill(ctx: CanvasRenderingContext2D, cx: number, cy: number, text: string, pill: ReturnType<typeof getPillData>) {
-  ctx.save();
-  ctx.font = "bold 36px system-ui, -apple-system, sans-serif";
-  const label = `${pill.emoji}  ${text}`;
-  const metrics = ctx.measureText(label);
-  const pw = metrics.width + 60;
-  const ph = 56;
-  const px = cx - pw / 2;
-  const py = cy - ph / 2;
-
-  // Pill background
-  ctx.fillStyle = pill.bg;
-  ctx.strokeStyle = pill.border;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.roundRect(px, py, pw, ph, ph / 2);
-  ctx.fill();
-  ctx.stroke();
-
-  // Pill text
-  ctx.fillStyle = pill.text;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(label, cx, cy + 2);
-  ctx.restore();
-}
-
-function drawGlowingBadgeIcon(ctx: CanvasRenderingContext2D, cx: number, cy: number, emoji: string, accentType: AchievementType) {
-  const radius = 80;
-  const [accent] = ACCENT_COLORS[accentType];
-
-  // Outer glow
-  ctx.save();
-  const outerGlow = ctx.createRadialGradient(cx, cy, radius * 0.5, cx, cy, radius * 2.5);
-  outerGlow.addColorStop(0, accent);
-  outerGlow.addColorStop(1, "transparent");
-  ctx.fillStyle = outerGlow;
-  ctx.fillRect(cx - radius * 2.5, cy - radius * 2.5, radius * 5, radius * 5);
-  ctx.restore();
-
-  // Glowing ring
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-  ctx.strokeStyle = "rgba(167,139,250,0.6)";
-  ctx.lineWidth = 4;
-  ctx.shadowColor = "rgba(139,92,246,0.5)";
-  ctx.shadowBlur = 25;
-  ctx.stroke();
-  // Second layer
-  ctx.shadowBlur = 50;
-  ctx.shadowColor = "rgba(139,92,246,0.25)";
-  ctx.stroke();
-  ctx.restore();
-
-  // Dark circle fill
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius - 4, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(13,0,21,0.6)";
-  ctx.fill();
-  ctx.restore();
-
-  // Large emoji centered
-  ctx.save();
-  ctx.font = "80px serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(emoji, cx, cy + 4);
-  ctx.restore();
-}
 
 function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
   const words = text.split(" ");
@@ -269,13 +98,129 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines;
 }
 
+function drawBrandGradientBg(ctx: CanvasRenderingContext2D, w: number, h: number, theme: typeof GRADIENT_THEMES[AchievementType]) {
+  // Main diagonal gradient
+  const bg = ctx.createLinearGradient(0, 0, w * 0.3, h);
+  bg.addColorStop(0, theme.from);
+  bg.addColorStop(0.5, theme.via);
+  bg.addColorStop(1, theme.to);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle darker overlay at edges for depth
+  const vignette = ctx.createRadialGradient(w / 2, h / 2, w * 0.2, w / 2, h / 2, w * 0.9);
+  vignette.addColorStop(0, "transparent");
+  vignette.addColorStop(1, "rgba(0,0,0,0.35)");
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, w, h);
+
+  // Large soft white glow behind center content
+  const centerGlow = ctx.createRadialGradient(w / 2, h * 0.42, 0, w / 2, h * 0.42, w * 0.5);
+  centerGlow.addColorStop(0, "rgba(255,255,255,0.08)");
+  centerGlow.addColorStop(1, "transparent");
+  ctx.fillStyle = centerGlow;
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle grid texture
+  ctx.save();
+  ctx.globalAlpha = 0.04;
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = 1;
+  const gs = 50;
+  for (let x = 0; x < w; x += gs) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for (let y = 0; y < h; y += gs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+  ctx.restore();
+}
+
+function drawDecoSparkles(ctx: CanvasRenderingContext2D, w: number, h: number) {
+  // Scattered white sparkle dots
+  for (let i = 0; i < 25; i++) {
+    const x = Math.random() * w;
+    const y = Math.random() * h;
+    const r = 1.5 + Math.random() * 2.5;
+    ctx.save();
+    ctx.fillStyle = "white";
+    ctx.globalAlpha = 0.15 + Math.random() * 0.25;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function drawBadgeCircle(ctx: CanvasRenderingContext2D, cx: number, cy: number, radius: number, emoji: string) {
+  // Outer glow ring
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius + 8, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(255,255,255,0.3)";
+  ctx.lineWidth = 3;
+  ctx.shadowColor = "rgba(255,255,255,0.4)";
+  ctx.shadowBlur = 30;
+  ctx.stroke();
+  ctx.restore();
+
+  // White circle fill
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(255,255,255,0.15)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.5)";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.restore();
+
+  // Emoji
+  ctx.save();
+  ctx.font = `${Math.round(radius * 1.1)}px serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(emoji, cx, cy + 4);
+  ctx.restore();
+}
+
+function drawPill(ctx: CanvasRenderingContext2D, cx: number, cy: number, text: string) {
+  ctx.save();
+  ctx.font = "bold 32px system-ui, -apple-system, sans-serif";
+  const metrics = ctx.measureText(text);
+  const pw = metrics.width + 56;
+  const ph = 50;
+  const px = cx - pw / 2;
+  const py = cy - ph / 2;
+
+  ctx.fillStyle = "rgba(255,255,255,0.15)";
+  ctx.strokeStyle = "rgba(255,255,255,0.35)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(px, py, pw, ph, ph / 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, cx, cy + 1);
+  ctx.restore();
+}
+
+function drawGradientSeparator(ctx: CanvasRenderingContext2D, cx: number, y: number, lineWidth: number) {
+  const grad = ctx.createLinearGradient(cx - lineWidth / 2, 0, cx + lineWidth / 2, 0);
+  grad.addColorStop(0, "transparent");
+  grad.addColorStop(0.3, "rgba(255,255,255,0.4)");
+  grad.addColorStop(0.7, "rgba(255,255,255,0.4)");
+  grad.addColorStop(1, "transparent");
+  ctx.fillStyle = grad;
+  ctx.fillRect(cx - lineWidth / 2, y, lineWidth, 2);
+}
+
 // ── Main render ──
 
 export function generateAchievementCard(
   data: AchievementData,
   format: "story" | "square" = "story",
   mascotImg?: HTMLImageElement | null,
-  logoImg?: HTMLImageElement | null,
+  _logoImg?: HTMLImageElement | null,
 ): HTMLCanvasElement {
   const w = 1080;
   const h = format === "story" ? 1920 : 1080;
@@ -284,237 +229,236 @@ export function generateAchievementCard(
   canvas.height = h;
   const ctx = canvas.getContext("2d")!;
   const isStory = format === "story";
+  const theme = GRADIENT_THEMES[data.type];
+  const emoji = BADGE_ICONS[data.type];
+  const safeX = 80; // horizontal padding
+  const contentW = w - safeX * 2;
 
   // ── Background ──
-  drawRichBackground(ctx, w, h, data.type);
-  drawScatteredDots(ctx, w, h);
-  drawStarSparkles(ctx, w, h);
-
-  const pill = getPillData(data);
+  drawBrandGradientBg(ctx, w, h, theme);
+  drawDecoSparkles(ctx, w, h);
 
   if (isStory) {
-    // ════════════════════════════════════════
-    // STORY FORMAT (9:16)
-    // TOP ZONE: 0 → ~480 (25%)
-    // MIDDLE ZONE: ~480 → ~1440 (50%)
-    // BOTTOM ZONE: ~1440 → 1920 (25%)
-    // ════════════════════════════════════════
+    // ════════════════════════════════════════════
+    // STORY FORMAT (9:16 = 1080×1920)
+    // Safe zone: 80px sides, 200px top/bottom
+    // ════════════════════════════════════════════
+    const safeTop = 200;
+    const safeBot = 200;
+    let y = safeTop;
 
-    // ── TOP ZONE ──
-    // Wordmark
+    // ── WORDMARK ──
     ctx.save();
-    ctx.font = "62px 'Pacifico', cursive";
+    ctx.font = "56px 'Pacifico', cursive";
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
-    ctx.shadowColor = "rgba(0,0,0,0.4)";
-    ctx.shadowBlur = 8;
-    ctx.fillText("Positive Thots", w / 2, 160);
+    ctx.shadowColor = "rgba(0,0,0,0.3)";
+    ctx.shadowBlur = 10;
+    ctx.fillText("Positive Thots", w / 2, y);
     ctx.restore();
+    y += 50;
 
     // Tagline
     ctx.save();
-    ctx.font = "30px system-ui, -apple-system, sans-serif";
+    ctx.font = "28px system-ui, -apple-system, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(196,167,255,0.9)";
-    ctx.fillText(TAGLINE, w / 2, 220);
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    ctx.fillText("Learn first. Connect better.", w / 2, y);
     ctx.restore();
+    y += 30;
 
-    // Gradient separator
-    drawGradientLine(ctx, w / 2, 250, w * 0.6);
+    // Separator
+    drawGradientSeparator(ctx, w / 2, y, w * 0.5);
+    y += 60;
 
-    // ── MIDDLE ZONE ──
-    const midY = h * 0.48;
-
-    // Glowing badge icon
-    drawGlowingBadgeIcon(ctx, w / 2, midY - 100, pill.emoji, data.type);
-
-    // Achievement title (actual badge name)
+    // ── HOOK LINE ──
     ctx.save();
-    ctx.font = "bold 64px system-ui, -apple-system, sans-serif";
+    ctx.font = "italic 30px system-ui, -apple-system, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(255,255,255,0.75)";
+    ctx.fillText(HOOK_LINES[data.type], w / 2, y);
+    ctx.restore();
+    y += 80;
+
+    // ── BADGE ICON (large, centered) ──
+    const badgeRadius = 110;
+    const badgeCY = y + badgeRadius;
+    drawBadgeCircle(ctx, w / 2, badgeCY, badgeRadius, emoji);
+    y = badgeCY + badgeRadius + 50;
+
+    // ── PILL ──
+    const pillText = `${emoji}  ${getPillLabel(data)}`;
+    drawPill(ctx, w / 2, y, pillText);
+    y += 55;
+
+    // ── BADGE NAME (large, bold) ──
+    ctx.save();
+    ctx.font = "bold 60px system-ui, -apple-system, sans-serif";
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
-    ctx.shadowColor = "rgba(0,0,0,0.4)";
-    ctx.shadowBlur = 10;
+    ctx.shadowColor = "rgba(0,0,0,0.3)";
+    ctx.shadowBlur = 8;
     const title = getTitle(data);
-    const titleLines = wrapText(ctx, title, w - 160);
-    const titleStartY = midY + 40;
+    const titleLines = wrapText(ctx, title, contentW);
     titleLines.forEach((line, i) => {
-      ctx.fillText(line, w / 2, titleStartY + i * 76);
+      ctx.fillText(line, w / 2, y + i * 72);
     });
     ctx.restore();
+    y += titleLines.length * 72 + 20;
 
-    // Achievement pill below title
-    const pillY = titleStartY + titleLines.length * 76 + 40;
-    drawPill(ctx, w / 2, pillY, pill.label, pill);
-
-    // Description text
+    // ── DESCRIPTION ──
     ctx.save();
-    ctx.font = "34px system-ui, -apple-system, sans-serif";
+    ctx.font = "32px system-ui, -apple-system, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(209,213,219,0.9)";
-    const desc = getDescription(data);
-    const descLines = wrapText(ctx, desc, w - 200);
-    const descStartY = pillY + 60;
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    const descLines = wrapText(ctx, getDescription(data), contentW);
     descLines.forEach((line, i) => {
-      ctx.fillText(line, w / 2, descStartY + i * 46);
+      ctx.fillText(line, w / 2, y + i * 44);
     });
     ctx.restore();
+    y += descLines.length * 44 + 20;
 
-    // Curiosity pitch line (italic)
-    ctx.save();
-    ctx.font = "italic 28px system-ui, -apple-system, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(196,167,255,0.8)";
-    const pitchLines = wrapText(ctx, PITCH, w - 180);
-    const pitchY = descStartY + descLines.length * 46 + 36;
-    pitchLines.forEach((line, i) => {
-      ctx.fillText(line, w / 2, pitchY + i * 38);
-    });
-    ctx.restore();
-
-    // ── BOTTOM ZONE ──
-    const bottomY = h - 350;
-
-    // Gradient separator
-    drawGradientLine(ctx, w / 2, bottomY, w * 0.5);
-
-    // Mascot on the left
-    if (mascotImg) {
-      const mascotH = 220;
-      const mascotW = (mascotImg.width / mascotImg.height) * mascotH;
-      ctx.globalAlpha = 0.95;
-      ctx.drawImage(mascotImg, 80, h - mascotH - 100, mascotW, mascotH);
-      ctx.globalAlpha = 1;
+    // ── BADGE COUNT (social proof) ──
+    if (data.badgeCount && data.badgeCount > 0) {
+      ctx.save();
+      ctx.font = "bold 26px system-ui, -apple-system, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "rgba(255,255,255,0.6)";
+      ctx.fillText(`${data.badgeCount} Badge${data.badgeCount > 1 ? "s" : ""} Earned`, w / 2, y);
+      ctx.restore();
+      y += 40;
     }
 
-    // Right side: CTA + URL + handle
-    const textX = mascotImg ? w * 0.6 : w / 2;
-    const textAlign: CanvasTextAlign = mascotImg ? "center" : "center";
-    const textAreaCenterX = mascotImg ? (w * 0.4 + w) / 2 : w / 2;
-
-    ctx.save();
-    ctx.textAlign = textAlign;
-
-    // "Join the movement 💜"
-    ctx.font = "bold 38px system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "white";
-    ctx.fillText("Join the movement 💜", textAreaCenterX, h - 260);
-
-    // URL
-    ctx.font = "bold 42px system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "rgba(167,139,250,1)";
-    ctx.fillText("positivethots.app", textAreaCenterX, h - 200);
+    // ── BOTTOM ZONE ──
+    // Position from bottom up within safe area
+    const botY = h - safeBot;
 
     // Handle
-    ctx.font = "30px system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "rgba(156,163,175,0.8)";
-    ctx.fillText(HANDLE, textAreaCenterX, h - 150);
-
+    ctx.save();
+    ctx.font = "28px system-ui, -apple-system, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.fillText(HANDLE, w / 2, botY);
     ctx.restore();
 
-    // Bottom sparkle dots decoration
-    const sparkleColors = ["rgba(139,92,246,0.5)", "rgba(236,72,153,0.4)", "rgba(250,204,21,0.4)"];
-    for (let i = 0; i < 12; i++) {
-      const sx = w * 0.15 + Math.random() * w * 0.7;
-      const sy = h - 60 + Math.random() * 40 - 20;
-      const sr = 2 + Math.random() * 3;
+    // URL
+    ctx.save();
+    ctx.font = "bold 38px system-ui, -apple-system, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.fillText("positivethots.com", w / 2, botY - 50);
+    ctx.restore();
+
+    // CTA
+    ctx.save();
+    ctx.font = "bold 32px system-ui, -apple-system, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.fillText("Join the journey →", w / 2, botY - 100);
+    ctx.restore();
+
+    // Separator above CTA
+    drawGradientSeparator(ctx, w / 2, botY - 140, w * 0.4);
+
+    // Mascot (left of CTA area, if available)
+    if (mascotImg && mascotImg.naturalWidth > 0) {
+      const mH = 160;
+      const mW = (mascotImg.width / mascotImg.height) * mH;
       ctx.save();
-      ctx.fillStyle = sparkleColors[i % sparkleColors.length];
-      ctx.globalAlpha = 0.4 + Math.random() * 0.4;
-      ctx.beginPath();
-      ctx.arc(sx, sy, sr, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.globalAlpha = 0.85;
+      ctx.drawImage(mascotImg, 60, botY - 160, mW, mH);
       ctx.restore();
     }
 
   } else {
-    // ════════════════════════════════════════
-    // SQUARE FORMAT (1:1)
-    // Wordmark top-left, URL bottom-center
-    // ════════════════════════════════════════
+    // ════════════════════════════════════════════
+    // SQUARE FORMAT (1:1 = 1080×1080)
+    // Tight, centered layout
+    // ════════════════════════════════════════════
+    const padX = 80;
+    const cW = w - padX * 2;
+    let y = 80;
 
-    // Top-left wordmark
+    // ── WORDMARK (top-left) ──
     ctx.save();
-    ctx.font = "42px 'Pacifico', cursive";
+    ctx.font = "40px 'Pacifico', cursive";
     ctx.textAlign = "left";
     ctx.fillStyle = "white";
-    ctx.shadowColor = "rgba(0,0,0,0.4)";
+    ctx.shadowColor = "rgba(0,0,0,0.3)";
     ctx.shadowBlur = 6;
-    ctx.fillText("Positive Thots", 60, 80);
+    ctx.fillText("Positive Thots", padX, y);
     ctx.restore();
+    y += 70;
 
-    // Tagline under wordmark
-    ctx.save();
-    ctx.font = "22px system-ui, -apple-system, sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillStyle = "rgba(196,167,255,0.8)";
-    ctx.fillText(TAGLINE, 62, 115);
-    ctx.restore();
-
-    // Center content
-    const midY = h * 0.45;
-    drawGlowingBadgeIcon(ctx, w / 2, midY - 60, pill.emoji, data.type);
-
-    // Title
-    ctx.save();
-    ctx.font = "bold 56px system-ui, -apple-system, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "white";
-    ctx.shadowColor = "rgba(0,0,0,0.4)";
-    ctx.shadowBlur = 8;
-    const title = getTitle(data);
-    const titleLines = wrapText(ctx, title, w - 140);
-    titleLines.forEach((line, i) => {
-      ctx.fillText(line, w / 2, midY + 50 + i * 66);
-    });
-    ctx.restore();
-
-    // Pill
-    const pillY = midY + 50 + titleLines.length * 66 + 30;
-    drawPill(ctx, w / 2, pillY, pill.label, pill);
-
-    // Description
-    ctx.save();
-    ctx.font = "30px system-ui, -apple-system, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(209,213,219,0.9)";
-    const descLines = wrapText(ctx, getDescription(data), w - 180);
-    const descY = pillY + 50;
-    descLines.forEach((line, i) => {
-      ctx.fillText(line, w / 2, descY + i * 40);
-    });
-    ctx.restore();
-
-    // Pitch line
+    // ── HOOK LINE ──
     ctx.save();
     ctx.font = "italic 24px system-ui, -apple-system, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(196,167,255,0.7)";
-    const pitchLines = wrapText(ctx, PITCH, w - 160);
-    const pitchY = descY + descLines.length * 40 + 24;
-    pitchLines.forEach((line, i) => {
-      ctx.fillText(line, w / 2, pitchY + i * 32);
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    ctx.fillText(HOOK_LINES[data.type], w / 2, y);
+    ctx.restore();
+    y += 50;
+
+    // ── BADGE ICON ──
+    const badgeR = 85;
+    const badgeCY = y + badgeR;
+    drawBadgeCircle(ctx, w / 2, badgeCY, badgeR, emoji);
+    y = badgeCY + badgeR + 35;
+
+    // ── PILL ──
+    const pillText = `${emoji}  ${getPillLabel(data)}`;
+    drawPill(ctx, w / 2, y, pillText);
+    y += 50;
+
+    // ── TITLE ──
+    ctx.save();
+    ctx.font = "bold 52px system-ui, -apple-system, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.shadowColor = "rgba(0,0,0,0.3)";
+    ctx.shadowBlur = 6;
+    const title = getTitle(data);
+    const titleLines = wrapText(ctx, title, cW);
+    titleLines.forEach((line, i) => {
+      ctx.fillText(line, w / 2, y + i * 62);
     });
     ctx.restore();
+    y += titleLines.length * 62 + 14;
 
-    // Mascot bottom-left (smaller)
-    if (mascotImg) {
-      const mH = 140;
-      const mW = (mascotImg.width / mascotImg.height) * mH;
-      ctx.globalAlpha = 0.9;
-      ctx.drawImage(mascotImg, 50, h - mH - 50, mW, mH);
-      ctx.globalAlpha = 1;
+    // ── DESCRIPTION ──
+    ctx.save();
+    ctx.font = "28px system-ui, -apple-system, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    const descLines = wrapText(ctx, getDescription(data), cW);
+    descLines.forEach((line, i) => {
+      ctx.fillText(line, w / 2, y + i * 38);
+    });
+    ctx.restore();
+    y += descLines.length * 38 + 10;
+
+    // ── BADGE COUNT ──
+    if (data.badgeCount && data.badgeCount > 0) {
+      ctx.save();
+      ctx.font = "bold 22px system-ui, -apple-system, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "rgba(255,255,255,0.55)";
+      ctx.fillText(`${data.badgeCount} Badge${data.badgeCount > 1 ? "s" : ""} Earned`, w / 2, y);
+      ctx.restore();
     }
 
-    // Bottom center: URL + handle
+    // ── BOTTOM: CTA + URL + handle ──
     ctx.save();
     ctx.textAlign = "center";
-    ctx.font = "bold 36px system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "rgba(167,139,250,1)";
-    ctx.fillText("positivethots.app", w / 2, h - 80);
-    ctx.font = "26px system-ui, -apple-system, sans-serif";
-    ctx.fillStyle = "rgba(156,163,175,0.7)";
-    ctx.fillText(HANDLE, w / 2, h - 40);
+
+    ctx.font = "bold 30px system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.fillText("Join the journey → positivethots.com", w / 2, h - 80);
+
+    ctx.font = "24px system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.fillText(HANDLE, w / 2, h - 42);
+
     ctx.restore();
   }
 
