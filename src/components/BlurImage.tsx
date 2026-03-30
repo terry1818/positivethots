@@ -72,4 +72,12 @@ export const BlurImage = memo(({
       )}
     </div>
   );
-};
+}, (prev, next) =>
+  prev.src === next.src &&
+  prev.alt === next.alt &&
+  prev.className === next.className &&
+  prev.aspectRatio === next.aspectRatio &&
+  prev.fetchPriority === next.fetchPriority
+);
+
+BlurImage.displayName = "BlurImage";

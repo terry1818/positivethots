@@ -35,4 +35,6 @@ export const AnimatedCounter = memo(({ end, duration = 1000, prefix = "", suffix
   }, [end, duration]);
 
   return <span className={className}>{prefix}{count}{suffix}</span>;
-};
+}, (prev, next) => prev.end === next.end && prev.className === next.className);
+
+AnimatedCounter.displayName = "AnimatedCounter";
