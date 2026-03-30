@@ -56,6 +56,7 @@ const BRAND_COLORS = [
 
 
 export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, onClose }: CelebrationModalProps) => {
+  const prefersReducedMotion = useReducedMotion();
   const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string; size: number; shape: string }>>([]);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
