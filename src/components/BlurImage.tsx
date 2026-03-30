@@ -1,4 +1,4 @@
-import { useEffect, useState, ImgHTMLAttributes } from "react";
+import { useEffect, useState, memo, ImgHTMLAttributes } from "react";
 import { User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
