@@ -200,12 +200,34 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
 
 // Read-aloud toolbar component
 const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
-  const { isPlaying, isPaused, isSupported, play, pause, resume, stop, rate, setRate, RATES } = useReadAloud();
+  const { isPlaying, isPaused, isSupported, play, pause, resume, stop, rate, setRate, RATES, voiceGender, setVoiceGender } = useReadAloud();
 
   if (!isSupported) return null;
 
   return (
-    <div role="toolbar" aria-label="Read aloud controls" className="flex items-center gap-2 py-2">
+    <div role="toolbar" aria-label="Read aloud controls" className="flex items-center gap-2 py-2 flex-wrap">
+      {/* Voice gender toggle */}
+      <div className="flex items-center border border-border rounded-md overflow-hidden">
+        <button
+          onClick={() => setVoiceGender("female")}
+          className={cn("px-2 py-1 text-xs font-medium transition-colors",
+            voiceGender === "female" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
+          aria-label="Female voice"
+          aria-pressed={voiceGender === "female"}
+        >
+          ♀
+        </button>
+        <button
+          onClick={() => setVoiceGender("male")}
+          className={cn("px-2 py-1 text-xs font-medium transition-colors",
+            voiceGender === "male" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
+          aria-label="Male voice"
+          aria-pressed={voiceGender === "male"}
+        >
+          ♂
+        </button>
+      </div>
+
       {!isPlaying && !isPaused && (
         <Button variant="outline" size="sm" onClick={() => play(contentText)}
           className="gap-1.5 text-xs" aria-label="Read section aloud">

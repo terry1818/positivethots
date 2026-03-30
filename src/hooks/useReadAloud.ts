@@ -2,63 +2,96 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 function stripMarkdown(text: string): string {
   return text
-    // Remove headings
     .replace(/^#{1,6}\s+/gm, "")
-    // Convert links [text](url) to just text
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    // Remove youtube embeds [youtube:Title](url)
     .replace(/\[youtube:[^\]]*\]\([^)]+\)/g, "")
-    // Remove bold/italic markers
     .replace(/\*\*(.+?)\*\*/g, "$1")
     .replace(/\*(.+?)\*/g, "$1")
-    // Remove list markers
     .replace(/^- /gm, "")
-    // Collapse multiple newlines
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 
+export type VoiceGender = "female" | "male";
 const RATES = [0.8, 1.0, 1.25, 1.5] as const;
+const VOICE_PREF_KEY = "pt_voice_gender";
+
+function getStoredVoice(): VoiceGender {
+  try {
+    const v = localStorage.getItem(VOICE_PREF_KEY);
+    if (v === "male" || v === "female") return v;
+  } catch {}
+  return "female";
+}
+
+function pickBestVoice(voices: SpeechSynthesisVoice[], gender: VoiceGender): SpeechSynthesisVoice | null {
+  if (!voices.length) return null;
+
+  const enVoices = voices.filter(v => v.lang.startsWith("en"));
+  if (!enVoices.length) return voices[0];
+
+  // Keywords that hint at gender in voice names
+  const femaleHints = ["female", "woman", "samantha", "karen", "victoria", "fiona", "moira", "tessa", "zira", "hazel", "susan", "jenny", "aria", "sara"];
+  const maleHints = ["male", "daniel", "james", "tom", "alex", "david", "mark", "guy", "fred", "aaron", "christopher", "roger"];
+  const hints = gender === "female" ? femaleHints : maleHints;
+
+  // Prefer remote/cloud voices with matching gender hints
+  const remoteMatches = enVoices.filter(v => !v.localService && hints.some(h => v.name.toLowerCase().includes(h)));
+  if (remoteMatches.length) return remoteMatches[0];
+
+  // Local voices with matching gender hints
+  const localMatches = enVoices.filter(v => hints.some(h => v.name.toLowerCase().includes(h)));
+  if (localMatches.length) return localMatches[0];
+
+  // Fallback: any remote English voice
+  const remoteEn = enVoices.find(v => !v.localService);
+  if (remoteEn) return remoteEn;
+
+  return enVoices[0];
+}
 
 export function useReadAloud() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [rate, setRateState] = useState(1.0);
+  const [voiceGender, setVoiceGenderState] = useState<VoiceGender>(getStoredVoice);
   const [isSupported] = useState(() => typeof window !== "undefined" && "speechSynthesis" in window);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const voiceRef = useRef<SpeechSynthesisVoice | null>(null);
+  const voicesLoadedRef = useRef(false);
 
-  // Pick best voice
-  const pickVoice = useCallback(() => {
+  const refreshVoice = useCallback(() => {
     if (!isSupported) return;
     const voices = window.speechSynthesis.getVoices();
-    // Prefer remote English voices (cloud/neural)
-    const remoteEn = voices.find(v => v.lang.startsWith("en") && !v.localService);
-    if (remoteEn) { voiceRef.current = remoteEn; return; }
-    // Fallback: any English voice
-    const anyEn = voices.find(v => v.lang.startsWith("en"));
-    if (anyEn) { voiceRef.current = anyEn; return; }
-    // Default
-    voiceRef.current = voices[0] || null;
-  }, [isSupported]);
+    if (voices.length) voicesLoadedRef.current = true;
+    voiceRef.current = pickBestVoice(voices, voiceGender);
+  }, [isSupported, voiceGender]);
 
   useEffect(() => {
     if (!isSupported) return;
-    pickVoice();
-    const handler = () => pickVoice();
+    refreshVoice();
+    const handler = () => refreshVoice();
     window.speechSynthesis.addEventListener("voiceschanged", handler);
     return () => {
       window.speechSynthesis.removeEventListener("voiceschanged", handler);
       window.speechSynthesis.cancel();
     };
-  }, [isSupported, pickVoice]);
+  }, [isSupported, refreshVoice]);
+
+  const setVoiceGender = useCallback((g: VoiceGender) => {
+    setVoiceGenderState(g);
+    try { localStorage.setItem(VOICE_PREF_KEY, g); } catch {}
+  }, []);
 
   const play = useCallback((text: string) => {
     if (!isSupported) return;
     window.speechSynthesis.cancel();
     const clean = stripMarkdown(text);
     const utterance = new SpeechSynthesisUtterance(clean);
-    if (voiceRef.current) utterance.voice = voiceRef.current;
+    // Re-pick voice in case gender changed
+    const voices = window.speechSynthesis.getVoices();
+    const best = pickBestVoice(voices, voiceGender);
+    if (best) utterance.voice = best;
     utterance.rate = rate;
     utterance.onend = () => { setIsPlaying(false); setIsPaused(false); };
     utterance.onerror = () => { setIsPlaying(false); setIsPaused(false); };
@@ -66,7 +99,7 @@ export function useReadAloud() {
     window.speechSynthesis.speak(utterance);
     setIsPlaying(true);
     setIsPaused(false);
-  }, [isSupported, rate]);
+  }, [isSupported, rate, voiceGender]);
 
   const pause = useCallback(() => {
     if (!isSupported) return;
@@ -91,12 +124,13 @@ export function useReadAloud() {
 
   const setRate = useCallback((r: number) => {
     setRateState(r);
-    // If currently speaking, restart with new rate
     if (utteranceRef.current && (isPlaying || isPaused)) {
       const text = utteranceRef.current.text;
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      if (voiceRef.current) utterance.voice = voiceRef.current;
+      const voices = window.speechSynthesis.getVoices();
+      const best = pickBestVoice(voices, voiceGender);
+      if (best) utterance.voice = best;
       utterance.rate = r;
       utterance.onend = () => { setIsPlaying(false); setIsPaused(false); };
       utterance.onerror = () => { setIsPlaying(false); setIsPaused(false); };
@@ -105,7 +139,7 @@ export function useReadAloud() {
       setIsPlaying(true);
       setIsPaused(false);
     }
-  }, [isPlaying, isPaused]);
+  }, [isPlaying, isPaused, voiceGender]);
 
-  return { isPlaying, isPaused, isSupported, play, pause, resume, stop, rate, setRate, RATES };
+  return { isPlaying, isPaused, isSupported, play, pause, resume, stop, rate, setRate, RATES, voiceGender, setVoiceGender };
 }
