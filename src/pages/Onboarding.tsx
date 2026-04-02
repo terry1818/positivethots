@@ -458,7 +458,7 @@ const Onboarding = () => {
 
       trackEvent('onboarding_completed', {});
       toast.success("Welcome to Positive Thots! 💕");
-      navigate("/learn");
+      setShowValueProp(true);
     } catch (error: any) {
       console.error("Onboarding error:", error);
       toast.error("Failed to complete profile setup");
