@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, BookOpen, MessageCircle, User, Calendar } from "lucide-react";
+import { Heart, Sparkles, BookOpen, ShoppingBag, MessageCircle, User, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useCallback } from "react";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
