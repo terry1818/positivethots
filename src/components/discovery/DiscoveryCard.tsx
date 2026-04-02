@@ -141,7 +141,18 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
           <div className="flex items-center gap-1.5">
             <h3 className="text-xl font-bold">{profile.name}, {profile.age}</h3>
             {profile.badge_count != null && profile.badge_count >= 5 && (
-              <EducationTierBadge badgeCount={profile.badge_count} size="sm" />
+              <>
+                <EducationTierBadge badgeCount={profile.badge_count} size="sm" />
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setBadgeSheetOpen(true); }}
+                  className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Badge info"
+                >
+                  <Info className="h-3 w-3" />
+                </button>
+              </>
+            )}
             )}
           </div>
           {profile.pronouns && <p className="text-sm text-muted-foreground">{profile.pronouns}</p>}
