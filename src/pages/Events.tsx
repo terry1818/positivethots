@@ -229,39 +229,57 @@ const Events = () => {
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : !hasEventsAccess ? (
-          /* State 1: Education not complete — info box front and center */
-          <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
-            <div className="bg-background/95 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-xl border border-border w-full max-w-md text-center">
-              <div className="text-4xl sm:text-5xl mb-4">🎓</div>
-              <h3 className="font-bold text-lg sm:text-xl mb-3">Complete Advanced Topics to Unlock Events</h3>
-              <p className="text-sm sm:text-base text-muted-foreground mb-6">
-                Community events and workshops are reserved for members who have completed the full education curriculum — including the Advanced Topics tier. This ensures every attendee arrives with shared knowledge and intentions.
-              </p>
-              <div className="space-y-2.5 text-left mb-6">
-                <div className="flex items-center gap-2 text-sm sm:text-base">
-                  <span className="text-green-500">✓</span>
-                  <span className="text-muted-foreground">Foundation (Required)</span>
+          /* State 1: Education not complete — blurred skeletons with overlay */
+          <div className="relative min-h-[60vh]">
+            <div className="space-y-4 blur-sm pointer-events-none select-none" aria-hidden="true">
+              {[1, 2, 3].map(i => (
+                <Card key={i} className="overflow-hidden">
+                  <div className="h-40 bg-gradient-to-br from-primary/20 to-secondary/20" />
+                  <CardHeader>
+                    <div className="h-5 bg-muted rounded w-3/4" />
+                    <div className="h-3 bg-muted rounded w-1/2 mt-2" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-3 bg-muted rounded w-full mb-2" />
+                    <div className="h-3 bg-muted rounded w-2/3" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 gap-4">
+              <div className="bg-background/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-border w-full max-w-sm sm:max-w-md">
+                <div className="text-4xl mb-3">🎓</div>
+                <h3 className="font-bold text-lg mb-2">Complete Advanced Topics to Unlock Events</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Community events and workshops are reserved for members who have completed the full education curriculum — including the Advanced Topics tier. This ensures every attendee arrives with shared knowledge and intentions.
+                </p>
+                <div className="space-y-2 text-left mb-4">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-green-500">✓</span>
+                    <span className="text-muted-foreground">Foundation (Required)</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">○</span>
+                    <span className="text-muted-foreground">Sexual Health</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">○</span>
+                    <span className="text-muted-foreground">Identity & Diversity</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">○</span>
+                    <span className="text-muted-foreground">Healthy Relationships</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <span className="text-primary">★</span>
+                    <span>Advanced Topics — unlocks Events</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm sm:text-base">
-                  <span className="text-muted-foreground">○</span>
-                  <span className="text-muted-foreground">Sexual Health</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm sm:text-base">
-                  <span className="text-muted-foreground">○</span>
-                  <span className="text-muted-foreground">Identity & Diversity</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm sm:text-base">
-                  <span className="text-muted-foreground">○</span>
-                  <span className="text-muted-foreground">Healthy Relationships</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm sm:text-base font-semibold">
-                  <span className="text-primary">★</span>
-                  <span>Advanced Topics — unlocks Events</span>
-                </div>
+                <Button className="w-full" onClick={() => navigate("/learn")}>
+                  Continue Learning →
+                </Button>
               </div>
-              <Button className="w-full text-base py-5" onClick={() => navigate("/learn")}>
-                Continue Learning →
-              </Button>
             </div>
           </div>
         ) : !isVIP ? (
