@@ -11,11 +11,12 @@ const navItems = [
   { path: "/", icon: Heart, label: "Discover" },
   { path: "/likes", icon: Sparkles, label: "Likes" },
   { path: "/learn", icon: BookOpen, label: "Learn" },
-  { path: "/shop", icon: ShoppingBag, label: "Shop" },
   { path: "/events", icon: Calendar, label: "Events" },
   { path: "/messages", icon: MessageCircle, label: "Chat" },
   { path: "/profile", icon: User, label: "Profile" },
 ];
+
+const SHOP_EXTERNAL_URL = "https://shop.positivethots.org";
 
 export const BottomNav = () => {
   const navigate = useNavigate();
