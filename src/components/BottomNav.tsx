@@ -17,7 +17,7 @@ const navItems = [
   { path: "/profile", icon: User, label: "Profile" },
 ];
 
-const SHOP_EXTERNAL_URL = "https://shop.positivethots.org";
+
 
 export const BottomNav = () => {
   const navigate = useNavigate();
