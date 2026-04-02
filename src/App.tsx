@@ -77,8 +77,7 @@ const AppContent = () => {
         <Route path="/profile" element={<Suspense fallback={<PageSkeleton variant="profile" />}><Profile /></Suspense>} />
         <Route path="/profile/edit" element={<Suspense fallback={<PageSkeleton variant="profile" />}><EditProfile /></Suspense>} />
         <Route path="/settings" element={<Suspense fallback={<PageLoader />}><Settings /></Suspense>} />
-        <Route path="/shop" element={<Suspense fallback={<PageLoader />}><Shop /></Suspense>} />
-        <Route path="/product/:handle" element={<Suspense fallback={<PageLoader />}><ProductDetail /></Suspense>} />
+        {/* Shop is now an external link to shop.positivethots.org */}
         <Route path="/resources" element={<Suspense fallback={<PageLoader />}><Resources /></Suspense>} />
         <Route path="/events" element={<Suspense fallback={<PageLoader />}><Events /></Suspense>} />
         <Route path="/journal" element={<Suspense fallback={<PageLoader />}><LearningJournal /></Suspense>} />
