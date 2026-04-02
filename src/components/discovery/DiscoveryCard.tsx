@@ -217,7 +217,15 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
         </Button>
       </div>
     </div>
-  </Card>
+   </Card>
+   <BadgeCredibilitySheet
+     open={badgeSheetOpen}
+     onOpenChange={setBadgeSheetOpen}
+     moduleSlug="consent-fundamentals"
+     title="Education Badges"
+     tier="foundation"
+   />
+   </>
   );
 });
 
