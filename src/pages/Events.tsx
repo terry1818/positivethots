@@ -247,7 +247,7 @@ const Events = () => {
               ))}
             </div>
 
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 gap-4">
+            <div className="absolute inset-0 flex flex-col items-center justify-start pt-8 text-center px-4 sm:px-6 gap-4">
               <div className="bg-background/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-border w-full max-w-sm sm:max-w-md">
                 <div className="text-4xl mb-3">🎓</div>
                 <h3 className="font-bold text-lg mb-2">Complete Advanced Topics to Unlock Events</h3>
