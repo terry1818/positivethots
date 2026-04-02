@@ -44,6 +44,7 @@ interface DiscoveryCardProps {
 export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperLike, canSuperLike, superLikeBalance }: DiscoveryCardProps) => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
+  const [badgeSheetOpen, setBadgeSheetOpen] = useState(false);
 
   const handleSuperLikeClick = () => {
     if (superLikeBalance !== undefined && superLikeBalance <= 0) {
