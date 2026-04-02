@@ -4,11 +4,12 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getLevelName, getLevelEmoji } from "@/hooks/useLearningStats";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Clock, Users, Shield, BookOpen, Star, Rocket, Award } from "lucide-react";
+import { Heart, MapPin, Clock, Users, Shield, BookOpen, Star, Rocket, Award, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { EducationTierBadge } from "@/components/EducationTierBadge";
+import { BadgeCredibilitySheet } from "@/components/BadgeCredibilitySheet";
 
 interface DiscoveryProfile {
   id: string;
