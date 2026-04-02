@@ -102,17 +102,6 @@ export const BottomNav = () => {
             </Button>
           );
         })}
-        {/* External Shop link */}
-        <a
-          href={SHOP_EXTERNAL_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex flex-col items-center gap-0.5 h-auto min-h-[48px] min-w-[48px] py-2 px-2 text-muted-foreground hover:text-foreground transition-all duration-200"
-          aria-label="Shop"
-        >
-          <ShoppingBag className="h-5 w-5" aria-hidden="true" />
-          <span className="text-[10px] font-medium" aria-hidden="true">Shop</span>
-        </a>
       </div>
     </nav>
   );
