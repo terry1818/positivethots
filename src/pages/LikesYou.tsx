@@ -14,6 +14,7 @@ import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
+import { Logo } from "@/components/Logo";
 
 interface LikerProfile {
   id: string; name: string; age: number; profile_image?: string; location?: string; bio?: string;
