@@ -20,6 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { Logo } from "@/components/Logo";
 
 interface Event {
   id: string;
