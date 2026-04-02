@@ -7,9 +7,9 @@ interface LogoProps {
 
 export const Logo = ({ size = "md" }: LogoProps) => {
   const imgSizes = {
-    sm: "h-14",
-    md: "h-20",
-    lg: "h-44"
+    sm: "h-[67px]",
+    md: "h-24",
+    lg: "h-52"
   };
 
   return (
