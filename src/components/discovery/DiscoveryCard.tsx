@@ -154,7 +154,6 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
                 </button>
               </>
             )}
-            )}
           </div>
           {profile.pronouns && <p className="text-sm text-muted-foreground">{profile.pronouns}</p>}
           {profile.learning_level && profile.learning_level > 1 && (
