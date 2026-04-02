@@ -32,8 +32,7 @@ const LikesYou = lazy(() => import("./pages/LikesYou"));
 const Premium = lazy(() => import("./pages/Premium"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
-const Shop = lazy(() => import("./pages/Shop"));
-const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+// Shop is now an external link — no in-app route needed
 const Resources = lazy(() => import("./pages/Resources"));
 const Events = lazy(() => import("./pages/Events"));
 const LearningJournal = lazy(() => import("./pages/LearningJournal"));
