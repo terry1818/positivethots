@@ -14,6 +14,7 @@ import { XPPopup } from "@/components/education/XPPopup";
 import { CelebrationModal } from "@/components/education/CelebrationModal";
 import { ReadingProgress } from "@/components/education/ReadingProgress";
 import { SessionIntro } from "@/components/education/SessionIntro";
+import { WhatYoullLearn } from "@/components/education/WhatYoullLearn";
 
 import { useAntiCheat } from "@/hooks/useAntiCheat";
 import { useModuleProgress } from "@/hooks/useModuleProgress";
@@ -343,6 +344,14 @@ const LearnModule = () => {
       <main className="flex-1 container max-w-2xl mx-auto px-4 py-6">
         <AdminPanel module={module} questions={questions} onUpdate={handleRefresh} />
 
+        {/* What You'll Learn preview */}
+        {!showQuiz && (
+          <WhatYoullLearn
+            moduleSlug={module.slug}
+            tier={module.tier || "foundation"}
+            estimatedMinutes={(module as any).estimated_minutes}
+          />
+        )}
         {!showQuiz ? (
           <>
             {hasSections ? (

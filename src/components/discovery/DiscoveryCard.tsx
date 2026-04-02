@@ -4,11 +4,12 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getLevelName, getLevelEmoji } from "@/hooks/useLearningStats";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Clock, Users, Shield, BookOpen, Star, Rocket, Award } from "lucide-react";
+import { Heart, MapPin, Clock, Users, Shield, BookOpen, Star, Rocket, Award, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { EducationTierBadge } from "@/components/EducationTierBadge";
+import { BadgeCredibilitySheet } from "@/components/BadgeCredibilitySheet";
 
 interface DiscoveryProfile {
   id: string;
@@ -43,6 +44,7 @@ interface DiscoveryCardProps {
 export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperLike, canSuperLike, superLikeBalance }: DiscoveryCardProps) => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
+  const [badgeSheetOpen, setBadgeSheetOpen] = useState(false);
 
   const handleSuperLikeClick = () => {
     if (superLikeBalance !== undefined && superLikeBalance <= 0) {
@@ -59,6 +61,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
   };
 
   return (
+  <>
   <Card
     className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-stagger-fade cursor-pointer"
     style={{ animationDelay: `${index * 80}ms` }}
@@ -139,7 +142,17 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
           <div className="flex items-center gap-1.5">
             <h3 className="text-xl font-bold">{profile.name}, {profile.age}</h3>
             {profile.badge_count != null && profile.badge_count >= 5 && (
-              <EducationTierBadge badgeCount={profile.badge_count} size="sm" />
+              <>
+                <EducationTierBadge badgeCount={profile.badge_count} size="sm" />
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setBadgeSheetOpen(true); }}
+                  className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Badge info"
+                >
+                  <Info className="h-3 w-3" />
+                </button>
+              </>
             )}
           </div>
           {profile.pronouns && <p className="text-sm text-muted-foreground">{profile.pronouns}</p>}
@@ -204,7 +217,15 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
         </Button>
       </div>
     </div>
-  </Card>
+   </Card>
+   <BadgeCredibilitySheet
+     open={badgeSheetOpen}
+     onOpenChange={setBadgeSheetOpen}
+     moduleSlug="consent-fundamentals"
+     title="Education Badges"
+     tier="foundation"
+   />
+   </>
   );
 });
 

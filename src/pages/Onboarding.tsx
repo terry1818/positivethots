@@ -22,6 +22,7 @@ import { ProgressRing } from "@/components/onboarding/ProgressRing";
 import { MiniProfilePreview } from "@/components/onboarding/MiniProfilePreview";
 import { StepHeader } from "@/components/onboarding/StepHeader";
 import { PromptPicker } from "@/components/onboarding/PromptPicker";
+import { ValuePropositionScreen } from "@/components/onboarding/ValuePropositionScreen";
 
 // ── Option Data ──
 
@@ -162,6 +163,7 @@ const Onboarding = () => {
   const [showInterstitial, setShowInterstitial] = useState(false);
   const [interstitialData, setInterstitialData] = useState({ emoji: "", message: "", nextPhase: "", nextUp: "" });
   const [showQuickStart, setShowQuickStart] = useState(false);
+  const [showValueProp, setShowValueProp] = useState(false);
 
   const [formData, setFormData] = useState({
     enmExperienceLevel: "",
@@ -456,7 +458,7 @@ const Onboarding = () => {
 
       trackEvent('onboarding_completed', {});
       toast.success("Welcome to Positive Thots! 💕");
-      navigate("/learn");
+      setShowValueProp(true);
     } catch (error: any) {
       console.error("Onboarding error:", error);
       toast.error("Failed to complete profile setup");
@@ -486,6 +488,10 @@ const Onboarding = () => {
         <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/5 blur-3xl animate-blob-float" style={{ animationDelay: "-6s" }} />
         <div className="absolute top-1/3 right-0 w-56 h-56 rounded-full bg-accent/5 blur-3xl animate-blob-float" style={{ animationDelay: "-12s" }} />
       </div>
+
+      {showValueProp && (
+        <ValuePropositionScreen onBegin={() => navigate("/learn")} />
+      )}
 
       <MicroCelebration trigger={celebrationTrigger} />
       <PhaseInterstitial
