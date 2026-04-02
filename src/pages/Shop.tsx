@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShopifyProduct, storefrontApiRequest, PRODUCTS_QUERY } from "@/lib/shopify";
+import { ShopifyProduct, storefrontApiRequest, PRODUCTS_QUERY, COLLECTIONS_QUERY, COLLECTION_PRODUCTS_QUERY } from "@/lib/shopify";
 import { useCartStore } from "@/stores/cartStore";
 import { CartDrawer } from "@/components/CartDrawer";
 import { BottomNav } from "@/components/BottomNav";
@@ -8,32 +8,62 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, Plus, Loader2 } from "lucide-react";
+import { ShoppingBag, Plus, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
+interface ShopifyCollection {
+  node: { id: string; title: string; handle: string };
+}
+
 const Shop = () => {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
+  const [collections, setCollections] = useState<ShopifyCollection[]>([]);
+  const [activeCollection, setActiveCollection] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   const addItem = useCartStore((s) => s.addItem);
   const isCartLoading = useCartStore((s) => s.isLoading);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await storefrontApiRequest(PRODUCTS_QUERY, { first: 50 });
-        if (data?.data?.products?.edges) {
-          setProducts(data.data.products.edges);
-        }
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setLoading(false);
+  const fetchCollections = async () => {
+    try {
+      const data = await storefrontApiRequest(COLLECTIONS_QUERY, { first: 20 });
+      if (data?.data?.collections?.edges) {
+        setCollections(data.data.collections.edges);
       }
-    };
+    } catch {
+      // Collections are optional — don't block on failure
+    }
+  };
+
+  const fetchProducts = async (collectionHandle?: string | null) => {
+    setLoading(true);
+    setError(false);
+    try {
+      if (collectionHandle) {
+        const data = await storefrontApiRequest(COLLECTION_PRODUCTS_QUERY, { handle: collectionHandle, first: 50 });
+        setProducts(data?.data?.collection?.products?.edges || []);
+      } else {
+        const data = await storefrontApiRequest(PRODUCTS_QUERY, { first: 50 });
+        setProducts(data?.data?.products?.edges || []);
+      }
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCollections();
     fetchProducts();
   }, []);
+
+  const handleCollectionChange = (handle: string | null) => {
+    setActiveCollection(handle);
+    fetchProducts(handle);
+  };
 
   const handleAddToCart = async (product: ShopifyProduct, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -53,7 +83,7 @@ const Shop = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border">
-        <div className="container max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="container max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <Logo size="sm" showText={false} />
           <div className="flex items-center gap-2">
             <CartDrawer />
@@ -61,15 +91,52 @@ const Shop = () => {
         </div>
       </header>
 
-      <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-24">
+      <main className="flex-1 container max-w-2xl mx-auto px-4 py-6 pb-24">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-foreground">Shop</h1>
           <p className="text-sm text-muted-foreground mt-1">Curated products for your journey</p>
         </div>
 
-        {loading ? (
-          <div className="grid grid-cols-2 gap-3">
-            {[...Array(4)].map((_, i) => (
+        {/* Collection filters */}
+        {collections.length > 1 && (
+          <div className="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide">
+            <Button
+              variant={activeCollection === null ? "default" : "outline"}
+              size="sm"
+              className="flex-shrink-0"
+              onClick={() => handleCollectionChange(null)}
+            >
+              All
+            </Button>
+            {collections.map((col) => (
+              <Button
+                key={col.node.id}
+                variant={activeCollection === col.node.handle ? "default" : "outline"}
+                size="sm"
+                className="flex-shrink-0"
+                onClick={() => handleCollectionChange(col.node.handle)}
+              >
+                {col.node.title}
+              </Button>
+            ))}
+          </div>
+        )}
+
+        {error ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <ShoppingBag className="h-16 w-16 text-muted-foreground/40 mb-4" />
+            <h2 className="text-lg font-semibold text-foreground mb-2">Couldn't load products</h2>
+            <p className="text-sm text-muted-foreground max-w-xs mb-6">
+              We're having trouble reaching the store. Check your connection and try again.
+            </p>
+            <Button onClick={() => fetchProducts(activeCollection)} variant="outline">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Try Again
+            </Button>
+          </div>
+        ) : loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {[...Array(6)].map((_, i) => (
               <Card key={i} className="overflow-hidden">
                 <Skeleton className="aspect-square w-full" />
                 <CardContent className="p-3 space-y-2">
@@ -88,7 +155,7 @@ const Shop = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {products.map((product) => {
               const price = product.node.priceRange.minVariantPrice;
               const image = product.node.images.edges[0]?.node;
