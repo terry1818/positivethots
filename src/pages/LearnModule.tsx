@@ -14,6 +14,7 @@ import { XPPopup } from "@/components/education/XPPopup";
 import { CelebrationModal } from "@/components/education/CelebrationModal";
 import { ReadingProgress } from "@/components/education/ReadingProgress";
 import { SessionIntro } from "@/components/education/SessionIntro";
+import { WhatYoullLearn } from "@/components/education/WhatYoullLearn";
 
 import { useAntiCheat } from "@/hooks/useAntiCheat";
 import { useModuleProgress } from "@/hooks/useModuleProgress";
