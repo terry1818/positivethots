@@ -489,6 +489,10 @@ const Onboarding = () => {
         <div className="absolute top-1/3 right-0 w-56 h-56 rounded-full bg-accent/5 blur-3xl animate-blob-float" style={{ animationDelay: "-12s" }} />
       </div>
 
+      {showValueProp && (
+        <ValuePropositionScreen onBegin={() => navigate("/learn")} />
+      )}
+
       <MicroCelebration trigger={celebrationTrigger} />
       <PhaseInterstitial
         show={showInterstitial}
