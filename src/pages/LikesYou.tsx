@@ -14,6 +14,7 @@ import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
+import { Logo } from "@/components/Logo";
 
 interface LikerProfile {
   id: string; name: string; age: number; profile_image?: string; location?: string; bio?: string;
@@ -133,6 +134,9 @@ const LikesYou = () => {
       <MicroCelebration trigger={celebrationTrigger} emojis={["🎉", "💕", "✨", "💜"]} />
       <div className="flex-1 overflow-auto">
         <div className="container max-w-md mx-auto px-4 py-6">
+          <header className="flex items-center justify-center mb-4">
+            <Logo size="md" />
+          </header>
           <div className="flex items-center gap-2 mb-4">
             <Heart className="h-6 w-6 text-primary" />
             <h1 className="text-2xl font-bold">Likes</h1>
