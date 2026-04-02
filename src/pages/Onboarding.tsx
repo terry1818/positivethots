@@ -163,6 +163,7 @@ const Onboarding = () => {
   const [showInterstitial, setShowInterstitial] = useState(false);
   const [interstitialData, setInterstitialData] = useState({ emoji: "", message: "", nextPhase: "", nextUp: "" });
   const [showQuickStart, setShowQuickStart] = useState(false);
+  const [showValueProp, setShowValueProp] = useState(false);
 
   const [formData, setFormData] = useState({
     enmExperienceLevel: "",
