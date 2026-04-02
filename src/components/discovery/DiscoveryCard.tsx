@@ -61,6 +61,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
   };
 
   return (
+  <>
   <Card
     className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-stagger-fade cursor-pointer"
     style={{ animationDelay: `${index * 80}ms` }}
