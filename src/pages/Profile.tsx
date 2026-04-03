@@ -327,7 +327,7 @@ const Profile = () => {
             {profile?.interests && profile.interests.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {profile.interests.map((interest: string, idx: number) => (
-                  <Badge key={interest} variant="secondary" className="text-xs animate-stagger-fade" style={{ animationDelay: `${idx * 50}ms` }}>
+                  <Badge key={interest} variant="secondary" className="text-sm animate-stagger-fade" style={{ animationDelay: `${idx * 50}ms` }}>
                     {interest}
                   </Badge>
                 ))}
@@ -378,7 +378,7 @@ const Profile = () => {
                     <div
                       key={f.key}
                       className={cn(
-                        "flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border transition-all",
+                        "flex items-center gap-1.5 text-sm px-2.5 py-2 rounded-lg border transition-all min-h-[44px]",
                         f.isUnlocked
                           ? "bg-primary/5 border-primary/20 text-foreground"
                           : "bg-muted/50 border-muted text-muted-foreground"
@@ -409,7 +409,7 @@ const Profile = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-sm">Go Premium</h3>
-                  <ul className="mt-1.5 space-y-1 text-xs text-muted-foreground">
+                  <ul className="mt-1.5 space-y-1 text-sm text-muted-foreground">
                     <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />See who likes you</li>
                     <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Unlimited Thots</li>
                     <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Priority Visibility</li>
@@ -437,11 +437,11 @@ const Profile = () => {
                   <span>Identity Verification</span>
                 </div>
                 {profile?.is_verified ? (
-                  <Badge className="bg-success/10 text-success border-success/20 text-xs">
+                  <Badge className="bg-success/10 text-success border-success/20 text-sm font-medium">
                     <CheckCircle className="h-3 w-3 mr-1" />Verified
                   </Badge>
                 ) : (
-                  <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => navigate("/profile/edit")}>
+                  <Button variant="outline" size="sm" className="text-sm h-9" onClick={() => navigate("/profile/edit")}>
                     Verify Now
                   </Button>
                 )}
