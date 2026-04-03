@@ -40,6 +40,7 @@ const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const CommunityGuidelines = lazy(() => import("./pages/CommunityGuidelines"));
 const CelebrationDemo = lazy(() => import("./pages/CelebrationDemo"));
+const TestingLocator = lazy(() => import("./pages/TestingLocator"));
 
 export const queryClient = new QueryClient({
   defaultOptions: {
