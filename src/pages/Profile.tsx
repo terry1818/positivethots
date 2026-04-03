@@ -378,7 +378,7 @@ const Profile = () => {
                     <div
                       key={f.key}
                       className={cn(
-                        "flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border transition-all",
+                        "flex items-center gap-1.5 text-sm px-2.5 py-2 rounded-lg border transition-all min-h-[44px]",
                         f.isUnlocked
                           ? "bg-primary/5 border-primary/20 text-foreground"
                           : "bg-muted/50 border-muted text-muted-foreground"
