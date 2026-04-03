@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle, CheckCircle2, XCircle, PlayCircle, FileText, Image, BookOpen, Sparkles, Volume2, Pause, Play, Square } from "lucide-react";
+import { CheckCircle, CheckCircle2, XCircle, PlayCircle, FileText, Image, BookOpen, Sparkles, Volume2, Pause, Play, Square, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { KeyTakeaway } from "./KeyTakeaway";
