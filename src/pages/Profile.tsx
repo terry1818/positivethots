@@ -11,6 +11,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock, Rocket, Crown, Award, ShoppingBag, Calendar } from "lucide-react";
+import { FetLifeBadge } from "@/components/FetLifeBadge";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
@@ -59,7 +60,24 @@ const Profile = () => {
       return count || 0;
     },
     enabled: !!profile?.id,
-    staleTime: 10 * 60 * 1000, // 10 min — own profile rarely changes
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const { data: fetlifeLink } = useQuery({
+    queryKey: ["fetlife-link", profile?.id],
+    queryFn: async () => {
+      if (!profile?.id) return null;
+      const { data } = await supabase
+        .from("external_platform_links" as any)
+        .select("*")
+        .eq("user_id", profile.id)
+        .eq("platform", "fetlife")
+        .in("status", ["self_reported", "verified"])
+        .maybeSingle();
+      return data as unknown as { platform_username: string; status: "self_reported" | "verified" } | null;
+    },
+    enabled: !!profile?.id,
+    staleTime: 10 * 60 * 1000,
   });
 
   const { percentage, nudges } = useProfileCompletion({
@@ -272,6 +290,13 @@ const Profile = () => {
               <h2 className="text-3xl font-bold flex items-center gap-2">
                 {profile?.name}, {profile?.age}
                 {profile?.is_verified && <ShieldCheck className="h-6 w-6 text-accent" />}
+                {fetlifeLink && (
+                  <FetLifeBadge
+                    username={fetlifeLink.platform_username}
+                    status={fetlifeLink.status}
+                    size="md"
+                  />
+                )}
               </h2>
               <div className="flex items-center gap-2 text-base opacity-95">
                 {profile?.pronouns && <span className="bg-white/20 px-2 py-0.5 rounded">{profile.pronouns}</span>}

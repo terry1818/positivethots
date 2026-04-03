@@ -23,6 +23,7 @@ import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, 
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { LinkedAccountsCard } from "@/components/settings/LinkedAccountsCard";
 
 const PreferencesCard = () => {
   const { soundEnabled, hapticEnabled, setSoundEnabled, setHapticEnabled } = useSoundEffects();
@@ -847,6 +848,9 @@ const Settings = () => {
             </Button>
           </CardContent>
         </Card>
+
+        {/* External Platforms */}
+        <LinkedAccountsCard />
 
         {/* Learning */}
         <Card className="animate-fade-in" style={{ animationDelay: "150ms" }}>
