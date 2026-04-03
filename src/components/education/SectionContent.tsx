@@ -230,8 +230,9 @@ const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
 
       {!isPlaying && !isPaused && (
         <Button variant="outline" size="sm" onClick={() => play(contentText)}
-          className="gap-1.5 text-xs" aria-label="Read section aloud">
-          <Volume2 className="h-3.5 w-3.5" /> Listen
+          className="gap-1.5 text-xs" aria-label="Read section aloud" disabled={isLoading}>
+          {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Volume2 className="h-3.5 w-3.5" />}
+          {isLoading ? "Loading…" : "Listen"}
         </Button>
       )}
       {isPlaying && (
