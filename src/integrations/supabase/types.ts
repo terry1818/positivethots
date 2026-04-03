@@ -396,6 +396,47 @@ export type Database = {
         }
         Relationships: []
       }
+      external_platform_links: {
+        Row: {
+          id: string
+          linked_at: string | null
+          platform: string
+          platform_username: string
+          status: string
+          user_id: string
+          verification_code: string
+          verified_at: string | null
+        }
+        Insert: {
+          id?: string
+          linked_at?: string | null
+          platform?: string
+          platform_username: string
+          status?: string
+          user_id: string
+          verification_code: string
+          verified_at?: string | null
+        }
+        Update: {
+          id?: string
+          linked_at?: string | null
+          platform?: string
+          platform_username?: string
+          status?: string
+          user_id?: string
+          verification_code?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "external_platform_links_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flagged_messages: {
         Row: {
           content: string
