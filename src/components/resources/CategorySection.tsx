@@ -18,6 +18,11 @@ const CATEGORY_META: Record<string, { label: string; icon: React.ReactNode; desc
     icon: <Sparkles className="w-5 h-5" />,
     description: "Show up as your best self in all your relationships.",
   },
+  advocacy: {
+    label: "Advocacy & Action",
+    icon: <Megaphone className="w-5 h-5" />,
+    description: "The freedoms we enjoy exist because people fought for them. Here are ways to keep fighting.",
+  },
 };
 
 const INITIAL_SHOW = 6;
