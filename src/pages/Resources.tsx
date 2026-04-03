@@ -154,17 +154,12 @@ const CATEGORIES = [
 /* ── page ── */
 
 const Resources = () => {
-  const [activeTab, setActiveTab] = useState("All");
-  const navigate = useNavigate();
-  const searchParams = new URLSearchParams(window.location.search);
-  const tabParam = searchParams.get("tab");
-
-  // Set initial tab from URL param
-  useState(() => {
-    if (tabParam && CATEGORIES.some(c => c.key === tabParam)) {
-      setActiveTab(tabParam);
-    }
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("tab");
+    return tab && ["books", "connection", "selfcare", "advocacy"].includes(tab) ? tab : "All";
   });
+  const navigate = useNavigate();
 
   const { data: products = FALLBACK, isLoading } = useQuery({
     queryKey: ["recommended-resources"],
