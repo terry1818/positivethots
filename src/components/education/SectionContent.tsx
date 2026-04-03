@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle, CheckCircle2, XCircle, PlayCircle, FileText, Image, BookOpen, Sparkles, Volume2, Pause, Play, Square } from "lucide-react";
+import { CheckCircle, CheckCircle2, XCircle, PlayCircle, FileText, Image, BookOpen, Sparkles, Volume2, Pause, Play, Square, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { KeyTakeaway } from "./KeyTakeaway";
@@ -200,7 +200,7 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
 
 // Read-aloud toolbar component
 const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
-  const { isPlaying, isPaused, isSupported, play, pause, resume, stop, rate, setRate, RATES, voiceGender, setVoiceGender } = useReadAloud();
+  const { isPlaying, isPaused, isLoading, isSupported, play, pause, resume, stop, rate, setRate, RATES, voiceGender, setVoiceGender } = useReadAloud();
 
   if (!isSupported) return null;
 
@@ -230,8 +230,9 @@ const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
 
       {!isPlaying && !isPaused && (
         <Button variant="outline" size="sm" onClick={() => play(contentText)}
-          className="gap-1.5 text-xs" aria-label="Read section aloud">
-          <Volume2 className="h-3.5 w-3.5" /> Listen
+          className="gap-1.5 text-xs" aria-label="Read section aloud" disabled={isLoading}>
+          {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Volume2 className="h-3.5 w-3.5" />}
+          {isLoading ? "Loading…" : "Listen"}
         </Button>
       )}
       {isPlaying && (
