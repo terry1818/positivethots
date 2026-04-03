@@ -1,9 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BottomNav } from "@/components/BottomNav";
-import { BookOpen, Heart, Sparkles, ShieldCheck } from "lucide-react";
+import { BookOpen, Heart, Sparkles, ShieldCheck, Megaphone } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeaturedSpotlight } from "@/components/resources/FeaturedSpotlight";
 import { CategorySection } from "@/components/resources/CategorySection";
@@ -148,12 +148,17 @@ const CATEGORIES = [
   { key: "books", label: "Books & Education", icon: <BookOpen className="w-4 h-4" /> },
   { key: "connection", label: "Intimacy & Connection", icon: <Heart className="w-4 h-4" /> },
   { key: "selfcare", label: "Self-Care & Wellness", icon: <Sparkles className="w-4 h-4" /> },
+  { key: "advocacy", label: "Advocacy & Action", icon: <Megaphone className="w-4 h-4" /> },
 ] as const;
 
 /* ── page ── */
 
 const Resources = () => {
-  const [activeTab, setActiveTab] = useState("All");
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get("tab");
+    return tab && ["books", "connection", "selfcare", "advocacy"].includes(tab) ? tab : "All";
+  });
   const navigate = useNavigate();
 
   const { data: products = FALLBACK, isLoading } = useQuery({
@@ -205,7 +210,7 @@ const Resources = () => {
     return counts;
   }, [products]);
 
-  const categoryOrder = ["books", "connection", "selfcare"];
+  const categoryOrder = ["books", "connection", "selfcare", "advocacy"];
   const groupedByCategory = useMemo(() => {
     const groups: Record<string, Resource[]> = {};
     for (const cat of categoryOrder) groups[cat] = [];

@@ -18,7 +18,7 @@ import { StreakRestoreModal } from "@/components/education/StreakRestoreModal";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
 import { BadgePathMap } from "@/components/education/TierRoadmap";
-import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen, MapPin, HeartPulse } from "lucide-react";
+import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen, MapPin, HeartPulse, Megaphone } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -357,6 +357,17 @@ const Learn = () => {
             <div className="text-left">
               <span className="text-sm font-medium">Test From Home</span>
               <p className="text-xs text-muted-foreground">Discreet at-home STD testing kits</p>
+            </div>
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3 h-auto py-3 min-h-[52px]"
+            onClick={() => navigate("/resources?tab=advocacy")}
+          >
+            <Megaphone className="h-5 w-5 text-primary flex-shrink-0" />
+            <div className="text-left">
+              <span className="text-sm font-medium">Advocacy & Action</span>
+              <p className="text-xs text-muted-foreground">Stand up for the freedoms that make ENM possible</p>
             </div>
           </Button>
         </section>
