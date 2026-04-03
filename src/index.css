@@ -220,6 +220,19 @@
   100% { transform: translateX(100%); }
 }
 
+/* Skeleton shimmer gradient animation */
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--muted-foreground) / 0.08) 50%, hsl(var(--muted)) 75%) !important;
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  will-change: background-position;
+}
+
 /* Slide in from left (received messages) */
 @keyframes slide-in-left {
   0% { opacity: 0; transform: translateX(-20px); }

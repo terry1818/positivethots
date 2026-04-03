@@ -4,13 +4,12 @@ function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>)
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-md bg-muted",
+        "relative overflow-hidden rounded-md bg-muted skeleton-shimmer",
         className
       )}
+      aria-hidden="true"
       {...props}
-    >
-      <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-primary/[0.07] to-transparent" />
-    </div>
+    />
   );
 }
 
