@@ -18,7 +18,7 @@ import { StreakRestoreModal } from "@/components/education/StreakRestoreModal";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
 import { BadgePathMap } from "@/components/education/TierRoadmap";
-import { BookOpen, CheckCircle, Award, Users, Star } from "lucide-react";
+import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -308,6 +308,36 @@ const Learn = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Resources & Tools Hub */}
+        <section className="space-y-2">
+          <h2 className="text-base font-semibold flex items-center gap-2">
+            <BookMarked className="h-4 w-4 text-primary" />
+            Resources & Tools
+          </h2>
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3 h-auto py-3 min-h-[52px]"
+            onClick={() => navigate("/resources")}
+          >
+            <BookMarked className="h-5 w-5 text-primary flex-shrink-0" />
+            <div className="text-left">
+              <span className="text-sm font-medium">Books & Products</span>
+              <p className="text-xs text-muted-foreground">Curated recommendations for your journey</p>
+            </div>
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3 h-auto py-3 min-h-[52px]"
+            onClick={() => navigate("/journal")}
+          >
+            <NotebookPen className="h-5 w-5 text-primary flex-shrink-0" />
+            <div className="text-left">
+              <span className="text-sm font-medium">Reflection Journal</span>
+              <p className="text-xs text-muted-foreground">Track your growth and insights</p>
+            </div>
+          </Button>
+        </section>
 
         <LeaderboardCard />
       </main>
