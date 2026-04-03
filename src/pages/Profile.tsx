@@ -441,7 +441,7 @@ const Profile = () => {
                     <CheckCircle className="h-3 w-3 mr-1" />Verified
                   </Badge>
                 ) : (
-                  <Button variant="outline" size="sm" className="text-xs h-7" onClick={() => navigate("/profile/edit")}>
+                  <Button variant="outline" size="sm" className="text-sm h-9" onClick={() => navigate("/profile/edit")}>
                     Verify Now
                   </Button>
                 )}
