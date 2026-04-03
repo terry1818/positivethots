@@ -501,6 +501,26 @@ const Profile = () => {
           </CardContent>
         </Card>
 
+        {/* Quick Access Cards */}
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            variant="outline"
+            className="flex flex-col items-center gap-2 h-auto py-4 min-h-[72px] transition-all hover:-translate-y-0.5 hover:shadow-md"
+            onClick={() => navigate("/shop")}
+          >
+            <ShoppingBag className="h-5 w-5 text-primary" />
+            <span className="text-sm font-medium">Shop Merch</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="flex flex-col items-center gap-2 h-auto py-4 min-h-[72px] transition-all hover:-translate-y-0.5 hover:shadow-md"
+            onClick={() => navigate("/events")}
+          >
+            <Calendar className="h-5 w-5 text-primary" />
+            <span className="text-sm font-medium">Events</span>
+          </Button>
+        </div>
+
         {/* Actions */}
         <div className="space-y-3">
           <Button
