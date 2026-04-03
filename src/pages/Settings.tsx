@@ -849,6 +849,9 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* External Platforms */}
+        <LinkedAccountsCard />
+
         {/* Learning */}
         <Card className="animate-fade-in" style={{ animationDelay: "150ms" }}>
           <CardHeader>
