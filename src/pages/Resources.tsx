@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BottomNav } from "@/components/BottomNav";
-import { BookOpen, Heart, Sparkles, ShieldCheck } from "lucide-react";
+import { BookOpen, Heart, Sparkles, ShieldCheck, Megaphone } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeaturedSpotlight } from "@/components/resources/FeaturedSpotlight";
 import { CategorySection } from "@/components/resources/CategorySection";
