@@ -41,6 +41,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const CommunityGuidelines = lazy(() => import("./pages/CommunityGuidelines"));
 const CelebrationDemo = lazy(() => import("./pages/CelebrationDemo"));
 const TestingLocator = lazy(() => import("./pages/TestingLocator"));
+const HealthTesting = lazy(() => import("./pages/HealthTesting"));
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -86,6 +87,7 @@ const AppContent = () => {
         <Route path="/terms" element={<Suspense fallback={<PageLoader />}><TermsOfService /></Suspense>} />
         <Route path="/community-guidelines" element={<Suspense fallback={<PageLoader />}><CommunityGuidelines /></Suspense>} />
         <Route path="/testing-locations" element={<Suspense fallback={<PageLoader />}><TestingLocator /></Suspense>} />
+        <Route path="/health-testing" element={<Suspense fallback={<PageLoader />}><HealthTesting /></Suspense>} />
         <Route path="/celebration-demo" element={<Suspense fallback={<PageLoader />}><CelebrationDemo /></Suspense>} />
         <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
       </Routes>
