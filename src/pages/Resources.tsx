@@ -156,6 +156,15 @@ const CATEGORIES = [
 const Resources = () => {
   const [activeTab, setActiveTab] = useState("All");
   const navigate = useNavigate();
+  const searchParams = new URLSearchParams(window.location.search);
+  const tabParam = searchParams.get("tab");
+
+  // Set initial tab from URL param
+  useState(() => {
+    if (tabParam && CATEGORIES.some(c => c.key === tabParam)) {
+      setActiveTab(tabParam);
+    }
+  });
 
   const { data: products = FALLBACK, isLoading } = useQuery({
     queryKey: ["recommended-resources"],
