@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ExternalLink, BookOpen, Heart, Sparkles, Star } from "lucide-react";
+import { ExternalLink, BookOpen, Heart, Sparkles, Star, Megaphone } from "lucide-react";
 import { BlurImage } from "@/components/BlurImage";
 
 interface Resource {
