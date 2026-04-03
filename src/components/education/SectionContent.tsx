@@ -200,7 +200,7 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
 
 // Read-aloud toolbar component
 const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
-  const { isPlaying, isPaused, isSupported, play, pause, resume, stop, rate, setRate, RATES, voiceGender, setVoiceGender } = useReadAloud();
+  const { isPlaying, isPaused, isLoading, isSupported, play, pause, resume, stop, rate, setRate, RATES, voiceGender, setVoiceGender } = useReadAloud();
 
   if (!isSupported) return null;
 
