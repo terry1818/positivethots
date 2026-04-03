@@ -327,7 +327,7 @@ const Profile = () => {
             {profile?.interests && profile.interests.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {profile.interests.map((interest: string, idx: number) => (
-                  <Badge key={interest} variant="secondary" className="text-xs animate-stagger-fade" style={{ animationDelay: `${idx * 50}ms` }}>
+                  <Badge key={interest} variant="secondary" className="text-sm animate-stagger-fade" style={{ animationDelay: `${idx * 50}ms` }}>
                     {interest}
                   </Badge>
                 ))}
