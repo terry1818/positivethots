@@ -61,6 +61,7 @@ const Profile = () => {
     },
     enabled: !!profile?.id,
     staleTime: 10 * 60 * 1000,
+    placeholderData: keepPreviousData,
   });
 
   const { data: fetlifeLink } = useQuery({
