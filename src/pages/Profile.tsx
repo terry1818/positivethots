@@ -3,7 +3,7 @@ import { BlurImage } from "@/components/BlurImage";
 import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -61,6 +61,7 @@ const Profile = () => {
     },
     enabled: !!profile?.id,
     staleTime: 10 * 60 * 1000,
+    placeholderData: keepPreviousData,
   });
 
   const { data: fetlifeLink } = useQuery({
@@ -78,6 +79,7 @@ const Profile = () => {
     },
     enabled: !!profile?.id,
     staleTime: 10 * 60 * 1000,
+    placeholderData: keepPreviousData,
   });
 
   const { percentage, nudges } = useProfileCompletion({

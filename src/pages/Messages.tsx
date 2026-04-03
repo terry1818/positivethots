@@ -145,7 +145,8 @@ const Messages = () => {
                         alt={match.profile.name}
                         className="h-full w-full"
                         aspectRatio="1/1"
-                        loading="lazy"
+                        loading={idx === 0 ? "eager" : "lazy"}
+                        fetchPriority={idx === 0 ? "high" : undefined}
                       />
                     </ProfileFrame>
                     {match.profile.is_verified ? (
