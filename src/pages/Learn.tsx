@@ -18,7 +18,7 @@ import { StreakRestoreModal } from "@/components/education/StreakRestoreModal";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
 import { BadgePathMap } from "@/components/education/TierRoadmap";
-import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen } from "lucide-react";
+import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen, MapPin } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -335,6 +335,17 @@ const Learn = () => {
             <div className="text-left">
               <span className="text-sm font-medium">Reflection Journal</span>
               <p className="text-xs text-muted-foreground">Track your growth and insights</p>
+            </div>
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3 h-auto py-3 min-h-[52px]"
+            onClick={() => navigate("/testing-locations")}
+          >
+            <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
+            <div className="text-left">
+              <span className="text-sm font-medium">Find Testing Near You</span>
+              <p className="text-xs text-muted-foreground">Locate STD testing centers nearby</p>
             </div>
           </Button>
         </section>
