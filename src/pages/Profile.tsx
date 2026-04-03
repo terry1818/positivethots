@@ -437,7 +437,7 @@ const Profile = () => {
                   <span>Identity Verification</span>
                 </div>
                 {profile?.is_verified ? (
-                  <Badge className="bg-success/10 text-success border-success/20 text-xs">
+                  <Badge className="bg-success/10 text-success border-success/20 text-sm font-medium">
                     <CheckCircle className="h-3 w-3 mr-1" />Verified
                   </Badge>
                 ) : (
