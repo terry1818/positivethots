@@ -60,7 +60,24 @@ const Profile = () => {
       return count || 0;
     },
     enabled: !!profile?.id,
-    staleTime: 10 * 60 * 1000, // 10 min — own profile rarely changes
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const { data: fetlifeLink } = useQuery({
+    queryKey: ["fetlife-link", profile?.id],
+    queryFn: async () => {
+      if (!profile?.id) return null;
+      const { data } = await supabase
+        .from("external_platform_links" as any)
+        .select("*")
+        .eq("user_id", profile.id)
+        .eq("platform", "fetlife")
+        .in("status", ["self_reported", "verified"])
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!profile?.id,
+    staleTime: 10 * 60 * 1000,
   });
 
   const { percentage, nudges } = useProfileCompletion({
