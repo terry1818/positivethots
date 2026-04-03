@@ -337,6 +337,17 @@ const Learn = () => {
               <p className="text-xs text-muted-foreground">Track your growth and insights</p>
             </div>
           </Button>
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-3 h-auto py-3 min-h-[52px]"
+            onClick={() => navigate("/testing-locations")}
+          >
+            <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
+            <div className="text-left">
+              <span className="text-sm font-medium">Find Testing Near You</span>
+              <p className="text-xs text-muted-foreground">Locate STD testing centers nearby</p>
+            </div>
+          </Button>
         </section>
 
         <LeaderboardCard />
