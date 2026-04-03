@@ -189,7 +189,8 @@ const Resources = () => {
         } as Resource;
       });
     },
-    staleTime: 60 * 60 * 1000, // 1 hour — very static content
+    staleTime: 60 * 60 * 1000,
+    placeholderData: keepPreviousData,
   });
 
   const sorted = useMemo(() =>
