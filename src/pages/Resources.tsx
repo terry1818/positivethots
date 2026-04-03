@@ -148,6 +148,7 @@ const CATEGORIES = [
   { key: "books", label: "Books & Education", icon: <BookOpen className="w-4 h-4" /> },
   { key: "connection", label: "Intimacy & Connection", icon: <Heart className="w-4 h-4" /> },
   { key: "selfcare", label: "Self-Care & Wellness", icon: <Sparkles className="w-4 h-4" /> },
+  { key: "advocacy", label: "Advocacy & Action", icon: <Megaphone className="w-4 h-4" /> },
 ] as const;
 
 /* ── page ── */
