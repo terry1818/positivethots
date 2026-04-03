@@ -74,7 +74,7 @@ const Profile = () => {
         .eq("platform", "fetlife")
         .in("status", ["self_reported", "verified"])
         .maybeSingle();
-      return data;
+      return data as { platform_username: string; status: "self_reported" | "verified" } | null;
     },
     enabled: !!profile?.id,
     staleTime: 10 * 60 * 1000,
