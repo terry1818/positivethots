@@ -215,7 +215,7 @@ const Resources = () => {
     return counts;
   }, [products]);
 
-  const categoryOrder = ["books", "connection", "selfcare"];
+  const categoryOrder = ["books", "connection", "selfcare", "advocacy"];
   const groupedByCategory = useMemo(() => {
     const groups: Record<string, Resource[]> = {};
     for (const cat of categoryOrder) groups[cat] = [];

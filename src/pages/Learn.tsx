@@ -18,7 +18,7 @@ import { StreakRestoreModal } from "@/components/education/StreakRestoreModal";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
 import { BadgePathMap } from "@/components/education/TierRoadmap";
-import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen, MapPin, HeartPulse } from "lucide-react";
+import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen, MapPin, HeartPulse, Megaphone } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
