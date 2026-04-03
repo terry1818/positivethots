@@ -22,6 +22,7 @@ const categoryIcon = (category: string) => {
     case "books": return <BookOpen className="w-12 h-12 text-muted-foreground/40" />;
     case "connection": return <Heart className="w-12 h-12 text-muted-foreground/40" />;
     case "selfcare": return <Sparkles className="w-12 h-12 text-muted-foreground/40" />;
+    case "advocacy": return <Megaphone className="w-12 h-12 text-muted-foreground/40" />;
     default: return <BookOpen className="w-12 h-12 text-muted-foreground/40" />;
   }
 };
