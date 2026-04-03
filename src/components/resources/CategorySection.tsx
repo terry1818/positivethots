@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BookOpen, Heart, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import { BookOpen, Heart, Sparkles, ChevronDown, ChevronUp, Megaphone } from "lucide-react";
 import { ResourceCard, type Resource } from "./ResourceCard";
 
 const CATEGORY_META: Record<string, { label: string; icon: React.ReactNode; description: string }> = {
