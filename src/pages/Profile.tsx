@@ -290,6 +290,13 @@ const Profile = () => {
               <h2 className="text-3xl font-bold flex items-center gap-2">
                 {profile?.name}, {profile?.age}
                 {profile?.is_verified && <ShieldCheck className="h-6 w-6 text-accent" />}
+                {fetlifeLink && (
+                  <FetLifeBadge
+                    username={fetlifeLink.platform_username}
+                    status={fetlifeLink.status}
+                    size="md"
+                  />
+                )}
               </h2>
               <div className="flex items-center gap-2 text-base opacity-95">
                 {profile?.pronouns && <span className="bg-white/20 px-2 py-0.5 rounded">{profile.pronouns}</span>}
