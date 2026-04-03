@@ -45,8 +45,8 @@
     nav.scrolled .nav-logo span { font-size:1.05rem; }
     @media (prefers-reduced-motion: reduce) { nav { transition:none; } nav .nav-logo img, nav .nav-logo span { transition:none; } }
     .nav-logo { display:flex; align-items:center; gap:.45rem; text-decoration:none; }
-    .nav-logo img { height:40px; width:auto; }
-    .nav-logo span { font-family:"Pacifico",cursive; font-size:1.3rem; color:hsl(275,70%,38%); -webkit-text-stroke:1.5px white; text-shadow:1px 1px 3px rgba(0,0,0,.3); paint-order:stroke fill; }
+    .nav-logo img { height:40px; width:auto; transition:height .2s ease-out; }
+    .nav-logo span { font-family:"Pacifico",cursive; font-size:1.3rem; color:hsl(275,70%,38%); -webkit-text-stroke:1.5px white; text-shadow:1px 1px 3px rgba(0,0,0,.3); paint-order:stroke fill; transition:font-size .2s ease-out; }
     nav ul { list-style:none; display:flex; gap:1.75rem; }
     nav ul a { text-decoration:none; color:var(--fg); font-weight:500; font-size:.9rem; transition:color .2s; }
     nav ul a:hover { color:var(--primary); }
