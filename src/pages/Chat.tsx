@@ -442,26 +442,28 @@ const Chat = () => {
         </div>
       </div>
 
-      {/* Safety Notice */}
-      {messages.length === 0 && (
+      {/* Safety Notice — shown when fewer than 3 messages */}
+      {messages.length < 3 && (
         <div className="container max-w-4xl mx-auto px-4 py-4 space-y-3">
-          <Card className="p-4 bg-primary/5 border-primary/20 animate-fade-in">
-            <div className="flex items-start gap-3">
-              <Shield className="h-5 w-5 text-primary mt-0.5" />
-              <div className="flex-1">
-                <h3 className="font-semibold text-sm">Stay Safe</h3>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Never share personal information like your address or financial details. Report any concerning behavior immediately.
-                </p>
+          {messages.length === 0 && (
+            <Card className="p-4 bg-primary/5 border-primary/20 animate-fade-in">
+              <div className="flex items-start gap-3">
+                <Shield className="h-5 w-5 text-primary mt-0.5" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-sm">Stay Safe</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Never share personal information like your address or financial details. Report any concerning behavior immediately.
+                  </p>
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          )}
 
-          {/* Icebreaker suggestions */}
+          {/* Icebreaker suggestions — available for first 3 messages */}
           <div className="space-y-2">
             <p className="text-xs text-muted-foreground flex items-center gap-1.5">
               <MessageCircle className="h-3 w-3" />
-              Start the conversation
+              {messages.length === 0 ? "Start the conversation" : "Conversation starters"}
             </p>
             <div className="flex flex-wrap gap-2">
               {icebreakers.map((text, i) => (
@@ -512,7 +514,13 @@ const Chat = () => {
                         {isOwn && (
                           <div className="flex justify-end items-center gap-1 mt-1">
                             <span className="text-xs opacity-70">{formatTime(message.created_at)}</span>
-                            {message.delivered && (message.read ? <CheckCheck className="h-3 w-3 opacity-70" /> : <Check className="h-3 w-3 opacity-70" />)}
+                            {message.read ? (
+                              <CheckCheck className="h-3 w-3 text-primary-foreground/90" />
+                            ) : message.delivered ? (
+                              <CheckCheck className="h-3 w-3 opacity-50" />
+                            ) : (
+                              <Check className="h-3 w-3 opacity-50" />
+                            )}
                           </div>
                         )}
                       </div>
@@ -534,25 +542,35 @@ const Chat = () => {
               </div>
             ))}
 
-            {/* Typing Indicator */}
-            {isTyping && (
-              <div className="flex items-end gap-2 animate-slide-in-left">
-                <div className="w-8 h-8 rounded-full bg-muted flex-shrink-0 overflow-hidden">
-                  {otherUser.profile_image ? (
-                    <img src={otherUser.profile_image} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-sm">{otherUser.name?.[0]}</div>
-                  )}
-                </div>
-                <div className="bg-muted px-4 py-3 rounded-2xl rounded-bl-none">
-                  <div className="flex gap-1.5">
-                    <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" />
-                    <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.2s" }} />
-                    <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.4s" }} />
+            {/* Typing Indicator with aria-live */}
+            <div aria-live="polite" aria-atomic="true">
+              {isTyping && <span className="sr-only">{otherUser.name} is typing</span>}
+              {isTyping && (
+                <div className="flex items-end gap-2 animate-slide-in-left">
+                  <div className="w-8 h-8 rounded-full bg-muted flex-shrink-0 overflow-hidden">
+                    {otherUser.profile_image ? (
+                      <img src={otherUser.profile_image} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-sm">{otherUser.name?.[0]}</div>
+                    )}
+                  </div>
+                  <div className="bg-muted px-4 py-3 rounded-2xl rounded-bl-none">
+                    <div className="flex gap-1.5">
+                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" />
+                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.2s" }} />
+                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.4s" }} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            {/* New message announcements for screen readers */}
+            <div aria-live="polite" className="sr-only">
+              {messages.length > 0 && messages[messages.length - 1].sender_id !== currentUser?.id &&
+                `New message from ${otherUser.name}: ${messages[messages.length - 1].content}`
+              }
+            </div>
 
             <div ref={messagesEndRef} />
           </div>
@@ -576,7 +594,12 @@ const Chat = () => {
               <Input
                 value={newMessage}
                 onChange={(e) => handleTyping(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
                 placeholder="Type a message..."
                 className="pr-10 focus-glow"
                 maxLength={1000}
