@@ -196,7 +196,7 @@ const Messages = () => {
         </div>
       </header>
 
-      <main className="flex-1 container max-w-md mx-auto px-4 py-6">
+      <main className="flex-1 container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6">
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4, 5].map(i => (
