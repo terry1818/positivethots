@@ -51,9 +51,11 @@ const Learn = () => {
   const [continueModuleId, setContinueModuleId] = useState<string | undefined>();
   const [continueSectionNumber, setContinueSectionNumber] = useState<number | undefined>();
   const [continueProgressPercent, setContinueProgressPercent] = useState<number | undefined>();
+  const [hasSpunToday, setHasSpunToday] = useState(true); // default true to prevent flash
+  const [showStreakInterstitial, setShowStreakInterstitial] = useState(false);
   const navigate = useNavigate();
   const handleModuleSearch = useCallback((q: string) => setModuleSearchQuery(q.toLowerCase()), []);
-  const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak } = useLearningStats();
+  const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak, awardXP } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const { tier: subscriptionTier } = useSubscription();
   const { seen: learnTourSeen, markSeen: markLearnTourSeen } = useTutorialState("learn_tour");
