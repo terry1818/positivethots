@@ -21,6 +21,7 @@ import {
   Star,
   Gift,
   Send,
+  Coins,
 } from "lucide-react";
 import {
   MONTHLY_TIERS,
@@ -32,7 +33,9 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-
+import { CoinBalanceWidget } from "@/components/coins/CoinBalanceWidget";
+import { GroupPricingCard } from "@/components/coins/GroupPricingCard";
+import { usePartnerLinks } from "@/hooks/usePartnerLinks";
 const tierIcons = {
   plus: Zap,
   premium: Crown,
@@ -182,9 +185,12 @@ const Premium = () => {
       <div className={cn("absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl", !reducedMotion && "animate-blob-float [animation-delay:5s]")} aria-hidden="true" />
 
       <div className="container max-w-4xl mx-auto px-4 py-6 relative z-10">
-        <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-1" /> Back
-        </Button>
+        <div className="flex items-center justify-between mb-4">
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+            <ArrowLeft className="h-4 w-4 mr-1" /> Back
+          </Button>
+          <CoinBalanceWidget onClick={() => navigate("/wallet")} />
+        </div>
 
         <div className={cn("text-center mb-8", !reducedMotion && "animate-fade-in")}>
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
@@ -418,7 +424,10 @@ const Premium = () => {
           </CardContent>
         </Card>
 
-        <p className="text-center text-sm text-muted-foreground">
+        {/* Group/Polycule Pricing */}
+        <GroupPricingCard partnerCount={1} />
+
+        <p className="text-center text-sm text-muted-foreground mt-6">
           Cancel anytime · {billingPeriod === "annual" ? "Billed annually" : "Billed monthly"} · Secure checkout via Stripe
         </p>
       </div>

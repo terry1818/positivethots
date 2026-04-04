@@ -94,6 +94,51 @@ export type Database = {
           },
         ]
       }
+      coin_packages: {
+        Row: {
+          apple_product_id: string | null
+          bonus_coins: number
+          coins: number
+          created_at: string
+          display_order: number
+          google_product_id: string | null
+          id: string
+          is_active: boolean
+          is_best_value: boolean
+          name: string
+          price_usd: number
+          stripe_price_id: string | null
+        }
+        Insert: {
+          apple_product_id?: string | null
+          bonus_coins?: number
+          coins: number
+          created_at?: string
+          display_order?: number
+          google_product_id?: string | null
+          id?: string
+          is_active?: boolean
+          is_best_value?: boolean
+          name: string
+          price_usd: number
+          stripe_price_id?: string | null
+        }
+        Update: {
+          apple_product_id?: string | null
+          bonus_coins?: number
+          coins?: number
+          created_at?: string
+          display_order?: number
+          google_product_id?: string | null
+          id?: string
+          is_active?: boolean
+          is_best_value?: boolean
+          name?: string
+          price_usd?: number
+          stripe_price_id?: string | null
+        }
+        Relationships: []
+      }
       community_challenges: {
         Row: {
           completed: boolean
@@ -838,6 +883,89 @@ export type Database = {
           },
         ]
       }
+      group_subscription_members: {
+        Row: {
+          created_at: string
+          group_owner_id: string
+          id: string
+          joined_at: string | null
+          member_id: string
+          status: string
+          subscription_id: string
+        }
+        Insert: {
+          created_at?: string
+          group_owner_id: string
+          id?: string
+          joined_at?: string | null
+          member_id: string
+          status?: string
+          subscription_id: string
+        }
+        Update: {
+          created_at?: string
+          group_owner_id?: string
+          id?: string
+          joined_at?: string | null
+          member_id?: string
+          status?: string
+          subscription_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_subscription_members_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "group_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_subscriptions: {
+        Row: {
+          annual_price_usd: number
+          created_at: string
+          id: string
+          individual_monthly_total: number
+          is_active: boolean
+          member_count: number
+          monthly_price_usd: number
+          name: string
+          plan_type: string
+          savings_percentage: number
+          stripe_annual_price_id: string | null
+          stripe_monthly_price_id: string | null
+        }
+        Insert: {
+          annual_price_usd: number
+          created_at?: string
+          id?: string
+          individual_monthly_total: number
+          is_active?: boolean
+          member_count: number
+          monthly_price_usd: number
+          name: string
+          plan_type: string
+          savings_percentage: number
+          stripe_annual_price_id?: string | null
+          stripe_monthly_price_id?: string | null
+        }
+        Update: {
+          annual_price_usd?: number
+          created_at?: string
+          id?: string
+          individual_monthly_total?: number
+          is_active?: boolean
+          member_count?: number
+          monthly_price_usd?: number
+          name?: string
+          plan_type?: string
+          savings_percentage?: number
+          stripe_annual_price_id?: string | null
+          stripe_monthly_price_id?: string | null
+        }
+        Relationships: []
+      }
       linked_profiles: {
         Row: {
           created_at: string
@@ -1108,6 +1236,42 @@ export type Database = {
           },
         ]
       }
+      pricing_tiers: {
+        Row: {
+          created_at: string
+          discount_percentage: number | null
+          id: string
+          is_active: boolean
+          promo_message: string | null
+          recommended_plan: string
+          trial_offer_days: number | null
+          trigger_event: string | null
+          user_segment: string
+        }
+        Insert: {
+          created_at?: string
+          discount_percentage?: number | null
+          id?: string
+          is_active?: boolean
+          promo_message?: string | null
+          recommended_plan: string
+          trial_offer_days?: number | null
+          trigger_event?: string | null
+          user_segment: string
+        }
+        Update: {
+          created_at?: string
+          discount_percentage?: number | null
+          id?: string
+          is_active?: boolean
+          promo_message?: string | null
+          recommended_plan?: string
+          trial_offer_days?: number | null
+          trigger_event?: string | null
+          user_segment?: string
+        }
+        Relationships: []
+      }
       private_photo_access: {
         Row: {
           granted_at: string
@@ -1274,6 +1438,7 @@ export type Database = {
           sexuality: string | null
           sti_last_tested: string | null
           sti_status: string | null
+          thots_coins_balance: number
           tutorials_completed: string[]
           updated_at: string
           winback_attempts: number
@@ -1327,6 +1492,7 @@ export type Database = {
           sexuality?: string | null
           sti_last_tested?: string | null
           sti_status?: string | null
+          thots_coins_balance?: number
           tutorials_completed?: string[]
           updated_at?: string
           winback_attempts?: number
@@ -1380,6 +1546,7 @@ export type Database = {
           sexuality?: string | null
           sti_last_tested?: string | null
           sti_status?: string | null
+          thots_coins_balance?: number
           tutorials_completed?: string[]
           updated_at?: string
           winback_attempts?: number
@@ -1821,6 +1988,72 @@ export type Database = {
           swiped_id?: string
           swiper_id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      thots_coins_store: {
+        Row: {
+          coin_cost: number
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          is_active: boolean
+          item_type: string
+          name: string
+        }
+        Insert: {
+          coin_cost: number
+          created_at?: string
+          description: string
+          icon: string
+          id?: string
+          is_active?: boolean
+          item_type: string
+          name: string
+        }
+        Update: {
+          coin_cost?: number
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          is_active?: boolean
+          item_type?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      thots_coins_transactions: {
+        Row: {
+          amount: number
+          balance_after: number
+          created_at: string
+          description: string
+          id: string
+          reference_id: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after: number
+          created_at?: string
+          description: string
+          id?: string
+          reference_id?: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          created_at?: string
+          description?: string
+          id?: string
+          reference_id?: string | null
+          transaction_type?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -2525,6 +2758,30 @@ export type Database = {
         Returns: Json
       }
       check_match: { Args: { user1: string; user2: string }; Returns: string }
+      credit_coins: {
+        Args: {
+          p_amount: number
+          p_description: string
+          p_reference_id?: string
+          p_transaction_type: string
+          p_user_id: string
+        }
+        Returns: {
+          balance_after: number
+        }[]
+      }
+      debit_coins: {
+        Args: {
+          p_amount: number
+          p_description: string
+          p_reference_id?: string
+          p_transaction_type: string
+          p_user_id: string
+        }
+        Returns: {
+          balance_after: number
+        }[]
+      }
       decrement_super_like: { Args: { _user_id: string }; Returns: number }
       delete_email: {
         Args: { message_id: number; queue_name: string }
