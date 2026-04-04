@@ -697,7 +697,7 @@ const Onboarding = () => {
               {/* Step 6: Sexuality */}
               {step === 6 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="🔥" title="Your sexuality" subtitle="This is shown on your profile" />
+                  <StepHeader emoji="🔥" title="Your sexuality" subtitle="This is shown on your profile · Optional" />
                   <div className="animate-stagger-2">
                     <ChipSelector
                       options={SEXUALITY_OPTIONS}
