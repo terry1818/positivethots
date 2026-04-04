@@ -10,6 +10,8 @@
 
 @layer base {
   :root {
+    --text-scale: 1;
+
     --background: 270 15% 98%;
     --foreground: 270 20% 15%;
 
