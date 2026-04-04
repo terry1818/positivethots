@@ -342,7 +342,7 @@ const Index = () => {
     const profileIds = profilesResult.data.map(p => p.id);
     const { data: userPhotos } = await supabase
       .from("user_photos")
-      .select("user_id, photo_url, order_index")
+      .select("user_id, photo_url, order_index, focal_point_y")
       .in("user_id", profileIds)
       .eq("visibility", "public")
       .eq("moderation_status", "approved")
