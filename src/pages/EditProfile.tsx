@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ import { PageSkeleton } from "@/components/PageSkeleton";
 import { PROMPT_QUESTIONS } from "@/lib/promptQuestions";
 import { FrameSelector } from "@/components/profile/FrameSelector";
 import { syncEarnedFrames } from "@/hooks/useEarnedFrames";
+import { FieldError } from "@/components/FieldError";
 
 interface PromptRow {
   id?: string;
