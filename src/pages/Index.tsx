@@ -660,7 +660,7 @@ const Index = () => {
 
       {/* Header */}
       <div className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="container max-w-7xl mx-auto px-4 py-4">
+        <div className="container max-w-md mx-auto px-4 py-2.5">
           <div className="flex items-center justify-between">
             <Logo size="md" showText={false} />
             <div className="flex items-center gap-2">
@@ -673,14 +673,16 @@ const Index = () => {
               <Button
                 variant={incognitoMode ? "default" : "outline"} size="sm"
                 onClick={() => setIncognitoMode(!incognitoMode)}
+                className="h-9 w-9 p-0"
+                aria-label={incognitoMode ? "Incognito mode on" : "Visible mode"}
               >
                 {incognitoMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                <span className="ml-2 hidden sm:inline">{incognitoMode ? "Incognito" : "Visible"}</span>
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className="text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
+                className="h-9 w-9 p-0 text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
+                aria-label="Boost profile"
                 onClick={async () => {
                   try {
                     const { data, error } = await supabase.functions.invoke("create-boost-payment");
@@ -692,11 +694,9 @@ const Index = () => {
                 }}
               >
                 <Zap className="h-4 w-4" />
-                <span className="ml-2 hidden sm:inline">Boost</span>
               </Button>
-              <Button variant="outline" size="sm" onClick={() => navigate("/profile")}>
+              <Button variant="outline" size="sm" className="h-9 w-9 p-0" onClick={() => navigate("/settings")} aria-label="Settings">
                 <Shield className="h-4 w-4" />
-                <span className="ml-2 hidden sm:inline">Settings</span>
               </Button>
             </div>
           </div>
@@ -705,7 +705,7 @@ const Index = () => {
 
       {/* Profile completion banner for Quick Start users */}
       {showProfileBanner && (
-        <div className="max-w-sm mx-auto px-4 py-2">
+        <div className="max-w-md mx-auto px-4 py-2">
           <button
             onClick={() => navigate("/learn")}
             className="w-full flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3 py-2 text-sm"
@@ -721,14 +721,14 @@ const Index = () => {
 
       {/* Compact Progress Strip */}
       {tiers.length > 0 && (
-        <div className="max-w-sm mx-auto px-4 py-3">
+        <div className="max-w-md mx-auto px-4 py-3">
           <CompactProgressBar tiers={tiers} badgeCount={userBadgeCount} connectionCount={matchCount} />
         </div>
       )}
 
       {/* Nearby Users */}
       {isSharing && (
-        <div className="max-w-sm mx-auto px-4 mb-4">
+        <div className="max-w-md mx-auto px-4 mb-4">
           <NearbyUsers nearbyUsers={nearbyUsers} isSharing={isSharing} />
         </div>
       )}
@@ -739,7 +739,7 @@ const Index = () => {
       </div>
 
       {/* Curated Matches Grid */}
-      <div className="max-w-sm mx-auto px-4">
+      <div className="max-w-md mx-auto px-4">
         {suggestions.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[50vh] px-6 text-center">
             <BrandedEmptyState
