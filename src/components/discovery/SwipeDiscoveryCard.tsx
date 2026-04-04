@@ -359,7 +359,7 @@ export const SwipeDiscoveryCard = memo(({
 
         {/* Card body — tappable for detail */}
         <button
-          className="w-full text-left p-4 space-y-2"
+          className="w-full text-left p-3 space-y-1.5"
           onClick={(e) => { e.stopPropagation(); onViewProfile(); }}
           aria-label={`View full profile of ${displayName}`}
         >
