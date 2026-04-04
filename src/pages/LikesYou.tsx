@@ -339,6 +339,36 @@ const LikesYou = () => {
           </Tabs>
         </div>
       </div>
+
+      {/* Unlike confirmation dialog */}
+      <AlertDialog open={!!unlikeTarget} onOpenChange={(open) => { if (!open) setUnlikeTarget(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove your Connect?</AlertDialogTitle>
+            <AlertDialogDescription>
+              They won't know you were interested. You can always Connect again later.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={async () => {
+                if (!unlikeTarget) return;
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) return;
+                await supabase.from("swipes").delete().eq("swiper_id", user.id).eq("swiped_id", unlikeTarget.id).eq("direction", "right");
+                setSentLikes(prev => prev.filter(p => p.id !== unlikeTarget.id));
+                setUnlikeTarget(null);
+                toast({ title: "Like removed" });
+              }}
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <BottomNav />
     </div>
   );
