@@ -20,6 +20,8 @@ import { syncEarnedFrames } from "@/hooks/useEarnedFrames";
 import { FieldError } from "@/components/FieldError";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { DesireTagSelector } from "@/components/profile-edit/DesireTagSelector";
+import { ChapterEditor } from "@/components/chapters/ChapterEditor";
+import { AstrologySetup } from "@/components/astrology/AstrologySetup";
 
 interface PromptRow {
   id?: string;
@@ -433,11 +435,27 @@ const EditProfile = () => {
             </AccordionContent>
           </AccordionItem>
 
+          {/* Your Story — Chapter-Based Narrative */}
+          <AccordionItem value="chapters" className="border rounded-xl px-4 bg-card">
+            <AccordionTrigger className="text-base font-semibold py-4">📖 Your Story</AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <ChapterEditor />
+            </AccordionContent>
+          </AccordionItem>
+
           {/* Desires & Interests */}
           <AccordionItem value="desires" className="border rounded-xl px-4 bg-card">
             <AccordionTrigger className="text-base font-semibold py-4">Desires & Interests</AccordionTrigger>
             <AccordionContent className="pb-4">
               <DesireTagSelector />
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Astrology */}
+          <AccordionItem value="astrology" className="border rounded-xl px-4 bg-card">
+            <AccordionTrigger className="text-base font-semibold py-4">✨ Cosmic Profile</AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <AstrologySetup />
             </AccordionContent>
           </AccordionItem>
 

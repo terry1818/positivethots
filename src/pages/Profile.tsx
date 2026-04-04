@@ -24,6 +24,9 @@ import { ProfilePromptsDisplay } from "@/components/profile/ProfilePrompts";
 import { ProfileCompletionMeter } from "@/components/profile/ProfileCompletionMeter";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { useProfileCompletion } from "@/hooks/useProfileCompletion";
+import { ChapterProfileView } from "@/components/chapters/ChapterProfileView";
+import { AstrologyBadge } from "@/components/astrology/AstrologyBadge";
+import { AstrologyCompatibility } from "@/components/astrology/AstrologyCompatibility";
 
 interface UserBadge {
   module_id: string;
@@ -395,6 +398,18 @@ const Profile = () => {
           )}
 
           <CardContent className="p-4 space-y-4">
+            {/* Narrative Chapters */}
+            {profile?.id && (
+              <ChapterProfileView userId={profile.id} />
+            )}
+
+            {/* Astrology */}
+            {profile?.id && (
+              <div className="flex items-center gap-2">
+                <AstrologyBadge userId={profile.id} />
+              </div>
+            )}
+
             {/* Profile Prompts */}
             {profile?.id && (
               <ProfilePromptsDisplay

@@ -1156,6 +1156,45 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_chapters: {
+        Row: {
+          chapter_type: string
+          content: string
+          created_at: string
+          custom_icon: string | null
+          display_order: number
+          id: string
+          is_visible: boolean
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_type: string
+          content: string
+          created_at?: string
+          custom_icon?: string | null
+          display_order?: number
+          id?: string
+          is_visible?: boolean
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_type?: string
+          content?: string
+          created_at?: string
+          custom_icon?: string | null
+          display_order?: number
+          id?: string
+          is_visible?: boolean
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profile_prompts: {
         Row: {
           created_at: string
@@ -1734,6 +1773,39 @@ export type Database = {
           swiped_id?: string
           swiper_id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_astrology: {
+        Row: {
+          created_at: string
+          id: string
+          moon_sign: string | null
+          rising_sign: string | null
+          show_on_profile: boolean
+          sun_sign: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          moon_sign?: string | null
+          rising_sign?: string | null
+          show_on_profile?: boolean
+          sun_sign?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          moon_sign?: string | null
+          rising_sign?: string | null
+          show_on_profile?: boolean
+          sun_sign?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
