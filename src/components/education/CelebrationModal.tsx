@@ -9,6 +9,7 @@ import mascotImg from "@/assets/mascot-celebration.png";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { ShareableAchievementCard } from "@/components/ShareableAchievementCard";
 import type { AchievementData } from "@/lib/shareableCard";
+import { haptic } from "@/lib/haptics";
 
 interface CelebrationModalProps {
   type: "level_up" | "streak_milestone" | "badge_earned" | "tier_complete" | null;
