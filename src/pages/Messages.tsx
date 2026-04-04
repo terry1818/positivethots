@@ -54,7 +54,9 @@ const Messages = () => {
   const [lastMessages, setLastMessages] = useState<Record<string, LastMessage>>({});
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const handleSearch = useCallback((q: string) => setSearchQuery(q.toLowerCase()), []);
 
   useEffect(() => {
     checkAuth();
