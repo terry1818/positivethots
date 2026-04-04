@@ -4,6 +4,8 @@ import { Heart, Sparkles, BookOpen, MessageCircle, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useCallback } from "react";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
