@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, memo, useCallback } from "react";
 import { BlurImage } from "@/components/BlurImage";
-import { Heart, X, Star, Zap, Shield, ChevronDown, RefreshCw } from "lucide-react";
+import { Heart, X, Star, Zap, Shield, ChevronDown, RefreshCw, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
