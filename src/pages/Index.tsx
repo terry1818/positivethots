@@ -865,6 +865,7 @@ const Index = () => {
                     superLikeBalance={isUnlimited ? 999 : superLikeBalance}
                     onViewProfile={() => setDetailProfile(profile)}
                     onUpgradeSuperLike={() => navigate("/premium")}
+                    onAllImagesFailed={() => handleBrokenProfile(profile.id)}
                   />
                 );
               })}
