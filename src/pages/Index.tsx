@@ -639,7 +639,7 @@ const Index = () => {
           </div>
         ) : (
           <>
-            <div className="relative flex justify-center items-start px-4 pt-2 pb-32" style={{ minHeight: '520px' }}>
+            <div className="relative flex justify-center items-start px-4 pt-2 pb-32" data-walkthrough="discovery-card" style={{ minHeight: '520px' }}>
               {suggestions.slice(0, 3).map((profile, stackIdx) => {
                 const isMystery = mysteryProfiles.has(profile.id);
                 if (isMystery && stackIdx === 0) {
