@@ -523,6 +523,16 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
                     <Star className="h-3 w-3" />
                   </button>
                 )}
+                {/* Set Focus button for approved photos */}
+                {photo.moderation_status === "approved" && (
+                  <button
+                    onClick={() => setFocalPhoto(photo)}
+                    className="absolute bottom-1 left-7 bg-background/80 text-foreground rounded-full p-0.5 hover:bg-background transition-colors min-h-0 min-w-0"
+                    title="Set focus point"
+                  >
+                    <Crosshair className="h-3 w-3" />
+                  </button>
+                )}
                 {/* Best photo badge */}
                 {bestPhotoId === photo.id && (
                   <div className="absolute bottom-1 right-1 bg-amber-500/90 text-white text-xs font-bold px-1 py-0.5 rounded-full flex items-center gap-0.5">
