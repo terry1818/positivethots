@@ -63,7 +63,7 @@ export const useSafetyNudge = (enabled: boolean = true) => {
   const [nudge, setNudge] = useState<NudgeResult | null>(null);
   const [checking, setChecking] = useState(false);
   const lastChecked = useRef<string>("");
-  const debounceTimer = useRef<NodeJS.Timeout>();
+  const debounceTimer = useRef<ReturnType<typeof setTimeout>>();
   const cache = useRef<Map<string, NudgeResult | null>>(new Map());
 
   const checkMessage = useCallback(async (content: string) => {
