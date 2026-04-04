@@ -158,6 +158,7 @@ const Index = () => {
   const [matchBreakdown, setMatchBreakdown] = useState<CompatibilityBreakdownResult | null>(null);
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [breakdownName, setBreakdownName] = useState("");
+  const [announcedProfile, setAnnouncedProfile] = useState("");
 
   // Handle super like purchase redirect
   useEffect(() => {
