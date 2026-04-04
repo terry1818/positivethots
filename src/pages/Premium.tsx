@@ -185,9 +185,12 @@ const Premium = () => {
       <div className={cn("absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl", !reducedMotion && "animate-blob-float [animation-delay:5s]")} aria-hidden="true" />
 
       <div className="container max-w-4xl mx-auto px-4 py-6 relative z-10">
-        <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-1" /> Back
-        </Button>
+        <div className="flex items-center justify-between mb-4">
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
+            <ArrowLeft className="h-4 w-4 mr-1" /> Back
+          </Button>
+          <CoinBalanceWidget onClick={() => navigate("/wallet")} />
+        </div>
 
         <div className={cn("text-center mb-8", !reducedMotion && "animate-fade-in")}>
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
