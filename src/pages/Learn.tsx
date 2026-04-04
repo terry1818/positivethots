@@ -53,8 +53,23 @@ const Learn = () => {
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const { tier: subscriptionTier } = useSubscription();
+  const { seen: learnTourSeen, markSeen: markLearnTourSeen } = useTutorialState("learn_tour");
+  const [showLearnTour, setShowLearnTour] = useState(false);
+
+  const learnTourSteps: TourStep[] = [
+    { target: "learn-xp-bar", title: "Your Learning Progress", description: "Complete modules to earn XP and level up for rewards!", position: "below" },
+    { target: "learn-tier-active", title: "Tier Roadmap", description: "Work through each tier to unlock new features. Complete all modules in a tier to unlock the next one.", position: "below" },
+    { target: "learn-daily-challenge", title: "Daily Challenges", description: "Complete daily challenges for bonus XP. Keep your streak alive! 🔥", position: "below" },
+  ];
 
   useEffect(() => { loadData(); }, []);
+
+  // Show learn tour after data loads
+  useEffect(() => {
+    if (!loading && !learnTourSeen && modules.length > 0) {
+      setTimeout(() => setShowLearnTour(true), 600);
+    }
+  }, [loading, learnTourSeen, modules.length]);
 
   const loadData = async () => {
     try {
