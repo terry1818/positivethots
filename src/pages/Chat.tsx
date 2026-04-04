@@ -612,7 +612,7 @@ const Chat = () => {
               <Button
                 size="icon" aria-label="Send message"
                 onClick={handleSendMessage}
-                className={cn("h-10 w-10 bg-gradient-primary text-primary-foreground transition-all", newMessage.trim() && "animate-pulse-glow")}
+                className={cn("h-11 w-11 min-h-[44px] min-w-[44px] bg-gradient-primary text-primary-foreground transition-all", newMessage.trim() && "animate-pulse-glow")}
               >
                 <Send className="h-5 w-5" />
               </Button>
