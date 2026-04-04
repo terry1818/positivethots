@@ -834,6 +834,7 @@ const Index = () => {
                     canSuperLike={canSuperLike}
                     superLikeBalance={isUnlimited ? 999 : superLikeBalance}
                     onViewProfile={() => setDetailProfile(profile)}
+                    onUpgradeSuperLike={() => navigate("/premium")}
                   />
                 );
               })}

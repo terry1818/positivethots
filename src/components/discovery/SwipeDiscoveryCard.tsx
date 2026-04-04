@@ -383,7 +383,7 @@ export const SwipeDiscoveryCard = memo(({
 
       {/* Action buttons */}
       {isTop && (
-        <div className="flex items-center justify-center gap-4 py-4" data-walkthrough="action-buttons" data-tour="action-buttons">
+        <div className="flex items-center justify-center gap-4 py-2" data-walkthrough="action-buttons" data-tour="action-buttons">
           <Button
             variant="outline"
             className="h-14 w-14 rounded-full border-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
@@ -393,19 +393,29 @@ export const SwipeDiscoveryCard = memo(({
             <X className="h-6 w-6" />
           </Button>
 
-          {canSuperLike && (
-            <Button
-              variant="outline"
-              className="h-12 w-12 rounded-full border-2 border-primary text-primary bg-gradient-to-br from-primary/10 to-secondary/10 hover:from-primary hover:to-secondary hover:text-primary-foreground active:scale-110"
-              onClick={(e) => {
-                e.stopPropagation();
+          <Button
+            variant="outline"
+            className={cn(
+              "h-12 w-12 rounded-full border-2 border-primary text-primary relative",
+              canSuperLike
+                ? "bg-gradient-to-br from-primary/10 to-secondary/10 hover:from-primary hover:to-secondary hover:text-primary-foreground active:scale-110"
+                : "opacity-60 grayscale"
+            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (canSuperLike) {
                 handleSuperLikeTap();
-              }}
-              aria-label={`Send a Thot to ${displayName}`}
-            >
-              <Star className="h-5 w-5" />
-            </Button>
-          )}
+              } else {
+                onUpgradeSuperLike?.();
+              }
+            }}
+            aria-label={canSuperLike ? `Send a Thot to ${displayName}` : "Get Thots — upgrade to send"}
+          >
+            <Star className="h-5 w-5" />
+            {!canSuperLike && (
+              <Lock className="h-3 w-3 absolute -bottom-0.5 -right-0.5 text-muted-foreground" />
+            )}
+          </Button>
 
           <Button
             className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground hover:scale-110 transition-transform shadow-lg"
