@@ -170,7 +170,7 @@ const LikesYou = () => {
     <div className="min-h-screen bg-background flex flex-col pb-20">
       <MicroCelebration trigger={celebrationTrigger} emojis={["🎉", "💕", "✨", "💜"]} />
       <div className="flex-1 overflow-auto">
-        <div className="container max-w-md mx-auto px-4">
+        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4">
           <header className="border-b border-border bg-card py-3 flex items-center justify-between">
             <Logo size="md" showText={false} />
             <div className="flex items-center gap-2">
