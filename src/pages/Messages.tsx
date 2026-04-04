@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { BlurImage } from "@/components/BlurImage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,12 +21,38 @@ interface Match {
     profile_image: string;
     age: number;
     is_verified?: boolean;
+    selected_frame?: string;
+    last_active_at?: string | null;
   };
+}
+
+interface LastMessage {
+  content: string;
+  created_at: string;
+  sender_id: string;
+}
+
+function formatRelativeTime(timestamp: string): string {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  if (diff < 60000) return "Now";
+  if (diff < 3600000) return `${Math.floor(diff / 60000)}m`;
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)}h`;
+  if (diff < 604800000) return `${Math.floor(diff / 86400000)}d`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function isRecentlyActive(lastActiveAt: string | null | undefined): boolean {
+  if (!lastActiveAt) return false;
+  return Date.now() - new Date(lastActiveAt).getTime() < 5 * 60 * 1000; // 5 minutes
 }
 
 const Messages = () => {
   const [matches, setMatches] = useState<Match[]>([]);
+  const [lastMessages, setLastMessages] = useState<Record<string, LastMessage>>({});
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,6 +69,7 @@ const Messages = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
+      setUserId(session.user.id);
 
       const [matchesResult, blockedResult] = await Promise.all([
         supabase
@@ -64,27 +91,47 @@ const Messages = () => {
         else blockedUserIds.add(row.blocker_id);
       });
 
+      const filteredMatches = matchesResult.data.filter(match => {
+        const otherId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
+        return !blockedUserIds.has(otherId);
+      });
+
+      // Fetch profiles and last messages in parallel
       const matchesWithProfiles = await Promise.all(
-        matchesResult.data
-          .filter(match => {
-            const otherId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
-            return !blockedUserIds.has(otherId);
-          })
-          .map(async (match) => {
-            const otherId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
-            const { data: profileData } = await supabase
-              .rpc("get_public_profile", { _user_id: otherId });
-            const profile = profileData?.[0];
-            return {
-              id: match.id,
-              profile: profile || {
-                id: otherId, name: "Unknown",
-                profile_image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${otherId}`, age: 0,
-              },
-            };
-          })
+        filteredMatches.map(async (match) => {
+          const otherId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
+          const { data: profileData } = await supabase
+            .rpc("get_public_profile", { _user_id: otherId });
+          const profile = profileData?.[0];
+          return {
+            id: match.id,
+            profile: profile ? {
+              ...profile,
+              last_active_at: (profile as any).last_active_at || null,
+            } : {
+              id: otherId, name: "Unknown",
+              profile_image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${otherId}`, age: 0,
+            },
+          };
+        })
       );
 
+      // Fetch last messages for all matches
+      const lastMsgs: Record<string, LastMessage> = {};
+      await Promise.all(
+        filteredMatches.map(async (match) => {
+          const { data } = await supabase
+            .from("messages")
+            .select("content, created_at, sender_id")
+            .eq("match_id", match.id)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (data) lastMsgs[match.id] = data;
+        })
+      );
+
+      setLastMessages(lastMsgs);
       setMatches(matchesWithProfiles);
     } catch (error: any) {
       console.error("Error loading matches:", error);
@@ -93,6 +140,23 @@ const Messages = () => {
       setLoading(false);
     }
   };
+
+  // Sort: conversations with messages first (by most recent message), then new matches
+  const sortedMatches = useMemo(() => {
+    return [...matches].sort((a, b) => {
+      const lastA = lastMessages[a.id];
+      const lastB = lastMessages[b.id];
+      // Both have messages — sort by most recent
+      if (lastA && lastB) {
+        return new Date(lastB.created_at).getTime() - new Date(lastA.created_at).getTime();
+      }
+      // One has messages, one doesn't — message first
+      if (lastA && !lastB) return -1;
+      if (!lastA && lastB) return 1;
+      // Neither has messages — keep original order
+      return 0;
+    });
+  }, [matches, lastMessages]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20">
@@ -129,40 +193,61 @@ const Messages = () => {
             onCtaClick={() => navigate("/")}
           />
         ) : (
-          <div className="space-y-3">
-            {matches.map((match, idx) => (
-              <Card
-                key={match.id}
-                className="p-4 cursor-pointer hover:bg-accent/50 transition-all duration-200 hover:-translate-y-0.5 animate-stagger-fade"
-                style={{ animationDelay: `${idx * 60}ms` }}
-                onClick={() => navigate(`/chat/${match.id}`)}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <ProfileFrame frameId={(match.profile as any).selected_frame} size="md">
-                      <BlurImage
-                        src={match.profile.profile_image}
-                        alt={match.profile.name}
-                        className="h-full w-full"
-                        aspectRatio="1/1"
-                        loading={idx === 0 ? "eager" : "lazy"}
-                        fetchPriority={idx === 0 ? "high" : undefined}
-                      />
-                    </ProfileFrame>
-                    {match.profile.is_verified ? (
-                      <VerifiedBadgeOverlay isVerified size="sm" />
-                    ) : idx < 2 ? (
-                      <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-success rounded-full border-2 border-card animate-pulse" />
-                    ) : null}
+          <div className="space-y-2">
+            {sortedMatches.map((match, idx) => {
+              const lastMsg = lastMessages[match.id];
+              const showOnline = isRecentlyActive((match.profile as any).last_active_at);
+
+              return (
+                <Card
+                  key={match.id}
+                  className="p-4 cursor-pointer hover:bg-accent/50 transition-all duration-200 hover:-translate-y-0.5 animate-stagger-fade min-h-[72px]"
+                  style={{ animationDelay: `${idx * 60}ms` }}
+                  onClick={() => navigate(`/chat/${match.id}`)}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <ProfileFrame frameId={(match.profile as any).selected_frame} size="md">
+                        <BlurImage
+                          src={match.profile.profile_image}
+                          alt={match.profile.name}
+                          className="h-full w-full"
+                          aspectRatio="1/1"
+                          loading={idx === 0 ? "eager" : "lazy"}
+                          fetchPriority={idx === 0 ? "high" : undefined}
+                        />
+                      </ProfileFrame>
+                      {match.profile.is_verified ? (
+                        <VerifiedBadgeOverlay isVerified size="sm" />
+                      ) : showOnline ? (
+                        <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-success rounded-full border-2 border-card animate-pulse" />
+                      ) : null}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-base truncate">{match.profile.name}, {match.profile.age}</h3>
+                        {lastMsg && (
+                          <span className="text-xs text-muted-foreground shrink-0 ml-2">
+                            {formatRelativeTime(lastMsg.created_at)}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {lastMsg ? (
+                          <>
+                            {lastMsg.sender_id === userId && <span className="opacity-60">You: </span>}
+                            {lastMsg.content}
+                          </>
+                        ) : (
+                          <span className="text-primary italic">Tap to say hi! 👋</span>
+                        )}
+                      </p>
+                    </div>
+                    <MessageCircle className="h-5 w-5 text-muted-foreground shrink-0" />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg">{match.profile.name}, {match.profile.age}</h3>
-                    <p className="text-sm text-muted-foreground">Tap to start chatting</p>
-                  </div>
-                  <MessageCircle className="h-5 w-5 text-muted-foreground" />
-                </div>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </div>
         )}
       </main>

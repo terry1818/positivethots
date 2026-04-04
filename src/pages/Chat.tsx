@@ -542,25 +542,35 @@ const Chat = () => {
               </div>
             ))}
 
-            {/* Typing Indicator */}
-            {isTyping && (
-              <div className="flex items-end gap-2 animate-slide-in-left">
-                <div className="w-8 h-8 rounded-full bg-muted flex-shrink-0 overflow-hidden">
-                  {otherUser.profile_image ? (
-                    <img src={otherUser.profile_image} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-sm">{otherUser.name?.[0]}</div>
-                  )}
-                </div>
-                <div className="bg-muted px-4 py-3 rounded-2xl rounded-bl-none">
-                  <div className="flex gap-1.5">
-                    <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" />
-                    <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.2s" }} />
-                    <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.4s" }} />
+            {/* Typing Indicator with aria-live */}
+            <div aria-live="polite" aria-atomic="true">
+              {isTyping && <span className="sr-only">{otherUser.name} is typing</span>}
+              {isTyping && (
+                <div className="flex items-end gap-2 animate-slide-in-left">
+                  <div className="w-8 h-8 rounded-full bg-muted flex-shrink-0 overflow-hidden">
+                    {otherUser.profile_image ? (
+                      <img src={otherUser.profile_image} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-sm">{otherUser.name?.[0]}</div>
+                    )}
+                  </div>
+                  <div className="bg-muted px-4 py-3 rounded-2xl rounded-bl-none">
+                    <div className="flex gap-1.5">
+                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" />
+                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.2s" }} />
+                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.4s" }} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            {/* New message announcements for screen readers */}
+            <div aria-live="polite" className="sr-only">
+              {messages.length > 0 && messages[messages.length - 1].sender_id !== currentUser?.id &&
+                `New message from ${otherUser.name}: ${messages[messages.length - 1].content}`
+              }
+            </div>
 
             <div ref={messagesEndRef} />
           </div>
