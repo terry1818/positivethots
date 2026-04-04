@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useTutorialState } from "@/hooks/useTutorialState";
+import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
 import { BlurImage } from "@/components/BlurImage";
 import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
