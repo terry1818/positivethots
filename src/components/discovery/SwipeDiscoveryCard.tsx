@@ -49,6 +49,7 @@ interface SwipeDiscoveryCardProps {
   superLikeBalance?: number;
   onViewProfile: () => void;
   is_recycled?: boolean;
+  onUpgradeSuperLike?: () => void;
 }
 
 export const SwipeDiscoveryCard = memo(({
