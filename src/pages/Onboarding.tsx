@@ -678,7 +678,7 @@ const Onboarding = () => {
               {/* Step 5: Photo Upload (moved earlier) */}
               {step === 5 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="📸" title="Add a photo" subtitle="At least 1 photo required — this is how people see you" />
+                  <StepHeader emoji="📸" title="Add a photo" subtitle="At least 1 photo required · Required" />
                   {userId && (
                     <div className="animate-stagger-1">
                       <PhotoUploadGrid
