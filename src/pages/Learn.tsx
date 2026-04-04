@@ -218,7 +218,7 @@ const Learn = () => {
 
         {/* Streak Calendar + Daily Challenge combined card */}
         {stats && (
-          <Card className="animate-fade-in">
+          <Card className="animate-fade-in" data-tour="learn-daily-challenge">
             <CardContent className="p-3 space-y-2">
               <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} freezeCount={stats.streak_freezes} />
               <DailyChallenge />
