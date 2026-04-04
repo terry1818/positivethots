@@ -66,6 +66,7 @@ export const MatchModal = ({
         }));
         setConfetti(particles);
         try { navigator.vibrate?.([50, 50, 100]); } catch {}
+        haptic([50, 30, 50]);
       } else {
         setConfetti([]);
       }

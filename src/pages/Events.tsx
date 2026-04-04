@@ -240,7 +240,11 @@ const Events = () => {
             </TabsTrigger>
           </TabsList>
 
-          <p className="text-xs text-muted-foreground mb-4 text-center">{tierDescriptions[activeTab]}</p>
+          <p className="text-xs text-muted-foreground mb-3 text-center">{tierDescriptions[activeTab]}</p>
+
+          <div className="mb-4">
+            <SearchInput placeholder="Search events..." ariaLabel="Search events" onSearch={handleEventSearch} />
+          </div>
 
           <TabsContent value="community">{renderEventList("community")}</TabsContent>
           <TabsContent value="premium">{renderEventList("premium")}</TabsContent>

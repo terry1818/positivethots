@@ -76,6 +76,11 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
 
   useEffect(() => {
     if (type) {
+      // Haptic feedback for celebrations
+      if (type === "badge_earned") haptic(30);
+      else if (type === "streak_milestone") haptic(30);
+      else if (type === "level_up") haptic([30, 20, 30]);
+
       if (!prefersReducedMotion) {
         const shapes = ["circle", "rect", "star"];
         const count = type === "tier_complete" ? 80 : 50;

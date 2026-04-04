@@ -226,6 +226,7 @@ const Learn = () => {
       </header>
 
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
+        <SearchInput placeholder="Search modules..." ariaLabel="Search modules" onSearch={handleModuleSearch} />
         {/* Streak Calendar */}
         {stats && (
           <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} freezeCount={stats.streak_freezes} />
