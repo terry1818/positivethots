@@ -371,7 +371,7 @@ export const SwipeDiscoveryCard = memo(({
 
       {/* Action buttons */}
       {isTop && (
-        <div className="absolute bottom-[-70px] left-1/2 -translate-x-1/2 flex items-center gap-4">
+        <div className="absolute bottom-[-70px] left-1/2 -translate-x-1/2 flex items-center gap-4" data-walkthrough="action-buttons">
           <Button
             variant="outline"
             className="h-14 w-14 rounded-full border-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
