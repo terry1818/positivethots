@@ -733,6 +733,27 @@ const Chat = () => {
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Block confirmation dialog */}
+      <AlertDialog open={showBlockDialog} onOpenChange={setShowBlockDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Block {otherUser?.name}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              They won't be able to see your profile or contact you. This can be reversed in Settings.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { setShowBlockDialog(false); handleBlock(); }}
+            >
+              Block
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Compatibility Breakdown Sheet */}
       <Sheet open={showCompatibility} onOpenChange={setShowCompatibility}>
         <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
