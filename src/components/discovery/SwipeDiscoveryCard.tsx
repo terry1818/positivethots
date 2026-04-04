@@ -128,6 +128,8 @@ export const SwipeDiscoveryCard = memo(({
     if (Math.abs(dragOffset.x) > threshold) {
       const direction = dragOffset.x > 0 ? "right" : "left";
       setAnimate(direction);
+      // Haptic feedback at swipe threshold
+      try { navigator?.vibrate?.([30]); } catch {}
       setTimeout(() => {
         if (direction === "right") onConnect(profile.id);
         else onPass(profile.id);
@@ -257,13 +259,13 @@ export const SwipeDiscoveryCard = memo(({
                 className="absolute top-8 left-6 text-4xl font-bold text-success border-4 border-success rounded-2xl px-4 py-2 rotate-[-20deg] z-20"
                 style={{ opacity: Math.max(0, Math.min(dragOffset.x / 100, 1)) }}
               >
-                LIKE
+                Connect 💜
               </div>
               <div
-                className="absolute top-8 right-6 text-4xl font-bold text-destructive border-4 border-destructive rounded-2xl px-4 py-2 rotate-[20deg] z-20"
+                className="absolute top-8 right-6 text-4xl font-bold text-muted-foreground border-4 border-muted-foreground rounded-2xl px-4 py-2 rotate-[20deg] z-20"
                 style={{ opacity: Math.max(0, Math.min(-dragOffset.x / 100, 1)) }}
               >
-                NOPE
+                Pass
               </div>
             </>
           )}
@@ -372,33 +374,33 @@ export const SwipeDiscoveryCard = memo(({
         <div className="absolute bottom-[-70px] left-1/2 -translate-x-1/2 flex items-center gap-4">
           <Button
             variant="outline"
-            className="h-12 w-12 rounded-full border-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+            className="h-14 w-14 rounded-full border-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
             onClick={(e) => { e.stopPropagation(); handleButtonSwipe("left"); }}
             aria-label={`Pass on ${displayName}`}
           >
-            <X className="h-5 w-5" />
+            <X className="h-6 w-6" />
           </Button>
 
           {canSuperLike && (
             <Button
               variant="outline"
-              className="h-11 w-11 rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white active:scale-110"
+              className="h-12 w-12 rounded-full border-2 border-primary text-primary bg-gradient-to-br from-primary/10 to-secondary/10 hover:from-primary hover:to-secondary hover:text-primary-foreground active:scale-110"
               onClick={(e) => {
                 e.stopPropagation();
                 handleSuperLikeTap();
               }}
               aria-label={`Send a Thot to ${displayName}`}
             >
-              <Star className="h-4 w-4" />
+              <Star className="h-5 w-5" />
             </Button>
           )}
 
           <Button
-            className="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground hover:scale-110 transition-transform shadow-lg"
+            className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground hover:scale-110 transition-transform shadow-lg"
             onClick={(e) => { e.stopPropagation(); handleButtonSwipe("right"); }}
             aria-label={`Connect with ${displayName}`}
           >
-            <Heart className="h-6 w-6 fill-current" />
+            <Heart className="h-7 w-7 fill-current" />
           </Button>
         </div>
       )}

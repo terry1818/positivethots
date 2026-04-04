@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles } from "lucide-react";
+import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles, MapPin, Share2 } from "lucide-react";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { calculateCompatibilityBreakdown, type CompatibilityBreakdownResult } from "@/lib/compatibility";
 import { CompatibilityBreakdown } from "@/components/discovery/CompatibilityBreakdown";
@@ -169,6 +169,7 @@ const Index = () => {
   useEffect(() => {
     checkAuthAndSetup();
   }, []);
+
 
   const checkAuthAndSetup = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -394,6 +395,41 @@ const Index = () => {
     setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
   }, [currentUser, suggestions, sendSuperLike]);
 
+  // Keyboard navigation for discovery
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (suggestions.length === 0 || loading) return;
+      const topProfile = suggestions[0];
+      if (!topProfile) return;
+
+      switch (e.key) {
+        case "ArrowRight":
+        case "l":
+          e.preventDefault();
+          handleConnect(topProfile.id);
+          break;
+        case "ArrowLeft":
+        case "h":
+          e.preventDefault();
+          handlePass(topProfile.id);
+          break;
+        case "ArrowUp":
+        case "s":
+          e.preventDefault();
+          if (canSuperLike) handleSuperLike(topProfile.id);
+          break;
+        case " ":
+        case "Enter":
+          e.preventDefault();
+          setDetailProfile(topProfile);
+          break;
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [suggestions, loading, canSuperLike, handleConnect, handlePass, handleSuperLike]);
+
   const handleBoostClick = async () => {
     trackEvent('discovery_empty_boost_clicked', {});
     try {
@@ -522,20 +558,31 @@ const Index = () => {
         </div>
       )}
 
+      {/* Screen reader live region */}
+      <div aria-live="polite" className="sr-only">
+        {suggestions.length > 0 && `Now viewing ${suggestions[0].display_name || suggestions[0].name}, age ${suggestions[0].age}`}
+      </div>
+
       {/* Curated Matches Grid */}
       <div className="max-w-sm mx-auto px-4">
         {suggestions.length === 0 ? (
-          <div className="space-y-4">
+          <div className="flex flex-col items-center justify-center min-h-[50vh] px-6 text-center">
             <BrandedEmptyState
               mascot="binoculars"
               headline="You've seen everyone nearby! 🔭"
-              description="Try expanding your distance or check back tomorrow for new faces."
-              ctaLabel="Adjust Filters"
-              onCtaClick={() => navigate("/settings")}
+              description="New people join every day. We'll let you know when someone new arrives."
             />
+            <div className="flex gap-3 mt-6">
+              <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="min-h-[44px]">
+                <MapPin className="h-4 w-4 mr-1" /> Expand radius
+              </Button>
+              <Button size="sm" className="bg-gradient-to-r from-primary to-secondary text-primary-foreground min-h-[44px]" onClick={handleReferralClick}>
+                <Share2 className="h-4 w-4 mr-1" /> Invite friends
+              </Button>
+            </div>
 
             {/* Boost upsell card */}
-            <Card className="p-6 text-center max-w-sm mx-auto w-full">
+            <Card className="p-6 text-center max-w-sm mx-auto w-full mt-4">
               <Zap className="h-12 w-12 text-amber-500 mx-auto mb-3" />
               <h2 className="text-xl font-bold mb-1">Get Seen by More People</h2>
               <p className="text-muted-foreground text-sm mb-1">
@@ -547,56 +594,52 @@ const Index = () => {
                 Boost Now
               </Button>
             </Card>
-
-            {/* Referral card */}
-            <Card className="p-6 text-center max-w-sm mx-auto w-full">
-              <Users className="h-12 w-12 text-primary mx-auto mb-3" />
-              <h2 className="text-xl font-bold mb-1">Invite a Friend, Earn a Free Boost</h2>
-              <p className="text-muted-foreground text-sm mb-4">
-                Share your referral link and you both get rewarded.
-              </p>
-              <Button variant="outline" className="w-full max-w-xs mx-auto" onClick={handleReferralClick}>
-                <Copy className="h-4 w-4 mr-2" />
-                Copy Referral Link
-              </Button>
-            </Card>
           </div>
         ) : (
-          <div className="relative flex justify-center items-start px-4 pt-2 pb-32" style={{ minHeight: '520px' }}>
-            {suggestions.slice(0, 3).map((profile, stackIdx) => {
-              const isMystery = mysteryProfiles.has(profile.id);
-              if (isMystery && stackIdx === 0) {
+          <>
+            <div className="relative flex justify-center items-start px-4 pt-2 pb-32" style={{ minHeight: '520px' }}>
+              {suggestions.slice(0, 3).map((profile, stackIdx) => {
+                const isMystery = mysteryProfiles.has(profile.id);
+                if (isMystery && stackIdx === 0) {
+                  return (
+                    <MysteryMatchCard
+                      key={profile.id}
+                      profile={profile}
+                      canReveal={canRevealMystery}
+                      onReveal={handleMysteryReveal}
+                      onConnect={handleConnect}
+                      onPass={handlePass}
+                      onSuperLike={handleSuperLike}
+                      canSuperLike={canSuperLike}
+                      superLikeBalance={isUnlimited ? 999 : superLikeBalance}
+                      onUpgrade={handleMysteryUpgrade}
+                    />
+                  );
+                }
                 return (
-                  <MysteryMatchCard
+                  <SwipeDiscoveryCard
                     key={profile.id}
                     profile={profile}
-                    canReveal={canRevealMystery}
-                    onReveal={handleMysteryReveal}
+                    isTop={stackIdx === 0}
+                    stackIndex={stackIdx}
                     onConnect={handleConnect}
                     onPass={handlePass}
                     onSuperLike={handleSuperLike}
                     canSuperLike={canSuperLike}
                     superLikeBalance={isUnlimited ? 999 : superLikeBalance}
-                    onUpgrade={handleMysteryUpgrade}
+                    onViewProfile={() => setDetailProfile(profile)}
                   />
                 );
-              }
-              return (
-                <SwipeDiscoveryCard
-                  key={profile.id}
-                  profile={profile}
-                  isTop={stackIdx === 0}
-                  stackIndex={stackIdx}
-                  onConnect={handleConnect}
-                  onPass={handlePass}
-                  onSuperLike={handleSuperLike}
-                  canSuperLike={canSuperLike}
-                  superLikeBalance={isUnlimited ? 999 : superLikeBalance}
-                  onViewProfile={() => setDetailProfile(profile)}
-                />
-              );
-            })}
-          </div>
+              })}
+            </div>
+            {/* Desktop keyboard hints */}
+            <div className="hidden md:flex gap-6 text-xs text-muted-foreground justify-center mt-3">
+              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono">←</kbd> Pass</span>
+              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono">↑</kbd> Send a Thot</span>
+              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono">→</kbd> Connect</span>
+              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono">Space</kbd> View profile</span>
+            </div>
+          </>
         )}
       </div>
 
