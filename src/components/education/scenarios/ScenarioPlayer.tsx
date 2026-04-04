@@ -100,8 +100,8 @@ export const ScenarioPlayer = ({ scenarioId, onComplete, onBack }: ScenarioPlaye
       const s: Scenario = {
         id: data.id,
         title: data.title,
-        characters: data.characters as Character[],
-        scenes: data.scenes as Scene[],
+        characters: data.characters as unknown as Character[],
+        scenes: data.scenes as unknown as Scene[],
         xp_reward: data.xp_reward,
         difficulty_level: data.difficulty_level,
         module_id: data.module_id,
