@@ -244,7 +244,16 @@ const EditProfile = () => {
             <AccordionContent className="pb-4 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" value={name} onChange={(e) => { setName(e.target.value); markChanged(); }} maxLength={100} className="focus-glow" />
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => { setName(e.target.value); markChanged(); setFieldErrors(prev => ({ ...prev, name: "" })); }}
+                  maxLength={100}
+                  className="focus-glow"
+                  aria-invalid={!!fieldErrors.name}
+                  aria-describedby={fieldErrors.name ? "name-error" : undefined}
+                />
+                <FieldError message={fieldErrors.name} id="name-error" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="pronouns">Pronouns</Label>
