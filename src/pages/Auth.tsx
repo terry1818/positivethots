@@ -362,6 +362,17 @@ const Auth = () => {
               {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
             </Button>
           </form>
+
+          {/* Rotating testimonial */}
+          <div className="mt-4 text-center min-h-[40px] flex items-center justify-center">
+            <p
+              key={prefersReducedMotion ? 0 : testimonialIdx}
+              className={cn("text-xs text-muted-foreground italic", !prefersReducedMotion && "animate-fade-in")}
+            >
+              "{TESTIMONIALS[prefersReducedMotion ? 0 : testimonialIdx]}"
+              <span className="block text-muted-foreground/60 mt-0.5 not-italic">— Positive Thots member</span>
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
