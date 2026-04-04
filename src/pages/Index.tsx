@@ -793,7 +793,7 @@ const Index = () => {
           </div>
         ) : (
           <>
-            <div className="relative flex justify-center items-start px-4 pt-2 pb-32" data-walkthrough="discovery-card" data-tour="discovery-card" style={{ minHeight: '520px' }}>
+            <div className="relative flex justify-center items-start px-4 pt-2" data-walkthrough="discovery-card" data-tour="discovery-card" style={{ minHeight: '420px' }}>
               {/* Undo button */}
               {showUndoButton && lastPassedProfile && (
                 <button
@@ -839,7 +839,7 @@ const Index = () => {
               })}
             </div>
             {/* Desktop keyboard hints */}
-            <div className="hidden md:flex gap-6 text-sm text-muted-foreground justify-center mt-3">
+            <div className="hidden xl:flex gap-6 text-sm text-muted-foreground justify-center mt-3">
               <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">←</kbd> Pass</span>
               <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">↑</kbd> Send a Thot</span>
               <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">→</kbd> Connect</span>
