@@ -29,6 +29,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { SearchInput } from "@/components/SearchInput";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
+import { WeeklySprintBanner } from "@/components/education/sprints/WeeklySprintBanner";
+import { CommunityChallengeCard } from "@/components/education/CommunityChallengeCard";
 
 interface Module {
   id: string; slug: string; title: string; description: string; order_index: number;
