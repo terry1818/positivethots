@@ -155,7 +155,7 @@ const LikesYou = () => {
   const handlePass = async (likerId: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    await supabase.from("swipes").insert({ swiper_id: user.id, swiped_id: likerId, direction: "left" });
+    await supabase.from("swipes").upsert({ swiper_id: user.id, swiped_id: likerId, direction: "left" }, { onConflict: "swiper_id,swiped_id" });
     setLikers(prev => prev.filter(l => l.id !== likerId));
     setLikerCount(prev => Math.max(0, prev - 1));
   };
