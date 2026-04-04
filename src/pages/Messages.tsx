@@ -238,6 +238,7 @@ const Messages = () => {
                   key={match.id}
                   className="p-4 cursor-pointer hover:bg-accent/50 transition-all duration-200 hover:-translate-y-0.5 animate-stagger-fade min-h-[72px]"
                   style={{ animationDelay: `${idx * 60}ms` }}
+                  data-tour={idx === 0 ? "messages-first-conversation" : undefined}
                   onClick={() => navigate(`/chat/${match.id}`)}
                 >
                   <div className="flex items-center gap-4">
