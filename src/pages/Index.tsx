@@ -754,7 +754,7 @@ const Index = () => {
             <BrandedEmptyState
               mascot="binoculars"
               headline="You've seen everyone nearby! 🔭"
-              description="New people join every day. We'll let you know when someone new arrives."
+              description="New people join every day. Keep connecting — your next match could be right around the corner! 💜"
             />
             <div className="flex flex-wrap gap-3 mt-6">
               <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="min-h-[44px]">

@@ -215,7 +215,7 @@ const Messages = () => {
             <BrandedEmptyState
               mascot="waving"
               headline="No messages yet! 💬"
-              description="When you and someone both say yes, you can start chatting here."
+              description="When you and someone both Connect, you can start chatting here. Keep earning badges and exploring Discovery!"
               ctaLabel="Go to Discovery"
               onCtaClick={() => navigate("/")}
               className="py-6 [&_.mb-6]:mb-3"
