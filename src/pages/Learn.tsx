@@ -32,14 +32,6 @@ interface Module {
 
 interface UserBadge { module_id: string; earned_at: string; }
 
-const tierConfig: Record<string, { label: string; color: string; bgClass: string; borderColor: string }> = {
-  foundation: { label: "Foundation (Required)", color: "text-primary", bgClass: "from-primary/20 to-primary/10", borderColor: "border-l-primary" },
-  sexual_health: { label: "Sexual Health", color: "text-success", bgClass: "from-success/20 to-success/10", borderColor: "border-l-success" },
-  identity: { label: "Identity & Diversity", color: "text-[hsl(285_55%_45%)]", bgClass: "from-[hsl(285_55%_45%)]/20 to-[hsl(285_55%_45%)]/10", borderColor: "border-l-[hsl(285_55%_45%)]" },
-  relationships: { label: "Healthy Relationships", color: "text-[hsl(340_65%_55%)]", bgClass: "from-[hsl(340_65%_55%)]/20 to-[hsl(340_65%_55%)]/10", borderColor: "border-l-[hsl(340_65%_55%)]" },
-  advanced: { label: "Advanced Topics", color: "text-accent", bgClass: "from-accent/20 to-accent/10", borderColor: "border-l-accent" },
-};
-
 const tierOrder = ["foundation", "sexual_health", "identity", "relationships", "advanced"];
 
 const Learn = () => {
@@ -96,7 +88,7 @@ const Learn = () => {
       }
       setModuleProgress(progressMap);
 
-      // Fetch continue data: most recently accessed section progress
+      // Fetch continue data
       const { data: recentProgress } = await supabase
         .from("user_section_progress")
         .select("section_id, completed, last_accessed")
@@ -113,7 +105,6 @@ const Learn = () => {
 
         if (sectionData) {
           const earnedIds = new Set(badges.map(b => b.module_id));
-          // Only show continue if badge not yet earned for this module
           if (!earnedIds.has(sectionData.module_id)) {
             const mp = progressMap[sectionData.module_id];
             const pct = mp && mp.total > 0 ? Math.round((mp.completed / mp.total) * 100) : 0;
@@ -157,13 +148,11 @@ const Learn = () => {
       return idx === 0 || earnedModuleIds.has(foundationModules[idx - 1]?.id);
     }
     if (requiredEarned < requiredModules.length) return false;
-    // Advanced tier requires premium subscription
     if (module.tier === 'advanced' && !isPremium) return false;
     if (!module.prerequisite_badges || module.prerequisite_badges.length === 0) return true;
     return module.prerequisite_badges.every(slug => earnedSlugs.has(slug));
   }, [modules, earnedModuleIds, earnedSlugs, requiredEarned, requiredModules, isPremium]);
 
-  // Check if advanced modules are locked specifically due to no premium (prereqs met but no sub)
   const isAdvancedPremiumLocked = useCallback((module: Module) => {
     if (module.tier !== 'advanced' || isPremium) return false;
     if (requiredEarned < requiredModules.length) return false;
@@ -202,7 +191,6 @@ const Learn = () => {
                 atRisk={isStreakAtRisk}
                 hoursLeft={streakHoursLeft}
               />
-              {/* Streak urgency pill */}
               {isStreakAtRisk && stats && stats.current_streak > 0 && (
                 <span className="bg-destructive/15 border border-destructive/40 text-destructive text-sm font-bold rounded-full px-2 py-0.5">
                   🔥 {streakHoursLeft}h left
@@ -214,22 +202,26 @@ const Learn = () => {
               </div>
             </div>
           </div>
+          {/* Compact XP row */}
           {stats && (
             <div className="mt-3">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-sm text-muted-foreground">{getLevelName(stats.current_level)}</span>
-              </div>
               <XPBar totalXP={stats.total_xp} level={stats.current_level} />
             </div>
           )}
         </div>
       </header>
 
-      <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
+      <main className="flex-1 container max-w-md mx-auto px-4 py-4 space-y-3">
         <SearchInput placeholder="Search modules..." ariaLabel="Search modules" onSearch={handleModuleSearch} />
-        {/* Streak Calendar */}
+
+        {/* Streak Calendar + Daily Challenge combined card */}
         {stats && (
-          <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} freezeCount={stats.streak_freezes} />
+          <Card className="animate-fade-in">
+            <CardContent className="p-3 space-y-2">
+              <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} freezeCount={stats.streak_freezes} />
+              <DailyChallenge />
+            </CardContent>
+          </Card>
         )}
 
         {/* Streak Restore Modal */}
@@ -241,27 +233,24 @@ const Learn = () => {
           onDismiss={() => {}}
         />
 
-        {/* Daily Challenge */}
-        <DailyChallenge />
-
-        {/* Community social proof */}
+        {/* Active learners — subtle line */}
         {activeLearnerCount != null && activeLearnerCount > 0 && (
-          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground py-1">
-            <Users className="h-3 w-3" />
-            <span>{activeLearnerCount.toLocaleString()} learners active today</span>
-          </div>
+          <p className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
+            <Users className="h-3.5 w-3.5" />
+            {activeLearnerCount.toLocaleString()} learners active today
+          </p>
         )}
 
-        {/* Learning Path - no Card wrapper */}
-        <div className="animate-fade-in space-y-4">
+        {/* Learning Path — compact header */}
+        <div className="animate-fade-in space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-primary" />
               Learning Path
+              <span className="text-sm text-muted-foreground font-normal">
+                · <AnimatedCounter end={earnedCount} />/{totalBadges} badges
+              </span>
             </h2>
-            <span className="text-sm text-muted-foreground">
-              <AnimatedCounter end={earnedCount} />/{totalBadges} badges
-            </span>
           </div>
           <div className="relative overflow-hidden rounded-full h-2 bg-muted">
             <div
@@ -269,15 +258,6 @@ const Learn = () => {
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          {requiredEarned === requiredModules.length && requiredModules.length > 0 ? (
-            <p className="text-sm text-success flex items-center gap-1">
-              <CheckCircle className="h-3.5 w-3.5" />Discovery unlocked! Keep learning for more.
-            </p>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              Complete {requiredModules.length - requiredEarned} more foundation module{requiredModules.length - requiredEarned !== 1 ? 's' : ''} to unlock discovery
-            </p>
-          )}
 
           <BadgePathMap
             modulesByTier={modulesByTier}
@@ -318,67 +298,39 @@ const Learn = () => {
           </Card>
         )}
 
-        {/* Resources & Tools Hub */}
+        {/* Divider */}
+        <div className="border-t border-border" />
+
+        {/* Resources & Tools — 2-column grid */}
         <section className="space-y-2">
-          <h2 className="text-base font-semibold flex items-center gap-2">
+          <h2 className="text-sm font-semibold flex items-center gap-2">
             <BookMarked className="h-4 w-4 text-primary" />
             Resources & Tools
           </h2>
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-3 h-auto py-3 min-h-[52px]"
-            onClick={() => navigate("/resources")}
-          >
-            <BookMarked className="h-5 w-5 text-primary flex-shrink-0" />
-            <div className="text-left">
-              <span className="text-sm font-medium">Books & Products</span>
-              <p className="text-sm text-muted-foreground">Curated recommendations for your journey</p>
-            </div>
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-3 h-auto py-3 min-h-[52px]"
-            onClick={() => navigate("/journal")}
-          >
-            <NotebookPen className="h-5 w-5 text-primary flex-shrink-0" />
-            <div className="text-left">
-              <span className="text-sm font-medium">Reflection Journal</span>
-              <p className="text-sm text-muted-foreground">Track your growth and insights</p>
-            </div>
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-3 h-auto py-3 min-h-[52px]"
-            onClick={() => navigate("/testing-locations")}
-          >
-            <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
-            <div className="text-left">
-              <span className="text-sm font-medium">Find Testing Near You</span>
-              <p className="text-sm text-muted-foreground">Locate STD testing centers nearby</p>
-            </div>
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-3 h-auto py-3 min-h-[52px]"
-            onClick={() => navigate("/health-testing")}
-          >
-            <HeartPulse className="h-5 w-5 text-primary flex-shrink-0" />
-            <div className="text-left">
-              <span className="text-sm font-medium">Test From Home</span>
-              <p className="text-sm text-muted-foreground">Discreet at-home STD testing kits</p>
-            </div>
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-start gap-3 h-auto py-3 min-h-[52px]"
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { icon: BookMarked, label: "Books & Products", onClick: () => navigate("/resources") },
+              { icon: NotebookPen, label: "Reflection Journal", onClick: () => navigate("/journal") },
+              { icon: MapPin, label: "Find Testing", onClick: () => navigate("/testing-locations") },
+              { icon: HeartPulse, label: "Test From Home", onClick: () => navigate("/health-testing") },
+            ].map(({ icon: Icon, label, onClick }) => (
+              <button
+                key={label}
+                onClick={onClick}
+                className="flex flex-col items-center justify-center gap-1.5 p-3 min-h-[72px] rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors text-center"
+              >
+                <Icon className="h-6 w-6 text-primary" />
+                <span className="text-sm font-medium">{label}</span>
+              </button>
+            ))}
+          </div>
+          <button
             onClick={() => navigate("/resources?tab=advocacy")}
+            className="flex items-center justify-center gap-2 w-full p-3 min-h-[48px] rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors"
           >
-            <Megaphone className="h-5 w-5 text-primary flex-shrink-0" />
-            <div className="text-left">
-              <span className="text-sm font-medium">Advocacy & Action</span>
-              <p className="text-sm text-muted-foreground">Stand up for the freedoms that make ENM possible</p>
-            </div>
-          </Button>
+            <Megaphone className="h-5 w-5 text-primary" />
+            <span className="text-sm font-medium">Advocacy & Action</span>
+          </button>
         </section>
 
         <LeaderboardCard />
