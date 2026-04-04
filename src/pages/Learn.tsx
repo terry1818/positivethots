@@ -173,7 +173,7 @@ const Learn = () => {
       // (delay slightly to avoid competing with page load)
     } catch (error: any) {
       console.error("Error loading education data:", error);
-      toast.error("Failed to load education modules");
+      setError(true);
     } finally {
       setLoading(false);
     }
