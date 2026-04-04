@@ -799,7 +799,7 @@ const Onboarding = () => {
               {/* Step 10: Height, Zodiac, Languages */}
               {step === 10 && (
                 <div className="space-y-6">
-                  <StepHeader emoji="📏" title="A bit more about you" subtitle="All optional — share what you like" />
+                  <StepHeader emoji="📏" title="A bit more about you" subtitle="All optional — share what you like · Optional" />
                   <div className="space-y-2 animate-stagger-1">
                     <Label className="text-sm font-medium">Height</Label>
                     <HeightSlider value={formData.heightCm} onChange={(v) => updateField("heightCm", v)} />
