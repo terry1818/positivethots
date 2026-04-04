@@ -162,6 +162,17 @@ const Chat = () => {
 
     if (otherProfile) {
       setOtherUser(otherProfile);
+
+      // Pre-compute compatibility for banner
+      const storageKey = `pt_compat_banner_${matchId}`;
+      if (!localStorage.getItem(storageKey)) {
+        const [{ count: myB }, { count: theirB }] = await Promise.all([
+          supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", session.user.id),
+          supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", otherUserId),
+        ]);
+        const bd = calculateCompatibilityBreakdown(profile as any, otherProfile as any, myB || 0, theirB || 0);
+        setCompatBreakdown(bd);
+      }
     }
 
     const { data: existingMessages } = await supabase
