@@ -379,10 +379,8 @@ const LikesYou = () => {
                 await supabase.from("swipes").delete().eq("swiper_id", user.id).eq("swiped_id", unlikeTarget.id).eq("direction", "right");
                 setSentLikes(prev => prev.filter(p => p.id !== unlikeTarget.id));
                 setUnlikeTarget(null);
-                // Invalidate discovery so the unliked profile can reappear
-                queryClient.invalidateQueries({ queryKey: ['discovery-suggestions'] });
-                queryClient.invalidateQueries({ queryKey: ['sent-likes'] });
-                toast({ title: "Removed from your likes", description: "They may reappear in Discovery." });
+                triggerDiscoveryRefresh();
+                toast({ title: "Removed from your likes", description: "They'll reappear in Discovery." });
               }}
             >
               Remove
