@@ -226,10 +226,14 @@ const Settings = () => {
   ];
 
   const handleChangePassword = async () => {
-    if (newPassword.length < 6) {
-      toast.error("New password must be at least 6 characters");
+    const errors: Record<string, string> = {};
+    if (newPassword.length < 6) errors.newPassword = "Password must be at least 6 characters";
+    if (Object.keys(errors).length > 0) {
+      setPasswordErrors(errors);
+      document.getElementById("new-password")?.focus();
       return;
     }
+    setPasswordErrors({});
     setChangingPassword(true);
     try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
@@ -238,7 +242,7 @@ const Settings = () => {
       setCurrentPassword("");
       setNewPassword("");
     } catch (error: any) {
-      toast.error(error.message || "Failed to update password");
+      setPasswordErrors({ newPassword: error.message || "Failed to update password" });
     } finally {
       setChangingPassword(false);
     }
