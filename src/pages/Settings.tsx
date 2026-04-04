@@ -300,7 +300,7 @@ const Settings = () => {
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
     } catch (error: any) {
-      toast.error(error.message || "Failed to open subscription management");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setManagingPortal(false);
     }
