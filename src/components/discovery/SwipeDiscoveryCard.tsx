@@ -38,6 +38,7 @@ interface EnhancedProfile {
   verified?: boolean;
   distance?: number | null;
   is_boosted?: boolean;
+  photo_focal_points?: Record<string, number>;
 }
 
 interface SwipeDiscoveryCardProps {
