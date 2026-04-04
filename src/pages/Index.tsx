@@ -417,8 +417,8 @@ const Index = () => {
       undoTimerRef.current = setTimeout(() => setShowUndoButton(false), 5000);
     }
 
-    const { error } = await supabase.from("swipes").insert({
-      swiper_id: currentUser.id, swiped_id: otherUserId, direction: "left",
+    const { error } = await supabase.rpc("record_pass", {
+      _swiper_id: currentUser.id, _swiped_id: otherUserId,
     });
     if (error) {
       setSuggestions(previousSuggestions);
