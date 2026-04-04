@@ -280,8 +280,8 @@ const LikesYou = () => {
                   {sentLikes.map((profile, idx) => (
                     <Card
                       key={profile.id}
-                      className="overflow-hidden relative animate-stagger-fade cursor-pointer"
-                      style={{ animationDelay: `${idx * 80}ms` }}
+                      className={cn("overflow-hidden relative cursor-pointer", !reducedMotion && "animate-stagger-fade")}
+                      style={!reducedMotion ? { animationDelay: `${idx * 80}ms` } : undefined}
                       onClick={() => navigate("/profile/" + profile.id)}
                     >
                       <button
