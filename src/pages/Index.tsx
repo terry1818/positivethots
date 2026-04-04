@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles, MapPin, Share2, Undo2, RefreshCw } from "lucide-react";
+import { Heart, BookOpen, Settings, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles, MapPin, Share2, Undo2, RefreshCw } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -659,9 +659,8 @@ const Index = () => {
       <MicroCelebration trigger={celebrationTrigger} emojis={["💕", "✨", "💜", "🔥"]} />
 
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="container max-w-md mx-auto px-4 py-2.5">
-          <div className="flex items-center justify-between">
+      <header className="sticky top-0 z-40 border-b border-border bg-card">
+        <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
             <Logo size="md" showText={false} />
             <div className="flex items-center gap-2">
               {canSuperLike && (
@@ -695,13 +694,12 @@ const Index = () => {
               >
                 <Zap className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" className="h-9 w-9 p-0" onClick={() => navigate("/settings")} aria-label="Settings">
-                <Shield className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => navigate("/settings")} aria-label="Settings">
+                <Settings className="h-6 w-6" />
               </Button>
             </div>
-          </div>
         </div>
-      </div>
+      </header>
 
       {/* Profile completion banner for Quick Start users */}
       {showProfileBanner && (
