@@ -22,6 +22,7 @@ const PADDING = 8;
 export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null);
+  const [transitioning, setTransitioning] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const tooltipRef = useRef<HTMLDivElement>(null);
 
@@ -30,21 +31,57 @@ export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps
     if (!step) return;
     const el = document.querySelector(`[data-tour="${step.target}"]`);
     if (el) {
-      setTargetRect(el.getBoundingClientRect());
+      el.scrollIntoView({
+        behavior: prefersReducedMotion ? "instant" as ScrollBehavior : "smooth",
+        block: "center",
+      });
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setTargetRect(el.getBoundingClientRect());
+        });
+      });
     } else {
       setTargetRect(null);
     }
-  }, [currentStep, steps]);
+  }, [currentStep, steps, prefersReducedMotion]);
 
   useEffect(() => {
     updateTargetRect();
-    window.addEventListener("resize", updateTargetRect);
-    window.addEventListener("scroll", updateTargetRect);
-    return () => {
-      window.removeEventListener("resize", updateTargetRect);
-      window.removeEventListener("scroll", updateTargetRect);
+    let timeout: ReturnType<typeof setTimeout>;
+    const debouncedUpdate = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        const step = steps[currentStep];
+        if (!step) return;
+        const el = document.querySelector(`[data-tour="${step.target}"]`);
+        if (el) setTargetRect(el.getBoundingClientRect());
+      }, 50);
     };
-  }, [updateTargetRect]);
+    window.addEventListener("resize", debouncedUpdate);
+    window.addEventListener("scroll", debouncedUpdate, { passive: true });
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener("resize", debouncedUpdate);
+      window.removeEventListener("scroll", debouncedUpdate);
+    };
+  }, [updateTargetRect, currentStep, steps]);
+
+  // Skip missing targets
+  useEffect(() => {
+    const step = steps[currentStep];
+    if (!step) return;
+    const el = document.querySelector(`[data-tour="${step.target}"]`);
+    if (!el) {
+      const timer = setTimeout(() => {
+        if (currentStep >= steps.length - 1) {
+          onComplete();
+        } else {
+          setCurrentStep(s => s + 1);
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [currentStep, steps, onComplete]);
 
   useEffect(() => {
     tooltipRef.current?.focus();
@@ -65,7 +102,11 @@ export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps
     if (currentStep >= steps.length - 1) {
       onComplete();
     } else {
-      setCurrentStep((s) => s + 1);
+      setTransitioning(true);
+      setTimeout(() => {
+        setCurrentStep((s) => s + 1);
+        setTransitioning(false);
+      }, 150);
     }
   };
 
@@ -81,7 +122,6 @@ export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps
       role="dialog"
       aria-label={`${tourKey} walkthrough`}
       onClick={(e) => {
-        // Dismiss on backdrop click
         if (e.target === e.currentTarget) onComplete();
       }}
     >
@@ -142,8 +182,9 @@ export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps
           role="status"
           aria-live="polite"
           className={cn(
-            "absolute z-[101] w-72 bg-card rounded-xl shadow-xl p-4 border border-border",
-            !prefersReducedMotion && "animate-fade-in"
+            "absolute z-[101] w-72 bg-card rounded-xl shadow-xl p-4 border border-border transition-opacity duration-150",
+            transitioning ? "opacity-0" : "opacity-100",
+            !prefersReducedMotion && !transitioning && "animate-fade-in"
           )}
           style={{
             left: Math.max(
