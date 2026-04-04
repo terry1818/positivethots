@@ -61,6 +61,7 @@ interface DiscoveryProfile {
   zodiac_sign: string | null;
   languages: string[] | null;
   height_cm: number | null;
+  is_recycled?: boolean;
 }
 
 interface EnhancedProfile extends DiscoveryProfile {
