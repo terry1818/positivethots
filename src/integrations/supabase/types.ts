@@ -630,6 +630,42 @@ export type Database = {
           },
         ]
       }
+      face_verifications: {
+        Row: {
+          attempt_count: number
+          created_at: string
+          expires_at: string | null
+          id: string
+          pose_requested: string
+          selfie_url: string | null
+          status: string
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          attempt_count?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          pose_requested: string
+          selfie_url?: string | null
+          status?: string
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          attempt_count?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          pose_requested?: string
+          selfie_url?: string | null
+          status?: string
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       flagged_messages: {
         Row: {
           content: string
@@ -689,6 +725,118 @@ export type Database = {
           question_text?: string
         }
         Relationships: []
+      }
+      group_chat_members: {
+        Row: {
+          group_id: string
+          id: string
+          joined_at: string
+          last_read_at: string
+          muted: boolean
+          role: string
+          user_id: string
+        }
+        Insert: {
+          group_id: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string
+          muted?: boolean
+          role?: string
+          user_id: string
+        }
+        Update: {
+          group_id?: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string
+          muted?: boolean
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_chat_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "group_chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_chats: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_active: boolean
+          max_members: number
+          name: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_members?: number
+          name: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_members?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      group_messages: {
+        Row: {
+          content: string
+          created_at: string
+          group_id: string
+          id: string
+          is_flagged: boolean
+          message_type: string
+          metadata: Json | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          group_id: string
+          id?: string
+          is_flagged?: boolean
+          message_type?: string
+          metadata?: Json | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          group_id?: string
+          id?: string
+          is_flagged?: boolean
+          message_type?: string
+          metadata?: Json | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_messages_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "group_chats"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       linked_profiles: {
         Row: {
@@ -841,6 +989,39 @@ export type Database = {
           score?: number
           trigger_event?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      opening_moves: {
+        Row: {
+          category: string
+          context_note: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          related_badge_slug: string | null
+          requires_education_tier: number | null
+          text: string
+        }
+        Insert: {
+          category: string
+          context_note?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          related_badge_slug?: string | null
+          requires_education_tier?: number | null
+          text: string
+        }
+        Update: {
+          category?: string
+          context_note?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          related_badge_slug?: string | null
+          requires_education_tier?: number | null
+          text?: string
         }
         Relationships: []
       }
@@ -1019,6 +1200,7 @@ export type Database = {
           earned_frames: string[]
           enm_experience_level: string | null
           experience_level: string | null
+          face_verified_at: string | null
           gender: string | null
           gender_preference: string | null
           height_cm: number | null
@@ -1027,6 +1209,7 @@ export type Database = {
           incognito_mode: boolean
           incognito_updated_at: string | null
           interests: string[] | null
+          is_face_verified: boolean
           is_verified: boolean
           languages: string[] | null
           last_active_at: string | null
@@ -1069,6 +1252,7 @@ export type Database = {
           earned_frames?: string[]
           enm_experience_level?: string | null
           experience_level?: string | null
+          face_verified_at?: string | null
           gender?: string | null
           gender_preference?: string | null
           height_cm?: number | null
@@ -1077,6 +1261,7 @@ export type Database = {
           incognito_mode?: boolean
           incognito_updated_at?: string | null
           interests?: string[] | null
+          is_face_verified?: boolean
           is_verified?: boolean
           languages?: string[] | null
           last_active_at?: string | null
@@ -1119,6 +1304,7 @@ export type Database = {
           earned_frames?: string[]
           enm_experience_level?: string | null
           experience_level?: string | null
+          face_verified_at?: string | null
           gender?: string | null
           gender_preference?: string | null
           height_cm?: number | null
@@ -1127,6 +1313,7 @@ export type Database = {
           incognito_mode?: boolean
           incognito_updated_at?: string | null
           interests?: string[] | null
+          is_face_verified?: boolean
           is_verified?: boolean
           languages?: string[] | null
           last_active_at?: string | null
