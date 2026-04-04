@@ -443,6 +443,22 @@ const Learn = () => {
           onComplete={() => { setShowLearnTour(false); markLearnTourSeen(); }}
         />
       )}
+      {showStreakInterstitial && stats && (
+        <StreakInterstitial
+          streak={stats.current_streak}
+          hoursLeft={streakHoursLeft}
+          onSaveStreak={() => {
+            setShowStreakInterstitial(false);
+            sessionStorage.setItem("pt_streak_interstitial_dismissed", "true");
+            const currentMod = modules.find(m => !earnedModuleIds.has(m.id));
+            if (currentMod) navigate(`/learn/${currentMod.slug}`);
+          }}
+          onDismiss={() => {
+            setShowStreakInterstitial(false);
+            sessionStorage.setItem("pt_streak_interstitial_dismissed", "true");
+          }}
+        />
+      )}
     </div>
   );
 };
