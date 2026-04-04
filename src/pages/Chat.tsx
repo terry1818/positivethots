@@ -442,26 +442,28 @@ const Chat = () => {
         </div>
       </div>
 
-      {/* Safety Notice */}
-      {messages.length === 0 && (
+      {/* Safety Notice — shown when fewer than 3 messages */}
+      {messages.length < 3 && (
         <div className="container max-w-4xl mx-auto px-4 py-4 space-y-3">
-          <Card className="p-4 bg-primary/5 border-primary/20 animate-fade-in">
-            <div className="flex items-start gap-3">
-              <Shield className="h-5 w-5 text-primary mt-0.5" />
-              <div className="flex-1">
-                <h3 className="font-semibold text-sm">Stay Safe</h3>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Never share personal information like your address or financial details. Report any concerning behavior immediately.
-                </p>
+          {messages.length === 0 && (
+            <Card className="p-4 bg-primary/5 border-primary/20 animate-fade-in">
+              <div className="flex items-start gap-3">
+                <Shield className="h-5 w-5 text-primary mt-0.5" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-sm">Stay Safe</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Never share personal information like your address or financial details. Report any concerning behavior immediately.
+                  </p>
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          )}
 
-          {/* Icebreaker suggestions */}
+          {/* Icebreaker suggestions — available for first 3 messages */}
           <div className="space-y-2">
             <p className="text-xs text-muted-foreground flex items-center gap-1.5">
               <MessageCircle className="h-3 w-3" />
-              Start the conversation
+              {messages.length === 0 ? "Start the conversation" : "Conversation starters"}
             </p>
             <div className="flex flex-wrap gap-2">
               {icebreakers.map((text, i) => (
