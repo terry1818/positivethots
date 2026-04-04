@@ -433,6 +433,14 @@ const EditProfile = () => {
             </AccordionContent>
           </AccordionItem>
 
+          {/* Desires & Interests */}
+          <AccordionItem value="desires" className="border rounded-xl px-4 bg-card">
+            <AccordionTrigger className="text-base font-semibold py-4">Desires & Interests</AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <DesireTagSelector />
+            </AccordionContent>
+          </AccordionItem>
+
           {/* BDSM & Verification */}
           <AccordionItem value="verification" className="border rounded-xl px-4 bg-card">
             <AccordionTrigger className="text-base font-semibold py-4">Verification & Extras</AccordionTrigger>
