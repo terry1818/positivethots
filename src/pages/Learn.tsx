@@ -20,7 +20,7 @@ import { StreakRestoreModal } from "@/components/education/StreakRestoreModal";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
 import { BadgePathMap } from "@/components/education/TierRoadmap";
-import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen, MapPin, HeartPulse, Megaphone } from "lucide-react";
+import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen, MapPin, HeartPulse, Megaphone, Search, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -38,6 +38,7 @@ const tierOrder = ["foundation", "sexual_health", "identity", "relationships", "
 
 const Learn = () => {
   const [moduleSearchQuery, setModuleSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
   const [modules, setModules] = useState<Module[]>([]);
   const [userBadges, setUserBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
@@ -196,10 +197,11 @@ const Learn = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20">
       <header className="border-b border-border bg-card">
-        <div className="container max-w-md mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+        <div className="container max-w-md mx-auto px-4 py-2.5">
+          {/* Row 1: Logo + quick stats */}
+          <div className="flex items-center justify-between mb-1.5">
             <Logo size="md" showText={false} />
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <StreakBadge
                 streak={stats?.current_streak || 0}
                 showFreeze
@@ -208,33 +210,40 @@ const Learn = () => {
                 atRisk={isStreakAtRisk}
                 hoursLeft={streakHoursLeft}
               />
-              {isStreakAtRisk && stats && stats.current_streak > 0 && (
-                <span className="bg-destructive/15 border border-destructive/40 text-destructive text-sm font-bold rounded-full px-2 py-0.5">
-                  🔥 {streakHoursLeft}h left
-                </span>
-              )}
-              <div className="flex items-center gap-1.5">
-                <Award className="h-4 w-4 text-primary" />
+              <div className="flex items-center gap-1 bg-muted/50 rounded-full px-2 py-0.5">
+                <Award className="h-3.5 w-3.5 text-primary" />
                 <span className="text-sm font-medium"><AnimatedCounter end={earnedCount} />/{totalBadges}</span>
               </div>
+              <button
+                onClick={() => setShowSearch(s => !s)}
+                className="p-1.5 rounded-full hover:bg-muted/50 transition-colors"
+                aria-label={showSearch ? "Close search" : "Search modules"}
+              >
+                {showSearch ? <X className="h-4 w-4 text-muted-foreground" /> : <Search className="h-4 w-4 text-muted-foreground" />}
+              </button>
             </div>
           </div>
-          {/* Compact XP row */}
+          {/* Row 2: XP bar */}
           {stats && (
-            <div className="mt-3" data-tour="learn-xp-bar">
+            <div data-tour="learn-xp-bar">
               <XPBar totalXP={stats.total_xp} level={stats.current_level} />
             </div>
           )}
         </div>
       </header>
 
-      <main className="flex-1 container max-w-md mx-auto px-4 py-4 space-y-3">
-        <SearchInput placeholder="Search modules..." ariaLabel="Search modules" onSearch={handleModuleSearch} />
+      <main className="flex-1 container max-w-md mx-auto px-4 py-3 space-y-2">
+        {/* Collapsible search */}
+        {showSearch && (
+          <div className="animate-fade-in">
+            <SearchInput placeholder="Search modules..." ariaLabel="Search modules" onSearch={handleModuleSearch} />
+          </div>
+        )}
 
         {/* Streak Calendar + Daily Challenge combined card */}
         {stats && (
           <Card className="animate-fade-in" data-tour="learn-daily-challenge">
-            <CardContent className="p-3 space-y-2">
+            <CardContent className="p-2 space-y-1.5">
               <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} freezeCount={stats.streak_freezes} />
               <DailyChallenge />
             </CardContent>
@@ -250,16 +259,8 @@ const Learn = () => {
           onDismiss={() => {}}
         />
 
-        {/* Active learners — subtle line */}
-        {activeLearnerCount != null && activeLearnerCount > 0 && (
-          <p className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
-            <Users className="h-3.5 w-3.5" />
-            {activeLearnerCount.toLocaleString()} learners active today
-          </p>
-        )}
-
-        {/* Learning Path — compact header */}
-        <div className="animate-fade-in space-y-3">
+        {/* Learning Path — compact header with active learners inline */}
+        <div className="animate-fade-in space-y-2">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-primary" />
@@ -268,6 +269,12 @@ const Learn = () => {
                 · <AnimatedCounter end={earnedCount} />/{totalBadges} badges
               </span>
             </h2>
+            {activeLearnerCount != null && activeLearnerCount > 0 && (
+              <span className="text-sm text-muted-foreground flex items-center gap-1">
+                <Users className="h-3 w-3" />
+                {activeLearnerCount} active
+              </span>
+            )}
           </div>
           <div className="relative overflow-hidden rounded-full h-2 bg-muted">
             <div
