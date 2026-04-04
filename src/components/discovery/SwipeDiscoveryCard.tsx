@@ -128,6 +128,8 @@ export const SwipeDiscoveryCard = memo(({
     if (Math.abs(dragOffset.x) > threshold) {
       const direction = dragOffset.x > 0 ? "right" : "left";
       setAnimate(direction);
+      // Haptic feedback at swipe threshold
+      try { navigator?.vibrate?.([30]); } catch {}
       setTimeout(() => {
         if (direction === "right") onConnect(profile.id);
         else onPass(profile.id);
