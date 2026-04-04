@@ -54,6 +54,7 @@ const Learn = () => {
   const [continueSectionNumber, setContinueSectionNumber] = useState<number | undefined>();
   const [continueProgressPercent, setContinueProgressPercent] = useState<number | undefined>();
   const navigate = useNavigate();
+  const handleModuleSearch = useCallback((q: string) => setModuleSearchQuery(q.toLowerCase()), []);
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const { tier: subscriptionTier } = useSubscription();
