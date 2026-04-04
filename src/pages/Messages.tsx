@@ -83,6 +83,13 @@ const Messages = () => {
     return () => { supabase.removeChannel(channel); };
   }, [userId]);
 
+  // Show messages tour after loading if there are matches
+  useEffect(() => {
+    if (!loading && !messagesTourSeen && matches.length > 0) {
+      setTimeout(() => setShowMessagesTour(true), 600);
+    }
+  }, [loading, messagesTourSeen, matches.length]);
+
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) navigate("/auth");
