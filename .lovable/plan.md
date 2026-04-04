@@ -1,57 +1,46 @@
 
+Fix this in three layers so it stops resurfacing:
 
-## Problem Analysis
+1. Harden which profiles are allowed into Discovery and Likes
+- Stop trusting legacy `profiles.profile_image` as a valid signal by itself.
+- In Discovery (`Index.tsx`), only keep profiles that resolve to at least one approved public `user_photos` image after enrichment.
+- In Likes, update the data path so both “Likes You” and “Your Likes” resolve their display photo from approved public `user_photos`, then filter out rows with no valid photo.
+- Tighten the likes RPCs/mapping so incomplete/bad profile rows do not get rendered just because a swipe record exists.
 
-Two issues visible in the screenshots:
+2. Remove broken profiles at render time too
+- Add a client-side guard for image failures:
+  - if a profile/tile exhausts all available photos, remove it from the Discovery queue / Likes grid instead of showing a broken-image card.
+- This covers storage/file mismatches that the database cannot detect from URL presence alone.
 
-1. **Discovery card photos crop heads** — The `BlurImage` uses `object-cover` which centers the image by default (`object-position: center`). For portrait/full-body photos, this cuts off heads. Users need a way to set a focal point per photo.
+3. Fix the broken Likes profile open flow
+- `LikesYou.tsx` currently routes to `/profile/:id`, but the app only has `/profile`.
+- Replace that dead navigation with the same full-profile sheet used in Discovery, powered by `get_public_profile`, so liked profiles open correctly and consistently.
 
-2. **Profile detail sheet photo is too small** — The `ProfileDetailSheet` uses a fixed `h-56` (224px) for the photo area regardless of screen size, wasting space on larger viewports. The full-profile view (image-49) shows the photo spanning full width but with no height constraint awareness.
+4. Make full-profile photos fully visible on larger screens
+- In `ProfileDetailSheet.tsx`, stop using crop-first behavior for the full-profile hero.
+- Keep crop/focal-point behavior for cards in Discovery, but switch the full-profile viewer to a dedicated media stage that uses full-image display (`object-contain`) on a dark background.
+- Increase the viewer height responsively with viewport-based sizing so tall portrait photos remain fully visible top-to-bottom on desktop/tablet/mobile.
+- Remove the current “small capped hero” behavior that is still forcing aggressive cropping on larger screens.
 
-## Plan
+5. Files to update
+- `src/pages/Index.tsx`
+- `src/pages/LikesYou.tsx`
+- `src/components/discovery/ProfileDetailSheet.tsx`
+- `src/components/BlurImage.tsx` or the sheet image rendering path
+- likely one migration to tighten the likes/discovery profile-fetch logic if backend filtering is needed
 
-### 1. Add focal point support to user_photos
+Technical notes
+- The current root causes visible in code are:
+  - Discovery still allows `p.profile_image` fallback even when no approved `user_photos` exist.
+  - Likes cards use raw `profile_image` data and do not enforce the same photo validity rules as Discovery.
+  - Likes tries to open a non-existent `/profile/:id` route.
+  - Full-profile view still renders with crop behavior, so large screens cut off the top/bottom of portrait photos.
+- I will keep focal-point cropping for feed cards, but the full-profile experience will prioritize seeing the whole image.
 
-**Database migration:**
-- Add `focal_point_y` column (DECIMAL, default 50) to `user_photos` — represents vertical percentage (0 = top, 50 = center, 100 = bottom). Only vertical axis needed since horizontal cropping rarely cuts important content.
-- Update RLS policy to allow users to update this field.
-
-### 2. Photo focal point selector in PhotoUploadGrid
-
-**Edit `PhotoUploadGrid.tsx`:**
-- Add a "Set Focus" button on each uploaded photo thumbnail.
-- On tap, open a modal/sheet showing the full photo with a draggable horizontal line or tap-to-set-focus interaction.
-- User taps where their face/subject is — saves the Y percentage to `focal_point_y`.
-- Simple UX: show the photo full-size, tap the important area, done.
-
-### 3. Pass focal point through to BlurImage
-
-**Edit `BlurImage.tsx`:**
-- Add optional `objectPosition` prop (e.g., `"center 30%"`).
-- Apply it to the `<img>` element's `style` alongside `object-cover`.
-
-### 4. Use focal point in Discovery cards
-
-**Edit `SwipeDiscoveryCard.tsx`:**
-- Fetch `focal_point_y` alongside photo URLs from `user_photos`.
-- Pass `objectPosition={`center ${focalY}%`}` to `BlurImage`.
-
-### 5. Use focal point in ProfileDetailSheet
-
-**Edit `ProfileDetailSheet.tsx`:**
-- Same focal point pass-through.
-- Fix responsive height: change `h-56` to `h-[50vh] max-h-[400px]` so the photo area scales with viewport instead of being a fixed 224px.
-
-### 6. Fix photo display on profile view across screen sizes
-
-**Edit `ProfileDetailSheet.tsx`:**
-- Replace fixed `h-56` with responsive classes: `h-[40vh] sm:h-[50vh] max-h-[500px]`.
-- This ensures the photo area is proportional on both small phones and desktop viewports.
-
-### Technical details
-
-- `focal_point_y` defaults to 50 (center), so existing photos display unchanged.
-- The focal point selector is a simple tap interaction — no complex drag needed. User sees full photo, taps where the subject's face is, a crosshair/indicator appears, they confirm.
-- Discovery feed query already fetches from `user_photos` — just need to include the new column.
-- `object-position: center ${y}%` is CSS-native and performant.
-
+Validation checklist after implementation
+- Discovery never shows profiles with no valid loadable public photo
+- “Likes You” and “Your Likes” no longer show broken/deleted-looking cards
+- Tapping a liked profile opens a working full-profile view
+- Tall portrait photos are fully visible top-to-bottom in full-profile view on 375px, tablet, and desktop
+- Multi-photo profiles still cycle correctly
+- One broken image in a carousel skips cleanly; all broken images remove the profile/tile from feed/panel instead of rendering a broken card
