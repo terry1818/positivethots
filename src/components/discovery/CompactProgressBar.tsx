@@ -100,6 +100,6 @@ export const CompactProgressBar = ({ tiers, badgeCount, connectionCount }: Compa
 const StatPill = ({ value, label, className }: { value: string | number; label: string; className?: string }) => (
   <div className="flex flex-col items-center">
     <span className={cn("text-base font-bold leading-none", className)}>{value}</span>
-    <span className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">{label}</span>
+    <span className="text-sm uppercase tracking-wider text-muted-foreground mt-0.5">{label}</span>
   </div>
 );

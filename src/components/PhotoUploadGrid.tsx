@@ -438,7 +438,7 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
                 )}
                 {/* Best photo badge */}
                 {bestPhotoId === photo.id && (
-                  <div className="absolute bottom-1 right-1 bg-amber-500/90 text-white text-[8px] font-bold px-1 py-0.5 rounded-full flex items-center gap-0.5">
+                  <div className="absolute bottom-1 right-1 bg-amber-500/90 text-white text-xs font-bold px-1 py-0.5 rounded-full flex items-center gap-0.5">
                     🔥 Best
                   </div>
                 )}
