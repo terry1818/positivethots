@@ -454,6 +454,11 @@ const Index = () => {
     });
   }, [navigate]);
 
+  // Remove a profile from the feed when all its images fail to load
+  const handleBrokenProfile = useCallback((profileId: string) => {
+    setSuggestions(prev => prev.filter(s => s.id !== profileId));
+  }, []);
+
   // Optimistic card removal helper
   const optimisticRemoveCard = useCallback((otherUserId: string): { previousSuggestions: EnhancedProfile[], removedProfile: EnhancedProfile | undefined } => {
     const previousSuggestions = [...suggestions];
