@@ -290,6 +290,13 @@ const Messages = () => {
       </main>
 
       <BottomNav />
+      {showMessagesTour && (
+        <SpotlightTour
+          tourKey="messages_tour"
+          steps={messagesTourSteps}
+          onComplete={() => { setShowMessagesTour(false); markMessagesTourSeen(); }}
+        />
+      )}
     </div>
   );
 };

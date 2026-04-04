@@ -268,6 +268,13 @@ const Events = () => {
         </Tabs>
       </div>
       <BottomNav />
+      {showEventsTour && (
+        <SpotlightTour
+          tourKey="events_tour"
+          steps={eventsTourSteps}
+          onComplete={() => { setShowEventsTour(false); markEventsTourSeen(); }}
+        />
+      )}
     </div>
   );
 };

@@ -393,6 +393,13 @@ const LikesYou = () => {
       </AlertDialog>
 
       <BottomNav />
+      {showLikesTour && (
+        <SpotlightTour
+          tourKey="likes_tour"
+          steps={likesTourSteps}
+          onComplete={() => { setShowLikesTour(false); markLikesTourSeen(); }}
+        />
+      )}
     </div>
   );
 };
