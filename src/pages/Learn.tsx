@@ -22,6 +22,7 @@ import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen, Map
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { SearchInput } from "@/components/SearchInput";
 
 interface Module {
   id: string; slug: string; title: string; description: string; order_index: number;
