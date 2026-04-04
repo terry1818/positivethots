@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, memo, useCallback } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { BlurImage } from "@/components/BlurImage";
 import { Heart, X, Star, Zap, Shield, ChevronDown, RefreshCw, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
