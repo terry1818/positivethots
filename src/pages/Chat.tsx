@@ -98,6 +98,7 @@ const Chat = () => {
   const [onlineStatus, setOnlineStatus] = useState<"online" | "away" | "offline">("offline");
   const [lastSeen, setLastSeen] = useState<Date | null>(null);
   const [chatGames, setChatGames] = useState<any[]>([]);
+  const [compatBannerDismissed, setCompatBannerDismissed] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<any>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
