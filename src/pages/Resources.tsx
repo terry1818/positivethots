@@ -237,7 +237,7 @@ const Resources = () => {
         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
           Curated Tools for Your ENM Journey
         </h1>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto mt-2">
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto mt-2">
           Hand-picked books, games, and wellness tools to strengthen your relationships.
         </p>
       </div>
