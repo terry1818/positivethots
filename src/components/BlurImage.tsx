@@ -59,6 +59,7 @@ export const BlurImage = memo(({
           src={src}
           alt={alt || ""}
           className={cn("absolute inset-0 h-full w-full object-cover transition-opacity duration-300", imgClassName)}
+          {...(objectPosition ? { style: { opacity: loaded ? 1 : 0, objectPosition } } : {})}
           style={{ opacity: loaded ? 1 : 0 }}
           decoding="async"
           loading={loading}
