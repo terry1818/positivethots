@@ -16,6 +16,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
+import { ProfileDetailSheet } from "@/components/discovery/ProfileDetailSheet";
 import { Lock, Heart, Crown, Check, X, Star, MapPin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -46,12 +47,35 @@ interface SentLikeProfile {
   id: string; name: string; age: number; profile_image?: string; location?: string; swiped_at?: string;
 }
 
+interface DetailProfile {
+  id: string;
+  name: string;
+  age: number;
+  bio: string | null;
+  location: string | null;
+  profile_image: string | null;
+  gender: string | null;
+  pronouns: string | null;
+  relationship_style: string | null;
+  relationship_status: string | null;
+  experience_level: string | null;
+  interests: string[] | null;
+  photos: string[] | null;
+  display_name: string | null;
+  is_verified: boolean;
+  looking_for: string | null;
+  zodiac_sign: string | null;
+  languages: string[] | null;
+  height_cm: number | null;
+}
+
 const LikesYou = () => {
   const navigate = useNavigate();
   const reducedMotion = useReducedMotion();
   const [isPremium, setIsPremium] = useState(false);
   const { seen: likesTourSeen, markSeen: markLikesTourSeen } = useTutorialState("likes_tour");
   const [showLikesTour, setShowLikesTour] = useState(false);
+  const [detailProfile, setDetailProfile] = useState<DetailProfile | null>(null);
 
   const likesTourSteps: TourStep[] = [
     { target: "likes-tab-likes-you", title: "Who Likes You", description: "People who've Connected with you appear here. Upgrade to Premium to see who they are!", position: "below" },
@@ -67,6 +91,26 @@ const LikesYou = () => {
   const [sentLikes, setSentLikes] = useState<SentLikeProfile[]>([]);
   const [sentLoading, setSentLoading] = useState(false);
   const [sentFetched, setSentFetched] = useState(false);
+
+  // Enrich profiles with approved photos from user_photos
+  const enrichWithPhotos = async (profileIds: string[]): Promise<Map<string, string>> => {
+    if (profileIds.length === 0) return new Map();
+    const { data } = await supabase
+      .from("user_photos")
+      .select("user_id, photo_url, order_index")
+      .in("user_id", profileIds)
+      .eq("visibility", "public")
+      .eq("moderation_status", "approved")
+      .order("order_index", { ascending: true });
+    
+    const bestPhoto = new Map<string, string>();
+    data?.forEach(p => {
+      if (!bestPhoto.has(p.user_id)) {
+        bestPhoto.set(p.user_id, p.photo_url);
+      }
+    });
+    return bestPhoto;
+  };
 
   useEffect(() => {
     const fetchLikers = async () => {
@@ -106,7 +150,15 @@ const LikesYou = () => {
             bio: r.bio,
             is_super_like: r.is_super_like,
           }));
-        setLikers(profiles);
+
+        // Enrich with approved photos and filter out profiles with no valid photo
+        const photoMap = await enrichWithPhotos(profiles.map(p => p.id));
+        const enriched = profiles.map(p => ({
+          ...p,
+          profile_image: photoMap.get(p.id) || p.profile_image,
+        })).filter(p => p.profile_image);
+
+        setLikers(enriched);
       } else {
         setLikers([]);
       }
@@ -133,7 +185,14 @@ const LikesYou = () => {
     if (error) {
       console.error("Error fetching sent likes:", error);
     } else if (data) {
-      setSentLikes(data as SentLikeProfile[]);
+      const profiles = data as SentLikeProfile[];
+      // Enrich with approved photos and filter
+      const photoMap = await enrichWithPhotos(profiles.map(p => p.id));
+      const enriched = profiles.map(p => ({
+        ...p,
+        profile_image: photoMap.get(p.id) || p.profile_image,
+      })).filter(p => p.profile_image);
+      setSentLikes(enriched);
     }
     setSentLoading(false);
     setSentFetched(true);
@@ -163,6 +222,34 @@ const LikesYou = () => {
   const handleTabChange = (value: string) => {
     if (value === "your-likes") {
       fetchSentLikes();
+    }
+  };
+
+  const openProfileDetail = async (profileId: string) => {
+    const { data } = await supabase.rpc("get_public_profile", { _user_id: profileId });
+    if (data && data.length > 0) {
+      const p = data[0] as any;
+      setDetailProfile({
+        id: p.id,
+        name: p.name,
+        age: p.age,
+        bio: p.bio || null,
+        location: p.location || null,
+        profile_image: p.profile_image || null,
+        gender: p.gender || null,
+        pronouns: p.pronouns || null,
+        relationship_style: p.relationship_style || null,
+        relationship_status: p.relationship_status || null,
+        experience_level: p.experience_level || null,
+        interests: p.interests || null,
+        photos: p.photos || null,
+        display_name: p.display_name || null,
+        is_verified: p.is_verified || false,
+        looking_for: p.looking_for || null,
+        zodiac_sign: p.zodiac_sign || null,
+        languages: p.languages || null,
+        height_cm: p.height_cm || null,
+      });
     }
   };
 
@@ -227,7 +314,6 @@ const LikesYou = () => {
                 </div>
               ) : !isPremium ? (
                 <div className="relative mb-6">
-                  {/* Blurred placeholder cards */}
                   <div className="grid grid-cols-2 gap-3 blur-lg pointer-events-none select-none" aria-hidden="true">
                     {Array.from({ length: Math.min(4, likerCount) }).map((_, i) => (
                       <div key={i} className="rounded-xl overflow-hidden border border-border">
@@ -239,7 +325,6 @@ const LikesYou = () => {
                       </div>
                     ))}
                   </div>
-                  {/* Overlay CTA */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl">
                     <Crown className="h-8 w-8 text-amber-500 mb-2" />
                     <p className="font-semibold text-base">{likerCount} {likerCount === 1 ? "person" : "people"} liked you</p>
@@ -260,7 +345,12 @@ const LikesYou = () => {
               ) : (
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                   {likers.map((liker, idx) => (
-                    <Card key={liker.id} className={cn("overflow-hidden relative", !reducedMotion && "animate-stagger-fade", liker.is_super_like && "ring-2 ring-amber-500/50")} style={!reducedMotion ? { animationDelay: `${idx * 80}ms` } : undefined}>
+                    <Card
+                      key={liker.id}
+                      className={cn("overflow-hidden relative cursor-pointer", !reducedMotion && "animate-stagger-fade", liker.is_super_like && "ring-2 ring-amber-500/50")}
+                      style={!reducedMotion ? { animationDelay: `${idx * 80}ms` } : undefined}
+                      onClick={() => openProfileDetail(liker.id)}
+                    >
                       {liker.is_super_like && (
                         <Badge className="absolute top-2 right-2 z-10 bg-amber-500 text-white">
                           <Star className="h-3 w-3 mr-1 fill-current" />Thot
@@ -280,10 +370,10 @@ const LikesYou = () => {
                         </div>
                       </div>
                       <div className="flex">
-                        <Button variant="ghost" size="sm" className="flex-1 rounded-none text-destructive hover:bg-destructive/10" onClick={() => handlePass(liker.id)}>
+                        <Button variant="ghost" size="sm" className="flex-1 rounded-none text-destructive hover:bg-destructive/10" onClick={(e) => { e.stopPropagation(); handlePass(liker.id); }}>
                           <X className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" className="flex-1 rounded-none text-primary hover:bg-primary/10" onClick={() => handleConnect(liker.id)}>
+                        <Button variant="ghost" size="sm" className="flex-1 rounded-none text-primary hover:bg-primary/10" onClick={(e) => { e.stopPropagation(); handleConnect(liker.id); }}>
                           <Check className="h-4 w-4" />
                         </Button>
                       </div>
@@ -311,7 +401,7 @@ const LikesYou = () => {
                       key={profile.id}
                       className={cn("overflow-hidden relative cursor-pointer", !reducedMotion && "animate-stagger-fade")}
                       style={!reducedMotion ? { animationDelay: `${idx * 80}ms` } : undefined}
-                      onClick={() => navigate("/profile/" + profile.id)}
+                      onClick={() => openProfileDetail(profile.id)}
                     >
                       <button
                         className="absolute top-2 left-2 z-10 bg-destructive/80 rounded-full p-1.5 hover:bg-destructive transition-colors"
@@ -328,7 +418,7 @@ const LikesYou = () => {
                       </div>
                       <div className="relative h-44 bg-gradient-to-br from-primary/20 to-secondary/20">
                         {profile.profile_image ? (
-                          <img src={profile.profile_image} alt={profile.name} className="absolute inset-0 w-full h-full object-cover" />
+                          <BlurImage src={profile.profile_image} alt={profile.name} className="absolute inset-0 w-full h-full" loading="lazy" sizes="(max-width: 375px) 170px, 200px" />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center">
                             <Heart className="h-10 w-10 text-primary/30" />
@@ -388,6 +478,14 @@ const LikesYou = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Profile Detail Sheet */}
+      <ProfileDetailSheet
+        profile={detailProfile}
+        onClose={() => setDetailProfile(null)}
+        onConnect={(id) => { handleConnect(id); setDetailProfile(null); }}
+        onPass={(id) => { handlePass(id); setDetailProfile(null); }}
+      />
 
       <BottomNav />
       {showLikesTour && (

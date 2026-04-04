@@ -365,9 +365,9 @@ const Index = () => {
 
     const enhancedProfiles: EnhancedProfile[] = profilesResult.data
       .filter(p => {
-        // Only include profiles that have at least one photo
-        const hasPhoto = photosByUser.get(p.id)?.length > 0 || p.profile_image;
-        return hasPhoto;
+        // Only include profiles that have at least one approved public photo
+        const approvedPhotos = photosByUser.get(p.id);
+        return approvedPhotos && approvedPhotos.length > 0;
       })
       .map(p => {
         const userPhotoData = photosByUser.get(p.id) || [];
@@ -376,7 +376,7 @@ const Index = () => {
         return {
         ...p,
         profile_image: userPhotoData[0]?.url || p.profile_image || null,
-        photos: userPhotoData.length > 1 ? userPhotoData.slice(1).map(ph => ph.url) : p.photos || null,
+        photos: userPhotoData.length > 1 ? userPhotoData.slice(1).map(ph => ph.url) : null,
         photo_focal_points: focalMap,
         badge_count: badgeCounts.get(p.id) || 0,
         compatibility_score: calculateCompatibility(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0),
@@ -453,6 +453,11 @@ const Index = () => {
       duration: 5000,
     });
   }, [navigate]);
+
+  // Remove a profile from the feed when all its images fail to load
+  const handleBrokenProfile = useCallback((profileId: string) => {
+    setSuggestions(prev => prev.filter(s => s.id !== profileId));
+  }, []);
 
   // Optimistic card removal helper
   const optimisticRemoveCard = useCallback((otherUserId: string): { previousSuggestions: EnhancedProfile[], removedProfile: EnhancedProfile | undefined } => {
@@ -860,6 +865,7 @@ const Index = () => {
                     superLikeBalance={isUnlimited ? 999 : superLikeBalance}
                     onViewProfile={() => setDetailProfile(profile)}
                     onUpgradeSuperLike={() => navigate("/premium")}
+                    onAllImagesFailed={() => handleBrokenProfile(profile.id)}
                   />
                 );
               })}
