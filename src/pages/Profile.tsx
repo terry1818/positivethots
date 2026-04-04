@@ -238,7 +238,9 @@ const Profile = () => {
 
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-24 space-y-4">
         {/* Profile Completion Meter */}
-        <ProfileCompletionMeter percentage={percentage} nudges={nudges} />
+        <div data-tour="profile-completion">
+          <ProfileCompletionMeter percentage={percentage} nudges={nudges} />
+        </div>
 
         {/* Profile Card */}
         <Card className="overflow-hidden animate-fade-in">
