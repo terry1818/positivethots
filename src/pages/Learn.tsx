@@ -45,6 +45,7 @@ const Learn = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [userBadges, setUserBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   
   const [moduleProgress, setModuleProgress] = useState<Record<string, { completed: number; total: number }>>({});
   const [activeLearnerCount, setActiveLearnerCount] = useState<number | null>(null);
