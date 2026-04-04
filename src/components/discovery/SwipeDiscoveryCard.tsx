@@ -73,6 +73,7 @@ export const SwipeDiscoveryCard = memo(({
   const [photoIndex, setPhotoIndex] = useState(0);
   const [failedPhotos, setFailedPhotos] = useState<Set<string>>(new Set());
   const cardRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
 
   const allPhotos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
   const photos = allPhotos.filter(url => !failedPhotos.has(url));
