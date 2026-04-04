@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { BlurImage } from "@/components/BlurImage";
 import { Heart, X, Star, Shield, ChevronLeft, MapPin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
