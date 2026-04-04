@@ -53,6 +53,13 @@ function isRecentlyActive(lastActiveAt: string | null | undefined): boolean {
 
 const Messages = () => {
   const [matches, setMatches] = useState<Match[]>([]);
+  const { seen: messagesTourSeen, markSeen: markMessagesTourSeen } = useTutorialState("messages_tour");
+  const [showMessagesTour, setShowMessagesTour] = useState(false);
+
+  const messagesTourSteps: TourStep[] = [
+    { target: "messages-first-conversation", title: "Your Matches", description: "When you and someone both say yes, you'll see them here. Tap to start chatting!", position: "below" },
+    { target: "messages-preview", title: "Quick Preview", description: "See your last message at a glance. Unread conversations appear at the top.", position: "below" },
+  ];
   const [lastMessages, setLastMessages] = useState<Record<string, LastMessage>>({});
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);

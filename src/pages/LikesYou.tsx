@@ -51,6 +51,13 @@ const LikesYou = () => {
   const queryClient = useQueryClient();
   const reducedMotion = useReducedMotion();
   const [isPremium, setIsPremium] = useState(false);
+  const { seen: likesTourSeen, markSeen: markLikesTourSeen } = useTutorialState("likes_tour");
+  const [showLikesTour, setShowLikesTour] = useState(false);
+
+  const likesTourSteps: TourStep[] = [
+    { target: "likes-tab-likes-you", title: "Who Likes You", description: "People who've Connected with you appear here. Upgrade to Premium to see who they are!", position: "below" },
+    { target: "likes-tab-your-likes", title: "Your Connects", description: "See everyone you've Connected with. Remove a Connect if you change your mind.", position: "below" },
+  ];
   const [likers, setLikers] = useState<LikerProfile[]>([]);
   const [likerCount, setLikerCount] = useState(0);
   const [loading, setLoading] = useState(true);

@@ -24,6 +24,13 @@ const Events = () => {
   const { isFeatureUnlocked } = useFeatureUnlocks();
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
+  const { seen: eventsTourSeen, markSeen: markEventsTourSeen } = useTutorialState("events_tour");
+  const [showEventsTour, setShowEventsTour] = useState(false);
+
+  const eventsTourSteps: TourStep[] = [
+    { target: "events-tier-tabs", title: "Event Tiers", description: "Events are organized by tier. Community events are free for everyone!", position: "below" },
+    { target: "events-card-first", title: "Event Details", description: "RSVP to free events instantly. Premium and Adults Only events require a subscription and education badges.", position: "below" },
+  ];
   const [purchasing, setPurchasing] = useState<string | null>(null);
   const [rsvpLoading, setRsvpLoading] = useState<string | null>(null);
   const [registrations, setRegistrations] = useState<string[]>([]);

@@ -75,6 +75,13 @@ const Profile = () => {
   const { stats } = useLearningStats();
   const { tiers } = useFeatureUnlocks();
   const { hasFeature, tier } = useSubscription();
+  const { seen: profileTourSeen, markSeen: markProfileTourSeen } = useTutorialState("profile_tour");
+  const [showProfileTour, setShowProfileTour] = useState(false);
+
+  const profileTourSteps: TourStep[] = [
+    { target: "profile-completion", title: "Complete Your Profile", description: "Complete your profile to get more Connects! Profiles with photos get 9× more engagement.", position: "below" },
+    { target: "profile-explore", title: "Your Hub", description: "Find Events, Resources, Health Testing, and more here. Your profile is your hub!", position: "above" },
+  ];
 
   const { data: promptCount = 0 } = useQuery({
     queryKey: ["profile-prompt-count", profile?.id],
