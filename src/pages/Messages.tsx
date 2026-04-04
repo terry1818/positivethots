@@ -1,4 +1,6 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
+import { useTutorialState } from "@/hooks/useTutorialState";
+import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
 import { BlurImage } from "@/components/BlurImage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,6 +53,13 @@ function isRecentlyActive(lastActiveAt: string | null | undefined): boolean {
 
 const Messages = () => {
   const [matches, setMatches] = useState<Match[]>([]);
+  const { seen: messagesTourSeen, markSeen: markMessagesTourSeen } = useTutorialState("messages_tour");
+  const [showMessagesTour, setShowMessagesTour] = useState(false);
+
+  const messagesTourSteps: TourStep[] = [
+    { target: "messages-first-conversation", title: "Your Matches", description: "When you and someone both say yes, you'll see them here. Tap to start chatting!", position: "below" },
+    { target: "messages-preview", title: "Quick Preview", description: "See your last message at a glance. Unread conversations appear at the top.", position: "below" },
+  ];
   const [lastMessages, setLastMessages] = useState<Record<string, LastMessage>>({});
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
@@ -73,6 +82,13 @@ const Messages = () => {
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [userId]);
+
+  // Show messages tour after loading if there are matches
+  useEffect(() => {
+    if (!loading && !messagesTourSeen && matches.length > 0) {
+      setTimeout(() => setShowMessagesTour(true), 600);
+    }
+  }, [loading, messagesTourSeen, matches.length]);
 
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -222,6 +238,7 @@ const Messages = () => {
                   key={match.id}
                   className="p-4 cursor-pointer hover:bg-accent/50 transition-all duration-200 hover:-translate-y-0.5 animate-stagger-fade min-h-[72px]"
                   style={{ animationDelay: `${idx * 60}ms` }}
+                  data-tour={idx === 0 ? "messages-first-conversation" : undefined}
                   onClick={() => navigate(`/chat/${match.id}`)}
                 >
                   <div className="flex items-center gap-4">
@@ -252,7 +269,7 @@ const Messages = () => {
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground truncate">
+                      <p className="text-sm text-muted-foreground truncate" data-tour={idx === 0 ? "messages-preview" : undefined}>
                         {lastMsg ? (
                           <>
                             {lastMsg.sender_id === userId && <span className="opacity-60">You: </span>}
@@ -273,6 +290,13 @@ const Messages = () => {
       </main>
 
       <BottomNav />
+      {showMessagesTour && (
+        <SpotlightTour
+          tourKey="messages_tour"
+          steps={messagesTourSteps}
+          onComplete={() => { setShowMessagesTour(false); markMessagesTourSeen(); }}
+        />
+      )}
     </div>
   );
 };

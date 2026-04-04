@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTutorialState } from "@/hooks/useTutorialState";
+import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -22,6 +24,13 @@ const Events = () => {
   const { isFeatureUnlocked } = useFeatureUnlocks();
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
+  const { seen: eventsTourSeen, markSeen: markEventsTourSeen } = useTutorialState("events_tour");
+  const [showEventsTour, setShowEventsTour] = useState(false);
+
+  const eventsTourSteps: TourStep[] = [
+    { target: "events-tier-tabs", title: "Event Tiers", description: "Events are organized by tier. Community events are free for everyone!", position: "below" },
+    { target: "events-card-first", title: "Event Details", description: "RSVP to free events instantly. Premium and Adults Only events require a subscription and education badges.", position: "below" },
+  ];
   const [purchasing, setPurchasing] = useState<string | null>(null);
   const [rsvpLoading, setRsvpLoading] = useState<string | null>(null);
   const [registrations, setRegistrations] = useState<string[]>([]);
@@ -38,6 +47,13 @@ const Events = () => {
       toast.success("You're registered! Check your email for details 🎉");
     }
   }, [searchParams]);
+
+  // Show events tour after loading
+  useEffect(() => {
+    if (!loading && !eventsTourSeen) {
+      setTimeout(() => setShowEventsTour(true), 600);
+    }
+  }, [loading, eventsTourSeen]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -228,7 +244,7 @@ const Events = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EventTier)} className="w-full">
-          <TabsList className="w-full grid grid-cols-3 mb-4">
+          <TabsList className="w-full grid grid-cols-3 mb-4" data-tour="events-tier-tabs">
             <TabsTrigger value="community" className="text-sm sm:text-sm">
               🌐 Community
             </TabsTrigger>
@@ -252,6 +268,13 @@ const Events = () => {
         </Tabs>
       </div>
       <BottomNav />
+      {showEventsTour && (
+        <SpotlightTour
+          tourKey="events_tour"
+          steps={eventsTourSteps}
+          onComplete={() => { setShowEventsTour(false); markEventsTourSeen(); }}
+        />
+      )}
     </div>
   );
 };

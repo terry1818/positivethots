@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useTutorialState } from "@/hooks/useTutorialState";
+import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
 import { BlurImage } from "@/components/BlurImage";
 import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -73,6 +75,13 @@ const Profile = () => {
   const { stats } = useLearningStats();
   const { tiers } = useFeatureUnlocks();
   const { hasFeature, tier } = useSubscription();
+  const { seen: profileTourSeen, markSeen: markProfileTourSeen } = useTutorialState("profile_tour");
+  const [showProfileTour, setShowProfileTour] = useState(false);
+
+  const profileTourSteps: TourStep[] = [
+    { target: "profile-completion", title: "Complete Your Profile", description: "Complete your profile to get more Connects! Profiles with photos get 9× more engagement.", position: "below" },
+    { target: "profile-explore", title: "Your Hub", description: "Find Events, Resources, Health Testing, and more here. Your profile is your hub!", position: "above" },
+  ];
 
   const { data: promptCount = 0 } = useQuery({
     queryKey: ["profile-prompt-count", profile?.id],
@@ -123,6 +132,13 @@ const Profile = () => {
 
   useEffect(() => { loadProfile(); checkActiveBoost(); }, []);
   useEffect(() => { setCurrentPhotoIndex(0); }, [userPhotos]);
+
+  // Show profile tour after loading
+  useEffect(() => {
+    if (!loading && !profileTourSeen && profile) {
+      setTimeout(() => setShowProfileTour(true), 600);
+    }
+  }, [loading, profileTourSeen, profile]);
 
   const loadProfile = async () => {
     try {
@@ -229,7 +245,9 @@ const Profile = () => {
 
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-24 space-y-4">
         {/* Profile Completion Meter */}
-        <ProfileCompletionMeter percentage={percentage} nudges={nudges} />
+        <div data-tour="profile-completion">
+          <ProfileCompletionMeter percentage={percentage} nudges={nudges} />
+        </div>
 
         {/* Profile Card */}
         <Card className="overflow-hidden animate-fade-in">
@@ -530,7 +548,7 @@ const Profile = () => {
         </Card>
 
         {/* EXPLORE section */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5" data-tour="profile-explore">
           <h2 className="text-sm font-semibold text-muted-foreground tracking-wider uppercase px-1">Explore</h2>
           <Card>
             <ProfileNavRow emoji="🎪" label="Events & Workshops" onClick={() => navigate("/events")} />
@@ -573,6 +591,13 @@ const Profile = () => {
       </main>
 
       <BottomNav />
+      {showProfileTour && (
+        <SpotlightTour
+          tourKey="profile_tour"
+          steps={profileTourSteps}
+          onComplete={() => { setShowProfileTour(false); markProfileTourSeen(); }}
+        />
+      )}
     </div>
   );
 };

@@ -1,4 +1,6 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
+import { useTutorialState } from "@/hooks/useTutorialState";
+import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -50,8 +52,23 @@ const Learn = () => {
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const { tier: subscriptionTier } = useSubscription();
+  const { seen: learnTourSeen, markSeen: markLearnTourSeen } = useTutorialState("learn_tour");
+  const [showLearnTour, setShowLearnTour] = useState(false);
+
+  const learnTourSteps: TourStep[] = [
+    { target: "learn-xp-bar", title: "Your Learning Progress", description: "Complete modules to earn XP and level up for rewards!", position: "below" },
+    { target: "learn-tier-active", title: "Tier Roadmap", description: "Work through each tier to unlock new features. Complete all modules in a tier to unlock the next one.", position: "below" },
+    { target: "learn-daily-challenge", title: "Daily Challenges", description: "Complete daily challenges for bonus XP. Keep your streak alive! 🔥", position: "below" },
+  ];
 
   useEffect(() => { loadData(); }, []);
+
+  // Show learn tour after data loads
+  useEffect(() => {
+    if (!loading && !learnTourSeen && modules.length > 0) {
+      setTimeout(() => setShowLearnTour(true), 600);
+    }
+  }, [loading, learnTourSeen, modules.length]);
 
   const loadData = async () => {
     try {
@@ -204,7 +221,7 @@ const Learn = () => {
           </div>
           {/* Compact XP row */}
           {stats && (
-            <div className="mt-3">
+            <div className="mt-3" data-tour="learn-xp-bar">
               <XPBar totalXP={stats.total_xp} level={stats.current_level} />
             </div>
           )}
@@ -216,7 +233,7 @@ const Learn = () => {
 
         {/* Streak Calendar + Daily Challenge combined card */}
         {stats && (
-          <Card className="animate-fade-in">
+          <Card className="animate-fade-in" data-tour="learn-daily-challenge">
             <CardContent className="p-3 space-y-2">
               <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} freezeCount={stats.streak_freezes} />
               <DailyChallenge />
@@ -337,6 +354,13 @@ const Learn = () => {
       </main>
 
       <BottomNav />
+      {showLearnTour && (
+        <SpotlightTour
+          tourKey="learn_tour"
+          steps={learnTourSteps}
+          onComplete={() => { setShowLearnTour(false); markLearnTourSeen(); }}
+        />
+      )}
     </div>
   );
 };

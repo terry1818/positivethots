@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useTutorialState } from "@/hooks/useTutorialState";
+import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
 import { BlurImage } from "@/components/BlurImage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,6 +51,13 @@ const LikesYou = () => {
   const queryClient = useQueryClient();
   const reducedMotion = useReducedMotion();
   const [isPremium, setIsPremium] = useState(false);
+  const { seen: likesTourSeen, markSeen: markLikesTourSeen } = useTutorialState("likes_tour");
+  const [showLikesTour, setShowLikesTour] = useState(false);
+
+  const likesTourSteps: TourStep[] = [
+    { target: "likes-tab-likes-you", title: "Who Likes You", description: "People who've Connected with you appear here. Upgrade to Premium to see who they are!", position: "below" },
+    { target: "likes-tab-your-likes", title: "Your Connects", description: "See everyone you've Connected with. Remove a Connect if you change your mind.", position: "below" },
+  ];
   const [likers, setLikers] = useState<LikerProfile[]>([]);
   const [likerCount, setLikerCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -107,6 +116,13 @@ const LikesYou = () => {
     };
     fetchLikers();
   }, [navigate]);
+
+  // Show likes tour after loading
+  useEffect(() => {
+    if (!loading && !likesTourSeen) {
+      setTimeout(() => setShowLikesTour(true), 600);
+    }
+  }, [loading, likesTourSeen]);
 
   const fetchSentLikes = async () => {
     if (sentFetched) return;
@@ -170,8 +186,8 @@ const LikesYou = () => {
 
           <Tabs defaultValue="likes-you" onValueChange={handleTabChange}>
             <TabsList className="w-full mb-4">
-              <TabsTrigger value="likes-you" className="flex-1">Likes You</TabsTrigger>
-              <TabsTrigger value="your-likes" className="flex-1">Your Likes</TabsTrigger>
+              <TabsTrigger value="likes-you" className="flex-1" data-tour="likes-tab-likes-you">Likes You</TabsTrigger>
+              <TabsTrigger value="your-likes" className="flex-1" data-tour="likes-tab-your-likes">Your Likes</TabsTrigger>
             </TabsList>
 
             <TabsContent value="likes-you">
@@ -377,6 +393,13 @@ const LikesYou = () => {
       </AlertDialog>
 
       <BottomNav />
+      {showLikesTour && (
+        <SpotlightTour
+          tourKey="likes_tour"
+          steps={likesTourSteps}
+          onComplete={() => { setShowLikesTour(false); markLikesTourSeen(); }}
+        />
+      )}
     </div>
   );
 };
