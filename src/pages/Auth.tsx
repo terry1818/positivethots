@@ -217,7 +217,25 @@ const Auth = () => {
         <CardHeader className="space-y-1 text-center">
           <div className="mb-4 flex justify-center"><Logo size="lg" /></div>
           <CardTitle className="text-2xl">{isSignUp ? "Create your account" : "Welcome back"}</CardTitle>
-          <CardDescription>{isSignUp ? "Join the Positive Thots community" : "Sign in to continue your journey"}</CardDescription>
+          <CardDescription>{isSignUp ? "The dating app that teaches you to be a better partner" : "Sign in to continue your journey"}</CardDescription>
+
+          {/* Value proposition icons */}
+          {isSignUp && (
+            <div className="pt-3 space-y-2">
+              <div className="flex items-center justify-center gap-3 flex-wrap">
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <GraduationCap className="h-4 w-4 text-primary shrink-0" />Evidence-based courses
+                </span>
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <ShieldCheck className="h-4 w-4 text-primary shrink-0" />Education-verified community
+                </span>
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Heart className="h-4 w-4 text-primary shrink-0" />Built for ethical non-monogamy
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground/70 text-center">Join 500+ members learning together</p>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           <form ref={formRef} onSubmit={handleAuth} className="space-y-4" noValidate>
