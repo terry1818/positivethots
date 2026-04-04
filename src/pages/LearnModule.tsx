@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { EducationBadge } from "@/components/EducationBadge";
 import { AdminPanel } from "@/components/admin/AdminPanel";
 import { SectionContent } from "@/components/education/SectionContent";
+import { ExerciseSession } from "@/components/education/ExerciseSession";
 import { LearningPath } from "@/components/education/LearningPath";
 import { XPPopup } from "@/components/education/XPPopup";
 import { CelebrationModal } from "@/components/education/CelebrationModal";
