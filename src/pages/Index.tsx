@@ -376,7 +376,7 @@ const Index = () => {
         return {
         ...p,
         profile_image: userPhotoData[0]?.url || p.profile_image || null,
-        photos: userPhotoData.length > 1 ? userPhotoData.slice(1).map(ph => ph.url) : p.photos || null,
+        photos: userPhotoData.length > 1 ? userPhotoData.slice(1).map(ph => ph.url) : null,
         photo_focal_points: focalMap,
         badge_count: badgeCounts.get(p.id) || 0,
         compatibility_score: calculateCompatibility(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0),
