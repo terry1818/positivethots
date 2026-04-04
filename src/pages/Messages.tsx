@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BottomNav } from "@/components/BottomNav";
-import { MessageCircle, ChevronLeft } from "lucide-react";
+import { MessageCircle, ChevronLeft, BookOpen, Calendar, BookMarked, Share2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
