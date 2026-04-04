@@ -274,12 +274,12 @@ const Resources = () => {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-gray-900/60 border border-gray-800/50 rounded-xl overflow-hidden">
-                <Skeleton className="h-48 w-full bg-gray-800" />
+              <div key={i} className="bg-card border border-border rounded-xl overflow-hidden">
+                <Skeleton className="h-48 w-full" />
                 <div className="p-4 space-y-2">
-                  <Skeleton className="h-5 w-3/4 bg-gray-800" />
-                  <Skeleton className="h-4 w-1/2 bg-gray-800" />
-                  <Skeleton className="h-3 w-full bg-gray-800" />
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-3 w-full" />
                 </div>
               </div>
             ))}
