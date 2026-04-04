@@ -175,7 +175,7 @@ const Settings = () => {
       toast.success("Role revoked");
       await loadRoleHolders();
     } catch (err: any) {
-      toast.error(err.message || "Failed to revoke role");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setRevokingId(null);
     }
