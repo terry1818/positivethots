@@ -358,6 +358,10 @@ const Learn = () => {
           }}
         />
 
+        {/* Weekly Sprint + Community Challenge */}
+        <WeeklySprintBanner />
+        <CommunityChallengeCard />
+
         {/* Near-miss nudge */}
         {nearMissTier && (
           <NearMissCard
