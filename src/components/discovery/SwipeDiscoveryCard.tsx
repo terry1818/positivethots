@@ -364,7 +364,7 @@ export const SwipeDiscoveryCard = memo(({
           aria-label={`View full profile of ${displayName}`}
         >
           {profile.bio && (
-            <p className="text-sm text-muted-foreground line-clamp-2">{profile.bio}</p>
+            <p className="text-sm text-muted-foreground line-clamp-1">{profile.bio}</p>
           )}
           {profile.compatibility_reasons && profile.compatibility_reasons.length > 0 && (
             <div className="space-y-0.5">
