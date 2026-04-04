@@ -928,7 +928,7 @@ const Settings = () => {
                       }
                     }
                     const { data, error } = await supabase.rpc("reset_discovery_feed");
-                    if (error) { toast.error("Failed to reset feed"); return; }
+                    if (error) { toast.error("Something went wrong. Please try again."); return; }
                     const result = data as { reset_count: number; message: string } | null;
                     localStorage.setItem("pt_last_feed_reset", Date.now().toString());
                     toast.success(`Feed reset! ${result?.reset_count ?? 0} profiles will reappear. 🔄`);
