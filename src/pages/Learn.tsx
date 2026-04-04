@@ -354,6 +354,13 @@ const Learn = () => {
       </main>
 
       <BottomNav />
+      {showLearnTour && (
+        <SpotlightTour
+          tourKey="learn_tour"
+          steps={learnTourSteps}
+          onComplete={() => { setShowLearnTour(false); markLearnTourSeen(); }}
+        />
+      )}
     </div>
   );
 };
