@@ -170,41 +170,6 @@ const Index = () => {
     checkAuthAndSetup();
   }, []);
 
-  // Keyboard navigation for discovery
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't intercept if user is typing in an input
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      if (suggestions.length === 0 || loading) return;
-      const topProfile = suggestions[0];
-      if (!topProfile) return;
-
-      switch (e.key) {
-        case "ArrowRight":
-        case "l":
-          e.preventDefault();
-          handleConnect(topProfile.id);
-          break;
-        case "ArrowLeft":
-        case "h":
-          e.preventDefault();
-          handlePass(topProfile.id);
-          break;
-        case "ArrowUp":
-        case "s":
-          e.preventDefault();
-          if (canSuperLike) handleSuperLike(topProfile.id);
-          break;
-        case " ":
-        case "Enter":
-          e.preventDefault();
-          setDetailProfile(topProfile);
-          break;
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [suggestions, loading, canSuperLike, handleConnect, handlePass, handleSuperLike]);
 
   const checkAuthAndSetup = async () => {
     const { data: { session } } = await supabase.auth.getSession();
