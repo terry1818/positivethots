@@ -74,6 +74,7 @@ interface EnhancedProfile extends DiscoveryProfile {
   verified?: boolean;
   distance?: number | null;
   is_boosted?: boolean;
+  photo_focal_points?: Record<string, number>;
 }
 
 const calculateCompatibility = (user: Profile, other: DiscoveryProfile, otherBadges: number, userBadges: number): number => {
