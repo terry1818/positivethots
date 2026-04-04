@@ -362,7 +362,7 @@ export const BadgePathMap = ({
                           </div>
 
                           <span className={cn(
-                            "text-base font-medium leading-tight text-center max-w-[140px] line-clamp-2",
+                            "text-sm font-medium leading-tight text-center max-w-[140px] line-clamp-2",
                             state === "completed" && "text-success",
                             state === "current" && cn(config.color, "font-semibold"),
                             state === "unlocked" && "text-foreground",
