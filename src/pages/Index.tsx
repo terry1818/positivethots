@@ -793,6 +793,7 @@ const Index = () => {
                     superLikeBalance={isUnlimited ? 999 : superLikeBalance}
                     onViewProfile={() => setDetailProfile(profile)}
                   />
+                  </div>
                 );
               })}
             </div>
