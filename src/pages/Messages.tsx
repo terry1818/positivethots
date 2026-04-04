@@ -211,17 +211,69 @@ const Messages = () => {
             ))}
           </div>
         ) : matches.length === 0 && !searchQuery ? (
-          <div className="space-y-3">
+          <div className="space-y-4">
             <BrandedEmptyState
               mascot="waving"
               headline="No messages yet! 💬"
               description="When you and someone both say yes, you can start chatting here."
               ctaLabel="Go to Discovery"
               onCtaClick={() => navigate("/")}
+              className="py-6 [&_img]:max-h-[80px] [&_.mb-6]:mb-3"
             />
-            <Button variant="ghost" className="w-full text-sm" onClick={() => navigate("/learn")} aria-label="Level up your conversation skills">
-              📚 Level up your conversation skills → Learn
-            </Button>
+
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-muted-foreground text-center">While you wait...</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => navigate("/learn")}
+                  className="flex flex-col items-center gap-1.5 p-3 min-h-[72px] rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors"
+                >
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium">Continue Learning</span>
+                  <span className="text-xs text-muted-foreground">Earn badges to stand out</span>
+                </button>
+                <button
+                  onClick={() => navigate("/events")}
+                  className="flex flex-col items-center gap-1.5 p-3 min-h-[72px] rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors"
+                >
+                  <Calendar className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium">Browse Events</span>
+                  <span className="text-xs text-muted-foreground">Meet people in person</span>
+                </button>
+                <button
+                  onClick={() => navigate("/resources")}
+                  className="flex flex-col items-center gap-1.5 p-3 min-h-[72px] rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors"
+                >
+                  <BookMarked className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium">Resources</span>
+                  <span className="text-xs text-muted-foreground">Books, journals & more</span>
+                </button>
+                <button
+                  onClick={() => {
+                    navigator.share?.({
+                      title: "Join Positive Thots",
+                      text: "Check out Positive Thots — a dating app that educates!",
+                      url: "https://positivethots.app",
+                    }).catch(() => {
+                      navigator.clipboard.writeText("https://positivethots.app");
+                      toast.success("Link copied!");
+                    });
+                  }}
+                  className="flex flex-col items-center gap-1.5 p-3 min-h-[72px] rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors"
+                >
+                  <Share2 className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium">Invite Friends</span>
+                  <span className="text-xs text-muted-foreground">Grow the community</span>
+                </button>
+              </div>
+            </div>
+
+            <Card className="p-3">
+              <p className="text-sm font-medium mb-1">💡 Conversation Starters</p>
+              <p className="text-xs text-muted-foreground">
+                When you get your first match, try asking about their learning journey or what badges they're most proud of!
+              </p>
+            </Card>
           </div>
         ) : (
           <div className="space-y-3">
