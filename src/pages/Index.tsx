@@ -185,6 +185,27 @@ const Index = () => {
     }
   }, [searchParams]);
 
+  // Deferred walkthrough check: only show if suggestions are loaded
+  useEffect(() => {
+    if (!showWalkthroughPending || loading) return;
+    setShowWalkthroughPending(false);
+    if (suggestions.length > 0 && shouldShowWalkthrough()) {
+      setTimeout(() => setShowWalkthrough(true), 500);
+    } else if (suggestions.length > 0 && shouldShowSwipeTutorial()) {
+      setTimeout(() => setShowSwipeTutorial(true), 500);
+    }
+  }, [showWalkthroughPending, loading, suggestions.length]);
+
+  // Dismiss walkthrough if suggestions become empty
+  useEffect(() => {
+    if (showWalkthrough && suggestions.length === 0) {
+      setShowWalkthrough(false);
+    }
+    if (showSwipeTutorial && suggestions.length === 0) {
+      setShowSwipeTutorial(false);
+    }
+  }, [suggestions.length, showWalkthrough, showSwipeTutorial]);
+
   useEffect(() => {
     checkAuthAndSetup();
   }, []);
