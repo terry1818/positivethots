@@ -181,6 +181,45 @@ export type Database = {
         }
         Relationships: []
       }
+      desire_options: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          display_order: number
+          emoji: string | null
+          id: string
+          is_active: boolean
+          label: string
+          requires_education_tier: number | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          emoji?: string | null
+          id?: string
+          is_active?: boolean
+          label: string
+          requires_education_tier?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          emoji?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string
+          requires_education_tier?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       device_tokens: {
         Row: {
           created_at: string
@@ -805,6 +844,42 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_links: {
+        Row: {
+          created_at: string
+          id: string
+          linked_at: string | null
+          partner_id: string
+          relationship_label: string | null
+          requester_id: string
+          status: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          linked_at?: string | null
+          partner_id: string
+          relationship_label?: string | null
+          requester_id: string
+          status?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          linked_at?: string | null
+          partner_id?: string
+          relationship_label?: string | null
+          requester_id?: string
+          status?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
       photo_performance: {
         Row: {
           id: string
@@ -948,6 +1023,9 @@ export type Database = {
           gender_preference: string | null
           height_cm: number | null
           id: string
+          incognito_exceptions: string[] | null
+          incognito_mode: boolean
+          incognito_updated_at: string | null
           interests: string[] | null
           is_verified: boolean
           languages: string[] | null
@@ -995,6 +1073,9 @@ export type Database = {
           gender_preference?: string | null
           height_cm?: number | null
           id: string
+          incognito_exceptions?: string[] | null
+          incognito_mode?: boolean
+          incognito_updated_at?: string | null
           interests?: string[] | null
           is_verified?: boolean
           languages?: string[] | null
@@ -1042,6 +1123,9 @@ export type Database = {
           gender_preference?: string | null
           height_cm?: number | null
           id?: string
+          incognito_exceptions?: string[] | null
+          incognito_mode?: boolean
+          incognito_updated_at?: string | null
           interests?: string[] | null
           is_verified?: boolean
           languages?: string[] | null
@@ -1500,6 +1584,44 @@ export type Database = {
             columns: ["module_id"]
             isOneToOne: false
             referencedRelation: "education_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_desires: {
+        Row: {
+          created_at: string
+          desire_id: string
+          id: string
+          priority: number
+          updated_at: string
+          user_id: string
+          visibility: string
+        }
+        Insert: {
+          created_at?: string
+          desire_id: string
+          id?: string
+          priority?: number
+          updated_at?: string
+          user_id: string
+          visibility?: string
+        }
+        Update: {
+          created_at?: string
+          desire_id?: string
+          id?: string
+          priority?: number
+          updated_at?: string
+          user_id?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_desires_desire_id_fkey"
+            columns: ["desire_id"]
+            isOneToOne: false
+            referencedRelation: "desire_options"
             referencedColumns: ["id"]
           },
         ]

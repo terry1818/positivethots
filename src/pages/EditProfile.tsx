@@ -19,6 +19,7 @@ import { FrameSelector } from "@/components/profile/FrameSelector";
 import { syncEarnedFrames } from "@/hooks/useEarnedFrames";
 import { FieldError } from "@/components/FieldError";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
+import { DesireTagSelector } from "@/components/profile-edit/DesireTagSelector";
 
 interface PromptRow {
   id?: string;
@@ -429,6 +430,14 @@ const EditProfile = () => {
                 <Label htmlFor="boundaries">Boundaries & Preferences</Label>
                 <Textarea id="boundaries" value={boundaries} onChange={(e) => { setBoundaries(e.target.value); markChanged(); }} rows={3} maxLength={500} placeholder="Share your boundaries and preferences..." className="focus-glow" />
               </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Desires & Interests */}
+          <AccordionItem value="desires" className="border rounded-xl px-4 bg-card">
+            <AccordionTrigger className="text-base font-semibold py-4">Desires & Interests</AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <DesireTagSelector />
             </AccordionContent>
           </AccordionItem>
 

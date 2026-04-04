@@ -24,6 +24,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { LinkedAccountsCard } from "@/components/settings/LinkedAccountsCard";
+import { PartnerLinkManager } from "@/components/settings/PartnerLinkManager";
+import { IncognitoToggle } from "@/components/settings/IncognitoToggle";
 
 const NotificationToggle = ({ label, description, storageKey, defaultOn = true }: { label: string; description: string; storageKey: string; defaultOn?: boolean }) => {
   const [enabled, setEnabled] = useState(() => {
@@ -546,7 +548,13 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Distance Radar */}
+        {/* Relationships & Polycule */}
+        <PartnerLinkManager />
+
+        {/* Privacy & Incognito */}
+        <IncognitoToggle />
+
+
         <Card className="animate-fade-in" style={{ animationDelay: "90ms" }}>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">

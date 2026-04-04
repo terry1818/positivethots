@@ -39,6 +39,7 @@ import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { IncognitoIndicator } from "@/components/layout/IncognitoIndicator";
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -705,6 +706,7 @@ const Index = () => {
               >
                 <Zap className="h-4 w-4" />
               </Button>
+              <IncognitoIndicator />
               <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => navigate("/settings")} aria-label="Settings">
                 <Settings className="h-6 w-6" />
               </Button>
