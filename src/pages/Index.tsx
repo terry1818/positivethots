@@ -469,9 +469,9 @@ const Index = () => {
     setCelebrationTrigger(prev => prev + 1);
     trackEvent("swipe", { direction: "right", swiped_id: otherUserId });
 
-    const { error: swipeError } = await supabase.from("swipes").insert({
+    const { error: swipeError } = await supabase.from("swipes").upsert({
       swiper_id: currentUser.id, swiped_id: otherUserId, direction: "right",
-    });
+    }, { onConflict: "swiper_id,swiped_id" });
     if (swipeError) {
       // Rollback
       setSuggestions(previousSuggestions);

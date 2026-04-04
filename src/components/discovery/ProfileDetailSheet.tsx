@@ -63,6 +63,23 @@ export const ProfileDetailSheet = ({
   const [photoIndex, setPhotoIndex] = useState(0);
   const [failedPhotos, setFailedPhotos] = useState<Set<string>>(new Set());
 
+  // Fetch approved photos from user_photos table (same source as discovery cards)
+  const { data: userPhotos } = useQuery({
+    queryKey: ["profile-detail-photos", profile?.id],
+    queryFn: async () => {
+      if (!profile?.id) return [];
+      const { data } = await supabase
+        .from("user_photos")
+        .select("photo_url, order_index")
+        .eq("user_id", profile.id)
+        .eq("visibility", "public")
+        .eq("moderation_status", "approved")
+        .order("order_index", { ascending: true });
+      return data?.map(p => p.photo_url) || [];
+    },
+    enabled: !!profile?.id,
+  });
+
   useEffect(() => {
     setPhotoIndex(0);
     setFailedPhotos(new Set());
@@ -70,8 +87,9 @@ export const ProfileDetailSheet = ({
 
   if (!profile) return null;
 
-  const allPhotos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
-  const photos = allPhotos.filter(url => !failedPhotos.has(url));
+  // Use fetched user_photos as primary source, fall back to profile data
+  const fetchedPhotos = userPhotos && userPhotos.length > 0 ? userPhotos : [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
+  const photos = fetchedPhotos.filter(url => !failedPhotos.has(url));
 
   const handlePhotoError = (url: string) => {
     setFailedPhotos(prev => {
