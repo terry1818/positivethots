@@ -705,7 +705,7 @@ const Index = () => {
 
       {/* Profile completion banner for Quick Start users */}
       {showProfileBanner && (
-        <div className="max-w-sm mx-auto px-4 py-2">
+        <div className="max-w-md mx-auto px-4 py-2">
           <button
             onClick={() => navigate("/learn")}
             className="w-full flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3 py-2 text-sm"
