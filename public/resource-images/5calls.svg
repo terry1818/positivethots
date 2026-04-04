@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+  <rect width="400" height="400" rx="24" fill="#1B2838"/>
+  <rect x="140" y="100" width="120" height="160" rx="16" fill="#FF6B6B"/>
+  <rect x="155" y="115" width="90" height="110" rx="4" fill="#1B2838"/>
+  <circle cx="200" cy="245" r="8" fill="#1B2838"/>
+  <text x="200" y="340" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="36" fill="#FF6B6B">5 Calls</text>
+</svg>

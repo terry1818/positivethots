@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+  <rect width="400" height="400" rx="24" fill="#0D1B2A"/>
+  <path d="M120 180l80-60 80 60v80H120z" fill="#E0AFA0"/>
+  <rect x="180" y="210" width="40" height="50" fill="#0D1B2A"/>
+  <polygon points="200,100 210,130 240,130 215,148 225,178 200,160 175,178 185,148 160,130 190,130" fill="#FFD700"/>
+  <text x="200" y="330" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="22" fill="#E0AFA0">More Perfect Union</text>
+</svg>

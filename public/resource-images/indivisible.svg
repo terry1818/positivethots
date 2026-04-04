@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+  <rect width="400" height="400" rx="24" fill="#232946"/>
+  <circle cx="200" cy="160" r="60" fill="#4361EE"/>
+  <circle cx="200" cy="160" r="40" fill="#7209B7"/>
+  <path d="M140 280h120v8H140z" fill="#4361EE"/>
+  <text x="200" y="340" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="32" fill="#EEBBC3">Indivisible</text>
+</svg>

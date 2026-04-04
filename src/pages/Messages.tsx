@@ -218,7 +218,7 @@ const Messages = () => {
               description="When you and someone both say yes, you can start chatting here."
               ctaLabel="Go to Discovery"
               onCtaClick={() => navigate("/")}
-              className="py-6 [&_img]:max-h-[80px] [&_.mb-6]:mb-3"
+              className="py-6 [&_.mb-6]:mb-3"
             />
 
             <div className="space-y-3">
