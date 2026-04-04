@@ -174,6 +174,8 @@ const Index = () => {
   const [dailyUndoCount, setDailyUndoCount] = useState(0);
   const undoTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const prefersReducedMotion = useReducedMotion();
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resettingFeed, setResettingFeed] = useState(false);
 
   // Handle super like purchase redirect
   useEffect(() => {
