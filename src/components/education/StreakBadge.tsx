@@ -34,7 +34,7 @@ export const StreakBadge = ({ streak, className, showFreeze, freezeCount = 0, fr
         )}
       </div>
       <span className={cn(
-        "text-sm font-bold",
+        "text-base font-bold",
         streak >= 100 ? "text-primary" :
         streak >= 30 ? "text-primary" :
         streak >= 7 ? "text-accent" :

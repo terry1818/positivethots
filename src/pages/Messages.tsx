@@ -164,9 +164,6 @@ const Messages = () => {
     <div className="min-h-screen bg-background flex flex-col pb-20">
       <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/")} className="text-muted-foreground" aria-label="Go back">
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
           <Logo size="md" showText={false} />
           <div className="w-10" />
         </div>

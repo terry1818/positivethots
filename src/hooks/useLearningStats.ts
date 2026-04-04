@@ -52,9 +52,9 @@ export const STREAK_MILESTONE_XP: Record<number, number> = {
 const REWARD_LEVELS = [3, 5, 7, 10];
 
 export const LEVEL_REWARDS: Record<number, { label: string; icon: string }> = {
-  3:  { label: "+1 Super Like",     icon: "💜" },
+  3:  { label: "+1 Thot",           icon: "💜" },
   5:  { label: "Streak Freeze",     icon: "❄️" },
-  7:  { label: "+2 Super Likes",    icon: "💜💜" },
+  7:  { label: "+2 Thots",          icon: "💜💜" },
   10: { label: "Free Profile Boost", icon: "🚀" },
 };
 

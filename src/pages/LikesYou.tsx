@@ -186,21 +186,22 @@ const LikesYou = () => {
                   ))}
                 </div>
               ) : likerCount === 0 ? (
-                <div>
+                <div className="space-y-3">
                   <BrandedEmptyState
                     mascot="heart"
                     headline="Your admirers are on their way! 💜"
                     description="Complete more badges to boost your profile visibility."
                     ctaLabel="Continue Learning"
                     onCtaClick={() => navigate("/learn")}
+                    className="[&_img]:max-h-[140px]"
                   />
                   {!isPremium && (
-                    <Card className="animate-pulse-border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-left mt-4">
-                      <CardContent className="p-4 text-center">
-                        <Crown className="h-8 w-8 text-primary mx-auto mb-2 animate-wiggle" />
-                        <p className="font-semibold text-foreground mb-1">Unlock Premium</p>
-                        <p className="text-sm text-muted-foreground mb-3">See who likes you instantly — $9.99/mo.</p>
-                        <Button onClick={() => navigate("/premium")} className="w-full">
+                    <Card className="animate-pulse-border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-left">
+                      <CardContent className="p-3 text-center">
+                        <Crown className="h-6 w-6 text-primary mx-auto mb-1.5 animate-wiggle" />
+                        <p className="font-semibold text-foreground text-sm mb-0.5">Unlock Premium</p>
+                        <p className="text-sm text-muted-foreground mb-2">See who likes you instantly — $9.99/mo.</p>
+                        <Button onClick={() => navigate("/premium")} className="w-full" size="sm">
                           <Lock className="h-4 w-4 mr-2" />Go Premium
                         </Button>
                       </CardContent>

@@ -19,7 +19,7 @@ const STEPS = [
   {
     target: "action-buttons",
     title: "Pass, Connect, or Send a Thot",
-    description: "Pass, Connect, or Send a Thot — our version of a Super Like!",
+    description: "Pass, Connect, or Send a Thot — a special way to stand out!",
     position: "top" as const,
   },
   {
