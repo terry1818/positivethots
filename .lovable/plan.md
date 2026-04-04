@@ -1,90 +1,55 @@
 
 
-## Plan: Fix Blank Photos, Main Photo Selection, and Smart Photo Ordering
+## Plan: Responsive Layouts, Larger Mascots, and Advocacy Images
 
 ### Problem Summary
-1. Discovery cards show blank space when `profile_image` URL is broken (e.g., zwickedsexy's first photo)
-2. Users cannot choose which photo is their main profile photo — it's always the first by order
-3. No system to help users identify their best-performing photos
+1. **Likes and Messages pages** use a fixed `max-w-md` container at all screen sizes, unlike Discovery which adapts. On a 1326px viewport, content sits in a narrow column with wasted space.
+2. **Mascots** in `BrandedEmptyState` are 120x120px -- too small, especially on larger screens.
+3. **Advocacy resources** (Indivisible, 5 Calls, More Perfect Union) have no `image_url` in the database, so they render with gradient letter fallbacks instead of logos.
 
 ### Changes
 
-#### 1. Fix blank photos in Discovery — skip broken URLs
-**Files:** `src/components/discovery/SwipeDiscoveryCard.tsx`, `src/components/discovery/ProfileDetailSheet.tsx`
+#### 1. BrandedEmptyState -- Increase Mascot Size by 30%
 
-- In `SwipeDiscoveryCard`, add `useState` to track which photo URLs have errored (`failedPhotos` Set)
-- Filter out failed URLs from the `photos` array so the card auto-advances to the next working photo
-- Pass `onError` prop to the `BlurImage` component that adds the failed URL to the set
-- If ALL photos fail, show the initial-letter gradient fallback (already exists)
-- Apply the same pattern in `ProfileDetailSheet` for the expanded profile view
+**File:** `src/components/BrandedEmptyState.tsx`
 
-The key fix: instead of `const photos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean)`, compute a `validPhotos` array that also excludes URLs in `failedPhotos`. When a photo errors, it gets added to `failedPhotos`, which re-renders and auto-skips to the next valid photo.
+- Change mascot from `w-[120px] h-[120px]` to `w-[156px] h-[156px]` (30% increase)
+- Remove the className overrides in LikesYou.tsx and Messages.tsx that force `max-h-[80px]` on the mascot image, since those were shrinking it further
 
-#### 2. "Set as Main Photo" button in PhotoUploadGrid
-**File:** `src/components/PhotoUploadGrid.tsx`
+#### 2. Responsive Container Widths for Likes and Messages
 
-- Add a "Set as Main" button (star icon) on each public approved photo that isn't already the first photo
-- When tapped: reorder that photo to `order_index: 0`, shift others up, update `profiles.profile_image` to the selected photo's URL
-- Update the description text: "Tap ⭐ on any photo to set it as your main profile photo. Drag to reorder."
+**Files:** `src/pages/LikesYou.tsx`, `src/pages/Messages.tsx`
 
-#### 3. Smart Photo Ordering — "Best Photo" insights
-**Database:** New table `photo_performance` to track engagement metrics per photo.
+- Replace `max-w-md` with `max-w-md md:max-w-2xl lg:max-w-4xl` on the main content containers so they expand on larger viewports, matching how Discovery scales
+- The Likes page grid (2-column) can become 3-column on `lg` screens
+- Messages conversation list naturally fills wider containers
 
-Schema:
+#### 3. Advocacy Resource Logos
+
+**Approach:** Download/create simple branded SVGs for the 3 advocacy sites and store them in `public/resource-images/`. Then update the database `image_url` field OR add client-side overrides in Resources.tsx (matching the existing pattern with `LOCAL_IMAGE_OVERRIDES`).
+
+**Files:**
+- Create `public/resource-images/indivisible.svg`, `public/resource-images/5calls.svg`, `public/resource-images/moreperfectunion.svg` -- simple branded graphics with each org's colors
+- **`src/pages/Resources.tsx`**: Add entries to `FALLBACK` array for advocacy resources with proper image URLs, OR add a `RESOURCE_TITLE_OVERRIDES` entry for each advocacy resource pointing to the local SVGs
+
+**Database migration:** Update the 3 advocacy rows to set `image_url`:
 ```sql
-CREATE TABLE public.photo_performance (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  photo_id uuid NOT NULL REFERENCES user_photos(id) ON DELETE CASCADE,
-  user_id uuid NOT NULL,
-  impressions integer NOT NULL DEFAULT 0,
-  right_swipes integer NOT NULL DEFAULT 0,
-  left_swipes integer NOT NULL DEFAULT 0,
-  super_likes integer NOT NULL DEFAULT 0,
-  score numeric NOT NULL DEFAULT 0,
-  period_start date NOT NULL DEFAULT CURRENT_DATE,
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE(photo_id, period_start)
-);
-ALTER TABLE public.photo_performance ENABLE ROW LEVEL SECURITY;
--- Users can read own stats
-CREATE POLICY "Users can read own photo stats" ON public.photo_performance FOR SELECT TO authenticated USING (auth.uid() = user_id);
+UPDATE recommended_resources SET image_url = '/resource-images/indivisible.svg' WHERE title = 'Indivisible';
+UPDATE recommended_resources SET image_url = '/resource-images/5calls.svg' WHERE title = '5 Calls';
+UPDATE recommended_resources SET image_url = '/resource-images/moreperfectunion.svg' WHERE title = 'More Perfect Union';
 ```
 
-**Tracking (in `src/pages/Index.tsx`):**
-- When a user swipes right/left/super-like on a profile, record which photo was visible (the `photoIndex` at swipe time) by inserting/updating `photo_performance` for that photo
-- This requires passing the current visible photo info back up from `SwipeDiscoveryCard`
+Since we can only INSERT (not UPDATE) via the database tools, we'll use the client-side override approach in Resources.tsx instead, adding these to the existing `RESOURCE_TITLE_OVERRIDES` map.
 
-**Display (in `src/components/PhotoUploadGrid.tsx`):**
-- Fetch `photo_performance` for the user's photos
-- Show a small badge on each photo: "🔥 Best" on the highest-scoring photo, or a subtle performance bar
-- Add a "Smart Order" button that auto-reorders photos by performance score (best first)
-- Show tooltip: "Based on how others engage with your photos"
+#### 4. Summary of Files Changed
 
-#### 4. Discovery photo enrichment fix
-**File:** `src/pages/Index.tsx`
-
-Current logic at line 257-258 has a bug: it only uses `photosByUser` as fallback when `profile_image` is null or `photos` array is empty. But `profile_image` can be a broken URL (non-null string that 404s).
-
-Fix: Always prefer `photosByUser` (approved photos from `user_photos` table) as the primary source. Only fall back to `profile_image`/`photos` columns if no approved photos exist:
-```typescript
-profile_image: photosByUser.get(p.id)?.[0] || p.profile_image || null,
-photos: photosByUser.get(p.id)?.slice(1) || p.photos || null,
-```
-
-### Technical Details
-
-- **Photo error handling pattern:** Uses React state (`Set<string>`) to track failed URLs. `BlurImage` already supports `onError` prop. When error fires, URL is added to set, component re-renders, failed URL is filtered from the computed `validPhotos` array, and `photoIndex` is clamped to valid range.
-
-- **Performance tracking:** Lightweight — only increments counters. Score formula: `(right_swipes + super_likes * 3) / max(impressions, 1) * 100`. Updated via upsert on each swipe action.
-
-- **RLS:** `photo_performance` only readable by the photo owner. Insertable by authenticated users (for tracking others' engagement on your photos, done via a security-definer function to avoid exposing other users' data).
-
-### File Summary
 | File | Change |
 |------|--------|
-| `src/components/discovery/SwipeDiscoveryCard.tsx` | Add failed photo tracking, auto-skip broken photos, expose visible photo index |
-| `src/components/discovery/ProfileDetailSheet.tsx` | Same failed photo tracking pattern |
-| `src/components/PhotoUploadGrid.tsx` | "Set as Main" button, "Smart Order" button, performance badges |
-| `src/pages/Index.tsx` | Fix photo enrichment priority, track photo impressions/swipes |
-| Migration | New `photo_performance` table |
+| `src/components/BrandedEmptyState.tsx` | Mascot size 120→156px |
+| `src/pages/LikesYou.tsx` | Responsive container widths, remove mascot size override |
+| `src/pages/Messages.tsx` | Responsive container widths, remove mascot size override |
+| `src/pages/Resources.tsx` | Add advocacy image overrides |
+| `public/resource-images/indivisible.svg` | New branded graphic |
+| `public/resource-images/5calls.svg` | New branded graphic |
+| `public/resource-images/moreperfectunion.svg` | New branded graphic |
 
