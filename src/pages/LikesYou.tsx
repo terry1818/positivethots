@@ -210,7 +210,7 @@ const LikesYou = () => {
                     description="Complete more badges to boost your profile visibility."
                     ctaLabel="Continue Learning"
                     onCtaClick={() => navigate("/learn")}
-                    className="py-6 [&_img]:max-h-[80px] [&_.mb-6]:mb-3 [&_.mb-2]:mb-1"
+                    className="py-6 [&_.mb-6]:mb-3 [&_.mb-2]:mb-1"
                   />
                   {!isPremium && (
                     <Card className="animate-pulse-border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-left">
