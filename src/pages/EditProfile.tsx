@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ import { PageSkeleton } from "@/components/PageSkeleton";
 import { PROMPT_QUESTIONS } from "@/lib/promptQuestions";
 import { FrameSelector } from "@/components/profile/FrameSelector";
 import { syncEarnedFrames } from "@/hooks/useEarnedFrames";
+import { FieldError } from "@/components/FieldError";
 
 interface PromptRow {
   id?: string;
@@ -32,6 +33,8 @@ const EditProfile = () => {
   const [photos, setPhotos] = useState<any[]>([]);
   const [latestVerification, setLatestVerification] = useState<any>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -114,7 +117,21 @@ const EditProfile = () => {
 
   const handleSave = async () => {
     if (!profile?.id) return;
-    if (!name.trim()) { toast.error("Name is required"); return; }
+
+    // Inline validation
+    const errors: Record<string, string> = {};
+    if (!name.trim()) errors.name = "Display name is required";
+    if (bio.length > 500) errors.bio = "Bio must be under 500 characters";
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      // Focus first error field
+      const firstKey = Object.keys(errors)[0];
+      const el = document.getElementById(firstKey);
+      el?.focus();
+      return;
+    }
+    setFieldErrors({});
     setSaving(true);
     try {
       const { error } = await supabase.from("profiles").update({
@@ -227,7 +244,16 @@ const EditProfile = () => {
             <AccordionContent className="pb-4 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" value={name} onChange={(e) => { setName(e.target.value); markChanged(); }} maxLength={100} className="focus-glow" />
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => { setName(e.target.value); markChanged(); setFieldErrors(prev => ({ ...prev, name: "" })); }}
+                  maxLength={100}
+                  className="focus-glow"
+                  aria-invalid={!!fieldErrors.name}
+                  aria-describedby={fieldErrors.name ? "name-error" : undefined}
+                />
+                <FieldError message={fieldErrors.name} id="name-error" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="pronouns">Pronouns</Label>
@@ -245,8 +271,22 @@ const EditProfile = () => {
             <AccordionTrigger className="text-base font-semibold py-4">About You</AccordionTrigger>
             <AccordionContent className="pb-4 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="bio">About Me</Label>
-                <Textarea id="bio" value={bio} onChange={(e) => { setBio(e.target.value); markChanged(); }} rows={4} maxLength={500} placeholder="Tell people about yourself..." className="focus-glow" />
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="bio">About Me</Label>
+                  <span className={cn("text-xs", bio.length > 500 ? "text-destructive" : "text-muted-foreground")}>{bio.length}/500</span>
+                </div>
+                <Textarea
+                  id="bio"
+                  value={bio}
+                  onChange={(e) => { setBio(e.target.value); markChanged(); setFieldErrors(prev => ({ ...prev, bio: "" })); }}
+                  rows={4}
+                  maxLength={500}
+                  placeholder="Tell people about yourself..."
+                  className="focus-glow"
+                  aria-invalid={!!fieldErrors.bio}
+                  aria-describedby={fieldErrors.bio ? "bio-error" : undefined}
+                />
+                <FieldError message={fieldErrors.bio} id="bio-error" />
               </div>
 
               {/* Prompts */}

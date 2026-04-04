@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
 import { Lock, Heart, Crown, Check, X, Star, MapPin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -47,6 +51,7 @@ const LikesYou = () => {
   const [likerCount, setLikerCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
+  const [unlikeTarget, setUnlikeTarget] = useState<SentLikeProfile | null>(null);
 
   // Sent likes state
   const [sentLikes, setSentLikes] = useState<SentLikeProfile[]>([]);
@@ -291,13 +296,9 @@ const LikesYou = () => {
                     >
                       <button
                         className="absolute top-2 left-2 z-10 bg-destructive/80 rounded-full p-1.5 hover:bg-destructive transition-colors"
-                        onClick={async (e) => {
+                        onClick={(e) => {
                           e.stopPropagation();
-                          const { data: { user } } = await supabase.auth.getUser();
-                          if (!user) return;
-                          await supabase.from("swipes").delete().eq("swiper_id", user.id).eq("swiped_id", profile.id).eq("direction", "right");
-                          setSentLikes(prev => prev.filter(p => p.id !== profile.id));
-                          toast({ title: "Like removed" });
+                          setUnlikeTarget(profile);
                         }}
                         aria-label="Unlike"
                       >
@@ -338,6 +339,36 @@ const LikesYou = () => {
           </Tabs>
         </div>
       </div>
+
+      {/* Unlike confirmation dialog */}
+      <AlertDialog open={!!unlikeTarget} onOpenChange={(open) => { if (!open) setUnlikeTarget(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove your Connect?</AlertDialogTitle>
+            <AlertDialogDescription>
+              They won't know you were interested. You can always Connect again later.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={async () => {
+                if (!unlikeTarget) return;
+                const { data: { user } } = await supabase.auth.getUser();
+                if (!user) return;
+                await supabase.from("swipes").delete().eq("swiper_id", user.id).eq("swiped_id", unlikeTarget.id).eq("direction", "right");
+                setSentLikes(prev => prev.filter(p => p.id !== unlikeTarget.id));
+                setUnlikeTarget(null);
+                toast({ title: "Like removed" });
+              }}
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <BottomNav />
     </div>
   );

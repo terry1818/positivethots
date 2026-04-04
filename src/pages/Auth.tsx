@@ -28,14 +28,7 @@ const signInSchema = z.object({
   password: z.string().min(1, "Password is required").max(100, "Password too long"),
 });
 
-function FieldError({ message, id }: { message?: string; id?: string }) {
-  if (!message) return null;
-  return (
-    <p role="alert" id={id} className="text-xs text-destructive flex items-center gap-1 mt-1 animate-fade-in">
-      <AlertCircle className="h-3 w-3 shrink-0" /> {message}
-    </p>
-  );
-}
+import { FieldError } from "@/components/FieldError";
 
 const TESTIMONIALS = [
   "Finally, a dating app that expects you to learn first.",

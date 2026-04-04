@@ -73,6 +73,7 @@ const Settings = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
 
   // Account actions
   const [exporting, setExporting] = useState(false);
@@ -225,10 +226,14 @@ const Settings = () => {
   ];
 
   const handleChangePassword = async () => {
-    if (newPassword.length < 6) {
-      toast.error("New password must be at least 6 characters");
+    const errors: Record<string, string> = {};
+    if (newPassword.length < 6) errors.newPassword = "Password must be at least 6 characters";
+    if (Object.keys(errors).length > 0) {
+      setPasswordErrors(errors);
+      document.getElementById("new-password")?.focus();
       return;
     }
+    setPasswordErrors({});
     setChangingPassword(true);
     try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
@@ -237,7 +242,7 @@ const Settings = () => {
       setCurrentPassword("");
       setNewPassword("");
     } catch (error: any) {
-      toast.error(error.message || "Failed to update password");
+      setPasswordErrors({ newPassword: error.message || "Failed to update password" });
     } finally {
       setChangingPassword(false);
     }
@@ -834,10 +839,17 @@ const Settings = () => {
                 type="password"
                 placeholder="••••••••"
                 value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                onChange={(e) => { setNewPassword(e.target.value); setPasswordErrors({}); }}
                 minLength={6}
                 maxLength={100}
+                aria-invalid={!!passwordErrors.newPassword}
+                aria-describedby={passwordErrors.newPassword ? "new-password-error" : undefined}
               />
+              {passwordErrors.newPassword && (
+                <p role="alert" id="new-password-error" className="text-xs text-destructive flex items-center gap-1 mt-1 animate-fade-in">
+                  {passwordErrors.newPassword}
+                </p>
+              )}
             </div>
             <Button
               onClick={handleChangePassword}

@@ -104,12 +104,25 @@ const Events = () => {
     const previousRsvps = [...rsvps];
     setRsvps((prev) => prev.filter((id) => id !== eventId));
 
+    const reRsvp = () => {
+      setRsvps(prev => [...prev, eventId]);
+    };
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { setRsvps(previousRsvps); return; }
       const { error } = await supabase.from("event_rsvps").delete().eq("event_id", eventId).eq("user_id", session.user.id);
       if (error) throw error;
-      toast.success("RSVP cancelled");
+      toast("RSVP cancelled", {
+        duration: 5000,
+        action: { label: "Undo", onClick: async () => {
+          reRsvp();
+          const { data: { session: s } } = await supabase.auth.getSession();
+          if (s) {
+            await supabase.from("event_rsvps").insert({ event_id: eventId, user_id: s.user.id, status: "confirmed" });
+          }
+        }},
+      });
     } catch {
       // Rollback
       setRsvps(previousRsvps);

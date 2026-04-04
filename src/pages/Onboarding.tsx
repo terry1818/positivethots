@@ -375,32 +375,35 @@ const Onboarding = () => {
     setStep(s => Math.max(s - 1, 1));
   };
 
+  const [stepError, setStepError] = useState("");
+
   const validateStep = (): boolean => {
+    setStepError("");
     switch (step) {
       case 2:
-        if (!formData.enmExperienceLevel) { toast.error("Please select your experience level"); return false; }
+        if (!formData.enmExperienceLevel) { setStepError("Please select your experience level"); return false; }
         return true;
       case 3:
-        if (!formData.gender) { toast.error("Please select your gender"); return false; }
+        if (!formData.gender) { setStepError("Please select your gender"); return false; }
         return true;
       case 4:
-        if (!formData.pronouns && !formData.customPronouns.trim()) { toast.error("Please select or enter your pronouns"); return false; }
+        if (!formData.pronouns && !formData.customPronouns.trim()) { setStepError("Please select or enter your pronouns"); return false; }
         return true;
       case 5:
-        if (photos.length === 0) { toast.error("Please upload at least 1 photo"); return false; }
+        if (photos.length === 0) { setStepError("Please upload at least 1 photo"); return false; }
         return true;
       case 8:
-        if (!formData.relationshipStyle) { toast.error("Please select your relationship style"); return false; }
+        if (!formData.relationshipStyle) { setStepError("Please select your relationship style"); return false; }
         return true;
       case 9:
-        if (!formData.relationshipStatus) { toast.error("Please select your status"); return false; }
+        if (!formData.relationshipStatus) { setStepError("Please select your status"); return false; }
         return true;
       case 12:
-        if (formData.interests.length < 3) { toast.error("Please select at least 3 interests"); return false; }
+        if (formData.interests.length < 3) { setStepError("Please select at least 3 interests"); return false; }
         return true;
       case 13:
-        if (!formData.location.trim()) { toast.error("Please enter your location"); return false; }
-        if (formData.prompts.filter(p => p.response.trim()).length < 2) { toast.error("Please answer at least 2 prompts"); return false; }
+        if (!formData.location.trim()) { setStepError("Please enter your location"); return false; }
+        if (formData.prompts.filter(p => p.response.trim()).length < 2) { setStepError("Please answer at least 2 prompts"); return false; }
         return true;
       default:
         return true;
@@ -948,26 +951,31 @@ const Onboarding = () => {
 
             {/* Navigation buttons */}
             {step > 1 && (
-              <div className="flex gap-2 mt-6 pb-16 relative z-50">
-                <Button onClick={goBack} variant="outline" className="flex-1">
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Back
-                </Button>
-                {step < TOTAL_STEPS ? (
-                  <>
-                    {isOptionalStep && (
-                      <Button onClick={() => { trackEvent('onboarding_skipped', { step }); goNext(); }} variant="ghost" className="px-3" title="Skip this step">
-                        <SkipForward className="h-4 w-4" />
-                      </Button>
-                    )}
-                    <Button onClick={goNext} className="flex-1">
-                      Continue <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
-                  </>
-                ) : (
-                  <Button onClick={handleComplete} className="flex-1" disabled={loading}>
-                    {loading ? "Setting up..." : "Complete Profile ✨"}
-                  </Button>
+              <div className="mt-6 pb-16 relative z-50 space-y-2">
+                {stepError && (
+                  <p role="alert" className="text-xs text-destructive text-center animate-fade-in">{stepError}</p>
                 )}
+                <div className="flex gap-2">
+                  <Button onClick={() => { setStepError(""); goBack(); }} variant="outline" className="flex-1">
+                    <ChevronLeft className="h-4 w-4 mr-1" /> Back
+                  </Button>
+                  {step < TOTAL_STEPS ? (
+                    <>
+                      {isOptionalStep && (
+                        <Button onClick={() => { setStepError(""); trackEvent('onboarding_skipped', { step }); goNext(); }} variant="ghost" className="px-3" title="Skip this step">
+                          <SkipForward className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <Button onClick={() => { setStepError(""); goNext(); }} className="flex-1">
+                        Continue <ChevronRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </>
+                  ) : (
+                    <Button onClick={handleComplete} className="flex-1" disabled={loading}>
+                      {loading ? "Setting up..." : "Complete Profile ✨"}
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
           </CardContent>
