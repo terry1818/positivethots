@@ -730,10 +730,10 @@ const Index = () => {
         {announcedProfile}
       </div>
 
-      {/* Curated Matches Grid */}
-      <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4">
+      {/* Curated Matches Grid — flex-1 fills remaining space */}
+      <div className="flex-1 min-h-0 overflow-hidden max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 w-full">
         {suggestions.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[50vh] px-6 text-center">
+          <div className="flex flex-col items-center justify-center h-full px-6 text-center overflow-y-auto">
             <BrandedEmptyState
               mascot="binoculars"
               headline="You've seen everyone nearby! 🔭"
