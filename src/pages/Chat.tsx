@@ -514,7 +514,13 @@ const Chat = () => {
                         {isOwn && (
                           <div className="flex justify-end items-center gap-1 mt-1">
                             <span className="text-xs opacity-70">{formatTime(message.created_at)}</span>
-                            {message.delivered && (message.read ? <CheckCheck className="h-3 w-3 opacity-70" /> : <Check className="h-3 w-3 opacity-70" />)}
+                            {message.read ? (
+                              <CheckCheck className="h-3 w-3 text-primary-foreground/90" />
+                            ) : message.delivered ? (
+                              <CheckCheck className="h-3 w-3 opacity-50" />
+                            ) : (
+                              <Check className="h-3 w-3 opacity-50" />
+                            )}
                           </div>
                         )}
                       </div>
