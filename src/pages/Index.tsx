@@ -219,6 +219,13 @@ const Index = () => {
     return unsub;
   }, [currentUser]);
 
+  // Auto-skip profiles with no photo
+  useEffect(() => {
+    if (suggestions.length > 0 && !suggestions[0].profile_image) {
+      setSuggestions(prev => prev.slice(1));
+    }
+  }, [suggestions]);
+
   // Refetch on window focus if suggestions are empty
   useEffect(() => {
     const handleFocus = () => {
