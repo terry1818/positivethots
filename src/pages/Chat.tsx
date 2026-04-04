@@ -508,6 +508,30 @@ const Chat = () => {
         </div>
       )}
 
+      {/* Compatibility event banner */}
+      {(() => {
+        const score = compatBreakdown?.overall;
+        const storageKey = `pt_compat_banner_${matchId}`;
+        const alreadyDismissed = compatBannerDismissed || (typeof localStorage !== 'undefined' && localStorage.getItem(storageKey) === 'true');
+        if (score && score > 80 && !alreadyDismissed) {
+          return (
+            <div className="container max-w-4xl mx-auto px-4 pt-2">
+              <div className="bg-primary/10 rounded-lg p-2 flex items-center gap-2 text-sm animate-fade-in">
+                <span className="flex-1">You're {score}% compatible! Meet in person →{' '}
+                  <button onClick={() => navigate("/events")} className="text-primary font-medium hover:underline">Browse Events</button>
+                </span>
+                <button
+                  onClick={() => { setCompatBannerDismissed(true); localStorage.setItem(storageKey, 'true'); }}
+                  className="text-muted-foreground hover:text-foreground shrink-0 p-1"
+                  aria-label="Dismiss"
+                >✕</button>
+              </div>
+            </div>
+          );
+        }
+        return null;
+      })()}
+
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
         <div className="container max-w-4xl mx-auto px-4 py-6">
