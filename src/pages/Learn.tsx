@@ -296,6 +296,35 @@ const Learn = () => {
           </Card>
         )}
 
+        {/* Daily Spin Wheel */}
+        <DailySpinWheel
+          hasSpunToday={hasSpunToday}
+          onReward={async (reward) => {
+            setHasSpunToday(true);
+            if (reward.type === "xp" && awardXP) {
+              const multiplier = getStreakMultiplier(stats?.current_streak || 0);
+              const xpAmount = Math.round(reward.value * multiplier);
+              await awardXP(xpAmount, "daily_spin");
+              toast.success(`You won ${reward.emoji} +${xpAmount} XP${multiplier > 1 ? ` (${multiplier}× streak bonus!)` : ""}! 🎉`);
+            } else {
+              toast.success(`You won ${reward.emoji} ${reward.label}! 🎉`);
+            }
+          }}
+        />
+
+        {/* Near-miss nudge */}
+        {nearMissTier && (
+          <NearMissCard
+            badgesRemaining={nearMissTier.badgesRemaining}
+            featureLabel={nearMissTier.featureLabel}
+            tierName={nearMissTier.tierName}
+            onContinue={() => {
+              const currentMod = modules.find(m => !earnedModuleIds.has(m.id));
+              if (currentMod) navigate(`/learn/${currentMod.slug}`);
+            }}
+          />
+        )}
+
         {/* Streak Restore Modal */}
         <StreakRestoreModal
           open={showStreakRestore}
