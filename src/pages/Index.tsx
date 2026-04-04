@@ -344,6 +344,11 @@ const Index = () => {
     const boostedUserIds = new Set(boostsResult.data?.map(b => b.user_id) || []);
 
     const enhancedProfiles: EnhancedProfile[] = profilesResult.data
+      .filter(p => {
+        // Only include profiles that have at least one photo
+        const hasPhoto = photosByUser.get(p.id)?.length > 0 || p.profile_image;
+        return hasPhoto;
+      })
       .map(p => ({
         ...p,
         profile_image: photosByUser.get(p.id)?.[0] || p.profile_image || null,
