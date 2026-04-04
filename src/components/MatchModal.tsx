@@ -6,6 +6,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { haptic } from "@/lib/haptics";
 
 interface MatchedUser {
   name: string;
@@ -65,6 +66,7 @@ export const MatchModal = ({
         }));
         setConfetti(particles);
         try { navigator.vibrate?.([50, 50, 100]); } catch {}
+        haptic([50, 30, 50]);
       } else {
         setConfetti([]);
       }

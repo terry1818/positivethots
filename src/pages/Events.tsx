@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -11,6 +11,7 @@ import { Calendar, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
 import { EventCard, type EventData } from "@/components/events/EventCard";
+import { SearchInput } from "@/components/SearchInput";
 
 type EventTier = "community" | "premium" | "adults_only";
 
@@ -26,6 +27,8 @@ const Events = () => {
   const [registrations, setRegistrations] = useState<string[]>([]);
   const [rsvps, setRsvps] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<EventTier>("community");
+  const [eventSearch, setEventSearch] = useState("");
+  const handleEventSearch = useCallback((q: string) => setEventSearch(q.toLowerCase()), []);
 
   const hasEventsAccess = isFeatureUnlocked("events_access");
   const isVIP = subscriptionTier === "vip";
@@ -147,7 +150,11 @@ const Events = () => {
     return { allowed: true };
   };
 
-  const tierEvents = (tier: EventTier) => events.filter((e) => e.event_tier === tier);
+  const tierEvents = (tier: EventTier) => {
+    let filtered = events.filter((e) => e.event_tier === tier);
+    if (eventSearch) filtered = filtered.filter(e => e.title.toLowerCase().includes(eventSearch));
+    return filtered;
+  };
 
   const tierDescriptions: Record<EventTier, string> = {
     community: "Free events open to all members",
@@ -233,7 +240,11 @@ const Events = () => {
             </TabsTrigger>
           </TabsList>
 
-          <p className="text-xs text-muted-foreground mb-4 text-center">{tierDescriptions[activeTab]}</p>
+          <p className="text-xs text-muted-foreground mb-3 text-center">{tierDescriptions[activeTab]}</p>
+
+          <div className="mb-4">
+            <SearchInput placeholder="Search events..." ariaLabel="Search events" onSearch={handleEventSearch} />
+          </div>
 
           <TabsContent value="community">{renderEventList("community")}</TabsContent>
           <TabsContent value="premium">{renderEventList("premium")}</TabsContent>

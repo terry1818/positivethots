@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { BlurImage } from "@/components/BlurImage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
+import { SearchInput } from "@/components/SearchInput";
 
 interface Match {
   id: string;
@@ -53,7 +54,9 @@ const Messages = () => {
   const [lastMessages, setLastMessages] = useState<Record<string, LastMessage>>({});
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const handleSearch = useCallback((q: string) => setSearchQuery(q.toLowerCase()), []);
 
   useEffect(() => {
     checkAuth();
@@ -143,20 +146,19 @@ const Messages = () => {
 
   // Sort: conversations with messages first (by most recent message), then new matches
   const sortedMatches = useMemo(() => {
-    return [...matches].sort((a, b) => {
+    let filtered = [...matches];
+    if (searchQuery) {
+      filtered = filtered.filter(m => m.profile.name.toLowerCase().includes(searchQuery));
+    }
+    return filtered.sort((a, b) => {
       const lastA = lastMessages[a.id];
       const lastB = lastMessages[b.id];
-      // Both have messages — sort by most recent
-      if (lastA && lastB) {
-        return new Date(lastB.created_at).getTime() - new Date(lastA.created_at).getTime();
-      }
-      // One has messages, one doesn't — message first
+      if (lastA && lastB) return new Date(lastB.created_at).getTime() - new Date(lastA.created_at).getTime();
       if (lastA && !lastB) return -1;
       if (!lastA && lastB) return 1;
-      // Neither has messages — keep original order
       return 0;
     });
-  }, [matches, lastMessages]);
+  }, [matches, lastMessages, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20">
@@ -184,7 +186,7 @@ const Messages = () => {
               </div>
             ))}
           </div>
-        ) : matches.length === 0 ? (
+        ) : matches.length === 0 && !searchQuery ? (
           <div className="space-y-3">
             <BrandedEmptyState
               mascot="waving"
@@ -198,7 +200,11 @@ const Messages = () => {
             </Button>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
+            <SearchInput placeholder="Search conversations..." ariaLabel="Search conversations" onSearch={handleSearch} />
+            {sortedMatches.length === 0 && searchQuery ? (
+              <p className="text-sm text-muted-foreground text-center py-8">No conversations matching &lsquo;{searchQuery}&rsquo;</p>
+            ) : null}
             {sortedMatches.map((match, idx) => {
               const lastMsg = lastMessages[match.id];
               const showOnline = isRecentlyActive((match.profile as any).last_active_at);

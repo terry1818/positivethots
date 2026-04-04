@@ -22,6 +22,7 @@ import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen, Map
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { SearchInput } from "@/components/SearchInput";
 
 interface Module {
   id: string; slug: string; title: string; description: string; order_index: number;
@@ -42,6 +43,7 @@ const tierConfig: Record<string, { label: string; color: string; bgClass: string
 const tierOrder = ["foundation", "sexual_health", "identity", "relationships", "advanced"];
 
 const Learn = () => {
+  const [moduleSearchQuery, setModuleSearchQuery] = useState("");
   const [modules, setModules] = useState<Module[]>([]);
   const [userBadges, setUserBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,6 +54,7 @@ const Learn = () => {
   const [continueSectionNumber, setContinueSectionNumber] = useState<number | undefined>();
   const [continueProgressPercent, setContinueProgressPercent] = useState<number | undefined>();
   const navigate = useNavigate();
+  const handleModuleSearch = useCallback((q: string) => setModuleSearchQuery(q.toLowerCase()), []);
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const { tier: subscriptionTier } = useSubscription();
@@ -170,10 +173,15 @@ const Learn = () => {
     return true;
   }, [isPremium, requiredEarned, requiredModules, earnedSlugs]);
 
-  const modulesByTier = useMemo(() => tierOrder.reduce((acc, tier) => {
-    acc[tier] = modules.filter(m => m.tier === tier).sort((a, b) => a.order_index - b.order_index);
-    return acc;
-  }, {} as Record<string, Module[]>), [modules]);
+  const modulesByTier = useMemo(() => {
+    const filtered = moduleSearchQuery
+      ? modules.filter(m => m.title.toLowerCase().includes(moduleSearchQuery) || m.description.toLowerCase().includes(moduleSearchQuery))
+      : modules;
+    return tierOrder.reduce((acc, tier) => {
+      acc[tier] = filtered.filter(m => m.tier === tier).sort((a, b) => a.order_index - b.order_index);
+      return acc;
+    }, {} as Record<string, Module[]>);
+  }, [modules, moduleSearchQuery]);
 
   if (loading) {
     return <PageSkeleton variant="learn" />;
@@ -218,6 +226,7 @@ const Learn = () => {
       </header>
 
       <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
+        <SearchInput placeholder="Search modules..." ariaLabel="Search modules" onSearch={handleModuleSearch} />
         {/* Streak Calendar */}
         {stats && (
           <StreakCalendar streak={stats.current_streak} lastActivityDate={stats.last_activity_date} freezeCount={stats.streak_freezes} />

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles, MapPin, Share2 } from "lucide-react";
+import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles, MapPin, Share2, Undo2 } from "lucide-react";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { calculateCompatibilityBreakdown, type CompatibilityBreakdownResult } from "@/lib/compatibility";
 import { CompatibilityBreakdown } from "@/components/discovery/CompatibilityBreakdown";
@@ -33,6 +33,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -163,6 +164,11 @@ const Index = () => {
   const [announcedProfile, setAnnouncedProfile] = useState("");
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
+  const [lastPassedProfile, setLastPassedProfile] = useState<EnhancedProfile | null>(null);
+  const [showUndoButton, setShowUndoButton] = useState(false);
+  const [dailyUndoCount, setDailyUndoCount] = useState(0);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const prefersReducedMotion = useReducedMotion();
 
   // Handle super like purchase redirect
   useEffect(() => {
@@ -395,17 +401,59 @@ const Index = () => {
     if (!currentUser) return;
 
     // Optimistic: immediately remove card
-    const { previousSuggestions } = optimisticRemoveCard(otherUserId);
+    const { previousSuggestions, removedProfile } = optimisticRemoveCard(otherUserId);
     trackEvent("swipe", { direction: "left", swiped_id: otherUserId });
+
+    // Store for undo
+    if (removedProfile) {
+      setLastPassedProfile(removedProfile);
+      setShowUndoButton(true);
+      clearTimeout(undoTimerRef.current);
+      undoTimerRef.current = setTimeout(() => setShowUndoButton(false), 5000);
+    }
 
     const { error } = await supabase.from("swipes").insert({
       swiper_id: currentUser.id, swiped_id: otherUserId, direction: "left",
     });
     if (error) {
       setSuggestions(previousSuggestions);
+      setLastPassedProfile(null);
+      setShowUndoButton(false);
       toast.error("Failed to pass, try again");
     }
   }, [currentUser, optimisticRemoveCard]);
+
+  const getUndoLimit = useCallback(() => {
+    if (subTier === "vip") return Infinity;
+    if (subTier === "premium" || subTier === "plus") return 3;
+    return 1;
+  }, [subTier]);
+
+  const handleUndo = useCallback(async () => {
+    if (!currentUser || !lastPassedProfile) return;
+    const limit = getUndoLimit();
+    if (dailyUndoCount >= limit) {
+      toast("Upgrade for more undos 👑", {
+        action: { label: "Upgrade", onClick: () => navigate("/premium") },
+      });
+      return;
+    }
+
+    // Delete swipe record
+    await supabase.from("swipes").delete().match({
+      swiper_id: currentUser.id,
+      swiped_id: lastPassedProfile.id,
+    });
+
+    // Re-insert at top
+    setSuggestions(prev => [lastPassedProfile, ...prev]);
+    setAnnouncedProfile(`Profile restored: ${lastPassedProfile.display_name || lastPassedProfile.name}`);
+    setDailyUndoCount(c => c + 1);
+    setLastPassedProfile(null);
+    setShowUndoButton(false);
+    clearTimeout(undoTimerRef.current);
+    toast.success("Profile restored ↩️");
+  }, [currentUser, lastPassedProfile, dailyUndoCount, getUndoLimit, navigate]);
 
   const handleSuperLike = useCallback(async (otherUserId: string) => {
     if (!currentUser) return;
@@ -643,6 +691,16 @@ const Index = () => {
         ) : (
           <>
             <div className="relative flex justify-center items-start px-4 pt-2 pb-32" data-walkthrough="discovery-card" style={{ minHeight: '520px' }}>
+              {/* Undo button */}
+              {showUndoButton && lastPassedProfile && (
+                <button
+                  onClick={handleUndo}
+                  className={`absolute top-4 left-4 z-30 bg-background/90 backdrop-blur-sm rounded-full p-3 shadow-md min-h-[44px] min-w-[44px] flex items-center gap-2 text-sm font-medium ${prefersReducedMotion ? '' : 'animate-fade-in'}`}
+                  aria-label="Undo last pass"
+                >
+                  <Undo2 className="h-5 w-5" />
+                </button>
+              )}
               {suggestions.slice(0, 3).map((profile, stackIdx) => {
                 const isMystery = mysteryProfiles.has(profile.id);
                 if (isMystery && stackIdx === 0) {
