@@ -951,26 +951,31 @@ const Onboarding = () => {
 
             {/* Navigation buttons */}
             {step > 1 && (
-              <div className="flex gap-2 mt-6 pb-16 relative z-50">
-                <Button onClick={goBack} variant="outline" className="flex-1">
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Back
-                </Button>
-                {step < TOTAL_STEPS ? (
-                  <>
-                    {isOptionalStep && (
-                      <Button onClick={() => { trackEvent('onboarding_skipped', { step }); goNext(); }} variant="ghost" className="px-3" title="Skip this step">
-                        <SkipForward className="h-4 w-4" />
-                      </Button>
-                    )}
-                    <Button onClick={goNext} className="flex-1">
-                      Continue <ChevronRight className="h-4 w-4 ml-1" />
-                    </Button>
-                  </>
-                ) : (
-                  <Button onClick={handleComplete} className="flex-1" disabled={loading}>
-                    {loading ? "Setting up..." : "Complete Profile ✨"}
-                  </Button>
+              <div className="mt-6 pb-16 relative z-50 space-y-2">
+                {stepError && (
+                  <p role="alert" className="text-xs text-destructive text-center animate-fade-in">{stepError}</p>
                 )}
+                <div className="flex gap-2">
+                  <Button onClick={() => { setStepError(""); goBack(); }} variant="outline" className="flex-1">
+                    <ChevronLeft className="h-4 w-4 mr-1" /> Back
+                  </Button>
+                  {step < TOTAL_STEPS ? (
+                    <>
+                      {isOptionalStep && (
+                        <Button onClick={() => { setStepError(""); trackEvent('onboarding_skipped', { step }); goNext(); }} variant="ghost" className="px-3" title="Skip this step">
+                          <SkipForward className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <Button onClick={() => { setStepError(""); goNext(); }} className="flex-1">
+                        Continue <ChevronRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </>
+                  ) : (
+                    <Button onClick={handleComplete} className="flex-1" disabled={loading}>
+                      {loading ? "Setting up..." : "Complete Profile ✨"}
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
           </CardContent>
