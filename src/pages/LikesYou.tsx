@@ -258,7 +258,7 @@ const LikesYou = () => {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                   {likers.map((liker, idx) => (
                     <Card key={liker.id} className={cn("overflow-hidden relative", !reducedMotion && "animate-stagger-fade", liker.is_super_like && "ring-2 ring-amber-500/50")} style={!reducedMotion ? { animationDelay: `${idx * 80}ms` } : undefined}>
                       {liker.is_super_like && (
