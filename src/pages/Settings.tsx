@@ -158,7 +158,7 @@ const Settings = () => {
       setAdminEmail("");
       await loadRoleHolders();
     } catch (err: any) {
-      toast.error(err.message || "Failed to grant role");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setGrantingRole(false);
     }
