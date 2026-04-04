@@ -179,8 +179,8 @@ const LikesYou = () => {
 
           <Tabs defaultValue="likes-you" onValueChange={handleTabChange}>
             <TabsList className="w-full mb-4">
-              <TabsTrigger value="likes-you" className="flex-1">Likes You</TabsTrigger>
-              <TabsTrigger value="your-likes" className="flex-1">Your Likes</TabsTrigger>
+              <TabsTrigger value="likes-you" className="flex-1" data-tour="likes-tab-likes-you">Likes You</TabsTrigger>
+              <TabsTrigger value="your-likes" className="flex-1" data-tour="likes-tab-your-likes">Your Likes</TabsTrigger>
             </TabsList>
 
             <TabsContent value="likes-you">
