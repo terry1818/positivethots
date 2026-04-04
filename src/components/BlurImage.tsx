@@ -26,6 +26,7 @@ export const BlurImage = memo(({
   width: widthProp,
   height: heightProp,
   sizes,
+  objectPosition,
   loading = "lazy",
   ...props
 }: BlurImageProps) => {
