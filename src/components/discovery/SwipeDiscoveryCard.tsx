@@ -274,6 +274,15 @@ export const SwipeDiscoveryCard = memo(({
 
           {/* Top badges */}
           <div className="absolute top-3 left-3 flex gap-1.5 z-10">
+            {isTop && is_recycled && (
+              <div
+                className="flex items-center gap-1.5 bg-background/80 backdrop-blur-sm rounded-full px-3 py-1"
+                aria-label="Previously viewed profile"
+              >
+                <RefreshCw className="h-3 w-3 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Second look</span>
+              </div>
+            )}
             {profile.is_boosted && (
               <Badge className="bg-amber-500/90 text-white text-sm border-0">
                 <Zap className="h-3 w-3 mr-0.5" /> Boosted
