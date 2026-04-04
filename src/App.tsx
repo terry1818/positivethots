@@ -71,6 +71,7 @@ const AppContent = () => {
 
   return (
     <>
+      <OfflineBanner />
       <WelcomeBackModal previousChurnStatus={previousChurnStatus} />
       {pendingTrigger && <NpsModal triggerEvent={pendingTrigger} onClose={dismiss} />}
       <Routes>
