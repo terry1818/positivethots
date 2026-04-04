@@ -231,13 +231,13 @@ const Resources = () => {
   }, [sorted]);
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Hero */}
       <div className="text-center pb-4 px-4" style={{ paddingTop: 'max(env(safe-area-inset-top, 0px) + 1rem, 2rem)' }}>
         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
           Curated Tools for Your ENM Journey
         </h1>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto mt-2">
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto mt-2">
           Hand-picked books, games, and wellness tools to strengthen your relationships.
         </p>
       </div>
@@ -255,8 +255,8 @@ const Resources = () => {
                   onClick={() => setActiveTab(cat.key)}
                   className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
                     isActive
-                      ? "bg-purple-600 text-white"
-                      : "bg-gray-800/60 text-gray-400 hover:bg-gray-700 hover:text-gray-200"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   }`}
                 >
                   {cat.icon}
@@ -274,12 +274,12 @@ const Resources = () => {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-gray-900/60 border border-gray-800/50 rounded-xl overflow-hidden">
-                <Skeleton className="h-48 w-full bg-gray-800" />
+              <div key={i} className="bg-card border border-border rounded-xl overflow-hidden">
+                <Skeleton className="h-48 w-full" />
                 <div className="p-4 space-y-2">
-                  <Skeleton className="h-5 w-3/4 bg-gray-800" />
-                  <Skeleton className="h-4 w-1/2 bg-gray-800" />
-                  <Skeleton className="h-3 w-full bg-gray-800" />
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-3 w-full" />
                 </div>
               </div>
             ))}
@@ -303,12 +303,12 @@ const Resources = () => {
         )}
 
         {/* Disclosure */}
-        <div className="bg-gray-900/40 border border-gray-800 rounded-xl p-6 text-center max-w-2xl mx-auto mt-12 mb-8">
+        <div className="bg-card border border-border rounded-xl p-6 text-center max-w-2xl mx-auto mt-12 mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <ShieldCheck className="w-5 h-5 text-purple-400" />
-            <span className="text-sm font-medium text-gray-300">Affiliate Disclosure</span>
+            <ShieldCheck className="w-5 h-5 text-primary" />
+            <span className="text-sm font-medium text-foreground">Affiliate Disclosure</span>
           </div>
-          <p className="text-sm text-gray-500 leading-relaxed">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             Positive Thots is a participant in the Amazon Services LLC Associates Program, an affiliate
             advertising program designed to provide a means for us to earn fees by linking to Amazon.com
             and affiliated sites. We only recommend products we believe in and that align with our mission

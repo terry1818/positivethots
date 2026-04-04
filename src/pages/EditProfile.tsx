@@ -18,6 +18,7 @@ import { PROMPT_QUESTIONS } from "@/lib/promptQuestions";
 import { FrameSelector } from "@/components/profile/FrameSelector";
 import { syncEarnedFrames } from "@/hooks/useEarnedFrames";
 import { FieldError } from "@/components/FieldError";
+import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 
 interface PromptRow {
   id?: string;
@@ -29,6 +30,7 @@ interface PromptRow {
 const EditProfile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [saving, setSaving] = useState(false);
   const [photos, setPhotos] = useState<any[]>([]);
   const [latestVerification, setLatestVerification] = useState<any>(null);
@@ -96,7 +98,7 @@ const EditProfile = () => {
       })));
     } catch (error) {
       console.error("Error loading profile:", error);
-      toast.error("Failed to load profile");
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -203,6 +205,22 @@ const EditProfile = () => {
 
   if (loading) {
     return <PageSkeleton variant="profile" />;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <main className="flex-1 container max-w-md mx-auto px-4 py-6 flex items-center justify-center">
+          <BrandedEmptyState
+            mascot="confused"
+            headline="Couldn't load profile editor"
+            description="Something went wrong on our end. Give it another try!"
+            ctaLabel="Try Again"
+            onCtaClick={() => { setError(false); setLoading(true); loadProfile(); }}
+          />
+        </main>
+      </div>
+    );
   }
 
   return (

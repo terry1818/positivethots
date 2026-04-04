@@ -158,7 +158,7 @@ const Settings = () => {
       setAdminEmail("");
       await loadRoleHolders();
     } catch (err: any) {
-      toast.error(err.message || "Failed to grant role");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setGrantingRole(false);
     }
@@ -175,7 +175,7 @@ const Settings = () => {
       toast.success("Role revoked");
       await loadRoleHolders();
     } catch (err: any) {
-      toast.error(err.message || "Failed to revoke role");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setRevokingId(null);
     }
@@ -205,7 +205,7 @@ const Settings = () => {
       toast.success(`${codeType === "gift" ? "Gift" : "Referral"} code created: ${code}`);
       await loadMyCodes();
     } catch (err: any) {
-      toast.error(err.message || "Failed to create code");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setCreatingCode(false);
     }
@@ -270,7 +270,7 @@ const Settings = () => {
       URL.revokeObjectURL(url);
       toast.success("Your data has been exported!");
     } catch (error: any) {
-      toast.error(error.message || "Failed to export data");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setExporting(false);
     }
@@ -287,7 +287,7 @@ const Settings = () => {
       await signOut();
       navigate("/auth");
     } catch (error: any) {
-      toast.error(error.message || "Failed to delete account");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setDeleting(false);
     }
@@ -300,7 +300,7 @@ const Settings = () => {
       if (error) throw error;
       if (data?.url) window.open(data.url, "_blank");
     } catch (error: any) {
-      toast.error(error.message || "Failed to open subscription management");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setManagingPortal(false);
     }
@@ -844,7 +844,7 @@ const Settings = () => {
                   setGiftEmail("");
                   await loadMyCodes();
                 } catch (err: any) {
-                  toast.error(err.message || "Failed to send gift");
+                  toast.error("Something went wrong. Please try again.");
                 } finally {
                   setSendingGift(false);
                 }
@@ -928,7 +928,7 @@ const Settings = () => {
                       }
                     }
                     const { data, error } = await supabase.rpc("reset_discovery_feed");
-                    if (error) { toast.error("Failed to reset feed"); return; }
+                    if (error) { toast.error("Something went wrong. Please try again."); return; }
                     const result = data as { reset_count: number; message: string } | null;
                     localStorage.setItem("pt_last_feed_reset", Date.now().toString());
                     toast.success(`Feed reset! ${result?.reset_count ?? 0} profiles will reappear. 🔄`);

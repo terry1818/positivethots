@@ -364,7 +364,7 @@ const Chat = () => {
       toast.success("Report Submitted", { description: "Our team will review this. Thank you for keeping the community safe." });
       setShowReportDialog(false);
     } catch (err: any) {
-      toast.error(err.message || "Failed to submit report");
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
@@ -379,7 +379,7 @@ const Chat = () => {
       toast.success("User Blocked", { description: "You won't see this user anymore." });
       navigate("/messages");
     } catch (err: any) {
-      toast.error(err.message || "Failed to block user");
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
@@ -465,16 +465,17 @@ const Chat = () => {
               <Button variant="ghost" size="icon" onClick={handleViewCompatibility} aria-label="View compatibility" title="View Compatibility">
                 <Heart className="h-5 w-5 text-primary" />
               </Button>
-              <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Voice call"><Phone className="h-5 w-5" /></Button>
-              <Button variant="ghost" size="icon" className="hidden sm:flex" aria-label="Video call"><Video className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" onClick={() => setShowReportDialog(true)} className="h-9 w-9 text-muted-foreground" aria-label="Report user">
+                <Flag className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => setShowBlockDialog(true)} className="h-9 w-9 text-muted-foreground" aria-label="Block user">
+                <UserX className="h-4 w-4" />
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" aria-label="More options"><MoreVertical className="h-5 w-5" /></Button></DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuItem className="sm:hidden"><Phone className="h-4 w-4 mr-2" />Voice Call</DropdownMenuItem>
                   <DropdownMenuItem className="sm:hidden"><Video className="h-4 w-4 mr-2" />Video Call</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setShowReportDialog(true)}><Flag className="h-4 w-4 mr-2" />Report</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setShowBlockDialog(true)} className="text-destructive focus:text-destructive"><UserX className="h-4 w-4 mr-2" />Block User</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
