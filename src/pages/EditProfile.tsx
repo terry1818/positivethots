@@ -117,7 +117,21 @@ const EditProfile = () => {
 
   const handleSave = async () => {
     if (!profile?.id) return;
-    if (!name.trim()) { toast.error("Name is required"); return; }
+
+    // Inline validation
+    const errors: Record<string, string> = {};
+    if (!name.trim()) errors.name = "Display name is required";
+    if (bio.length > 500) errors.bio = "Bio must be under 500 characters";
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      // Focus first error field
+      const firstKey = Object.keys(errors)[0];
+      const el = document.getElementById(firstKey);
+      el?.focus();
+      return;
+    }
+    setFieldErrors({});
     setSaving(true);
     try {
       const { error } = await supabase.from("profiles").update({
