@@ -646,7 +646,7 @@ const Onboarding = () => {
               {/* Step 4: Pronouns */}
               {step === 4 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="💬" title="Your pronouns" subtitle="Displayed on your profile" />
+                  <StepHeader emoji="💬" title="Your pronouns" subtitle="Displayed on your profile · Required" />
                   <div className="flex flex-wrap gap-2 animate-stagger-2">
                     {PRONOUN_PRESETS.map(p => (
                       <button
