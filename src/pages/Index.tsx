@@ -369,10 +369,15 @@ const Index = () => {
         const hasPhoto = photosByUser.get(p.id)?.length > 0 || p.profile_image;
         return hasPhoto;
       })
-      .map(p => ({
+      .map(p => {
+        const userPhotoData = photosByUser.get(p.id) || [];
+        const focalMap: Record<string, number> = {};
+        userPhotoData.forEach(ph => { focalMap[ph.url] = ph.focalY; });
+        return {
         ...p,
-        profile_image: photosByUser.get(p.id)?.[0] || p.profile_image || null,
-        photos: photosByUser.get(p.id)?.slice(1) || p.photos || null,
+        profile_image: userPhotoData[0]?.url || p.profile_image || null,
+        photos: userPhotoData.length > 1 ? userPhotoData.slice(1).map(ph => ph.url) : p.photos || null,
+        photo_focal_points: focalMap,
         badge_count: badgeCounts.get(p.id) || 0,
         compatibility_score: calculateCompatibility(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0),
         compatibility_reasons: calculateCompatibilityReasons(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0, isSharing),
