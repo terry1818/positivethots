@@ -206,7 +206,7 @@ const Learn = () => {
           </div>
           {/* Compact XP row */}
           {stats && (
-            <div className="mt-3">
+            <div className="mt-3" data-tour="learn-xp-bar">
               <XPBar totalXP={stats.total_xp} level={stats.current_level} />
             </div>
           )}
