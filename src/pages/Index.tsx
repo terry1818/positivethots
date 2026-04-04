@@ -805,7 +805,7 @@ const Index = () => {
                   <Undo2 className="h-5 w-5" />
                 </button>
               )}
-              {suggestions.slice(0, 3).map((profile, stackIdx) => {
+              {suggestions.filter(p => p.profile_image).slice(0, 3).map((profile, stackIdx) => {
                 const isMystery = mysteryProfiles.has(profile.id);
                 if (isMystery && stackIdx === 0) {
                   return (
