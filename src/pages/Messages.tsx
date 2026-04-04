@@ -146,20 +146,19 @@ const Messages = () => {
 
   // Sort: conversations with messages first (by most recent message), then new matches
   const sortedMatches = useMemo(() => {
-    return [...matches].sort((a, b) => {
+    let filtered = [...matches];
+    if (searchQuery) {
+      filtered = filtered.filter(m => m.profile.name.toLowerCase().includes(searchQuery));
+    }
+    return filtered.sort((a, b) => {
       const lastA = lastMessages[a.id];
       const lastB = lastMessages[b.id];
-      // Both have messages — sort by most recent
-      if (lastA && lastB) {
-        return new Date(lastB.created_at).getTime() - new Date(lastA.created_at).getTime();
-      }
-      // One has messages, one doesn't — message first
+      if (lastA && lastB) return new Date(lastB.created_at).getTime() - new Date(lastA.created_at).getTime();
       if (lastA && !lastB) return -1;
       if (!lastA && lastB) return 1;
-      // Neither has messages — keep original order
       return 0;
     });
-  }, [matches, lastMessages]);
+  }, [matches, lastMessages, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20">
