@@ -567,8 +567,17 @@ const Onboarding = () => {
         </div>
 
         <Card className="shadow-[var(--shadow-elevated)] overflow-hidden border-border/50 backdrop-blur-sm bg-card/95">
-          <CardContent className="p-6">
-            <StepTransition stepKey={step} direction={direction}>
+          <CardContent className="p-6 relative">
+            {/* Skip button for optional steps */}
+            {isOptionalStep && step > 1 && step < TOTAL_STEPS && (
+              <button
+                onClick={() => { trackEvent('onboarding_skipped', { step }); goNext(); }}
+                className="absolute top-2 right-2 text-sm text-muted-foreground hover:text-foreground transition-colors z-10"
+                aria-label="Skip this step"
+              >
+                Skip for now →
+              </button>
+            )}
               {/* Step 1: Welcome */}
               {step === 1 && (
                 <div className="text-center space-y-6 py-4">
