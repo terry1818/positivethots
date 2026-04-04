@@ -10,6 +10,7 @@ interface BlurImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, "onLo
   width?: number | string;
   height?: number | string;
   sizes?: string;
+  objectPosition?: string;
 }
 
 export const BlurImage = memo(({
@@ -25,6 +26,7 @@ export const BlurImage = memo(({
   width: widthProp,
   height: heightProp,
   sizes,
+  objectPosition,
   loading = "lazy",
   ...props
 }: BlurImageProps) => {
@@ -57,7 +59,7 @@ export const BlurImage = memo(({
           src={src}
           alt={alt || ""}
           className={cn("absolute inset-0 h-full w-full object-cover transition-opacity duration-300", imgClassName)}
-          style={{ opacity: loaded ? 1 : 0 }}
+          style={{ opacity: loaded ? 1 : 0, ...(objectPosition ? { objectPosition } : {}) }}
           decoding="async"
           loading={loading}
           width={widthProp ?? "100%"}
@@ -77,7 +79,8 @@ export const BlurImage = memo(({
   prev.alt === next.alt &&
   prev.className === next.className &&
   prev.aspectRatio === next.aspectRatio &&
-  prev.fetchPriority === next.fetchPriority
+  prev.fetchPriority === next.fetchPriority &&
+  prev.objectPosition === next.objectPosition
 );
 
 BlurImage.displayName = "BlurImage";

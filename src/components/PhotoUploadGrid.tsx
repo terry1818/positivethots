@@ -1,11 +1,12 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2, Users, Star, Sparkles } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2, Users, Star, Sparkles, Crosshair } from "lucide-react";
 import { toast } from "sonner";
 import { isNative, pickNativePhoto } from "@/lib/capacitor";
 
@@ -19,7 +20,82 @@ interface UserPhoto {
   moderation_status: string;
   moderation_reason: string | null;
   created_at: string;
+  focal_point_y?: number;
 }
+
+// Focal point selector modal
+const FocalPointSelector = ({
+  photo,
+  onClose,
+  onSave,
+}: {
+  photo: UserPhoto;
+  onClose: () => void;
+  onSave: (photoId: string, focalY: number) => void;
+}) => {
+  const [focalY, setFocalY] = useState(photo.focal_point_y ?? 50);
+  const imgRef = useRef<HTMLDivElement>(null);
+
+  const handleTap = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    const rect = imgRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+    const y = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100));
+    setFocalY(Math.round(y));
+  }, []);
+
+  return (
+    <Dialog open onOpenChange={() => onClose()}>
+      <DialogContent className="max-w-sm p-0 overflow-hidden">
+        <DialogHeader className="p-4 pb-2">
+          <DialogTitle className="text-base">Set Photo Focus</DialogTitle>
+          <p className="text-sm text-muted-foreground">Tap where the most important part of your photo is (e.g., your face)</p>
+        </DialogHeader>
+        <div
+          ref={imgRef}
+          className="relative w-full cursor-crosshair select-none"
+          style={{ maxHeight: "60vh" }}
+          onClick={handleTap}
+          onTouchStart={handleTap}
+        >
+          <img
+            src={photo.photo_url}
+            alt="Set focus point"
+            className="w-full h-auto"
+            draggable={false}
+          />
+          {/* Horizontal focus line */}
+          <div
+            className="absolute left-0 right-0 h-0.5 bg-primary shadow-[0_0_8px_2px_hsl(var(--primary)/0.5)] pointer-events-none transition-all duration-150"
+            style={{ top: `${focalY}%` }}
+          />
+          {/* Focus dot */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 rounded-full border-2 border-primary bg-primary/30 pointer-events-none transition-all duration-150 flex items-center justify-center"
+            style={{ top: `${focalY}%` }}
+          >
+            <Crosshair className="h-3 w-3 text-primary" />
+          </div>
+          {/* Preview crop zone */}
+          <div
+            className="absolute left-0 right-0 border border-dashed border-white/40 pointer-events-none transition-all duration-150"
+            style={{
+              top: `${Math.max(0, focalY - 25)}%`,
+              height: "50%",
+              maxHeight: `${100 - Math.max(0, focalY - 25)}%`,
+            }}
+          />
+        </div>
+        <div className="p-4 pt-2 flex gap-2">
+          <Button variant="outline" className="flex-1" onClick={onClose}>Cancel</Button>
+          <Button className="flex-1" onClick={() => { onSave(photo.id, focalY); onClose(); }}>
+            Save Focus
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 interface PhotoUploadGridProps {
   userId: string;
@@ -128,7 +204,18 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [photoStats, setPhotoStats] = useState<Record<string, { score: number; impressions: number }>>({});
+  const [focalPhoto, setFocalPhoto] = useState<UserPhoto | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSaveFocalPoint = async (photoId: string, focalY: number) => {
+    try {
+      await supabase.from("user_photos").update({ focal_point_y: focalY } as any).eq("id", photoId);
+      toast.success("Focus point saved!");
+      onPhotosChange();
+    } catch {
+      toast.error("Failed to save focus point");
+    }
+  };
 
   const publicPhotos = photos.filter((p) => p.visibility === "public").sort((a, b) => a.order_index - b.order_index);
   const privatePhotos = photos.filter((p) => p.visibility === "private").sort((a, b) => a.order_index - b.order_index);
@@ -436,6 +523,16 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
                     <Star className="h-3 w-3" />
                   </button>
                 )}
+                {/* Set Focus button for approved photos */}
+                {photo.moderation_status === "approved" && (
+                  <button
+                    onClick={() => setFocalPhoto(photo)}
+                    className="absolute bottom-1 left-7 bg-background/80 text-foreground rounded-full p-0.5 hover:bg-background transition-colors min-h-0 min-w-0"
+                    title="Set focus point"
+                  >
+                    <Crosshair className="h-3 w-3" />
+                  </button>
+                )}
                 {/* Best photo badge */}
                 {bestPhotoId === photo.id && (
                   <div className="absolute bottom-1 right-1 bg-amber-500/90 text-white text-xs font-bold px-1 py-0.5 rounded-full flex items-center gap-0.5">
@@ -511,6 +608,13 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
           onChange={handleUpload}
         />
       </CardContent>
+      {focalPhoto && (
+        <FocalPointSelector
+          photo={focalPhoto}
+          onClose={() => setFocalPhoto(null)}
+          onSave={handleSaveFocalPoint}
+        />
+      )}
     </Card>
   );
 };

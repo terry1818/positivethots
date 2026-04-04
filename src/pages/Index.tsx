@@ -74,6 +74,7 @@ interface EnhancedProfile extends DiscoveryProfile {
   verified?: boolean;
   distance?: number | null;
   is_boosted?: boolean;
+  photo_focal_points?: Record<string, number>;
 }
 
 const calculateCompatibility = (user: Profile, other: DiscoveryProfile, otherBadges: number, userBadges: number): number => {
@@ -342,16 +343,16 @@ const Index = () => {
     const profileIds = profilesResult.data.map(p => p.id);
     const { data: userPhotos } = await supabase
       .from("user_photos")
-      .select("user_id, photo_url, order_index")
+      .select("user_id, photo_url, order_index, focal_point_y")
       .in("user_id", profileIds)
       .eq("visibility", "public")
       .eq("moderation_status", "approved")
       .order("order_index", { ascending: true });
 
-    const photosByUser = new Map<string, string[]>();
+    const photosByUser = new Map<string, { url: string; focalY: number }[]>();
     userPhotos?.forEach(photo => {
       const existing = photosByUser.get(photo.user_id) || [];
-      existing.push(photo.photo_url);
+      existing.push({ url: photo.photo_url, focalY: Number(photo.focal_point_y) || 50 });
       photosByUser.set(photo.user_id, existing);
     });
 
@@ -368,17 +369,22 @@ const Index = () => {
         const hasPhoto = photosByUser.get(p.id)?.length > 0 || p.profile_image;
         return hasPhoto;
       })
-      .map(p => ({
+      .map(p => {
+        const userPhotoData = photosByUser.get(p.id) || [];
+        const focalMap: Record<string, number> = {};
+        userPhotoData.forEach(ph => { focalMap[ph.url] = ph.focalY; });
+        return {
         ...p,
-        profile_image: photosByUser.get(p.id)?.[0] || p.profile_image || null,
-        photos: photosByUser.get(p.id)?.slice(1) || p.photos || null,
+        profile_image: userPhotoData[0]?.url || p.profile_image || null,
+        photos: userPhotoData.length > 1 ? userPhotoData.slice(1).map(ph => ph.url) : p.photos || null,
+        photo_focal_points: focalMap,
         badge_count: badgeCounts.get(p.id) || 0,
         compatibility_score: calculateCompatibility(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0),
         compatibility_reasons: calculateCompatibilityReasons(profile, p, badgeCounts.get(p.id) || 0, badgeCounts.get(userId) || 0, isSharing),
         verified: p.is_verified,
         distance: null,
         is_boosted: boostedUserIds.has(p.id),
-      }))
+      };})
       .sort((a, b) => {
         if (a.is_boosted && !b.is_boosted) return -1;
         if (!a.is_boosted && b.is_boosted) return 1;

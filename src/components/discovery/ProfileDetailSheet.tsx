@@ -41,6 +41,7 @@ interface EnhancedProfile {
   verified?: boolean;
   distance?: number | null;
   is_boosted?: boolean;
+  photo_focal_points?: Record<string, number>;
 }
 
 interface ProfileDetailSheetProps {
@@ -64,18 +65,18 @@ export const ProfileDetailSheet = ({
   const [failedPhotos, setFailedPhotos] = useState<Set<string>>(new Set());
 
   // Fetch approved photos from user_photos table (same source as discovery cards)
-  const { data: userPhotos } = useQuery({
+  const { data: userPhotosData } = useQuery({
     queryKey: ["profile-detail-photos", profile?.id],
     queryFn: async () => {
       if (!profile?.id) return [];
       const { data } = await supabase
         .from("user_photos")
-        .select("photo_url, order_index")
+        .select("photo_url, order_index, focal_point_y")
         .eq("user_id", profile.id)
         .eq("visibility", "public")
         .eq("moderation_status", "approved")
         .order("order_index", { ascending: true });
-      return data?.map(p => p.photo_url) || [];
+      return data?.map(p => ({ url: p.photo_url, focalY: Number(p.focal_point_y) || 50 })) || [];
     },
     enabled: !!profile?.id,
   });
@@ -88,8 +89,12 @@ export const ProfileDetailSheet = ({
   if (!profile) return null;
 
   // Use fetched user_photos as primary source, fall back to profile data
-  const fetchedPhotos = userPhotos && userPhotos.length > 0 ? userPhotos : [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
-  const photos = fetchedPhotos.filter(url => !failedPhotos.has(url));
+  const fetchedUrls = userPhotosData && userPhotosData.length > 0 ? userPhotosData.map(p => p.url) : [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
+  const photos = fetchedUrls.filter(url => !failedPhotos.has(url));
+
+  // Build focal point map from fetched data + profile data
+  const focalMap: Record<string, number> = { ...(profile.photo_focal_points || {}) };
+  userPhotosData?.forEach(p => { focalMap[p.url] = p.focalY; });
 
   const handlePhotoError = (url: string) => {
     setFailedPhotos(prev => {
@@ -112,13 +117,14 @@ export const ProfileDetailSheet = ({
 
         <div className="overflow-y-auto flex-1">
           {/* Photo carousel */}
-          <div className="relative h-56 w-full overflow-hidden">
+          <div className="relative h-[40vh] sm:h-[50vh] max-h-[500px] w-full overflow-hidden">
             {photos.length > 0 ? (
               <BlurImage
                 src={photos[safePhotoIndex] || "/placeholder.svg"}
                 alt={displayName}
                 className="h-full w-full"
                 loading="eager"
+                objectPosition={`center ${focalMap[photos[safePhotoIndex]] ?? 50}%`}
                 onError={() => handlePhotoError(photos[safePhotoIndex])}
               />
             ) : (
