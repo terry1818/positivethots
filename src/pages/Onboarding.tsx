@@ -375,32 +375,35 @@ const Onboarding = () => {
     setStep(s => Math.max(s - 1, 1));
   };
 
+  const [stepError, setStepError] = useState("");
+
   const validateStep = (): boolean => {
+    setStepError("");
     switch (step) {
       case 2:
-        if (!formData.enmExperienceLevel) { toast.error("Please select your experience level"); return false; }
+        if (!formData.enmExperienceLevel) { setStepError("Please select your experience level"); return false; }
         return true;
       case 3:
-        if (!formData.gender) { toast.error("Please select your gender"); return false; }
+        if (!formData.gender) { setStepError("Please select your gender"); return false; }
         return true;
       case 4:
-        if (!formData.pronouns && !formData.customPronouns.trim()) { toast.error("Please select or enter your pronouns"); return false; }
+        if (!formData.pronouns && !formData.customPronouns.trim()) { setStepError("Please select or enter your pronouns"); return false; }
         return true;
       case 5:
-        if (photos.length === 0) { toast.error("Please upload at least 1 photo"); return false; }
+        if (photos.length === 0) { setStepError("Please upload at least 1 photo"); return false; }
         return true;
       case 8:
-        if (!formData.relationshipStyle) { toast.error("Please select your relationship style"); return false; }
+        if (!formData.relationshipStyle) { setStepError("Please select your relationship style"); return false; }
         return true;
       case 9:
-        if (!formData.relationshipStatus) { toast.error("Please select your status"); return false; }
+        if (!formData.relationshipStatus) { setStepError("Please select your status"); return false; }
         return true;
       case 12:
-        if (formData.interests.length < 3) { toast.error("Please select at least 3 interests"); return false; }
+        if (formData.interests.length < 3) { setStepError("Please select at least 3 interests"); return false; }
         return true;
       case 13:
-        if (!formData.location.trim()) { toast.error("Please enter your location"); return false; }
-        if (formData.prompts.filter(p => p.response.trim()).length < 2) { toast.error("Please answer at least 2 prompts"); return false; }
+        if (!formData.location.trim()) { setStepError("Please enter your location"); return false; }
+        if (formData.prompts.filter(p => p.response.trim()).length < 2) { setStepError("Please answer at least 2 prompts"); return false; }
         return true;
       default:
         return true;
