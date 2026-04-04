@@ -395,7 +395,41 @@ const Index = () => {
     setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
   }, [currentUser, suggestions, sendSuperLike]);
 
-  const handleBoostClick = async () => {
+  // Keyboard navigation for discovery
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (suggestions.length === 0 || loading) return;
+      const topProfile = suggestions[0];
+      if (!topProfile) return;
+
+      switch (e.key) {
+        case "ArrowRight":
+        case "l":
+          e.preventDefault();
+          handleConnect(topProfile.id);
+          break;
+        case "ArrowLeft":
+        case "h":
+          e.preventDefault();
+          handlePass(topProfile.id);
+          break;
+        case "ArrowUp":
+        case "s":
+          e.preventDefault();
+          if (canSuperLike) handleSuperLike(topProfile.id);
+          break;
+        case " ":
+        case "Enter":
+          e.preventDefault();
+          setDetailProfile(topProfile);
+          break;
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [suggestions, loading, canSuperLike, handleConnect, handlePass, handleSuperLike]);
+
     trackEvent('discovery_empty_boost_clicked', {});
     try {
       const { data, error } = await supabase.functions.invoke("create-boost-payment");
