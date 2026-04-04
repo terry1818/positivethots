@@ -919,7 +919,9 @@ const Index = () => {
         canSuperLike={canSuperLike}
       />
 
-      <BottomNav />
+      <div className="shrink-0">
+        <BottomNav />
+      </div>
 
       {/* First-time walkthrough */}
       {showWalkthrough && suggestions.length > 0 && (
