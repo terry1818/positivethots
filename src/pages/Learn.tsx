@@ -146,6 +146,18 @@ const Learn = () => {
         .eq("event_name", "module_section_viewed")
         .gte("created_at", last24h);
       setActiveLearnerCount(learnerCount && learnerCount > 0 ? learnerCount : null);
+
+      // Check daily spin status
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("last_daily_spin")
+        .eq("id", session.user.id)
+        .single();
+      const today = new Date().toISOString().split("T")[0];
+      setHasSpunToday((profileData as any)?.last_daily_spin === today);
+
+      // Show streak interstitial if at risk and haven't done activity today
+      // (delay slightly to avoid competing with page load)
     } catch (error: any) {
       console.error("Error loading education data:", error);
       toast.error("Failed to load education modules");
