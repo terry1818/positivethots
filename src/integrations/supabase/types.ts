@@ -354,43 +354,96 @@ export type Database = {
           },
         ]
       }
+      event_rsvps: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_rsvps_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
+          age_minimum: number | null
           capacity: number
           created_at: string
           description: string | null
           event_date: string
+          event_format: string | null
+          event_tier: string
           host_name: string
           id: string
           image_url: string | null
           is_active: boolean
+          location_address: string | null
+          location_name: string | null
+          max_waitlist: number | null
           price_cents: number
+          requires_application: boolean | null
           stripe_price_id: string | null
           title: string
         }
         Insert: {
+          age_minimum?: number | null
           capacity?: number
           created_at?: string
           description?: string | null
           event_date: string
+          event_format?: string | null
+          event_tier?: string
           host_name: string
           id?: string
           image_url?: string | null
           is_active?: boolean
+          location_address?: string | null
+          location_name?: string | null
+          max_waitlist?: number | null
           price_cents?: number
+          requires_application?: boolean | null
           stripe_price_id?: string | null
           title: string
         }
         Update: {
+          age_minimum?: number | null
           capacity?: number
           created_at?: string
           description?: string | null
           event_date?: string
+          event_format?: string | null
+          event_tier?: string
           host_name?: string
           id?: string
           image_url?: string | null
           is_active?: boolean
+          location_address?: string | null
+          location_name?: string | null
+          max_waitlist?: number | null
           price_cents?: number
+          requires_application?: boolean | null
           stripe_price_id?: string | null
           title?: string
         }

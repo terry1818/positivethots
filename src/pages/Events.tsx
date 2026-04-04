@@ -4,49 +4,31 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { BottomNav } from "@/components/BottomNav";
-import {
-  Calendar,
-  ArrowLeft,
-  Loader2,
-  Users,
-  Ticket,
-  Crown,
-  MapPin,
-  Clock,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Calendar, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { format } from "date-fns";
 import { Logo } from "@/components/Logo";
+import { EventCard, type EventData } from "@/components/events/EventCard";
 
-interface Event {
-  id: string;
-  title: string;
-  description: string | null;
-  host_name: string;
-  event_date: string;
-  price_cents: number;
-  capacity: number;
-  image_url: string | null;
-  is_active: boolean;
-}
+type EventTier = "community" | "premium" | "adults_only";
 
 const Events = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isPremium, tier: subscriptionTier } = useSubscription();
   const { isFeatureUnlocked } = useFeatureUnlocks();
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState<string | null>(null);
+  const [rsvpLoading, setRsvpLoading] = useState<string | null>(null);
   const [registrations, setRegistrations] = useState<string[]>([]);
+  const [rsvps, setRsvps] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<EventTier>("community");
 
   const hasEventsAccess = isFeatureUnlocked("events_access");
   const isVIP = subscriptionTier === "vip";
-  const isFullyUnlocked = hasEventsAccess && isVIP;
 
   useEffect(() => {
     if (searchParams.get("registered")) {
@@ -63,15 +45,16 @@ const Events = () => {
         .gte("event_date", new Date().toISOString())
         .order("event_date", { ascending: true });
 
-      setEvents(eventsData ?? []);
+      setEvents((eventsData as EventData[]) ?? []);
 
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        const { data: regs } = await supabase
-          .from("event_registrations")
-          .select("event_id")
-          .eq("user_id", session.user.id);
-        setRegistrations(regs?.map((r) => r.event_id) ?? []);
+        const [regsResult, rsvpsResult] = await Promise.all([
+          supabase.from("event_registrations").select("event_id").eq("user_id", session.user.id),
+          supabase.from("event_rsvps").select("event_id").eq("user_id", session.user.id).neq("status", "cancelled"),
+        ]);
+        setRegistrations(regsResult.data?.map((r) => r.event_id) ?? []);
+        setRsvps(rsvpsResult.data?.map((r) => r.event_id) ?? []);
       }
       setLoading(false);
     };
@@ -94,7 +77,43 @@ const Events = () => {
     }
   };
 
-  const addToCalendar = (event: Event) => {
+  const handleRsvp = async (eventId: string) => {
+    setRsvpLoading(eventId);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { toast.error("Please sign in"); return; }
+
+      const { error } = await supabase.from("event_rsvps").insert({
+        event_id: eventId,
+        user_id: session.user.id,
+        status: "confirmed",
+      });
+      if (error) throw error;
+      setRsvps((prev) => [...prev, eventId]);
+      toast.success("You're in! 🎉");
+    } catch (err: any) {
+      toast.error(err.message?.includes("duplicate") ? "You've already RSVP'd" : "Failed to RSVP");
+    } finally {
+      setRsvpLoading(null);
+    }
+  };
+
+  const handleCancelRsvp = async (eventId: string) => {
+    setRsvpLoading(eventId);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await supabase.from("event_rsvps").delete().eq("event_id", eventId).eq("user_id", session.user.id);
+      setRsvps((prev) => prev.filter((id) => id !== eventId));
+      toast.success("RSVP cancelled");
+    } catch {
+      toast.error("Failed to cancel RSVP");
+    } finally {
+      setRsvpLoading(null);
+    }
+  };
+
+  const addToCalendar = (event: EventData) => {
     const start = new Date(event.event_date);
     const end = new Date(start.getTime() + 60 * 60 * 1000);
     const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
@@ -102,102 +121,69 @@ const Events = () => {
     window.open(url, "_blank");
   };
 
-  const subtitleText = !hasEventsAccess
-    ? "Complete the full curriculum to access community events"
-    : !isVIP
-      ? "Upgrade to VIP to purchase event tickets"
-      : "Learn, connect, and grow";
+  const canAccessTier = (tier: string): { allowed: boolean; reason?: string } => {
+    if (tier === "community") return { allowed: true };
+    if (tier === "premium") return isPremium ? { allowed: true } : { allowed: false, reason: "premium" };
+    // adults_only requires Advanced education + VIP
+    if (!hasEventsAccess) return { allowed: false, reason: "education" };
+    if (!isVIP) return { allowed: false, reason: "vip" };
+    return { allowed: true };
+  };
 
-  const renderEventCard = (event: Event) => {
-    const isRegistered = registrations.includes(event.id);
-    const priceFormatted = (event.price_cents / 100).toFixed(2);
-    const discountedPrice = isVIP
-      ? ((event.price_cents * 0.75) / 100).toFixed(2)
-      : null;
-    const eventDate = new Date(event.event_date);
-    const isPast = eventDate < new Date();
+  const tierEvents = (tier: EventTier) => events.filter((e) => e.event_tier === tier);
+
+  const tierDescriptions: Record<EventTier, string> = {
+    community: "Free events open to all members",
+    premium: "Exclusive meetups for premium subscribers",
+    adults_only: "Intimate events for educated, verified members",
+  };
+
+  const renderEventList = (tier: EventTier) => {
+    const filtered = tierEvents(tier);
+    const access = canAccessTier(tier);
+
+    if (loading) {
+      return (
+        <div className="flex justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      );
+    }
+
+    if (filtered.length === 0) {
+      return (
+        <Card className="text-center py-12">
+          <CardContent>
+            <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="font-semibold text-lg mb-1">No upcoming events</h3>
+            <p className="text-muted-foreground text-sm">Check back soon for new {tier === "community" ? "community" : tier === "premium" ? "premium" : "adults-only"} events!</p>
+          </CardContent>
+        </Card>
+      );
+    }
 
     return (
-      <Card key={event.id} className="overflow-hidden transition-all hover:-translate-y-0.5">
-        {event.image_url && (
-          <div className="h-40 overflow-hidden">
-            <img
-              src={event.image_url}
-              alt={event.title}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          </div>
-        )}
-        <CardHeader className="pb-2">
-          <div className="flex items-start justify-between">
-            <CardTitle className="text-lg">{event.title}</CardTitle>
-            {isRegistered && (
-              <Badge className="bg-primary text-primary-foreground">Registered</Badge>
-            )}
-          </div>
-          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mt-1">
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {format(eventDate, "MMM d, yyyy · h:mm a")}
-            </span>
-            <span className="flex items-center gap-1">
-              <Users className="h-3 w-3" />
-              {event.capacity} spots
-            </span>
-            <span className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              {event.host_name}
-            </span>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {event.description && (
-            <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-              {event.description}
-            </p>
-          )}
-          <div className="flex items-center justify-between">
-            <div className="flex items-baseline gap-2">
-              {discountedPrice ? (
-                <>
-                  <span className="text-lg font-bold text-primary">${discountedPrice}</span>
-                  <span className="text-sm text-muted-foreground line-through">${priceFormatted}</span>
-                </>
-              ) : (
-                <span className="text-lg font-bold">${priceFormatted}</span>
-              )}
-            </div>
-            <div className="flex gap-2">
-              {isFullyUnlocked ? (
-                <>
-                  {isRegistered && (
-                    <Button variant="outline" size="sm" onClick={() => addToCalendar(event)}>
-                      <Calendar className="h-4 w-4 mr-1" /> Add to Calendar
-                    </Button>
-                  )}
-                  {!isRegistered && !isPast && (
-                    <Button size="sm" onClick={() => handlePurchase(event.id)} disabled={purchasing !== null}>
-                      {purchasing === event.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <><Ticket className="h-4 w-4 mr-1" /> Get Ticket</>
-                      )}
-                    </Button>
-                  )}
-                </>
-              ) : (
-                <div className="text-right">
-                  <Button size="sm" variant="outline" onClick={() => navigate("/premium")}>
-                    <Crown className="h-4 w-4 mr-1" /> VIP Required
-                  </Button>
-                  <p className="text-xs text-muted-foreground mt-1">VIP members get full event access</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        {filtered.map((event) => (
+          <EventCard
+            key={event.id}
+            event={event}
+            isRegistered={registrations.includes(event.id)}
+            isRsvpd={rsvps.includes(event.id)}
+            canAccess={access.allowed}
+            accessReason={access.reason}
+            isVIP={isVIP}
+            purchasing={purchasing}
+            rsvpLoading={rsvpLoading}
+            onPurchase={handlePurchase}
+            onRsvp={handleRsvp}
+            onCancelRsvp={handleCancelRsvp}
+            onAddToCalendar={addToCalendar}
+            onUpgrade={() => navigate("/premium")}
+            onLearn={() => navigate("/learn")}
+          />
+        ))}
+      </div>
     );
   };
 
@@ -213,119 +199,29 @@ const Events = () => {
           </Button>
           <div>
             <h1 className="text-2xl font-bold">Events & Workshops</h1>
-            <p className="text-sm text-muted-foreground">
-              {subtitleText}
-              {isFullyUnlocked && (
-                <Badge variant="secondary" className="ml-2 text-xs">
-                  <Crown className="h-3 w-3 mr-1" /> 25% off
-                </Badge>
-              )}
-            </p>
+            <p className="text-sm text-muted-foreground">Learn, connect, and grow</p>
           </div>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        ) : !hasEventsAccess ? (
-          /* State 1: Education not complete — blurred skeletons with overlay */
-          <div className="relative min-h-[60vh]">
-            <div className="space-y-4 blur-sm pointer-events-none select-none" aria-hidden="true">
-              {[1, 2, 3].map(i => (
-                <Card key={i} className="overflow-hidden">
-                  <div className="h-40 bg-gradient-to-br from-primary/20 to-secondary/20" />
-                  <CardHeader>
-                    <div className="h-5 bg-muted rounded w-3/4" />
-                    <div className="h-3 bg-muted rounded w-1/2 mt-2" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-3 bg-muted rounded w-full mb-2" />
-                    <div className="h-3 bg-muted rounded w-2/3" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EventTier)} className="w-full">
+          <TabsList className="w-full grid grid-cols-3 mb-4">
+            <TabsTrigger value="community" className="text-xs sm:text-sm">
+              🌐 Community
+            </TabsTrigger>
+            <TabsTrigger value="premium" className="text-xs sm:text-sm">
+              👑 Premium
+            </TabsTrigger>
+            <TabsTrigger value="adults_only" className="text-xs sm:text-sm">
+              🔒 Adults Only
+            </TabsTrigger>
+          </TabsList>
 
-            <div className="absolute inset-0 flex flex-col items-center justify-start pt-8 text-center px-4 sm:px-6 gap-4">
-              <div className="bg-background/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-border w-full max-w-sm sm:max-w-md">
-                <div className="text-4xl mb-3">🎓</div>
-                <h3 className="font-bold text-lg mb-2">Complete Advanced Topics to Unlock Events</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Community events and workshops are reserved for members who have completed the full education curriculum — including the Advanced Topics tier. This ensures every attendee arrives with shared knowledge and intentions.
-                </p>
-                <div className="space-y-2 text-left mb-4">
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-green-500">✓</span>
-                    <span className="text-muted-foreground">Foundation (Required)</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-muted-foreground">○</span>
-                    <span className="text-muted-foreground">Sexual Health</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-muted-foreground">○</span>
-                    <span className="text-muted-foreground">Identity & Diversity</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-muted-foreground">○</span>
-                    <span className="text-muted-foreground">Healthy Relationships</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm font-semibold">
-                    <span className="text-primary">★</span>
-                    <span>Advanced Topics — unlocks Events</span>
-                  </div>
-                </div>
-                <Button className="w-full" onClick={() => navigate("/learn")}>
-                  Continue Learning →
-                </Button>
-              </div>
-            </div>
-          </div>
-        ) : !isVIP ? (
-          /* State 2: Education complete, not VIP */
-          <div className="space-y-4">
-            <Card className="bg-gradient-to-r from-amber-500/10 to-primary/10 border-amber-500/20">
-              <CardContent className="py-3 px-4 flex items-center gap-3">
-                <Crown className="h-5 w-5 text-amber-500 shrink-0" />
-                <div>
-                  <p className="text-sm font-semibold">VIP Access Required</p>
-                  <p className="text-xs text-muted-foreground">
-                    You've completed the curriculum! Upgrade to VIP to purchase event tickets and get 25% off every event.
-                  </p>
-                </div>
-                <Button size="sm" variant="outline" className="shrink-0 border-amber-500/40 text-amber-600" onClick={() => navigate("/premium")}>
-                  Upgrade
-                </Button>
-              </CardContent>
-            </Card>
-            {events.length === 0 ? (
-              <Card className="text-center py-12">
-                <CardContent>
-                  <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="font-semibold text-lg mb-1">No upcoming events</h3>
-                  <p className="text-muted-foreground text-sm">Check back soon for workshops and meetups!</p>
-                </CardContent>
-              </Card>
-            ) : (
-              events.map(renderEventCard)
-            )}
-          </div>
-        ) : events.length === 0 ? (
-          /* State 3: Fully unlocked, no events */
-          <Card className="text-center py-12">
-            <CardContent>
-              <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="font-semibold text-lg mb-1">No upcoming events</h3>
-              <p className="text-muted-foreground text-sm">Check back soon for workshops and meetups!</p>
-            </CardContent>
-          </Card>
-        ) : (
-          /* State 3: Fully unlocked with events */
-          <div className="space-y-4">
-            {events.map(renderEventCard)}
-          </div>
-        )}
+          <p className="text-xs text-muted-foreground mb-4 text-center">{tierDescriptions[activeTab]}</p>
+
+          <TabsContent value="community">{renderEventList("community")}</TabsContent>
+          <TabsContent value="premium">{renderEventList("premium")}</TabsContent>
+          <TabsContent value="adults_only">{renderEventList("adults_only")}</TabsContent>
+        </Tabs>
       </div>
       <BottomNav />
     </div>
