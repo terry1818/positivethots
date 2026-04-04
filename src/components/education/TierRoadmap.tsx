@@ -271,7 +271,7 @@ export const BadgePathMap = ({
                     td.isTierComplete ? "bg-success/5 border-success/30" : "bg-muted/30 border-border"
                   )}>
                     <p className={cn(
-                      "text-base font-bold uppercase tracking-wider mb-2",
+                      "text-sm font-bold uppercase tracking-wider mb-2",
                       td.isTierComplete ? "text-success" : "text-muted-foreground"
                     )}>
                       {td.isTierComplete ? "✓ Unlocked" : "🔒 Complete this tier to unlock"}
@@ -279,15 +279,15 @@ export const BadgePathMap = ({
                     <div className="space-y-1.5">
                       {td.features.map(f => (
                         <div key={f.key} className="flex items-center gap-2">
-                          <span className="text-base leading-none">{f.icon}</span>
+                          <span className="text-sm leading-none">{f.icon}</span>
                           <div className="flex-1 min-w-0">
                             <p className={cn(
-                              "text-lg font-medium leading-tight",
+                              "text-base font-medium leading-tight",
                               f.isUnlocked ? "text-foreground" : "text-muted-foreground"
                             )}>
                               {f.label}
                             </p>
-                            <p className="text-base text-muted-foreground leading-tight">
+                            <p className="text-sm text-muted-foreground leading-tight">
                               {f.description}
                             </p>
                           </div>
