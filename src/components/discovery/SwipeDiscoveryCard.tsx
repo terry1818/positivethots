@@ -252,16 +252,34 @@ export const SwipeDiscoveryCard = memo(({
           {/* LIKE / NOPE overlays */}
           {isDragging && (
             <>
-              {/* Green tint overlay for right swipe */}
+              {/* Purple tint overlay for right swipe (Connect) */}
               <div
-                className="absolute inset-0 bg-success/20 z-15 pointer-events-none transition-opacity"
-                style={{ opacity: isRight ? dragProgress * 0.6 : 0 }}
+                className="absolute inset-0 z-15 pointer-events-none transition-opacity"
+                style={{
+                  opacity: isRight ? dragProgress * 0.5 : 0,
+                  background: "linear-gradient(135deg, hsl(270 60% 50% / 0.4), hsl(320 70% 55% / 0.3))",
+                }}
               />
-              {/* Gray tint overlay for left swipe */}
+              {/* Grayscale overlay for left swipe (Pass) */}
               <div
-                className="absolute inset-0 bg-muted-foreground/20 z-15 pointer-events-none transition-opacity"
-                style={{ opacity: !isRight ? dragProgress * 0.5 : 0 }}
+                className="absolute inset-0 z-15 pointer-events-none transition-opacity"
+                style={{
+                  opacity: !isRight ? dragProgress * 0.6 : 0,
+                  background: "hsl(0 0% 30% / 0.5)",
+                  filter: "saturate(0.3)",
+                }}
               />
+              {/* Pink/magenta overlay for up swipe (Send a Thot) */}
+              {dragOffset.y < -30 && (
+                <div
+                  className="absolute inset-0 z-15 pointer-events-none"
+                  style={{
+                    opacity: Math.min(Math.abs(dragOffset.y) / 150, 0.6),
+                    background: "linear-gradient(180deg, hsl(320 70% 55% / 0.5), hsl(280 80% 65% / 0.3))",
+                  }}
+                />
+              )}
+              {/* Connect label (right) */}
               <div
                 className="absolute top-8 left-6 z-20 flex flex-col items-center bg-black/30 backdrop-blur-sm rounded-xl p-4 rotate-[-20deg]"
                 style={{ opacity: Math.max(0, Math.min(dragOffset.x / 100, 1)) }}
@@ -269,6 +287,7 @@ export const SwipeDiscoveryCard = memo(({
                 <Heart className="h-12 w-12 text-white drop-shadow-lg" fill="white" />
                 <span className="text-white font-bold text-lg drop-shadow-lg">Connect 💜</span>
               </div>
+              {/* Pass label (left) */}
               <div
                 className="absolute top-8 right-6 z-20 flex flex-col items-center bg-black/30 backdrop-blur-sm rounded-xl p-4 rotate-[20deg]"
                 style={{ opacity: Math.max(0, Math.min(-dragOffset.x / 100, 1)) }}
@@ -276,6 +295,16 @@ export const SwipeDiscoveryCard = memo(({
                 <X className="h-12 w-12 text-white drop-shadow-lg" />
                 <span className="text-white font-bold text-lg drop-shadow-lg">Pass</span>
               </div>
+              {/* Send a Thot label (up) */}
+              {dragOffset.y < -30 && (
+                <div
+                  className="absolute top-1/3 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center bg-black/30 backdrop-blur-sm rounded-xl p-4"
+                  style={{ opacity: Math.min(Math.abs(dragOffset.y) / 100, 1) }}
+                >
+                  <Star className="h-12 w-12 text-white drop-shadow-lg" fill="white" />
+                  <span className="text-white font-bold text-lg drop-shadow-lg">Send a Thot 💜</span>
+                </div>
+              )}
             </>
           )}
 

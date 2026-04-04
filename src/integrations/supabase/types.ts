@@ -851,6 +851,7 @@ export type Database = {
           is_verified: boolean
           languages: string[] | null
           last_active_at: string | null
+          last_daily_reward_date: string | null
           last_daily_spin: string | null
           last_winback_sent_at: string | null
           learning_level: number | null
@@ -897,6 +898,7 @@ export type Database = {
           is_verified?: boolean
           languages?: string[] | null
           last_active_at?: string | null
+          last_daily_reward_date?: string | null
           last_daily_spin?: string | null
           last_winback_sent_at?: string | null
           learning_level?: number | null
@@ -943,6 +945,7 @@ export type Database = {
           is_verified?: boolean
           languages?: string[] | null
           last_active_at?: string | null
+          last_daily_reward_date?: string | null
           last_daily_spin?: string | null
           last_winback_sent_at?: string | null
           learning_level?: number | null
