@@ -1018,10 +1018,14 @@ export type Database = {
       quiz_questions: {
         Row: {
           correct_answer: number
+          correct_order: Json | null
+          exercise_type: string
+          explanation: string | null
           explanation_correct: string | null
           explanation_wrong: string | null
           id: string
           is_checkpoint: boolean | null
+          match_pairs: Json | null
           module_id: string
           options: Json
           order_index: number
@@ -1031,10 +1035,14 @@ export type Database = {
         }
         Insert: {
           correct_answer: number
+          correct_order?: Json | null
+          exercise_type?: string
+          explanation?: string | null
           explanation_correct?: string | null
           explanation_wrong?: string | null
           id?: string
           is_checkpoint?: boolean | null
+          match_pairs?: Json | null
           module_id: string
           options: Json
           order_index?: number
@@ -1044,10 +1052,14 @@ export type Database = {
         }
         Update: {
           correct_answer?: number
+          correct_order?: Json | null
+          exercise_type?: string
+          explanation?: string | null
           explanation_correct?: string | null
           explanation_wrong?: string | null
           id?: string
           is_checkpoint?: boolean | null
+          match_pairs?: Json | null
           module_id?: string
           options?: Json
           order_index?: number
@@ -1451,6 +1463,61 @@ export type Database = {
           visibility?: string
         }
         Relationships: []
+      }
+      user_quiz_performance: {
+        Row: {
+          attempt_number: number
+          created_at: string
+          id: string
+          is_correct: boolean
+          module_id: string
+          question_id: string
+          time_taken_ms: number | null
+          user_id: string
+        }
+        Insert: {
+          attempt_number?: number
+          created_at?: string
+          id?: string
+          is_correct: boolean
+          module_id: string
+          question_id: string
+          time_taken_ms?: number | null
+          user_id: string
+        }
+        Update: {
+          attempt_number?: number
+          created_at?: string
+          id?: string
+          is_correct?: boolean
+          module_id?: string
+          question_id?: string
+          time_taken_ms?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_quiz_performance_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "education_modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_quiz_performance_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_quiz_performance_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions_public"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_reflections: {
         Row: {
