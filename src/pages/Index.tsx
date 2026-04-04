@@ -200,6 +200,13 @@ const Index = () => {
     // No longer gate Discovery behind Foundation badges — allow full browsing
     await loadSuggestions(session.user.id, profile);
     setLoading(false);
+
+    // Show walkthrough for first-time users
+    if (shouldShowWalkthrough()) {
+      setTimeout(() => setShowWalkthrough(true), 500);
+    } else if (shouldShowSwipeTutorial()) {
+      setTimeout(() => setShowSwipeTutorial(true), 500);
+    }
   };
 
   const loadSuggestions = async (userId: string, profile: Profile) => {
