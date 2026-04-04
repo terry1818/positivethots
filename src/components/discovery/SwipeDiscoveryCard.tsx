@@ -63,6 +63,7 @@ export const SwipeDiscoveryCard = memo(({
   superLikeBalance = 0,
   onViewProfile,
   is_recycled,
+  onUpgradeSuperLike,
 }: SwipeDiscoveryCardProps) => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
