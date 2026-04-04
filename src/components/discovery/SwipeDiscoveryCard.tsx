@@ -8,6 +8,7 @@ import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { EducationTierBadge } from "@/components/EducationTierBadge";
 import { FlairBadges } from "@/components/profile/FlairBadges";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 interface EnhancedProfile {
   id: string;
