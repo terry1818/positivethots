@@ -34,6 +34,31 @@ const relationshipStyleLabels: Record<string, string> = {
   "hierarchical-poly": "Hierarchical Poly", "solo-poly": "Solo Poly",
 };
 
+const ProfileNavRow = ({ emoji, label, onClick, href, external }: {
+  emoji: string; label: string; onClick?: () => void; href?: string; external?: boolean;
+}) => {
+  const content = (
+    <div className="flex items-center gap-3 px-4 py-3 min-h-[48px] hover:bg-muted/50 transition-colors border-b border-border last:border-b-0 cursor-pointer">
+      <span className="text-base">{emoji}</span>
+      <span className="text-sm flex-1">{label}</span>
+      {external ? (
+        <ExternalLink className="h-4 w-4 text-muted-foreground shrink-0" />
+      ) : (
+        <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+      )}
+    </div>
+  );
+
+  if (href) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`${label} (opens in new tab)`}>
+        {content}
+      </a>
+    );
+  }
+  return <button onClick={onClick} className="w-full text-left">{content}</button>;
+};
+
 const Profile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [badges, setBadges] = useState<UserBadge[]>([]);
