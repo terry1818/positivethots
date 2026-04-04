@@ -131,7 +131,7 @@
       font-size: calc(16px * var(--text-scale));
     }
   }
-}
+
 
 @layer base {
   * {
