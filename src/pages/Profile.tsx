@@ -24,6 +24,9 @@ import { ProfilePromptsDisplay } from "@/components/profile/ProfilePrompts";
 import { ProfileCompletionMeter } from "@/components/profile/ProfileCompletionMeter";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { useProfileCompletion } from "@/hooks/useProfileCompletion";
+import { ChapterProfileView } from "@/components/chapters/ChapterProfileView";
+import { AstrologyBadge } from "@/components/astrology/AstrologyBadge";
+import { AstrologyCompatibility } from "@/components/astrology/AstrologyCompatibility";
 
 interface UserBadge {
   module_id: string;
