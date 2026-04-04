@@ -173,10 +173,15 @@ const Learn = () => {
     return true;
   }, [isPremium, requiredEarned, requiredModules, earnedSlugs]);
 
-  const modulesByTier = useMemo(() => tierOrder.reduce((acc, tier) => {
-    acc[tier] = modules.filter(m => m.tier === tier).sort((a, b) => a.order_index - b.order_index);
-    return acc;
-  }, {} as Record<string, Module[]>), [modules]);
+  const modulesByTier = useMemo(() => {
+    const filtered = moduleSearchQuery
+      ? modules.filter(m => m.title.toLowerCase().includes(moduleSearchQuery) || m.description.toLowerCase().includes(moduleSearchQuery))
+      : modules;
+    return tierOrder.reduce((acc, tier) => {
+      acc[tier] = filtered.filter(m => m.tier === tier).sort((a, b) => a.order_index - b.order_index);
+      return acc;
+    }, {} as Record<string, Module[]>);
+  }, [modules, moduleSearchQuery]);
 
   if (loading) {
     return <PageSkeleton variant="learn" />;
