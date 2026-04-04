@@ -243,9 +243,9 @@ export const ScenarioPlayer = ({ scenarioId, onComplete, onBack }: ScenarioPlaye
   if (error || !scenario) {
     return (
       <BrandedEmptyState
-        mascot="empathetic"
+        mascot="confused"
         headline="Couldn't load scenario"
-        body="Something went wrong. Please try again."
+        description="Something went wrong. Please try again."
         ctaLabel="Go Back"
         onCtaClick={onBack}
       />
