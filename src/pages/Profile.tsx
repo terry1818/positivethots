@@ -584,6 +584,13 @@ const Profile = () => {
       </main>
 
       <BottomNav />
+      {showProfileTour && (
+        <SpotlightTour
+          tourKey="profile_tour"
+          steps={profileTourSteps}
+          onComplete={() => { setShowProfileTour(false); markProfileTourSeen(); }}
+        />
+      )}
     </div>
   );
 };

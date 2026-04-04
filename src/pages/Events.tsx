@@ -48,6 +48,13 @@ const Events = () => {
     }
   }, [searchParams]);
 
+  // Show events tour after loading
+  useEffect(() => {
+    if (!loading && !eventsTourSeen) {
+      setTimeout(() => setShowEventsTour(true), 600);
+    }
+  }, [loading, eventsTourSeen]);
+
   useEffect(() => {
     const fetchData = async () => {
       const { data: eventsData } = await supabase

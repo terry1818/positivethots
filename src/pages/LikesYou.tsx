@@ -117,6 +117,13 @@ const LikesYou = () => {
     fetchLikers();
   }, [navigate]);
 
+  // Show likes tour after loading
+  useEffect(() => {
+    if (!loading && !likesTourSeen) {
+      setTimeout(() => setShowLikesTour(true), 600);
+    }
+  }, [loading, likesTourSeen]);
+
   const fetchSentLikes = async () => {
     if (sentFetched) return;
     setSentLoading(true);
