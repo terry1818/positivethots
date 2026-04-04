@@ -691,6 +691,16 @@ const Index = () => {
         ) : (
           <>
             <div className="relative flex justify-center items-start px-4 pt-2 pb-32" data-walkthrough="discovery-card" style={{ minHeight: '520px' }}>
+              {/* Undo button */}
+              {showUndoButton && lastPassedProfile && (
+                <button
+                  onClick={handleUndo}
+                  className={`absolute top-4 left-4 z-30 bg-background/90 backdrop-blur-sm rounded-full p-3 shadow-md min-h-[44px] min-w-[44px] flex items-center gap-2 text-sm font-medium ${prefersReducedMotion ? '' : 'animate-fade-in'}`}
+                  aria-label="Undo last pass"
+                >
+                  <Undo2 className="h-5 w-5" />
+                </button>
+              )}
               {suggestions.slice(0, 3).map((profile, stackIdx) => {
                 const isMystery = mysteryProfiles.has(profile.id);
                 if (isMystery && stackIdx === 0) {
