@@ -556,6 +556,10 @@ const Settings = () => {
         {/* Privacy & Incognito */}
         <IncognitoToggle />
 
+        {/* Connections */}
+        <SpotifyConnect />
+        <CrossAppLinksEditor />
+
 
         <Card className="animate-fade-in" style={{ animationDelay: "90ms" }}>
           <CardHeader>

@@ -405,6 +405,12 @@ const Profile = () => {
               <ChapterProfileView userId={profile.id} />
             )}
 
+            {/* Cross-App Links */}
+            {profile?.id && <CrossAppLinksDisplay userId={profile.id} />}
+
+            {/* Spotify */}
+            {profile?.id && <SpotifyProfileSection userId={profile.id} />}
+
             {/* Astrology */}
             {profile?.id && (
               <div className="flex items-center gap-2">
