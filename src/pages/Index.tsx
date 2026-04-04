@@ -649,7 +649,7 @@ const Index = () => {
   const showProfileBanner = currentUser && userBadgeCount < requiredCount;
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       <MicroCelebration trigger={celebrationTrigger} emojis={["💕", "✨", "💜", "🔥"]} />
 
       {/* Header */}
