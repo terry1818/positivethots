@@ -736,7 +736,7 @@ const Onboarding = () => {
               {/* Step 8: Relationship Style */}
               {step === 8 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="🔗" title="Relationship style" subtitle="How do you approach relationships?" />
+                  <StepHeader emoji="🔗" title="Relationship style" subtitle="How do you approach relationships? · Required" />
                   <div className="flex gap-1 mb-1 animate-stagger-1">
                     <GlossaryTooltip term="Solo Poly" />
                     <GlossaryTooltip term="Relationship Anarchy" />
