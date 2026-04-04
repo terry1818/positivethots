@@ -227,7 +227,7 @@ export const SwipeDiscoveryCard = memo(({
                   key={i}
                   className={cn(
                     "h-1 rounded-full transition-all",
-                    i === photoIndex ? "w-4 bg-white" : "w-2 bg-white/40"
+                    i === photoIndex ? "w-4 bg-white" : "w-2 bg-white/70 ring-1 ring-white/50"
                   )}
                 />
               ))}
