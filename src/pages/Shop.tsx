@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { ShoppingBag, Plus, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 
 interface ShopifyCollection {
   node: { id: string; title: string; handle: string };
