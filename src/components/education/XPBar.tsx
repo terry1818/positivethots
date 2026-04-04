@@ -22,7 +22,7 @@ export const XPBar = ({ totalXP, level }: XPBarProps) => {
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-1 shrink-0">
           <Zap className="h-3.5 w-3.5 text-accent" />
-          <span className="text-sm font-bold text-accent">{totalXP} XP</span>
+          <span className="text-base font-bold text-accent">{totalXP} XP</span>
         </div>
         <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
           <div
