@@ -133,6 +133,13 @@ const Profile = () => {
   useEffect(() => { loadProfile(); checkActiveBoost(); }, []);
   useEffect(() => { setCurrentPhotoIndex(0); }, [userPhotos]);
 
+  // Show profile tour after loading
+  useEffect(() => {
+    if (!loading && !profileTourSeen && profile) {
+      setTimeout(() => setShowProfileTour(true), 600);
+    }
+  }, [loading, profileTourSeen, profile]);
+
   const loadProfile = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
