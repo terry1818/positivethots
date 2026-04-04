@@ -325,6 +325,7 @@ const Chat = () => {
 
   const [reportReason, setReportReason] = useState("");
   const [showReportDialog, setShowReportDialog] = useState(false);
+  const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showCompatibility, setShowCompatibility] = useState(false);
   const [compatBreakdown, setCompatBreakdown] = useState<CompatibilityBreakdownResult | null>(null);
 
