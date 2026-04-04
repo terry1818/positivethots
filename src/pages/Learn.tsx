@@ -269,6 +269,12 @@ const Learn = () => {
                 · <AnimatedCounter end={earnedCount} />/{totalBadges} badges
               </span>
             </h2>
+            {activeLearnerCount != null && activeLearnerCount > 0 && (
+              <span className="text-sm text-muted-foreground flex items-center gap-1">
+                <Users className="h-3 w-3" />
+                {activeLearnerCount} active
+              </span>
+            )}
           </div>
           <div className="relative overflow-hidden rounded-full h-2 bg-muted">
             <div
