@@ -604,7 +604,7 @@ const Onboarding = () => {
               {/* Step 2: ENM Familiarity (NEW) */}
               {step === 2 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="🧭" title="How familiar are you with ethical non-monogamy?" subtitle="This helps us personalize your experience" />
+                  <StepHeader emoji="🧭" title="How familiar are you with ethical non-monogamy?" subtitle="This helps us personalize your experience · Required" />
                   <div className="space-y-2 animate-stagger-2">
                     {ENM_EXPERIENCE_OPTIONS.map(opt => (
                       <button
