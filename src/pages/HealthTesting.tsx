@@ -42,7 +42,7 @@ const HealthTesting = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border bg-card">
-        <div className="container max-w-md mx-auto px-4 py-4 flex items-center gap-3">
+        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => navigate("/learn")} aria-label="Go back">
             <ChevronLeft className="h-6 w-6" />
           </Button>
@@ -51,7 +51,7 @@ const HealthTesting = () => {
         </div>
       </header>
 
-      <main className="flex-1 container max-w-md mx-auto px-4 py-6 space-y-4">
+      <main className="flex-1 container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6 space-y-4">
         {/* FTC Disclosure */}
         <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 border border-border">
           <Info className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />

@@ -219,12 +219,6 @@ const Index = () => {
     return unsub;
   }, [currentUser]);
 
-  // Auto-skip profiles with no photo
-  useEffect(() => {
-    if (suggestions.length > 0 && !suggestions[0].profile_image) {
-      setSuggestions(prev => prev.slice(1));
-    }
-  }, [suggestions]);
 
   // Refetch on window focus if suggestions are empty
   useEffect(() => {
@@ -660,7 +654,7 @@ const Index = () => {
 
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-card">
-        <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
             <Logo size="md" showText={false} />
             <div className="flex items-center gap-2">
               {canSuperLike && (
@@ -703,7 +697,7 @@ const Index = () => {
 
       {/* Profile completion banner for Quick Start users */}
       {showProfileBanner && (
-        <div className="max-w-md mx-auto px-4 py-2">
+        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2">
           <button
             onClick={() => navigate("/learn")}
             className="w-full flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3 py-2 text-sm"
@@ -719,14 +713,14 @@ const Index = () => {
 
       {/* Compact Progress Strip */}
       {tiers.length > 0 && (
-        <div className="max-w-md mx-auto px-4 py-3">
+        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-3">
           <CompactProgressBar tiers={tiers} badgeCount={userBadgeCount} connectionCount={matchCount} />
         </div>
       )}
 
       {/* Nearby Users */}
       {isSharing && (
-        <div className="max-w-md mx-auto px-4 mb-4">
+        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 mb-4">
           <NearbyUsers nearbyUsers={nearbyUsers} isSharing={isSharing} />
         </div>
       )}
@@ -737,7 +731,7 @@ const Index = () => {
       </div>
 
       {/* Curated Matches Grid */}
-      <div className="max-w-md mx-auto px-4">
+      <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4">
         {suggestions.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[50vh] px-6 text-center">
             <BrandedEmptyState

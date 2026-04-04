@@ -174,7 +174,7 @@ export const SwipeDiscoveryCard = memo(({
     <div
       ref={cardRef}
       className={cn(
-        "absolute w-full max-w-sm select-none",
+        "absolute w-full max-w-sm md:max-w-md select-none",
         animate === "left" && "animate-swipe-left",
         animate === "right" && "animate-swipe-right",
         animate === "up" && "animate-swipe-fly-up",

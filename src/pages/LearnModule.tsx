@@ -324,7 +324,7 @@ const LearnModule = () => {
 
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-10">
-        <div className="container max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
+        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate("/learn")} aria-label="Go back">
             <ChevronLeft className="h-6 w-6" />
           </Button>
@@ -341,7 +341,7 @@ const LearnModule = () => {
       </header>
 
       {/* Content */}
-      <main className="flex-1 container max-w-2xl mx-auto px-4 py-6">
+      <main className="flex-1 container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6">
         <AdminPanel module={module} questions={questions} onUpdate={handleRefresh} />
 
         {/* What You'll Learn preview */}

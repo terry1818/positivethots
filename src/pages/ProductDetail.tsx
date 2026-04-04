@@ -54,14 +54,14 @@ const ProductDetail = () => {
     return (
       <div className="min-h-screen bg-background">
         <header className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border">
-          <div className="container max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <CartDrawer />
           </div>
         </header>
-        <div className="container max-w-md mx-auto px-4 py-4 space-y-4">
+        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 space-y-4">
           <Skeleton className="aspect-square w-full rounded-lg" />
           <Skeleton className="h-6 w-3/4" />
           <Skeleton className="h-4 w-1/3" />
@@ -86,7 +86,7 @@ const ProductDetail = () => {
   return (
     <div className="min-h-screen bg-background pb-8">
       <header className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border">
-        <div className="container max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -94,7 +94,7 @@ const ProductDetail = () => {
         </div>
       </header>
 
-      <div className="container max-w-md mx-auto px-4 py-4">
+      <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4">
         {/* Image gallery */}
         <div className="aspect-square bg-muted rounded-xl overflow-hidden mb-3">
           {images[activeImage]?.node ? (

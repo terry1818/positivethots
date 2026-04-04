@@ -229,7 +229,7 @@ const Events = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="container max-w-2xl mx-auto px-4 py-6">
+      <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6">
         <header className="flex items-center justify-center mb-4">
           <Logo size="md" />
         </header>

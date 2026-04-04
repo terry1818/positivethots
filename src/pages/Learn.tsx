@@ -243,7 +243,7 @@ const Learn = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20">
       <header className="border-b border-border bg-card">
-        <div className="container max-w-md mx-auto px-4 py-2.5">
+        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2.5">
           {/* Row 1: Logo + quick stats */}
           <div className="flex items-center justify-between mb-1.5">
             <Logo size="md" showText={false} />
@@ -278,7 +278,7 @@ const Learn = () => {
         </div>
       </header>
 
-      <main className="flex-1 container max-w-md mx-auto px-4 py-3 space-y-2">
+      <main className="flex-1 container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-3 space-y-2">
         {/* Collapsible search */}
         {showSearch && (
           <div className="animate-fade-in">
