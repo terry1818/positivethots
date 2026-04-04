@@ -18,6 +18,7 @@ import { PROMPT_QUESTIONS } from "@/lib/promptQuestions";
 import { FrameSelector } from "@/components/profile/FrameSelector";
 import { syncEarnedFrames } from "@/hooks/useEarnedFrames";
 import { FieldError } from "@/components/FieldError";
+import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 
 interface PromptRow {
   id?: string;
