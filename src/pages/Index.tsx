@@ -210,6 +210,25 @@ const Index = () => {
   useEffect(() => {
     checkAuthAndSetup();
   }, []);
+
+  // Subscribe to discovery refresh events (e.g. from unlike on Likes page)
+  useEffect(() => {
+    const unsub = onDiscoveryRefresh(() => {
+      if (currentUser) loadSuggestions(currentUser.id, currentUser);
+    });
+    return unsub;
+  }, [currentUser]);
+
+  // Refetch on window focus if suggestions are empty
+  useEffect(() => {
+    const handleFocus = () => {
+      if (currentUser && suggestions.length === 0) {
+        loadSuggestions(currentUser.id, currentUser);
+      }
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [currentUser, suggestions.length]);
   const handleResetFeed = useCallback(async () => {
     const lastReset = localStorage.getItem("pt_last_feed_reset");
     if (lastReset) {
