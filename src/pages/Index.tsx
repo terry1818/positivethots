@@ -22,6 +22,8 @@ import { SwipeDiscoveryCard } from "@/components/discovery/SwipeDiscoveryCard";
 import { ProfileDetailSheet } from "@/components/discovery/ProfileDetailSheet";
 import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
 import { MysteryMatchCard } from "@/components/discovery/MysteryMatchCard";
+import { DiscoveryWalkthrough, shouldShowWalkthrough } from "@/components/discovery/DiscoveryWalkthrough";
+import { SwipeTutorial, shouldShowSwipeTutorial } from "@/components/discovery/SwipeTutorial";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
