@@ -89,8 +89,12 @@ export const ProfileDetailSheet = ({
   if (!profile) return null;
 
   // Use fetched user_photos as primary source, fall back to profile data
-  const fetchedPhotos = userPhotos && userPhotos.length > 0 ? userPhotos : [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
-  const photos = fetchedPhotos.filter(url => !failedPhotos.has(url));
+  const fetchedUrls = userPhotosData && userPhotosData.length > 0 ? userPhotosData.map(p => p.url) : [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
+  const photos = fetchedUrls.filter(url => !failedPhotos.has(url));
+
+  // Build focal point map from fetched data + profile data
+  const focalMap: Record<string, number> = { ...(profile.photo_focal_points || {}) };
+  userPhotosData?.forEach(p => { focalMap[p.url] = p.focalY; });
 
   const handlePhotoError = (url: string) => {
     setFailedPhotos(prev => {
