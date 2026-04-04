@@ -578,6 +578,7 @@ const Onboarding = () => {
                 Skip for now →
               </button>
             )}
+            <StepTransition stepKey={step} direction={direction}>
               {/* Step 1: Welcome */}
               {step === 1 && (
                 <div className="text-center space-y-6 py-4">
