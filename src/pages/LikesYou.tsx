@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BlurImage } from "@/components/BlurImage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { BottomNav } from "@/components/BottomNav";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ interface SentLikeProfile {
 
 const LikesYou = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const reducedMotion = useReducedMotion();
   const [isPremium, setIsPremium] = useState(false);
   const [likers, setLikers] = useState<LikerProfile[]>([]);
@@ -362,7 +364,10 @@ const LikesYou = () => {
                 await supabase.from("swipes").delete().eq("swiper_id", user.id).eq("swiped_id", unlikeTarget.id).eq("direction", "right");
                 setSentLikes(prev => prev.filter(p => p.id !== unlikeTarget.id));
                 setUnlikeTarget(null);
-                toast({ title: "Like removed" });
+                // Invalidate discovery so the unliked profile can reappear
+                queryClient.invalidateQueries({ queryKey: ['discovery-suggestions'] });
+                queryClient.invalidateQueries({ queryKey: ['sent-likes'] });
+                toast({ title: "Removed from your likes", description: "They may reappear in Discovery." });
               }}
             >
               Remove

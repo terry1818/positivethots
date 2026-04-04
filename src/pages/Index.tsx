@@ -169,6 +169,7 @@ const Index = () => {
   const [announcedProfile, setAnnouncedProfile] = useState("");
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
+  const [showWalkthroughPending, setShowWalkthroughPending] = useState(false);
   const [lastPassedProfile, setLastPassedProfile] = useState<EnhancedProfile | null>(null);
   const [showUndoButton, setShowUndoButton] = useState(false);
   const [dailyUndoCount, setDailyUndoCount] = useState(0);
@@ -183,6 +184,27 @@ const Index = () => {
       toast.success("Thots purchased! 💜", { description: "10 Thots added to your balance." });
     }
   }, [searchParams]);
+
+  // Deferred walkthrough check: only show if suggestions are loaded
+  useEffect(() => {
+    if (!showWalkthroughPending || loading) return;
+    setShowWalkthroughPending(false);
+    if (suggestions.length > 0 && shouldShowWalkthrough()) {
+      setTimeout(() => setShowWalkthrough(true), 500);
+    } else if (suggestions.length > 0 && shouldShowSwipeTutorial()) {
+      setTimeout(() => setShowSwipeTutorial(true), 500);
+    }
+  }, [showWalkthroughPending, loading, suggestions.length]);
+
+  // Dismiss walkthrough if suggestions become empty
+  useEffect(() => {
+    if (showWalkthrough && suggestions.length === 0) {
+      setShowWalkthrough(false);
+    }
+    if (showSwipeTutorial && suggestions.length === 0) {
+      setShowSwipeTutorial(false);
+    }
+  }, [suggestions.length, showWalkthrough, showSwipeTutorial]);
 
   useEffect(() => {
     checkAuthAndSetup();
@@ -234,12 +256,18 @@ const Index = () => {
     await loadSuggestions(session.user.id, profile);
     setLoading(false);
 
-    // Show walkthrough for first-time users
-    if (shouldShowWalkthrough()) {
-      setTimeout(() => setShowWalkthrough(true), 500);
-    } else if (shouldShowSwipeTutorial()) {
-      setTimeout(() => setShowSwipeTutorial(true), 500);
+    // Sync tutorial flags from DB → localStorage
+    const tutorialsCompleted: string[] = (profile as any).tutorials_completed || [];
+    if (tutorialsCompleted.includes("discovery_walkthrough") && !localStorage.getItem("pt_discovery_walkthrough_seen")) {
+      localStorage.setItem("pt_discovery_walkthrough_seen", "true");
     }
+    if (tutorialsCompleted.includes("swipe_tutorial") && !localStorage.getItem("pt_swipe_tutorial_seen")) {
+      localStorage.setItem("pt_swipe_tutorial_seen", "true");
+    }
+
+    // Show walkthrough for first-time users — only if profiles exist
+    // (suggestions set after loadSuggestions, so we defer check)
+    setShowWalkthroughPending(true);
   };
 
   const loadSuggestions = async (userId: string, profile: Profile) => {

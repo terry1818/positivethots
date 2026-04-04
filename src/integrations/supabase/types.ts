@@ -870,6 +870,7 @@ export type Database = {
           sexuality: string | null
           sti_last_tested: string | null
           sti_status: string | null
+          tutorials_completed: string[]
           updated_at: string
           winback_attempts: number
           zodiac_sign: string | null
@@ -914,6 +915,7 @@ export type Database = {
           sexuality?: string | null
           sti_last_tested?: string | null
           sti_status?: string | null
+          tutorials_completed?: string[]
           updated_at?: string
           winback_attempts?: number
           zodiac_sign?: string | null
@@ -958,6 +960,7 @@ export type Database = {
           sexuality?: string | null
           sti_last_tested?: string | null
           sti_status?: string | null
+          tutorials_completed?: string[]
           updated_at?: string
           winback_attempts?: number
           zodiac_sign?: string | null
