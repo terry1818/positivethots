@@ -187,16 +187,32 @@ const LikesYou = () => {
                   )}
                 </div>
               ) : !isPremium ? (
-                <Card className="mb-6 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 animate-pulse-border">
-                  <CardContent className="p-4 text-center">
-                    <Crown className="h-8 w-8 text-primary mx-auto mb-2" />
-                    <p className="font-semibold mb-1">{likerCount} {likerCount === 1 ? "person" : "people"} liked you</p>
-                    <p className="text-sm text-muted-foreground mb-3">Upgrade to Premium to see who they are</p>
-                    <Button onClick={() => navigate("/premium")} className="w-full">
-                      <Lock className="h-4 w-4 mr-2" />Unlock Premium — $9.99/mo
+                <div className="relative mb-6">
+                  {/* Blurred placeholder cards */}
+                  <div className="grid grid-cols-2 gap-3 blur-lg pointer-events-none select-none" aria-hidden="true">
+                    {Array.from({ length: Math.min(4, likerCount) }).map((_, i) => (
+                      <div key={i} className="rounded-xl overflow-hidden border border-border">
+                        <div className="h-44 bg-gradient-to-br from-primary/30 to-secondary/30" />
+                        <div className="flex h-10">
+                          <div className="flex-1 bg-muted/50" />
+                          <div className="flex-1 bg-muted/30" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Overlay CTA */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl">
+                    <Crown className="h-8 w-8 text-amber-500 mb-2" />
+                    <p className="font-semibold text-base">{likerCount} {likerCount === 1 ? "person" : "people"} liked you</p>
+                    <p className="text-sm text-muted-foreground mt-1">Upgrade to see who they are</p>
+                    <Button
+                      className="mt-4 bg-gradient-to-r from-primary to-pink-500 text-primary-foreground px-6"
+                      onClick={() => navigate("/premium")}
+                    >
+                      See who likes you
                     </Button>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   {likers.map((liker, idx) => (
