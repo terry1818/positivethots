@@ -287,7 +287,7 @@ const Settings = () => {
       await signOut();
       navigate("/auth");
     } catch (error: any) {
-      toast.error(error.message || "Failed to delete account");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setDeleting(false);
     }
