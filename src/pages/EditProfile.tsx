@@ -19,6 +19,7 @@ import { FrameSelector } from "@/components/profile/FrameSelector";
 import { syncEarnedFrames } from "@/hooks/useEarnedFrames";
 import { FieldError } from "@/components/FieldError";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
+import { DesireTagSelector } from "@/components/profile-edit/DesireTagSelector";
 
 interface PromptRow {
   id?: string;
