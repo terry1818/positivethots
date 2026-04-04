@@ -1,100 +1,57 @@
-## Plan: Emotional Design Systems Upgrade
 
-### Overview
-Seven interconnected systems spanning celebrations, mascot reactions, streak urgency, match upgrades, swipe feedback, daily rewards, and notification templates.
 
-### Phase 1: Core Infrastructure
+## Problem Analysis
 
-#### 1a. Confetti System (`src/components/celebrations/ConfettiSystem.tsx`)
-- CSS-only confetti with 4 intensity levels (light/medium/heavy/epic)
-- Brand-weighted colors (40% purple, 30% pink, 15% gold, 10% green, 5% white)
-- Reduced-motion fallback: static "✨ Achievement!" text
-- Particle shapes: square, circle, rectangle via border-radius
+Two issues visible in the screenshots:
 
-#### 1b. Celebration Engine (`src/components/celebrations/CelebrationEngine.tsx`)
-- 5-tier orchestrator: micro → small → medium → large → epic
-- Each tier controls: confetti intensity, sound, haptic pattern, duration, modal vs inline
-- Integrates with existing sound system (`soundGenerator.ts`) and haptics (`haptics.ts`)
-- Reduced-motion: skip animations, show static achievement text
+1. **Discovery card photos crop heads** — The `BlurImage` uses `object-cover` which centers the image by default (`object-position: center`). For portrait/full-body photos, this cuts off heads. Users need a way to set a focal point per photo.
 
-### Phase 2: Mascot System
+2. **Profile detail sheet photo is too small** — The `ProfileDetailSheet` uses a fixed `h-56` (224px) for the photo area regardless of screen size, wasting space on larger viewports. The full-profile view (image-49) shows the photo spanning full width but with no height constraint awareness.
 
-#### 2a. Mascot Reaction Component (`src/components/mascot/MascotReaction.tsx`)
-- 12 emotional states with CSS animations (encouraging, cheering, empathetic, celebrating, proud, worried, excited, thinking, waving, sleeping, surprised, love)
-- Speech bubble with Pacifico/Inter fonts
-- 4 positions: inline, bottom-right, center, toast
-- 3 sizes: small (48px), medium (96px), large (144px)
-- Reduced-motion: static pose only
+## Plan
 
-### Phase 3: Streak Urgency
+### 1. Add focal point support to user_photos
 
-#### 3. Streak Urgency Animation (modify `StreakBadge.tsx`)
-- Time-based animation intensity: static → gentle pulse → faster pulse → rapid pulse → frantic shake
-- Green checkmark overlay when streak maintained
-- Blue/ice overlay when streak freeze active
-- Requires checking current hour + whether daily activity is done
+**Database migration:**
+- Add `focal_point_y` column (DECIMAL, default 50) to `user_photos` — represents vertical percentage (0 = top, 50 = center, 100 = bottom). Only vertical axis needed since horizontal cropping rarely cuts important content.
+- Update RLS policy to allow users to update this field.
 
-### Phase 4: Match Celebration Upgrade
+### 2. Photo focal point selector in PhotoUploadGrid
 
-#### 4. Match Modal Upgrade (modify `MatchModal.tsx`)
-- Replace current flat celebration with sequenced animation:
-  - Screen dim → photos slide in → particle burst → text fade → CTAs
-- Mascot with 'love' emotion + floating hearts
-- Compatibility score count-up animation
-- First-ever match gets EPIC tier treatment
-- Shared interests shown as pills
+**Edit `PhotoUploadGrid.tsx`:**
+- Add a "Set Focus" button on each uploaded photo thumbnail.
+- On tap, open a modal/sheet showing the full photo with a draggable horizontal line or tap-to-set-focus interaction.
+- User taps where their face/subject is — saves the Y percentage to `focal_point_y`.
+- Simple UX: show the photo full-size, tap the important area, done.
 
-### Phase 5: Swipe Feedback
+### 3. Pass focal point through to BlurImage
 
-#### 5. Color-Coded Swipe Feedback (modify `SwipeDiscoveryCard.tsx`)
-- Right drag: purple tint overlay + "CONNECT" text + purple glow
-- Left drag: grayscale desaturation + "PASS" text
-- Up drag: pink/magenta gradient + "SEND A THOT" + sparkles (premium feel)
-- Physics: rotation proportional to drag, spring-back on cancel, velocity-based throw
+**Edit `BlurImage.tsx`:**
+- Add optional `objectPosition` prop (e.g., `"center 30%"`).
+- Apply it to the `<img>` element's `style` alongside `object-cover`.
 
-### Phase 6: Daily Rewards
+### 4. Use focal point in Discovery cards
 
-#### 6a. Database Migration
-- Add `last_daily_reward_date` column to profiles table
+**Edit `SwipeDiscoveryCard.tsx`:**
+- Fetch `focal_point_y` alongside photo URLs from `user_photos`.
+- Pass `objectPosition={`center ${focalY}%`}` to `BlurImage`.
 
-#### 6b. Daily Reward Modal (`src/components/rewards/DailyRewardModal.tsx`)
-- Variable ratio rewards: 60% +5XP, 20% +10XP, 10% +15XP, 5% +25XP, 5% 2x boost
-- Weekly bonus on day 7
-- Mascot waving with welcome message
-- Pulsing "Daily Bonus" indicator until claimed
+### 5. Use focal point in ProfileDetailSheet
 
-### Phase 7: Notification Templates
+**Edit `ProfileDetailSheet.tsx`:**
+- Same focal point pass-through.
+- Fix responsive height: change `h-56` to `h-[50vh] max-h-[400px]` so the photo area scales with viewport instead of being a fixed 224px.
 
-#### 7. Notification Templates (`src/lib/notification-templates.ts`)
-- Templates for: streak risk, streak critical, streak lost, new match, new message, badge almost complete, inactive 3/7 days, weekly summary, daily challenge
-- Branded language only (no "Super Like", "Swipe Right", etc.)
-- Random copy rotation for variable reinforcement
-- Max 3/day rule, quiet hours 10pm-8am (except streak-critical)
+### 6. Fix photo display on profile view across screen sizes
 
-### Files Created
-| File | Purpose |
-|------|---------|
-| `src/components/celebrations/ConfettiSystem.tsx` | Reusable CSS confetti |
-| `src/components/celebrations/CelebrationEngine.tsx` | 5-tier celebration orchestrator |
-| `src/components/mascot/MascotReaction.tsx` | 12-emotion mascot component |
-| `src/components/rewards/DailyRewardModal.tsx` | Daily first-open reward |
-| `src/lib/notification-templates.ts` | Push notification copy templates |
+**Edit `ProfileDetailSheet.tsx`:**
+- Replace fixed `h-56` with responsive classes: `h-[40vh] sm:h-[50vh] max-h-[500px]`.
+- This ensures the photo area is proportional on both small phones and desktop viewports.
 
-### Files Modified
-| File | Change |
-|------|--------|
-| `src/components/education/StreakBadge.tsx` | Time-based urgency animations |
-| `src/components/MatchModal.tsx` | Sequenced match celebration |
-| `src/components/discovery/SwipeDiscoveryCard.tsx` | Color-coded drag feedback |
-| `src/index.css` | New keyframe animations for celebrations + mascot |
-| `tailwind.config.ts` | New animation utilities |
+### Technical details
 
-### Database Migration
-- `ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_daily_reward_date DATE`
+- `focal_point_y` defaults to 50 (center), so existing photos display unchanged.
+- The focal point selector is a simple tap interaction — no complex drag needed. User sees full photo, taps where the subject's face is, a crosshair/indicator appears, they confirm.
+- Discovery feed query already fetches from `user_photos` — just need to include the new column.
+- `object-position: center ${y}%` is CSS-native and performant.
 
-### Standards
-- All animations CSS-only (no heavy libs)
-- prefers-reduced-motion respected everywhere
-- 44x44px touch targets
-- Mobile-first 375px
-- Branded language throughout
