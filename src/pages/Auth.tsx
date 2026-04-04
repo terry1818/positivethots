@@ -37,7 +37,14 @@ function FieldError({ message, id }: { message?: string; id?: string }) {
   );
 }
 
+const TESTIMONIALS = [
+  "Finally, a dating app that expects you to learn first.",
+  "The education modules changed how I communicate.",
+  "I feel safer here than any other dating app.",
+];
+
 const Auth = () => {
+  const prefersReducedMotion = useReducedMotion();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
