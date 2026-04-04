@@ -150,7 +150,11 @@ const Events = () => {
     return { allowed: true };
   };
 
-  const tierEvents = (tier: EventTier) => events.filter((e) => e.event_tier === tier);
+  const tierEvents = (tier: EventTier) => {
+    let filtered = events.filter((e) => e.event_tier === tier);
+    if (eventSearch) filtered = filtered.filter(e => e.title.toLowerCase().includes(eventSearch));
+    return filtered;
+  };
 
   const tierDescriptions: Record<EventTier, string> = {
     community: "Free events open to all members",
