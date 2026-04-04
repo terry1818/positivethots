@@ -27,6 +27,8 @@ import { useProfileCompletion } from "@/hooks/useProfileCompletion";
 import { ChapterProfileView } from "@/components/chapters/ChapterProfileView";
 import { AstrologyBadge } from "@/components/astrology/AstrologyBadge";
 import { AstrologyCompatibility } from "@/components/astrology/AstrologyCompatibility";
+import { SpotifyProfileSection } from "@/components/spotify/SpotifyProfileSection";
+import { CrossAppLinksDisplay } from "@/components/cross-app/CrossAppLinksDisplay";
 
 interface UserBadge {
   module_id: string;
