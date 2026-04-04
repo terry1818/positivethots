@@ -184,8 +184,12 @@ const Chat = () => {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
         (payload) => {
           const newMsg = payload.new as Message;
-          if (newMsg.sender_id !== currentUser?.id) playMessage();
-          setMessages(prev => [...prev, { ...newMsg, delivered: true, read: newMsg.sender_id === session.user.id }]);
+          // Skip if we already have this message (from optimistic insert)
+          setMessages(prev => {
+            if (prev.some(m => m.id === newMsg.id)) return prev;
+            if (newMsg.sender_id !== session.user.id) playMessage();
+            return [...prev, { ...newMsg, delivered: true, read: newMsg.sender_id === session.user.id }];
+          });
         })
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_games', filter: `match_id=eq.${matchId}` },
         (payload) => {
