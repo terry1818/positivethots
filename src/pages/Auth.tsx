@@ -64,8 +64,6 @@ const Auth = () => {
     const interval = setInterval(() => setTestimonialIdx(i => (i + 1) % TESTIMONIALS.length), 5000);
     return () => clearInterval(interval);
   }, [prefersReducedMotion]);
-  const [searchParams] = useSearchParams();
-  const formRef = useRef<HTMLFormElement>(null);
 
   // Capture referral code from URL
   useEffect(() => {
