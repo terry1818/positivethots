@@ -1,40 +1,59 @@
 
 
-## Plan: Consistent Header Across All Pages
+## Plan: Responsive Layouts Across All Pages + Discovery Feed Debug
 
-### Problem
-The Discovery page header differs from the other pages (Profile, Messages, etc.) in two ways:
-1. **Settings icon**: Discovery uses a Shield icon at `h-4 w-4` inside a small `h-9 w-9` outline button. Profile page uses a Settings gear at `h-6 w-6` inside a `size="icon"` ghost button — larger and bolder.
-2. **Header structure**: Discovery has extra buttons (Incognito, Boost, Thot count) that are fine, but the container styling differs slightly (`py-2.5` vs `py-4`, no `border-b` class on the outer header).
+### Problem 1: Inconsistent Responsive Layouts
 
-### Reference (Profile page — the "correct" pattern)
-```
-<header className="border-b border-border bg-card">
-  <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
-    <Logo size="md" showText={false} />
-    <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => navigate("/settings")}>
-      <Settings className="h-6 w-6" />
-    </Button>
-  </div>
-</header>
-```
+Several pages use fixed `max-w-md` which looks cramped on larger screens, while Messages and LikesYou already use the responsive pattern `max-w-md md:max-w-2xl lg:max-w-4xl`. The following pages need updating:
 
-### Changes
+| Page | Current | Target |
+|------|---------|--------|
+| `Index.tsx` | `max-w-md` (7 occurrences) | `max-w-md md:max-w-2xl lg:max-w-4xl` |
+| `Learn.tsx` | `max-w-md` (2 occurrences) | `max-w-md md:max-w-2xl lg:max-w-4xl` |
+| `Profile.tsx` | `max-w-md` (2 occurrences) | `max-w-md md:max-w-2xl lg:max-w-4xl` |
+| `Settings.tsx` | `max-w-md` (2 occurrences) | `max-w-md md:max-w-2xl lg:max-w-4xl` |
+| `EditProfile.tsx` | `max-w-md` (2 occurrences) | `max-w-md md:max-w-2xl lg:max-w-4xl` |
+| `TestingLocator.tsx` | `max-w-md` (2 occurrences) | `max-w-md md:max-w-2xl lg:max-w-4xl` |
+| `HealthTesting.tsx` | `max-w-md` (2 occurrences) | `max-w-md md:max-w-2xl lg:max-w-4xl` |
+| `ProductDetail.tsx` | `max-w-md` (4 occurrences) | `max-w-md md:max-w-2xl lg:max-w-4xl` |
+| `Events.tsx` | `max-w-2xl` (1 occurrence) | `max-w-md md:max-w-2xl lg:max-w-4xl` |
+| `LearningJournal.tsx` | `max-w-2xl` (1 occurrence) | `max-w-md md:max-w-2xl lg:max-w-4xl` |
+| `LearnModule.tsx` | `max-w-2xl` (2 occurrences) | `max-w-md md:max-w-2xl lg:max-w-4xl` |
 
-#### 1. Discovery Page Header (`src/pages/Index.tsx`)
+Pages already correct: Messages, LikesYou, Chat (`max-w-4xl`), Premium (`max-w-4xl`), Resources (`max-w-6xl`).
 
-- Change the outer sticky div to include `border-b border-border bg-card` (matching Profile)
-- Change `py-2.5` to `py-4` for consistent vertical spacing
-- Replace the Settings button: swap `Shield` icon for `Settings` (gear), change from `variant="outline" h-9 w-9 p-0` with `h-4 w-4` icon to `variant="ghost" size="icon"` with `h-6 w-6` icon — matching Profile exactly
-- Keep Incognito, Boost, and Thot count buttons as they are (those are Discovery-specific)
-- Add `Settings` to the lucide-react import if not already present
+For each page, replace ALL `max-w-md` or `max-w-2xl` container classes with the responsive pattern.
 
-#### 2. All Other Pages — Already Consistent
-Profile, Messages, Likes, Learn pages already use `Logo size="md"` with consistent header patterns. No changes needed there.
+### Problem 2: Discovery Profiles Not Loading After Feed Reset
+
+I investigated thoroughly:
+- The `get_discovery_profiles` RPC returns 11 profiles successfully (HTTP 200)
+- The `user_photos` query returns approved photos (HTTP 200)
+- No network errors detected
+- The client-side filtering logic is correct
+
+However, I found a potential issue: **the auto-skip useEffect on lines 222-227** creates a reactive loop that could strip profiles if images fail to load or if there's a brief moment where `profile_image` is falsy during state transitions. This effect is also dangerous because it creates an infinite loop risk — each `setSuggestions` triggers the effect again.
+
+**Fix:** Remove the auto-skip `useEffect` entirely. It's redundant because:
+1. `loadSuggestions` already filters profiles with the `hasPhoto` check on line 354-357
+2. If a profile somehow gets through without a photo, the `SwipeDiscoveryCard` already handles the fallback (line 209-212 shows a gradient letter)
+
+Additionally, the `SwipeDiscoveryCard` has `max-w-sm` on line 177 which should expand on larger screens. Change to `max-w-sm md:max-w-md` so cards look better on wider viewports.
 
 ### Files Changed
 
 | File | Change |
 |------|--------|
-| `src/pages/Index.tsx` | Match header styling and settings icon to Profile page pattern |
+| `src/pages/Index.tsx` | Responsive containers + remove auto-skip useEffect |
+| `src/pages/Learn.tsx` | Responsive containers |
+| `src/pages/Profile.tsx` | Responsive containers |
+| `src/pages/Settings.tsx` | Responsive containers |
+| `src/pages/EditProfile.tsx` | Responsive containers |
+| `src/pages/TestingLocator.tsx` | Responsive containers |
+| `src/pages/HealthTesting.tsx` | Responsive containers |
+| `src/pages/ProductDetail.tsx` | Responsive containers |
+| `src/pages/Events.tsx` | Responsive containers |
+| `src/pages/LearningJournal.tsx` | Responsive containers |
+| `src/pages/LearnModule.tsx` | Responsive containers |
+| `src/components/discovery/SwipeDiscoveryCard.tsx` | Responsive card width |
 
