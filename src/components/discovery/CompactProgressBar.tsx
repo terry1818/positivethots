@@ -86,7 +86,7 @@ export const CompactProgressBar = ({ tiers, badgeCount, connectionCount }: Compa
                   style={{ width: `${pct}%` }}
                 />
               </div>
-              <span className="text-[9px] text-muted-foreground leading-none">
+              <span className="text-sm text-muted-foreground leading-none">
                 {tierLabels[tier.tier] || tier.label.split(" ")[0]}
               </span>
             </div>
