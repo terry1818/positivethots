@@ -80,6 +80,9 @@ const Settings = () => {
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [managingPortal, setManagingPortal] = useState(false);
+  const [textScale, setTextScale] = useState<"small" | "medium" | "large">(() => {
+    return (localStorage.getItem("pt_text_scale") as "small" | "medium" | "large") || "medium";
+  });
 
   // Promo code generation
   const [codeType, setCodeType] = useState<"gift" | "referral">("referral");

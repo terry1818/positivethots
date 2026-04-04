@@ -60,6 +60,14 @@ const AppContent = () => {
   useCartSync();
   const { previousChurnStatus } = useActivityTracker();
   const { pendingTrigger, dismiss } = useNPSSurvey();
+
+  // Apply text scale on mount
+  useEffect(() => {
+    const scale = localStorage.getItem("pt_text_scale") || "medium";
+    document.documentElement.classList.remove("text-scale-small", "text-scale-medium", "text-scale-large");
+    document.documentElement.classList.add(`text-scale-${scale}`);
+  }, []);
+
   return (
     <>
       <WelcomeBackModal previousChurnStatus={previousChurnStatus} />
