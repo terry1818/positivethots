@@ -257,13 +257,13 @@ export const SwipeDiscoveryCard = memo(({
                 className="absolute top-8 left-6 text-4xl font-bold text-success border-4 border-success rounded-2xl px-4 py-2 rotate-[-20deg] z-20"
                 style={{ opacity: Math.max(0, Math.min(dragOffset.x / 100, 1)) }}
               >
-                LIKE
+                Connect 💜
               </div>
               <div
-                className="absolute top-8 right-6 text-4xl font-bold text-destructive border-4 border-destructive rounded-2xl px-4 py-2 rotate-[20deg] z-20"
+                className="absolute top-8 right-6 text-4xl font-bold text-muted-foreground border-4 border-muted-foreground rounded-2xl px-4 py-2 rotate-[20deg] z-20"
                 style={{ opacity: Math.max(0, Math.min(-dragOffset.x / 100, 1)) }}
               >
-                NOPE
+                Pass
               </div>
             </>
           )}
