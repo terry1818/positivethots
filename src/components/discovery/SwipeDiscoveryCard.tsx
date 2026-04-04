@@ -53,6 +53,7 @@ interface SwipeDiscoveryCardProps {
   onViewProfile: () => void;
   is_recycled?: boolean;
   onUpgradeSuperLike?: () => void;
+  onAllImagesFailed?: () => void;
 }
 
 export const SwipeDiscoveryCard = memo(({
@@ -67,6 +68,7 @@ export const SwipeDiscoveryCard = memo(({
   onViewProfile,
   is_recycled,
   onUpgradeSuperLike,
+  onAllImagesFailed,
 }: SwipeDiscoveryCardProps) => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
