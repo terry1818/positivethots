@@ -84,6 +84,7 @@ const AppContent = () => {
         <Route path="/onboarding" element={<Suspense fallback={<PageLoader />}><Onboarding /></Suspense>} />
         <Route path="/likes" element={<Suspense fallback={<PageSkeleton variant="likes" />}><LikesYou /></Suspense>} />
         <Route path="/premium" element={<Suspense fallback={<PageLoader />}><Premium /></Suspense>} />
+        <Route path="/wallet" element={<Suspense fallback={<PageLoader />}><Wallet /></Suspense>} />
         <Route path="/learn" element={<Suspense fallback={<PageSkeleton variant="learn" />}><Learn /></Suspense>} />
         <Route path="/learn/:slug" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnModule /></Suspense>} />
         <Route path="/messages" element={<Suspense fallback={<PageSkeleton variant="messages" />}><Messages /></Suspense>} />

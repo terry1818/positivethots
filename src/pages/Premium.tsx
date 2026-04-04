@@ -424,7 +424,10 @@ const Premium = () => {
           </CardContent>
         </Card>
 
-        <p className="text-center text-sm text-muted-foreground">
+        {/* Group/Polycule Pricing */}
+        <GroupPricingCard partnerCount={1} />
+
+        <p className="text-center text-sm text-muted-foreground mt-6">
           Cancel anytime · {billingPeriod === "annual" ? "Billed annually" : "Billed monthly"} · Secure checkout via Stripe
         </p>
       </div>
