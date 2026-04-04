@@ -697,7 +697,33 @@ const Index = () => {
               <Button variant="ghost" size="sm" onClick={() => navigate("/events")} className="min-h-[44px]" aria-label="Browse upcoming events">
                 🎪 Browse events
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="min-h-[44px]"
+                onClick={() => setShowResetDialog(true)}
+              >
+                <RefreshCw className="h-4 w-4 mr-1" /> Start Fresh
+              </Button>
             </div>
+
+            {/* Reset Feed Dialog */}
+            <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Reset your discovery feed?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Profiles you previously passed on will reappear (except those you passed 3+ times). You can only do this once per week.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleResetFeed} disabled={resettingFeed}>
+                    {resettingFeed ? "Resetting..." : "Reset Feed"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
 
             {/* Boost upsell card */}
             <Card className="p-6 text-center max-w-sm mx-auto w-full mt-4">
