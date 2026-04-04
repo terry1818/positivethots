@@ -364,7 +364,7 @@ const Chat = () => {
       toast.success("Report Submitted", { description: "Our team will review this. Thank you for keeping the community safe." });
       setShowReportDialog(false);
     } catch (err: any) {
-      toast.error(err.message || "Failed to submit report");
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
