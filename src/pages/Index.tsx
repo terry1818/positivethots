@@ -721,7 +721,7 @@ const Index = () => {
 
       {/* Compact Progress Strip */}
       {tiers.length > 0 && (
-        <div className="max-w-sm mx-auto px-4 py-3">
+        <div className="max-w-md mx-auto px-4 py-3">
           <CompactProgressBar tiers={tiers} badgeCount={userBadgeCount} connectionCount={matchCount} />
         </div>
       )}
