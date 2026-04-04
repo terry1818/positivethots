@@ -303,12 +303,12 @@ const Resources = () => {
         )}
 
         {/* Disclosure */}
-        <div className="bg-gray-900/40 border border-gray-800 rounded-xl p-6 text-center max-w-2xl mx-auto mt-12 mb-8">
+        <div className="bg-card border border-border rounded-xl p-6 text-center max-w-2xl mx-auto mt-12 mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <ShieldCheck className="w-5 h-5 text-purple-400" />
-            <span className="text-sm font-medium text-gray-300">Affiliate Disclosure</span>
+            <ShieldCheck className="w-5 h-5 text-primary" />
+            <span className="text-sm font-medium text-foreground">Affiliate Disclosure</span>
           </div>
-          <p className="text-sm text-gray-500 leading-relaxed">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             Positive Thots is a participant in the Amazon Services LLC Associates Program, an affiliate
             advertising program designed to provide a means for us to earn fees by linking to Amazon.com
             and affiliated sites. We only recommend products we believe in and that align with our mission
