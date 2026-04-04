@@ -223,12 +223,11 @@ const Index = () => {
   };
 
   const loadSuggestions = async (userId: string, profile: Profile) => {
-    const [matchesResult, blockedResult, swipesResult] = await Promise.all([
+    const [matchesResult, blockedResult] = await Promise.all([
       supabase.from("matches").select("user1_id, user2_id")
         .or(`user1_id.eq.${userId},user2_id.eq.${userId}`),
       supabase.from("blocked_users").select("blocked_id, blocker_id")
         .or(`blocker_id.eq.${userId},blocked_id.eq.${userId}`),
-      supabase.from("swipes").select("swiped_id").eq("swiper_id", userId),
     ]);
 
     const matchedUserIds = new Set(matchesResult.data?.flatMap(m => [m.user1_id, m.user2_id]) || []);
@@ -241,9 +240,8 @@ const Index = () => {
       else blockedUserIds.add(row.blocker_id);
     });
 
-    const swipedUserIds = new Set(swipesResult.data?.map(s => s.swiped_id) || []);
-
-    const excludeIds = [userId, ...Array.from(matchedUserIds), ...Array.from(blockedUserIds), ...Array.from(swipedUserIds)];
+    // Only pass matched + blocked IDs; the RPC handles left-swipe recycling server-side
+    const excludeIds = [userId, ...Array.from(matchedUserIds), ...Array.from(blockedUserIds)];
 
     const [profilesResult, allBadgesResult, boostsResult] = await Promise.all([
       supabase.rpc("get_discovery_profiles", { _exclude_ids: excludeIds }),
