@@ -237,7 +237,7 @@ const Events = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EventTier)} className="w-full">
-          <TabsList className="w-full grid grid-cols-3 mb-4">
+          <TabsList className="w-full grid grid-cols-3 mb-4" data-tour="events-tier-tabs">
             <TabsTrigger value="community" className="text-sm sm:text-sm">
               🌐 Community
             </TabsTrigger>
