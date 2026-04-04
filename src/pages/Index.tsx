@@ -39,6 +39,7 @@ import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { IncognitoIndicator } from "@/components/layout/IncognitoIndicator";
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
