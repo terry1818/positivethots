@@ -55,7 +55,7 @@ export const BrandedEmptyState = memo(({
         <img
           src={MASCOT_IMAGES[mascot]}
           alt=""
-          className="relative w-[156px] h-[156px] object-contain drop-shadow-lg animate-float-gentle"
+          className="relative w-[187px] h-[187px] object-contain drop-shadow-lg animate-float-gentle"
           loading="lazy"
         />
       </div>

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, memo, useCallback } from "react";
 import { BlurImage } from "@/components/BlurImage";
-import { Heart, X, Star, Zap, Shield, ChevronDown } from "lucide-react";
+import { Heart, X, Star, Zap, Shield, ChevronDown, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -48,6 +48,7 @@ interface SwipeDiscoveryCardProps {
   canSuperLike?: boolean;
   superLikeBalance?: number;
   onViewProfile: () => void;
+  is_recycled?: boolean;
 }
 
 export const SwipeDiscoveryCard = memo(({
@@ -60,6 +61,7 @@ export const SwipeDiscoveryCard = memo(({
   canSuperLike,
   superLikeBalance = 0,
   onViewProfile,
+  is_recycled,
 }: SwipeDiscoveryCardProps) => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -272,6 +274,15 @@ export const SwipeDiscoveryCard = memo(({
 
           {/* Top badges */}
           <div className="absolute top-3 left-3 flex gap-1.5 z-10">
+            {isTop && is_recycled && (
+              <div
+                className="flex items-center gap-1.5 bg-background/80 backdrop-blur-sm rounded-full px-3 py-1"
+                aria-label="Previously viewed profile"
+              >
+                <RefreshCw className="h-3 w-3 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Second look</span>
+              </div>
+            )}
             {profile.is_boosted && (
               <Badge className="bg-amber-500/90 text-white text-sm border-0">
                 <Zap className="h-3 w-3 mr-0.5" /> Boosted
