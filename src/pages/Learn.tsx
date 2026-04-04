@@ -86,26 +86,7 @@ const Learn = () => {
     }
   }, [loading, isStreakAtRisk, stats, streakHoursLeft]);
 
-  // Compute near-miss tier info
-  const nearMissTier = useMemo(() => {
-    if (!tiers.length || !modules.length) return null;
-    for (const tier of tiers) {
-      const tierModules = modules.filter(m => m.tier === tier.tier);
-      const earnedInTier = tierModules.filter(m => earnedModuleIds.has(m.id)).length;
-      const remaining = tierModules.length - earnedInTier;
-      if (remaining > 0 && remaining <= 2) {
-        const firstLockedFeature = tier.features.find(f => !f.isUnlocked);
-        if (firstLockedFeature) {
-          return {
-            badgesRemaining: remaining,
-            featureLabel: firstLockedFeature.label,
-            tierName: tier.tier.replace("_", " "),
-          };
-        }
-      }
-    }
-    return null;
-  }, [tiers, modules, earnedModuleIds]);
+  // nearMissTier computed below after earnedModuleIds
 
   const loadData = async () => {
     try {
