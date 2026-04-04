@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StaggerChildren } from "@/components/StaggerChildren";
-import { ArrowLeft, Save, Plus, Trash2 } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { ArrowLeft, Save, Plus, Trash2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { PhotoUploadGrid } from "@/components/PhotoUploadGrid";
 import { VerificationCard } from "@/components/VerificationCard";
@@ -34,11 +33,15 @@ const EditProfile = () => {
   const [latestVerification, setLatestVerification] = useState<any>(null);
   const [hasChanges, setHasChanges] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
+
+  const focusSection = (location.state as any)?.focusSection as string | undefined;
+  const [openSection, setOpenSection] = useState<string>(focusSection || "basics");
 
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
-  const [location, setLocation] = useState("");
+  const [locationVal, setLocationVal] = useState("");
   const [pronouns, setPronouns] = useState("");
   const [boundaries, setBoundaries] = useState("");
   const [lookingFor, setLookingFor] = useState("");
@@ -72,14 +75,13 @@ const EditProfile = () => {
       if (profileResult.error) throw profileResult.error;
       const data = profileResult.data;
       setProfile(data);
-      setName(data.name || ""); setBio(data.bio || ""); setLocation(data.location || "");
+      setName(data.name || ""); setBio(data.bio || ""); setLocationVal(data.location || "");
       setPronouns(data.pronouns || ""); setBoundaries(data.boundaries || "");
       setLookingFor(data.looking_for || ""); setRelationshipStyle(data.relationship_style || "");
       setRelationshipStatus(data.relationship_status || ""); setExperienceLevel(data.experience_level || "");
       setBdsmTestUrl(data.bdsm_test_url || ""); setBdsmTestScreenshot(data.bdsm_test_screenshot || "");
       setSelectedFrame((data as any).selected_frame || "newbie");
       setEarnedFrames((data as any).earned_frames || ["newbie"]);
-      // Sync earned frames based on current achievements
       syncEarnedFrames(session.user.id).then(frames => setEarnedFrames(frames));
       setPhotos(photosResult.data || []);
       setLatestVerification(verResult.data?.[0] || null);
@@ -116,7 +118,7 @@ const EditProfile = () => {
     setSaving(true);
     try {
       const { error } = await supabase.from("profiles").update({
-        name: name.trim(), bio: bio.trim(), location: location.trim(), pronouns: pronouns.trim(),
+        name: name.trim(), bio: bio.trim(), location: locationVal.trim(), pronouns: pronouns.trim(),
         boundaries: boundaries.trim(), looking_for: lookingFor, relationship_style: relationshipStyle,
         relationship_status: relationshipStatus, experience_level: experienceLevel,
         bdsm_test_url: bdsmTestUrl.trim() || null, bdsm_test_screenshot: bdsmTestScreenshot || null,
@@ -124,7 +126,6 @@ const EditProfile = () => {
       } as any).eq("id", profile.id);
       if (error) throw error;
 
-      // Save prompts
       await supabase.from("profile_prompts" as any).delete().eq("user_id", profile.id);
       const validPrompts = prompts.filter(p => p.prompt_response.trim());
       if (validPrompts.length > 0) {
@@ -141,6 +142,7 @@ const EditProfile = () => {
       queryClient.invalidateQueries({ queryKey: ["profile-prompts"] });
       queryClient.invalidateQueries({ queryKey: ["profile-prompt-count"] });
       toast.success("Profile updated!");
+      setHasChanges(false);
       navigate("/profile");
     } catch (error) {
       console.error("Error saving profile:", error);
@@ -188,102 +190,41 @@ const EditProfile = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
+      <header className="border-b border-border bg-card sticky top-0 z-40">
         <div className="container max-w-md mx-auto px-4 py-4 flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} aria-label="Go back">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-xl font-bold flex-1">Edit Profile</h1>
-          <Button
-            size="sm" onClick={handleSave} disabled={saving}
-            className={cn("transition-all", hasChanges && "animate-pulse-glow")}
-          >
-            <Save className="h-4 w-4 mr-1" />{saving ? "Saving..." : "Save"}
-          </Button>
         </div>
       </header>
 
-      <main className="container max-w-md mx-auto px-4 py-6 pb-24">
-        <StaggerChildren className="space-y-4" stagger={100}>
-          {profile?.id && <PhotoUploadGrid userId={profile.id} photos={photos} onPhotosChange={reloadPhotos} />}
+      <main className="container max-w-md mx-auto px-4 py-6 pb-36">
+        <Accordion
+          type="single"
+          collapsible
+          value={openSection}
+          onValueChange={(val) => setOpenSection(val)}
+          className="space-y-3"
+        >
+          {/* Photos Section */}
+          <AccordionItem value="photos" className="border rounded-xl px-4 bg-card">
+            <AccordionTrigger className="text-base font-semibold py-4">Photos & Frame</AccordionTrigger>
+            <AccordionContent className="pb-4 space-y-4">
+              {profile?.id && <PhotoUploadGrid userId={profile.id} photos={photos} onPhotosChange={reloadPhotos} />}
+              <FrameSelector
+                earnedFrames={earnedFrames}
+                selectedFrame={selectedFrame}
+                onSelect={(f) => { setSelectedFrame(f); markChanged(); }}
+                profileImage={profile?.profile_image}
+              />
+            </AccordionContent>
+          </AccordionItem>
 
-          {/* Frame Selector */}
-          <FrameSelector
-            earnedFrames={earnedFrames}
-            selectedFrame={selectedFrame}
-            onSelect={(f) => { setSelectedFrame(f); markChanged(); }}
-            profileImage={profile?.profile_image}
-          />
-
-          {/* Prompts Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Your Prompts</CardTitle>
-              <p className="text-xs text-muted-foreground">Answer prompts so people get to know the real you</p>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {prompts.map((prompt, idx) => (
-                <div key={idx} className="bg-muted/30 rounded-xl p-3 border border-border/50 space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setChangingQuestionIdx(changingQuestionIdx === idx ? null : idx)}
-                      className="text-sm font-medium text-primary hover:text-primary/80 text-left flex-1"
-                    >
-                      {prompt.prompt_question}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => removePrompt(idx)}
-                      className="p-1 text-muted-foreground hover:text-destructive transition-colors"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-
-                  {changingQuestionIdx === idx && (
-                    <div className="space-y-1 max-h-32 overflow-y-auto">
-                      {PROMPT_QUESTIONS.filter(q => !usedQuestions.includes(q) || q === prompt.prompt_question).map(q => (
-                        <button
-                          key={q}
-                          type="button"
-                          onClick={() => changePromptQuestion(idx, q)}
-                          className={cn(
-                            "block w-full text-left text-xs px-2 py-1.5 rounded-lg transition-colors",
-                            q === prompt.prompt_question
-                              ? "bg-primary/10 text-primary"
-                              : "hover:bg-muted text-muted-foreground"
-                          )}
-                        >
-                          {q}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  <Textarea
-                    value={prompt.prompt_response}
-                    onChange={(e) => updatePromptResponse(idx, e.target.value)}
-                    placeholder="Your answer..."
-                    maxLength={150}
-                    rows={2}
-                    className="text-sm resize-none"
-                  />
-                  <p className="text-[10px] text-muted-foreground text-right">{prompt.prompt_response.length}/150</p>
-                </div>
-              ))}
-
-              {prompts.length < 3 && (
-                <Button variant="outline" size="sm" onClick={addPrompt} className="w-full">
-                  <Plus className="h-4 w-4 mr-1" /> Add {prompts.length === 0 ? "a" : "another"} prompt
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader><CardTitle className="text-lg">Basic Info</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
+          {/* Basics Section */}
+          <AccordionItem value="basics" className="border rounded-xl px-4 bg-card">
+            <AccordionTrigger className="text-base font-semibold py-4">Basics</AccordionTrigger>
+            <AccordionContent className="pb-4 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
                 <Input id="name" value={name} onChange={(e) => { setName(e.target.value); markChanged(); }} maxLength={100} className="focus-glow" />
@@ -294,21 +235,91 @@ const EditProfile = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="location">Location (city)</Label>
-                <Input id="location" value={location} onChange={(e) => { setLocation(e.target.value); markChanged(); }} placeholder="e.g., Portland" maxLength={100} className="focus-glow" />
+                <Input id="location" value={locationVal} onChange={(e) => { setLocationVal(e.target.value); markChanged(); }} placeholder="e.g., Portland" maxLength={100} className="focus-glow" />
               </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* About You Section */}
+          <AccordionItem value="about" className="border rounded-xl px-4 bg-card">
+            <AccordionTrigger className="text-base font-semibold py-4">About You</AccordionTrigger>
+            <AccordionContent className="pb-4 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="bio">About Me (Optional)</Label>
+                <Label htmlFor="bio">About Me</Label>
                 <Textarea id="bio" value={bio} onChange={(e) => { setBio(e.target.value); markChanged(); }} rows={4} maxLength={500} placeholder="Tell people about yourself..." className="focus-glow" />
               </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader><CardTitle className="text-lg">Relationship Details</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
+              {/* Prompts */}
+              <div className="space-y-3">
+                <Label>Your Prompts</Label>
+                <p className="text-xs text-muted-foreground">Answer prompts so people get to know the real you</p>
+                {prompts.map((prompt, idx) => (
+                  <div key={idx} className="bg-muted/30 rounded-xl p-3 border border-border/50 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setChangingQuestionIdx(changingQuestionIdx === idx ? null : idx)}
+                        className="text-sm font-medium text-primary hover:text-primary/80 text-left flex-1"
+                      >
+                        {prompt.prompt_question}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removePrompt(idx)}
+                        className="p-1 text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+
+                    {changingQuestionIdx === idx && (
+                      <div className="space-y-1 max-h-32 overflow-y-auto">
+                        {PROMPT_QUESTIONS.filter(q => !usedQuestions.includes(q) || q === prompt.prompt_question).map(q => (
+                          <button
+                            key={q}
+                            type="button"
+                            onClick={() => changePromptQuestion(idx, q)}
+                            className={cn(
+                              "block w-full text-left text-xs px-2 py-1.5 rounded-lg transition-colors",
+                              q === prompt.prompt_question
+                                ? "bg-primary/10 text-primary"
+                                : "hover:bg-muted text-muted-foreground"
+                            )}
+                          >
+                            {q}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    <Textarea
+                      value={prompt.prompt_response}
+                      onChange={(e) => updatePromptResponse(idx, e.target.value)}
+                      placeholder="Your answer..."
+                      maxLength={150}
+                      rows={2}
+                      className="text-sm resize-none"
+                    />
+                    <p className="text-[10px] text-muted-foreground text-right">{prompt.prompt_response.length}/150</p>
+                  </div>
+                ))}
+
+                {prompts.length < 3 && (
+                  <Button variant="outline" size="sm" onClick={addPrompt} className="w-full">
+                    <Plus className="h-4 w-4 mr-1" /> Add {prompts.length === 0 ? "a" : "another"} prompt
+                  </Button>
+                )}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Relationship Section */}
+          <AccordionItem value="relationship" className="border rounded-xl px-4 bg-card">
+            <AccordionTrigger className="text-base font-semibold py-4">Relationship Style</AccordionTrigger>
+            <AccordionContent className="pb-4 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="style">Relationship Style</Label>
-                <select id="style" value={relationshipStyle} onChange={(e) => { setRelationshipStyle(e.target.value); markChanged(); }} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <select id="style" value={relationshipStyle} onChange={(e) => { setRelationshipStyle(e.target.value); markChanged(); }} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[44px]">
                   <option value="">Select...</option>
                   <option value="monogamous">Monogamous</option>
                   <option value="polyamory">Polyamorous</option>
@@ -323,7 +334,7 @@ const EditProfile = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="status">Relationship Status</Label>
-                <select id="status" value={relationshipStatus} onChange={(e) => { setRelationshipStatus(e.target.value); markChanged(); }} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <select id="status" value={relationshipStatus} onChange={(e) => { setRelationshipStatus(e.target.value); markChanged(); }} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[44px]">
                   <option value="">Select...</option>
                   <option value="Single">Single</option>
                   <option value="Dating">Dating</option>
@@ -338,7 +349,7 @@ const EditProfile = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="looking">Looking For</Label>
-                <select id="looking" value={lookingFor} onChange={(e) => { setLookingFor(e.target.value); markChanged(); }} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <select id="looking" value={lookingFor} onChange={(e) => { setLookingFor(e.target.value); markChanged(); }} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[44px]">
                   <option value="">Select...</option>
                   <option value="New connections">New connections</option>
                   <option value="Friends first">Friends first</option>
@@ -348,7 +359,7 @@ const EditProfile = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="exp">Experience Level</Label>
-                <select id="exp" value={experienceLevel} onChange={(e) => { setExperienceLevel(e.target.value); markChanged(); }} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                <select id="exp" value={experienceLevel} onChange={(e) => { setExperienceLevel(e.target.value); markChanged(); }} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[44px]">
                   <option value="">Select...</option>
                   <option value="curious">Curious</option>
                   <option value="new">New</option>
@@ -356,32 +367,50 @@ const EditProfile = () => {
                   <option value="veteran">Veteran</option>
                 </select>
               </div>
-            </CardContent>
-          </Card>
+              <div className="space-y-2">
+                <Label htmlFor="boundaries">Boundaries & Preferences</Label>
+                <Textarea id="boundaries" value={boundaries} onChange={(e) => { setBoundaries(e.target.value); markChanged(); }} rows={3} maxLength={500} placeholder="Share your boundaries and preferences..." className="focus-glow" />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
 
-          <Card>
-            <CardHeader><CardTitle className="text-lg">Boundaries & Preferences</CardTitle></CardHeader>
-            <CardContent>
-              <Textarea id="boundaries" value={boundaries} onChange={(e) => { setBoundaries(e.target.value); markChanged(); }} rows={3} maxLength={500} placeholder="Share your boundaries and preferences..." className="focus-glow" />
-            </CardContent>
-          </Card>
-
-          {profile?.id && (
-            <BdsmTestSection
-              bdsmTestUrl={bdsmTestUrl}
-              bdsmTestScreenshot={bdsmTestScreenshot}
-              onUrlChange={setBdsmTestUrl}
-              onScreenshotChange={setBdsmTestScreenshot}
-              userId={profile.id}
-              onChange={markChanged}
-            />
-          )}
-
-          {profile?.id && (
-            <VerificationCard userId={profile.id} isVerified={profile.is_verified || false} hasApprovedPhotos={photos.some(p => p.moderation_status === 'approved')} latestRequest={latestVerification} onVerificationChange={reloadPhotos} />
-          )}
-        </StaggerChildren>
+          {/* BDSM & Verification */}
+          <AccordionItem value="verification" className="border rounded-xl px-4 bg-card">
+            <AccordionTrigger className="text-base font-semibold py-4">Verification & Extras</AccordionTrigger>
+            <AccordionContent className="pb-4 space-y-4">
+              {profile?.id && (
+                <BdsmTestSection
+                  bdsmTestUrl={bdsmTestUrl}
+                  bdsmTestScreenshot={bdsmTestScreenshot}
+                  onUrlChange={setBdsmTestUrl}
+                  onScreenshotChange={setBdsmTestScreenshot}
+                  userId={profile.id}
+                  onChange={markChanged}
+                />
+              )}
+              {profile?.id && (
+                <VerificationCard userId={profile.id} isVerified={profile.is_verified || false} hasApprovedPhotos={photos.some(p => p.moderation_status === 'approved')} latestRequest={latestVerification} onVerificationChange={reloadPhotos} />
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </main>
+
+      {/* Floating Save Button */}
+      {hasChanges && (
+        <div className="fixed bottom-20 left-0 right-0 px-4 z-50 animate-fade-in">
+          <div className="container max-w-md mx-auto">
+            <Button
+              className="w-full h-12 bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold shadow-lg rounded-xl"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+              {saving ? "Saving..." : "Save changes"}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
