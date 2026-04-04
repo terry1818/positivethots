@@ -839,10 +839,17 @@ const Settings = () => {
                 type="password"
                 placeholder="••••••••"
                 value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                onChange={(e) => { setNewPassword(e.target.value); setPasswordErrors({}); }}
                 minLength={6}
                 maxLength={100}
+                aria-invalid={!!passwordErrors.newPassword}
+                aria-describedby={passwordErrors.newPassword ? "new-password-error" : undefined}
               />
+              {passwordErrors.newPassword && (
+                <p role="alert" id="new-password-error" className="text-xs text-destructive flex items-center gap-1 mt-1 animate-fade-in">
+                  {passwordErrors.newPassword}
+                </p>
+              )}
             </div>
             <Button
               onClick={handleChangePassword}
