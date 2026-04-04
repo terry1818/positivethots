@@ -135,6 +135,23 @@ const calculateCompatibilityReasons = (
 
 const MYSTERY_INTERVAL = 10; // Insert mystery card every N cards
 
+const KeyboardHints = () => {
+  const [visible, setVisible] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(false), 7000);
+    return () => clearTimeout(timer);
+  }, []);
+  if (!visible) return null;
+  return (
+    <div className="hidden xl:flex gap-6 text-sm text-muted-foreground justify-center py-2 animate-fade-in">
+      <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">←</kbd> Pass</span>
+      <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">↑</kbd> Send a Thot</span>
+      <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">→</kbd> Connect</span>
+      <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">Space</kbd> View profile</span>
+    </div>
+  );
+};
+
 const getMysteryRevealLimit = (tier: string): number => {
   if (tier === "vip" || tier === "premium") return 999;
   if (tier === "plus") return 3;
