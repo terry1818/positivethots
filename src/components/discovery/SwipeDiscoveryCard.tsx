@@ -286,7 +286,7 @@ export const SwipeDiscoveryCard = memo(({
 
           {/* Compatibility badge */}
           {profile.compatibility_score != null && profile.compatibility_score > 0 && (
-            <div className="absolute top-3 right-3 z-10">
+            <div className="absolute top-3 right-3 z-10" data-walkthrough="compatibility-score">
               <Badge variant="secondary" className="bg-primary/90 text-primary-foreground text-xs font-bold">
                 {profile.compatibility_score}% Match
               </Badge>
@@ -371,7 +371,7 @@ export const SwipeDiscoveryCard = memo(({
 
       {/* Action buttons */}
       {isTop && (
-        <div className="absolute bottom-[-70px] left-1/2 -translate-x-1/2 flex items-center gap-4">
+        <div className="absolute bottom-[-70px] left-1/2 -translate-x-1/2 flex items-center gap-4" data-walkthrough="action-buttons">
           <Button
             variant="outline"
             className="h-14 w-14 rounded-full border-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"

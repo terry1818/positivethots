@@ -22,6 +22,8 @@ import { SwipeDiscoveryCard } from "@/components/discovery/SwipeDiscoveryCard";
 import { ProfileDetailSheet } from "@/components/discovery/ProfileDetailSheet";
 import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
 import { MysteryMatchCard } from "@/components/discovery/MysteryMatchCard";
+import { DiscoveryWalkthrough, shouldShowWalkthrough } from "@/components/discovery/DiscoveryWalkthrough";
+import { SwipeTutorial, shouldShowSwipeTutorial } from "@/components/discovery/SwipeTutorial";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
@@ -159,6 +161,8 @@ const Index = () => {
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [breakdownName, setBreakdownName] = useState("");
   const [announcedProfile, setAnnouncedProfile] = useState("");
+  const [showWalkthrough, setShowWalkthrough] = useState(false);
+  const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
 
   // Handle super like purchase redirect
   useEffect(() => {
@@ -196,6 +200,13 @@ const Index = () => {
     // No longer gate Discovery behind Foundation badges — allow full browsing
     await loadSuggestions(session.user.id, profile);
     setLoading(false);
+
+    // Show walkthrough for first-time users
+    if (shouldShowWalkthrough()) {
+      setTimeout(() => setShowWalkthrough(true), 500);
+    } else if (shouldShowSwipeTutorial()) {
+      setTimeout(() => setShowSwipeTutorial(true), 500);
+    }
   };
 
   const loadSuggestions = async (userId: string, profile: Profile) => {
@@ -628,7 +639,7 @@ const Index = () => {
           </div>
         ) : (
           <>
-            <div className="relative flex justify-center items-start px-4 pt-2 pb-32" style={{ minHeight: '520px' }}>
+            <div className="relative flex justify-center items-start px-4 pt-2 pb-32" data-walkthrough="discovery-card" style={{ minHeight: '520px' }}>
               {suggestions.slice(0, 3).map((profile, stackIdx) => {
                 const isMystery = mysteryProfiles.has(profile.id);
                 if (isMystery && stackIdx === 0) {
@@ -732,6 +743,19 @@ const Index = () => {
       />
 
       <BottomNav />
+
+      {/* First-time walkthrough */}
+      {showWalkthrough && suggestions.length > 0 && (
+        <DiscoveryWalkthrough onComplete={() => {
+          setShowWalkthrough(false);
+          if (shouldShowSwipeTutorial()) setShowSwipeTutorial(true);
+        }} />
+      )}
+
+      {/* Mobile swipe tutorial */}
+      {showSwipeTutorial && !showWalkthrough && (
+        <SwipeTutorial onDismiss={() => setShowSwipeTutorial(false)} />
+      )}
     </div>
   );
 };
