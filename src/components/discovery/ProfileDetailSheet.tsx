@@ -116,19 +116,21 @@ export const ProfileDetailSheet = ({
         <DrawerDescription className="sr-only">View full profile details</DrawerDescription>
 
         <div className="overflow-y-auto flex-1">
-          {/* Photo carousel */}
-          <div className="relative h-[40vh] sm:h-[50vh] max-h-[500px] w-full overflow-hidden">
+          {/* Photo carousel — full image display, no cropping */}
+          <div className="relative w-full bg-black">
             {photos.length > 0 ? (
-              <BlurImage
-                src={photos[safePhotoIndex] || "/placeholder.svg"}
-                alt={displayName}
-                className="h-full w-full"
-                loading="eager"
-                objectPosition={`center ${focalMap[photos[safePhotoIndex]] ?? 50}%`}
-                onError={() => handlePhotoError(photos[safePhotoIndex])}
-              />
+              <div className="relative w-full flex items-center justify-center" style={{ minHeight: '250px', maxHeight: '70vh' }}>
+                <img
+                  src={photos[safePhotoIndex] || "/placeholder.svg"}
+                  alt={displayName}
+                  className="w-full h-auto max-h-[70vh] object-contain"
+                  loading="eager"
+                  onError={() => handlePhotoError(photos[safePhotoIndex])}
+                  draggable={false}
+                />
+              </div>
             ) : (
-              <div className="h-full w-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <div className="h-[250px] w-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
                 <span className="text-5xl font-bold text-primary-foreground">{displayName?.[0] || "?"}</span>
               </div>
             )}

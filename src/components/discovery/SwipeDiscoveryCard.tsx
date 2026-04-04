@@ -86,9 +86,14 @@ export const SwipeDiscoveryCard = memo(({
     setFailedPhotos(prev => {
       const next = new Set(prev);
       next.add(url);
+      // If all photos have failed, notify parent to remove this profile
+      const remainingPhotos = allPhotos.filter(u => !next.has(u));
+      if (remainingPhotos.length === 0) {
+        onAllImagesFailed?.();
+      }
       return next;
     });
-  }, []);
+  }, [allPhotos, onAllImagesFailed]);
 
   useEffect(() => {
     setPhotoIndex(0);
