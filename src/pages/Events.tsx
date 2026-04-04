@@ -11,6 +11,7 @@ import { Calendar, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
 import { EventCard, type EventData } from "@/components/events/EventCard";
+import { SearchInput } from "@/components/SearchInput";
 
 type EventTier = "community" | "premium" | "adults_only";
 
