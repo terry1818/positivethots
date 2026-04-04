@@ -541,7 +541,7 @@ const Profile = () => {
         </Card>
 
         {/* EXPLORE section */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5" data-tour="profile-explore">
           <h2 className="text-sm font-semibold text-muted-foreground tracking-wider uppercase px-1">Explore</h2>
           <Card>
             <ProfileNavRow emoji="🎪" label="Events & Workshops" onClick={() => navigate("/events")} />
