@@ -4,6 +4,7 @@ import { Heart, Sparkles, BookOpen, MessageCircle, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useCallback } from "react";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,6 +23,7 @@ export const BottomNav = () => {
   const location = useLocation();
   const [tapped, setTapped] = useState<string | null>(null);
   const { unreadCount } = useUnreadMessages();
+  const reducedMotion = useReducedMotion();
   const qc = useQueryClient();
 
   const prefetchMessages = useCallback(async () => {
@@ -82,7 +84,7 @@ export const BottomNav = () => {
               className={cn(
                 "flex flex-col items-center gap-0.5 h-auto min-h-[48px] min-w-[48px] py-2 px-2 relative transition-all duration-200",
                 isActive ? "text-primary" : "text-muted-foreground",
-                isTapped && "animate-tab-bounce"
+                isTapped && !reducedMotion && "animate-tab-bounce"
               )}
             >
               <div className="relative">

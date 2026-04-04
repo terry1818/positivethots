@@ -12,6 +12,7 @@ import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
 import { Lock, Heart, Crown, Check, X, Star, MapPin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { Logo } from "@/components/Logo";
@@ -40,6 +41,7 @@ interface SentLikeProfile {
 
 const LikesYou = () => {
   const navigate = useNavigate();
+  const reducedMotion = useReducedMotion();
   const [isPremium, setIsPremium] = useState(false);
   const [likers, setLikers] = useState<LikerProfile[]>([]);
   const [likerCount, setLikerCount] = useState(0);
@@ -229,7 +231,7 @@ const LikesYou = () => {
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   {likers.map((liker, idx) => (
-                    <Card key={liker.id} className={cn("overflow-hidden relative animate-stagger-fade", liker.is_super_like && "ring-2 ring-amber-500/50")} style={{ animationDelay: `${idx * 80}ms` }}>
+                    <Card key={liker.id} className={cn("overflow-hidden relative", !reducedMotion && "animate-stagger-fade", liker.is_super_like && "ring-2 ring-amber-500/50")} style={!reducedMotion ? { animationDelay: `${idx * 80}ms` } : undefined}>
                       {liker.is_super_like && (
                         <Badge className="absolute top-2 right-2 z-10 bg-amber-500 text-white">
                           <Star className="h-3 w-3 mr-1 fill-current" />Thot
@@ -278,8 +280,8 @@ const LikesYou = () => {
                   {sentLikes.map((profile, idx) => (
                     <Card
                       key={profile.id}
-                      className="overflow-hidden relative animate-stagger-fade cursor-pointer"
-                      style={{ animationDelay: `${idx * 80}ms` }}
+                      className={cn("overflow-hidden relative cursor-pointer", !reducedMotion && "animate-stagger-fade")}
+                      style={!reducedMotion ? { animationDelay: `${idx * 80}ms` } : undefined}
                       onClick={() => navigate("/profile/" + profile.id)}
                     >
                       <button

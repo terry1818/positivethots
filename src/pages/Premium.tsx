@@ -31,6 +31,7 @@ import {
 } from "@/lib/subscriptionTiers";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 const tierIcons = {
   plus: Zap,
@@ -47,6 +48,7 @@ const Premium = () => {
   const [promoCode, setPromoCode] = useState("");
   const [redeemingCode, setRedeemingCode] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
+  const reducedMotion = useReducedMotion();
 
   // Gift state
   const [giftEmail, setGiftEmail] = useState("");
@@ -155,10 +157,10 @@ const Premium = () => {
 
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative overflow-hidden">
-        <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-blob-float" />
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl animate-blob-float [animation-delay:5s]" />
-        <div className="animate-bounce-in relative z-10 text-center">
-          <TierIcon className="h-16 w-16 text-primary mb-4 mx-auto animate-pulse-glow" />
+        <div className={cn("absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl", !reducedMotion && "animate-blob-float")} aria-hidden="true" />
+        <div className={cn("absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl", !reducedMotion && "animate-blob-float [animation-delay:5s]")} aria-hidden="true" />
+        <div className={cn("relative z-10 text-center", !reducedMotion && "animate-bounce-in")}>
+          <TierIcon className={cn("h-16 w-16 text-primary mb-4 mx-auto", !reducedMotion && "animate-pulse-glow")} />
           <h1 className="text-2xl font-bold mb-2">You're {currentConfig?.name ?? "Premium"}!</h1>
           <p className="text-muted-foreground mb-6">You have full access to your plan's features.</p>
           <div className="flex gap-3">
@@ -176,17 +178,17 @@ const Premium = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-blob-float" />
-      <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl animate-blob-float [animation-delay:5s]" />
+      <div className={cn("absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl", !reducedMotion && "animate-blob-float")} aria-hidden="true" />
+      <div className={cn("absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl", !reducedMotion && "animate-blob-float [animation-delay:5s]")} aria-hidden="true" />
 
       <div className="container max-w-4xl mx-auto px-4 py-6 relative z-10">
         <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" /> Back
         </Button>
 
-        <div className="text-center mb-8 animate-fade-in">
+        <div className={cn("text-center mb-8", !reducedMotion && "animate-fade-in")}>
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <Crown className="h-8 w-8 text-primary animate-wiggle" />
+            <Crown className={cn("h-8 w-8 text-primary", !reducedMotion && "animate-wiggle")} />
           </div>
           <h1 className="text-3xl font-bold mb-2">Choose Your Plan</h1>
           <p className="text-muted-foreground">Unlock the full experience</p>

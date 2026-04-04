@@ -483,7 +483,7 @@ const Onboarding = () => {
   return (
     <div className={`min-h-screen bg-gradient-to-br ${PHASE_GRADIENTS[phaseIndex] || PHASE_GRADIENTS[0]} transition-all duration-700 flex flex-col items-center justify-center p-4 relative overflow-hidden`}>
       {/* Background orbs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-primary/5 blur-3xl animate-blob-float" />
         <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/5 blur-3xl animate-blob-float" style={{ animationDelay: "-6s" }} />
         <div className="absolute top-1/3 right-0 w-56 h-56 rounded-full bg-accent/5 blur-3xl animate-blob-float" style={{ animationDelay: "-12s" }} />
