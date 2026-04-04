@@ -171,20 +171,20 @@ const LikesYou = () => {
       <MicroCelebration trigger={celebrationTrigger} emojis={["🎉", "💕", "✨", "💜"]} />
       <div className="flex-1 overflow-auto">
         <div className="container max-w-md mx-auto px-4">
-          <header className="border-b border-border bg-card py-4 flex items-center justify-between mb-4">
+          <header className="border-b border-border bg-card py-3 flex items-center justify-between">
             <Logo size="md" showText={false} />
+            <div className="flex items-center gap-2">
+              <Heart className="h-5 w-5 text-primary" />
+              <h1 className="text-xl font-bold">Likes</h1>
+              {likerCount > 0 && (
+                <span className="bg-primary text-primary-foreground text-sm px-2 py-0.5 rounded-full animate-pulse">{likerCount}</span>
+              )}
+            </div>
             <div className="w-10" />
           </header>
-          <div className="flex items-center gap-2 mb-4">
-            <Heart className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl font-bold">Likes</h1>
-            {likerCount > 0 && (
-              <span className="bg-primary text-primary-foreground text-sm px-2 py-0.5 rounded-full animate-pulse">{likerCount}</span>
-            )}
-          </div>
 
           <Tabs defaultValue="likes-you" onValueChange={handleTabChange}>
-            <TabsList className="w-full mb-4">
+            <TabsList className="w-full mb-2 mt-2">
               <TabsTrigger value="likes-you" className="flex-1" data-tour="likes-tab-likes-you">Likes You</TabsTrigger>
               <TabsTrigger value="your-likes" className="flex-1" data-tour="likes-tab-your-likes">Your Likes</TabsTrigger>
             </TabsList>
@@ -203,20 +203,20 @@ const LikesYou = () => {
                   ))}
                 </div>
               ) : likerCount === 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <BrandedEmptyState
                     mascot="heart"
                     headline="Your admirers are on their way! 💜"
                     description="Complete more badges to boost your profile visibility."
                     ctaLabel="Continue Learning"
                     onCtaClick={() => navigate("/learn")}
-                    className="[&_img]:max-h-[140px]"
+                    className="py-6 [&_img]:max-h-[80px] [&_.mb-6]:mb-3 [&_.mb-2]:mb-1"
                   />
                   {!isPremium && (
                     <Card className="animate-pulse-border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-left">
-                      <CardContent className="p-3 text-center">
-                        <Crown className="h-6 w-6 text-primary mx-auto mb-1.5 animate-wiggle" />
-                        <p className="font-semibold text-foreground text-sm mb-0.5">Unlock Premium</p>
+                      <CardContent className="p-2.5 text-center">
+                        <Crown className="h-5 w-5 text-primary mx-auto mb-1 animate-wiggle" />
+                        <p className="font-semibold text-foreground text-sm">Unlock Premium</p>
                         <p className="text-sm text-muted-foreground mb-2">See who likes you instantly — $9.99/mo.</p>
                         <Button onClick={() => navigate("/premium")} className="w-full" size="sm">
                           <Lock className="h-4 w-4 mr-2" />Go Premium
