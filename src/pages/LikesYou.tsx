@@ -304,8 +304,6 @@ const LikesYou = () => {
                       >
                         <X className="h-3.5 w-3.5 text-destructive-foreground" />
                       </button>
-                        <X className="h-3.5 w-3.5 text-destructive-foreground" />
-                      </button>
                       <div className="absolute top-2 right-2 z-10 bg-primary/80 rounded-full p-1.5">
                         <Heart className="h-3.5 w-3.5 text-primary-foreground fill-current" />
                       </div>
