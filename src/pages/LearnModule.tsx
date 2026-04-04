@@ -45,6 +45,11 @@ interface Question {
   is_checkpoint?: boolean | null;
   position_in_section?: number | null;
   section_id?: string | null;
+  exercise_type?: string;
+  match_pairs?: any[];
+  correct_order?: number[];
+  explanation?: string;
+  correct_answer?: number;
 }
 
 export interface CheckpointQuestion {
