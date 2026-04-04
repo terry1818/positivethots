@@ -24,6 +24,7 @@ export const BottomNav = () => {
   const location = useLocation();
   const [tapped, setTapped] = useState<string | null>(null);
   const { unreadCount } = useUnreadMessages();
+  const reducedMotion = useReducedMotion();
   const qc = useQueryClient();
 
   const prefetchMessages = useCallback(async () => {
