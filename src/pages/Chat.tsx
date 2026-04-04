@@ -379,7 +379,7 @@ const Chat = () => {
       toast.success("User Blocked", { description: "You won't see this user anymore." });
       navigate("/messages");
     } catch (err: any) {
-      toast.error(err.message || "Failed to block user");
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
