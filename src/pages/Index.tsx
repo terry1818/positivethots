@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef, type CSSProperties } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
@@ -134,6 +134,23 @@ const calculateCompatibilityReasons = (
 };
 
 const MYSTERY_INTERVAL = 10; // Insert mystery card every N cards
+
+const KeyboardHints = () => {
+  const [visible, setVisible] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(false), 7000);
+    return () => clearTimeout(timer);
+  }, []);
+  if (!visible) return null;
+  return (
+    <div className="hidden xl:flex gap-6 text-sm text-muted-foreground justify-center py-2 animate-fade-in">
+      <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">←</kbd> Pass</span>
+      <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">↑</kbd> Send a Thot</span>
+      <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">→</kbd> Connect</span>
+      <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">Space</kbd> View profile</span>
+    </div>
+  );
+};
 
 const getMysteryRevealLimit = (tier: string): number => {
   if (tier === "vip" || tier === "premium") return 999;
@@ -649,7 +666,7 @@ const Index = () => {
   const showProfileBanner = currentUser && userBadgeCount < requiredCount;
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="h-screen flex flex-col bg-background overflow-hidden">
       <MicroCelebration trigger={celebrationTrigger} emojis={["💕", "✨", "💜", "🔥"]} />
 
       {/* Header */}
@@ -730,10 +747,10 @@ const Index = () => {
         {announcedProfile}
       </div>
 
-      {/* Curated Matches Grid */}
-      <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4">
+      {/* Curated Matches Grid — flex-1 fills remaining space */}
+      <div className="flex-1 min-h-0 overflow-hidden max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 w-full">
         {suggestions.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-[50vh] px-6 text-center">
+          <div className="flex flex-col items-center justify-center h-full px-6 text-center overflow-y-auto">
             <BrandedEmptyState
               mascot="binoculars"
               headline="You've seen everyone nearby! 🔭"
@@ -793,7 +810,7 @@ const Index = () => {
           </div>
         ) : (
           <>
-            <div className="relative flex justify-center items-start px-4 pt-2" data-walkthrough="discovery-card" data-tour="discovery-card" style={{ height: 'calc(100vh - 280px)', minHeight: '340px' }}>
+            <div className="relative flex justify-center items-start h-full pt-2" data-walkthrough="discovery-card" data-tour="discovery-card">
               {/* Undo button */}
               {showUndoButton && lastPassedProfile && (
                 <button
@@ -839,13 +856,8 @@ const Index = () => {
                 );
               })}
             </div>
-            {/* Desktop keyboard hints */}
-            <div className="hidden xl:flex gap-6 text-sm text-muted-foreground justify-center mt-3">
-              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">←</kbd> Pass</span>
-              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">↑</kbd> Send a Thot</span>
-              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">→</kbd> Connect</span>
-              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">Space</kbd> View profile</span>
-            </div>
+            {/* Desktop keyboard hints — auto-dismiss after 7s */}
+            <KeyboardHints />
           </>
         )}
       </div>
@@ -907,7 +919,9 @@ const Index = () => {
         canSuperLike={canSuperLike}
       />
 
-      <BottomNav />
+      <div className="shrink-0">
+        <BottomNav />
+      </div>
 
       {/* First-time walkthrough */}
       {showWalkthrough && suggestions.length > 0 && (

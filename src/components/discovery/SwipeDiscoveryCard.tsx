@@ -178,7 +178,7 @@ export const SwipeDiscoveryCard = memo(({
     <div
       ref={cardRef}
       className={cn(
-        "absolute w-full max-w-sm md:max-w-md select-none",
+        "absolute w-full max-w-sm md:max-w-md max-h-full select-none",
         animate === "left" && "animate-swipe-left",
         animate === "right" && "animate-swipe-right",
         animate === "up" && "animate-swipe-fly-up",
@@ -200,7 +200,7 @@ export const SwipeDiscoveryCard = memo(({
     >
       <div className="rounded-3xl overflow-hidden shadow-xl border border-border bg-card">
         {/* Photo area */}
-        <div className="relative h-[50vh] max-h-96 w-full overflow-hidden">
+        <div className="relative h-[40vh] max-h-80 w-full overflow-hidden">
           {photos.length > 0 ? (
             <BlurImage
               src={photos[photoIndex] || "/placeholder.svg"}
