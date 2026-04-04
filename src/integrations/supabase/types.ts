@@ -2244,6 +2244,7 @@ export type Database = {
       user_photos: {
         Row: {
           created_at: string
+          focal_point_y: number
           id: string
           moderation_reason: string | null
           moderation_status: string
@@ -2255,6 +2256,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          focal_point_y?: number
           id?: string
           moderation_reason?: string | null
           moderation_status?: string
@@ -2266,6 +2268,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          focal_point_y?: number
           id?: string
           moderation_reason?: string | null
           moderation_status?: string

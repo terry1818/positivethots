@@ -1,0 +1,1 @@
+ALTER TABLE public.user_photos ADD COLUMN IF NOT EXISTS focal_point_y DECIMAL NOT NULL DEFAULT 50;
