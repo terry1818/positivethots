@@ -78,10 +78,12 @@ const Events = () => {
   };
 
   const handleRsvp = async (eventId: string) => {
-    setRsvpLoading(eventId);
+    // Optimistic: immediately show RSVP'd state
+    setRsvps((prev) => [...prev, eventId]);
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { toast.error("Please sign in"); return; }
+      if (!session) { setRsvps((prev) => prev.filter((id) => id !== eventId)); toast.error("Please sign in"); return; }
 
       const { error } = await supabase.from("event_rsvps").insert({
         event_id: eventId,
@@ -89,27 +91,29 @@ const Events = () => {
         status: "confirmed",
       });
       if (error) throw error;
-      setRsvps((prev) => [...prev, eventId]);
       toast.success("You're in! 🎉");
     } catch (err: any) {
-      toast.error(err.message?.includes("duplicate") ? "You've already RSVP'd" : "Failed to RSVP");
-    } finally {
-      setRsvpLoading(null);
+      // Rollback
+      setRsvps((prev) => prev.filter((id) => id !== eventId));
+      toast.error(err.message?.includes("duplicate") ? "You've already RSVP'd" : "RSVP failed, try again");
     }
   };
 
   const handleCancelRsvp = async (eventId: string) => {
-    setRsvpLoading(eventId);
+    // Optimistic: immediately revert to un-RSVP'd state
+    const previousRsvps = [...rsvps];
+    setRsvps((prev) => prev.filter((id) => id !== eventId));
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      await supabase.from("event_rsvps").delete().eq("event_id", eventId).eq("user_id", session.user.id);
-      setRsvps((prev) => prev.filter((id) => id !== eventId));
+      if (!session) { setRsvps(previousRsvps); return; }
+      const { error } = await supabase.from("event_rsvps").delete().eq("event_id", eventId).eq("user_id", session.user.id);
+      if (error) throw error;
       toast.success("RSVP cancelled");
     } catch {
-      toast.error("Failed to cancel RSVP");
-    } finally {
-      setRsvpLoading(null);
+      // Rollback
+      setRsvps(previousRsvps);
+      toast.error("Failed to cancel RSVP, try again");
     }
   };
 

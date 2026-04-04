@@ -334,15 +334,37 @@ const Index = () => {
     });
   }, [navigate]);
 
+  // Optimistic card removal helper
+  const optimisticRemoveCard = useCallback((otherUserId: string): { previousSuggestions: EnhancedProfile[], removedProfile: EnhancedProfile | undefined } => {
+    const previousSuggestions = [...suggestions];
+    const removedProfile = suggestions.find(s => s.id === otherUserId);
+    setSuggestions(prev => {
+      const next = prev.filter(s => s.id !== otherUserId);
+      const nextProfile = next[0];
+      if (nextProfile) setAnnouncedProfile(`Now viewing ${nextProfile.display_name || nextProfile.name}, age ${nextProfile.age}. ${nextProfile.compatibility_score ?? 0}% compatible.`);
+      return next;
+    });
+    return { previousSuggestions, removedProfile };
+  }, [suggestions]);
+
   const handleConnect = useCallback(async (otherUserId: string) => {
     if (!currentUser) return;
+
+    // Optimistic: immediately remove card
+    const { previousSuggestions, removedProfile } = optimisticRemoveCard(otherUserId);
+    setCelebrationTrigger(prev => prev + 1);
+    trackEvent("swipe", { direction: "right", swiped_id: otherUserId });
+
     const { error: swipeError } = await supabase.from("swipes").insert({
       swiper_id: currentUser.id, swiped_id: otherUserId, direction: "right",
     });
-    if (swipeError) { toast.error("Failed to send connection"); console.error("Swipe error:", swipeError); return; }
-
-    trackEvent("swipe", { direction: "right", swiped_id: otherUserId });
-    setCelebrationTrigger(prev => prev + 1);
+    if (swipeError) {
+      // Rollback
+      setSuggestions(previousSuggestions);
+      toast.error("Connection failed, try again");
+      console.error("Swipe error:", swipeError);
+      return;
+    }
 
     const { data: matchData, error: matchError } = await supabase
       .rpc("check_match", { user1: currentUser.id, user2: otherUserId });
@@ -351,44 +373,44 @@ const Index = () => {
     if (matchData) {
       trackEvent("match", { matched_user_id: otherUserId });
       playMatch();
-      const matchedProfile = suggestions.find(s => s.id === otherUserId);
-      if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
+      if (removedProfile) { setMatchedUser(removedProfile); setShowMatchModal(true); }
       toast.success("You Both Said Yes 💜", { description: "You can now start chatting!" });
     } else {
       toast.success("Connection Sent", { description: "They'll be notified of your interest!" });
     }
-    setSuggestions(prev => {
-      const next = prev.filter(s => s.id !== otherUserId);
-      const nextProfile = next[0];
-      if (nextProfile) setAnnouncedProfile(`Now viewing ${nextProfile.display_name || nextProfile.name}, age ${nextProfile.age}. ${nextProfile.compatibility_score ?? 0}% compatible.`);
-      return next;
-    });
-  }, [currentUser, suggestions]);
+  }, [currentUser, suggestions, optimisticRemoveCard]);
 
   const handlePass = useCallback(async (otherUserId: string) => {
     if (!currentUser) return;
-    await supabase.from("swipes").insert({
+
+    // Optimistic: immediately remove card
+    const { previousSuggestions } = optimisticRemoveCard(otherUserId);
+    trackEvent("swipe", { direction: "left", swiped_id: otherUserId });
+
+    const { error } = await supabase.from("swipes").insert({
       swiper_id: currentUser.id, swiped_id: otherUserId, direction: "left",
     });
-    trackEvent("swipe", { direction: "left", swiped_id: otherUserId });
-    setSuggestions(prev => {
-      const next = prev.filter(s => s.id !== otherUserId);
-      const nextProfile = next[0];
-      if (nextProfile) setAnnouncedProfile(`Now viewing ${nextProfile.display_name || nextProfile.name}, age ${nextProfile.age}. ${nextProfile.compatibility_score ?? 0}% compatible.`);
-      return next;
-    });
-  }, [currentUser]);
+    if (error) {
+      setSuggestions(previousSuggestions);
+      toast.error("Failed to pass, try again");
+    }
+  }, [currentUser, optimisticRemoveCard]);
 
   const handleSuperLike = useCallback(async (otherUserId: string) => {
     if (!currentUser) return;
+
+    // Optimistic: immediately remove card and show toast
+    const { previousSuggestions, removedProfile } = optimisticRemoveCard(otherUserId);
+    setCelebrationTrigger(prev => prev + 1);
+    trackEvent("super_like", { swiped_id: otherUserId });
+
     const success = await sendSuperLike(otherUserId);
     if (!success) {
+      // Rollback
+      setSuggestions(previousSuggestions);
       toast.error("No Thots left", { description: "Purchase more or wait until tomorrow." });
       return;
     }
-
-    trackEvent("super_like", { swiped_id: otherUserId });
-    setCelebrationTrigger(prev => prev + 1);
 
     const { data: matchData } = await supabase
       .rpc("check_match", { user1: currentUser.id, user2: otherUserId });
@@ -396,20 +418,13 @@ const Index = () => {
     if (matchData) {
       trackEvent("match", { matched_user_id: otherUserId });
       playMatch();
-      const matchedProfile = suggestions.find(s => s.id === otherUserId);
-      if (matchedProfile) { setMatchedUser(matchedProfile); setShowMatchModal(true); }
+      if (removedProfile) { setMatchedUser(removedProfile); setShowMatchModal(true); }
       toast.success("You Both Said Yes 💜", { description: "Your Thot worked!" });
     } else {
       playThot();
       toast.success("Thot Sent! 💜", { description: "They'll see you stand out!" });
     }
-    setSuggestions(prev => {
-      const next = prev.filter(s => s.id !== otherUserId);
-      const nextProfile = next[0];
-      if (nextProfile) setAnnouncedProfile(`Now viewing ${nextProfile.display_name || nextProfile.name}, age ${nextProfile.age}. ${nextProfile.compatibility_score ?? 0}% compatible.`);
-      return next;
-    });
-  }, [currentUser, suggestions, sendSuperLike]);
+  }, [currentUser, suggestions, sendSuperLike, optimisticRemoveCard]);
 
   // Keyboard navigation for discovery
   useEffect(() => {

@@ -220,10 +220,23 @@ const Chat = () => {
     lastSendTimestamp.current = now;
 
     const messageContent = newMessage.trim();
+    const optimisticId = `optimistic-${Date.now()}`;
     setNewMessage("");
     if (channelRef.current) {
       channelRef.current.send({ type: 'broadcast', event: 'typing', payload: { userId: currentUser.id, isTyping: false } });
     }
+
+    // Optimistic: immediately show message bubble with "sending" state
+    const optimisticMsg: EnhancedMessage = {
+      id: optimisticId,
+      match_id: matchId,
+      sender_id: currentUser.id,
+      content: messageContent,
+      created_at: new Date().toISOString(),
+      delivered: false,
+      read: false,
+    };
+    setMessages(prev => [...prev, optimisticMsg]);
 
     // Moderate message before sending
     try {
@@ -236,6 +249,7 @@ const Chat = () => {
         const errorBody = typeof modError === 'object' && modError !== null ? (modError as any) : {};
         if (errorBody.status === 429 || (typeof modError === 'string' && modError.includes('429'))) {
           toast.error("Slow down — you're sending too quickly.");
+          setMessages(prev => prev.filter(m => m.id !== optimisticId));
           setNewMessage(messageContent);
           return;
         }
@@ -243,11 +257,13 @@ const Chat = () => {
 
       if (modResult?.error && modResult.error.includes("Sending too fast")) {
         toast.error("Slow down — you're sending too quickly.");
+        setMessages(prev => prev.filter(m => m.id !== optimisticId));
         setNewMessage(messageContent);
         return;
       }
 
       if (modResult?.verdict === 'flagged') {
+        setMessages(prev => prev.filter(m => m.id !== optimisticId));
         await supabase.from("flagged_messages").insert({
           match_id: matchId,
           sender_id: currentUser.id,
@@ -262,10 +278,17 @@ const Chat = () => {
       console.error("Moderation check failed:", e);
     }
 
-    const { error } = await supabase.from("messages").insert({ match_id: matchId, sender_id: currentUser.id, content: messageContent });
-    if (error) { console.error("Error sending message:", error); toast.error("Failed to send message"); setNewMessage(messageContent); }
-    else {
+    const { data: insertedMsg, error } = await supabase.from("messages").insert({ match_id: matchId, sender_id: currentUser.id, content: messageContent }).select().single();
+    if (error) {
+      // Mark as failed — keep the bubble but show error state
+      console.error("Error sending message:", error);
+      setMessages(prev => prev.map(m => m.id === optimisticId ? { ...m, id: `failed-${Date.now()}`, delivered: false, read: false } : m));
+      toast.error("Failed to send message", { description: "Tap message to retry" });
+    } else {
+      // Replace optimistic message with real one
+      setMessages(prev => prev.map(m => m.id === optimisticId ? { ...insertedMsg, delivered: true, read: false } : m));
       trackEvent("message_sent", { match_id: matchId });
+      // Simulate read receipt after delay
       setTimeout(() => {
         setMessages(prev => prev.map(msg => msg.sender_id === currentUser.id && !msg.read ? { ...msg, read: true } : msg));
       }, 2000 + Math.random() * 3000);
