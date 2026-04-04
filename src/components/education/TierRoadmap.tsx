@@ -381,7 +381,7 @@ export const BadgePathMap = ({
                           {isContinueModule && continueSectionNumber && continueProgressPercent != null && (
                             <button
                               onClick={(e) => { e.stopPropagation(); onModuleClick(module.slug); }}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-base font-semibold hover:bg-indigo-500/25 transition-colors"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-sm font-semibold hover:bg-indigo-500/25 transition-colors"
                             >
                               ▶ Resume · Section {continueSectionNumber} · {continueProgressPercent}%
                             </button>
