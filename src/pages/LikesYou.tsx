@@ -41,6 +41,7 @@ interface SentLikeProfile {
 
 const LikesYou = () => {
   const navigate = useNavigate();
+  const reducedMotion = useReducedMotion();
   const [isPremium, setIsPremium] = useState(false);
   const [likers, setLikers] = useState<LikerProfile[]>([]);
   const [likerCount, setLikerCount] = useState(0);
