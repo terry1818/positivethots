@@ -22,6 +22,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { ProfilePromptsDisplay } from "@/components/profile/ProfilePrompts";
 import { ProfileCompletionMeter } from "@/components/profile/ProfileCompletionMeter";
+import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { useProfileCompletion } from "@/hooks/useProfileCompletion";
 
 interface UserBadge {
