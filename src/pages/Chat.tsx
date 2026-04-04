@@ -531,10 +531,19 @@ const Chat = () => {
                         </div>
                       )}
                       <div className={cn("relative px-4 py-2.5 rounded-2xl",
-                        isOwn ? "bg-gradient-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
+                        isOwn ? "bg-gradient-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none",
+                        isOwn && message.id.startsWith("optimistic-") && "opacity-80",
+                        isOwn && message.id.startsWith("failed-") && "opacity-60"
                       )}>
                         <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
-                        {isOwn && (
+                        {isOwn && message.id.startsWith("failed-") ? (
+                          <button
+                            className="flex items-center gap-1 mt-1 text-xs text-destructive-foreground/80 hover:text-destructive-foreground"
+                            onClick={(e) => { e.stopPropagation(); setNewMessage(message.content); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
+                          >
+                            <span>Failed to send · Tap to retry</span>
+                          </button>
+                        ) : isOwn && (
                           <div className="flex justify-end items-center gap-1 mt-1">
                             <span className="text-xs opacity-70">{formatTime(message.created_at)}</span>
                             {message.read ? (
