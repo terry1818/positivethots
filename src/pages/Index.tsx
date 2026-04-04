@@ -365,9 +365,9 @@ const Index = () => {
 
     const enhancedProfiles: EnhancedProfile[] = profilesResult.data
       .filter(p => {
-        // Only include profiles that have at least one photo
-        const hasPhoto = photosByUser.get(p.id)?.length > 0 || p.profile_image;
-        return hasPhoto;
+        // Only include profiles that have at least one approved public photo
+        const approvedPhotos = photosByUser.get(p.id);
+        return approvedPhotos && approvedPhotos.length > 0;
       })
       .map(p => {
         const userPhotoData = photosByUser.get(p.id) || [];
