@@ -29,6 +29,7 @@ interface PromptRow {
 const EditProfile = () => {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [saving, setSaving] = useState(false);
   const [photos, setPhotos] = useState<any[]>([]);
   const [latestVerification, setLatestVerification] = useState<any>(null);
