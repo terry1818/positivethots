@@ -53,7 +53,17 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [testimonialIdx, setTestimonialIdx] = useState(0);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // Rotate testimonials
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const interval = setInterval(() => setTestimonialIdx(i => (i + 1) % TESTIMONIALS.length), 5000);
+    return () => clearInterval(interval);
+  }, [prefersReducedMotion]);
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement>(null);
 
