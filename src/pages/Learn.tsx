@@ -38,6 +38,7 @@ const tierOrder = ["foundation", "sexual_health", "identity", "relationships", "
 
 const Learn = () => {
   const [moduleSearchQuery, setModuleSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
   const [modules, setModules] = useState<Module[]>([]);
   const [userBadges, setUserBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
