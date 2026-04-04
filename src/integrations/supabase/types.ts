@@ -94,6 +94,57 @@ export type Database = {
           },
         ]
       }
+      community_challenges: {
+        Row: {
+          completed: boolean
+          created_at: string
+          current_progress: number
+          description: string
+          ends_at: string
+          goal_target: number
+          goal_type: string
+          id: string
+          is_active: boolean
+          reward_description: string
+          reward_icon: string | null
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          current_progress?: number
+          description: string
+          ends_at: string
+          goal_target: number
+          goal_type: string
+          id?: string
+          is_active?: boolean
+          reward_description: string
+          reward_icon?: string | null
+          starts_at: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          current_progress?: number
+          description?: string
+          ends_at?: string
+          goal_target?: number
+          goal_type?: string
+          id?: string
+          is_active?: boolean
+          reward_description?: string
+          reward_icon?: string | null
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       daily_challenges: {
         Row: {
           challenge_date: string
@@ -207,6 +258,56 @@ export type Database = {
           video_url?: string | null
         }
         Relationships: []
+      }
+      education_scenarios: {
+        Row: {
+          characters: Json
+          created_at: string
+          difficulty_level: number
+          id: string
+          image_url: string | null
+          module_id: string
+          prerequisite_badges: number[] | null
+          scenario_slug: string
+          scenes: Json
+          title: string
+          xp_reward: number
+        }
+        Insert: {
+          characters?: Json
+          created_at?: string
+          difficulty_level?: number
+          id?: string
+          image_url?: string | null
+          module_id: string
+          prerequisite_badges?: number[] | null
+          scenario_slug: string
+          scenes?: Json
+          title: string
+          xp_reward?: number
+        }
+        Update: {
+          characters?: Json
+          created_at?: string
+          difficulty_level?: number
+          id?: string
+          image_url?: string | null
+          module_id?: string
+          prerequisite_badges?: number[] | null
+          scenario_slug?: string
+          scenes?: Json
+          title?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "education_scenarios_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "education_modules"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_send_log: {
         Row: {
@@ -1156,6 +1257,56 @@ export type Database = {
         }
         Relationships: []
       }
+      sprint_participants: {
+        Row: {
+          demotion_zone: boolean
+          id: string
+          joined_at: string
+          lessons_completed: number
+          promotion_zone: boolean
+          rank: number | null
+          scenarios_completed: number
+          sprint_id: string
+          updated_at: string
+          user_id: string
+          xp_earned: number
+        }
+        Insert: {
+          demotion_zone?: boolean
+          id?: string
+          joined_at?: string
+          lessons_completed?: number
+          promotion_zone?: boolean
+          rank?: number | null
+          scenarios_completed?: number
+          sprint_id: string
+          updated_at?: string
+          user_id: string
+          xp_earned?: number
+        }
+        Update: {
+          demotion_zone?: boolean
+          id?: string
+          joined_at?: string
+          lessons_completed?: number
+          promotion_zone?: boolean
+          rank?: number | null
+          scenarios_completed?: number
+          sprint_id?: string
+          updated_at?: string
+          user_id?: string
+          xp_earned?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sprint_participants_sprint_id_fkey"
+            columns: ["sprint_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_sprints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           created_at: string
@@ -1575,6 +1726,56 @@ export type Database = {
         }
         Relationships: []
       }
+      user_scenario_progress: {
+        Row: {
+          choices_made: Json
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          current_scene: string
+          id: string
+          max_score: number
+          scenario_id: string
+          score: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          choices_made?: Json
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          current_scene?: string
+          id?: string
+          max_score?: number
+          scenario_id: string
+          score?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          choices_made?: Json
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          current_scene?: string
+          id?: string
+          max_score?: number
+          scenario_id?: string
+          score?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_scenario_progress_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: false
+            referencedRelation: "education_scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_section_progress: {
         Row: {
           completed: boolean | null
@@ -1637,6 +1838,36 @@ export type Database = {
           selfie_path?: string
           status?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      weekly_sprints: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          league_tier: string
+          max_participants: number
+          week_end: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          league_tier?: string
+          max_participants?: number
+          week_end: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          league_tier?: string
+          max_participants?: number
+          week_end?: string
+          week_start?: string
         }
         Relationships: []
       }
