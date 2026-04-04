@@ -73,6 +73,7 @@ const Settings = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [changingPassword, setChangingPassword] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
 
   // Account actions
   const [exporting, setExporting] = useState(false);
