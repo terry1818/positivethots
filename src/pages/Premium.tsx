@@ -48,6 +48,7 @@ const Premium = () => {
   const [promoCode, setPromoCode] = useState("");
   const [redeemingCode, setRedeemingCode] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
+  const reducedMotion = useReducedMotion();
 
   // Gift state
   const [giftEmail, setGiftEmail] = useState("");
