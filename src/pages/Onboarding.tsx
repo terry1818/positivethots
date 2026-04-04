@@ -772,7 +772,7 @@ const Onboarding = () => {
               {/* Step 9: Relationship Status */}
               {step === 9 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="💜" title="Current status" subtitle="Where are you right now?" />
+                  <StepHeader emoji="💜" title="Current status" subtitle="Where are you right now? · Required" />
                   <div className="flex gap-1 mb-1 animate-stagger-1">
                     <GlossaryTooltip term="Nesting Partner" />
                     <GlossaryTooltip term="Polycule" />
