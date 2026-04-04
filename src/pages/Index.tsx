@@ -161,6 +161,8 @@ const Index = () => {
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [breakdownName, setBreakdownName] = useState("");
   const [announcedProfile, setAnnouncedProfile] = useState("");
+  const [showWalkthrough, setShowWalkthrough] = useState(false);
+  const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
 
   // Handle super like purchase redirect
   useEffect(() => {
