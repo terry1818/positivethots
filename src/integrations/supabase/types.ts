@@ -1234,6 +1234,7 @@ export type Database = {
           boundaries: string | null
           churn_status: string
           created_at: string
+          cross_app_links: Json | null
           desires: string[] | null
           display_name: string | null
           earned_frames: string[]
@@ -1286,6 +1287,7 @@ export type Database = {
           boundaries?: string | null
           churn_status?: string
           created_at?: string
+          cross_app_links?: Json | null
           desires?: string[] | null
           display_name?: string | null
           earned_frames?: string[]
@@ -1338,6 +1340,7 @@ export type Database = {
           boundaries?: string | null
           churn_status?: string
           created_at?: string
+          cross_app_links?: Json | null
           desires?: string[] | null
           display_name?: string | null
           earned_frames?: string[]
@@ -1564,6 +1567,51 @@ export type Database = {
           reviewed_at?: string | null
           reviewed_by?: string | null
           status?: string
+        }
+        Relationships: []
+      }
+      spotify_connections: {
+        Row: {
+          access_token: string | null
+          anthem_track: Json | null
+          created_at: string
+          id: string
+          last_synced_at: string | null
+          refresh_token: string | null
+          show_on_profile: boolean
+          spotify_user_id: string | null
+          token_expires_at: string | null
+          top_artists: Json | null
+          top_tracks: Json | null
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          anthem_track?: Json | null
+          created_at?: string
+          id?: string
+          last_synced_at?: string | null
+          refresh_token?: string | null
+          show_on_profile?: boolean
+          spotify_user_id?: string | null
+          token_expires_at?: string | null
+          top_artists?: Json | null
+          top_tracks?: Json | null
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          anthem_track?: Json | null
+          created_at?: string
+          id?: string
+          last_synced_at?: string | null
+          refresh_token?: string | null
+          show_on_profile?: boolean
+          spotify_user_id?: string | null
+          token_expires_at?: string | null
+          top_artists?: Json | null
+          top_tracks?: Json | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -2221,6 +2269,130 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      video_date_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          education_tier_required: number | null
+          id: string
+          max_participants: number
+          round_duration_seconds: number
+          scheduled_at: string
+          status: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          education_tier_required?: number | null
+          id?: string
+          max_participants?: number
+          round_duration_seconds?: number
+          scheduled_at: string
+          status?: string
+          title?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          education_tier_required?: number | null
+          id?: string
+          max_participants?: number
+          round_duration_seconds?: number
+          scheduled_at?: string
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      video_date_participants: {
+        Row: {
+          event_id: string
+          id: string
+          matches_found: number
+          registered_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          matches_found?: number
+          registered_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          matches_found?: number
+          registered_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_date_participants_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "video_date_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      video_date_rounds: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          event_id: string
+          id: string
+          is_match: boolean | null
+          round_number: number
+          started_at: string | null
+          user_a: string
+          user_a_interest: boolean | null
+          user_b: string
+          user_b_interest: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          event_id: string
+          id?: string
+          is_match?: boolean | null
+          round_number: number
+          started_at?: string | null
+          user_a: string
+          user_a_interest?: boolean | null
+          user_b: string
+          user_b_interest?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          event_id?: string
+          id?: string
+          is_match?: boolean | null
+          round_number?: number
+          started_at?: string | null
+          user_a?: string
+          user_a_interest?: boolean | null
+          user_b?: string
+          user_b_interest?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_date_rounds_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "video_date_events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       weekly_sprints: {
         Row: {
