@@ -27,6 +27,8 @@ const Events = () => {
   const [registrations, setRegistrations] = useState<string[]>([]);
   const [rsvps, setRsvps] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<EventTier>("community");
+  const [eventSearch, setEventSearch] = useState("");
+  const handleEventSearch = useCallback((q: string) => setEventSearch(q.toLowerCase()), []);
 
   const hasEventsAccess = isFeatureUnlocked("events_access");
   const isVIP = subscriptionTier === "vip";
