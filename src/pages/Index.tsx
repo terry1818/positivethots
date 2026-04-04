@@ -839,13 +839,8 @@ const Index = () => {
                 );
               })}
             </div>
-            {/* Desktop keyboard hints */}
-            <div className="hidden xl:flex gap-6 text-sm text-muted-foreground justify-center mt-3">
-              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">←</kbd> Pass</span>
-              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">↑</kbd> Send a Thot</span>
-              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">→</kbd> Connect</span>
-              <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-muted text-sm font-mono">Space</kbd> View profile</span>
-            </div>
+            {/* Desktop keyboard hints — auto-dismiss after 7s */}
+            <KeyboardHints />
           </>
         )}
       </div>

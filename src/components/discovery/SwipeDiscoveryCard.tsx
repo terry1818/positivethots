@@ -200,7 +200,7 @@ export const SwipeDiscoveryCard = memo(({
     >
       <div className="rounded-3xl overflow-hidden shadow-xl border border-border bg-card">
         {/* Photo area */}
-        <div className="relative h-[50vh] max-h-96 w-full overflow-hidden">
+        <div className="relative h-[40vh] max-h-80 w-full overflow-hidden">
           {photos.length > 0 ? (
             <BlurImage
               src={photos[photoIndex] || "/placeholder.svg"}
