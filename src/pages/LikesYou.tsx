@@ -226,6 +226,11 @@ const LikesYou = () => {
                     >
                       See who likes you
                     </Button>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      <button onClick={() => navigate("/learn")} className="hover:underline">
+                        Not ready to upgrade? Keep learning to unlock features →
+                      </button>
+                    </p>
                   </div>
                 </div>
               ) : (
