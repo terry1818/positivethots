@@ -343,7 +343,7 @@ const LikesYou = () => {
                               </p>
                             )}
                             {profile.swiped_at && (
-                              <span className="text-white/60 text-sm">
+                              <span className="text-white/80 text-sm">
                                 {formatRelativeTime(profile.swiped_at)}
                               </span>
                             )}

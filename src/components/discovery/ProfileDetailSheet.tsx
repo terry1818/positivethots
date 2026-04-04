@@ -118,7 +118,7 @@ export const ProfileDetailSheet = ({
                     key={i}
                     className={cn(
                       "h-1 rounded-full transition-all",
-                      i === safePhotoIndex ? "w-4 bg-white" : "w-2 bg-white/40"
+                      i === safePhotoIndex ? "w-4 bg-white" : "w-2 bg-white/70 ring-1 ring-white/50"
                     )}
                   />
                 ))}
