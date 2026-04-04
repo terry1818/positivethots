@@ -401,17 +401,59 @@ const Index = () => {
     if (!currentUser) return;
 
     // Optimistic: immediately remove card
-    const { previousSuggestions } = optimisticRemoveCard(otherUserId);
+    const { previousSuggestions, removedProfile } = optimisticRemoveCard(otherUserId);
     trackEvent("swipe", { direction: "left", swiped_id: otherUserId });
+
+    // Store for undo
+    if (removedProfile) {
+      setLastPassedProfile(removedProfile);
+      setShowUndoButton(true);
+      clearTimeout(undoTimerRef.current);
+      undoTimerRef.current = setTimeout(() => setShowUndoButton(false), 5000);
+    }
 
     const { error } = await supabase.from("swipes").insert({
       swiper_id: currentUser.id, swiped_id: otherUserId, direction: "left",
     });
     if (error) {
       setSuggestions(previousSuggestions);
+      setLastPassedProfile(null);
+      setShowUndoButton(false);
       toast.error("Failed to pass, try again");
     }
   }, [currentUser, optimisticRemoveCard]);
+
+  const getUndoLimit = useCallback(() => {
+    if (subTier === "vip") return Infinity;
+    if (subTier === "premium" || subTier === "plus") return 3;
+    return 1;
+  }, [subTier]);
+
+  const handleUndo = useCallback(async () => {
+    if (!currentUser || !lastPassedProfile) return;
+    const limit = getUndoLimit();
+    if (dailyUndoCount >= limit) {
+      toast("Upgrade for more undos 👑", {
+        action: { label: "Upgrade", onClick: () => navigate("/premium") },
+      });
+      return;
+    }
+
+    // Delete swipe record
+    await supabase.from("swipes").delete().match({
+      swiper_id: currentUser.id,
+      swiped_id: lastPassedProfile.id,
+    });
+
+    // Re-insert at top
+    setSuggestions(prev => [lastPassedProfile, ...prev]);
+    setAnnouncedProfile(`Profile restored: ${lastPassedProfile.display_name || lastPassedProfile.name}`);
+    setDailyUndoCount(c => c + 1);
+    setLastPassedProfile(null);
+    setShowUndoButton(false);
+    clearTimeout(undoTimerRef.current);
+    toast.success("Profile restored ↩️");
+  }, [currentUser, lastPassedProfile, dailyUndoCount, getUndoLimit, navigate]);
 
   const handleSuperLike = useCallback(async (otherUserId: string) => {
     if (!currentUser) return;
