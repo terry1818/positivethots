@@ -90,7 +90,7 @@ export const ProfileFrame = memo(({ frameId, size = "md", children, className }:
         {children}
       </div>
       {frameId === "og" && (
-        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-amber-600 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full leading-none z-10">
+        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-amber-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full leading-none z-10">
           OG
         </span>
       )}
