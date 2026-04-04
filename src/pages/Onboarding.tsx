@@ -714,7 +714,7 @@ const Onboarding = () => {
               {/* Step 7: Desires */}
               {step === 7 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="⭐" title="What are you looking for?" subtitle="Select up to 10 — be honest!" />
+                  <StepHeader emoji="⭐" title="What are you looking for?" subtitle="Select up to 10 — be honest! · Optional" />
                   <div className="flex gap-1 mb-2 animate-stagger-1">
                     <GlossaryTooltip term="ENM" />
                     <GlossaryTooltip term="GGG" />
