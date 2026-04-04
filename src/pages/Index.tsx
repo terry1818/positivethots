@@ -384,7 +384,7 @@ const Index = () => {
         verified: p.is_verified,
         distance: null,
         is_boosted: boostedUserIds.has(p.id),
-      }))
+      };})
       .sort((a, b) => {
         if (a.is_boosted && !b.is_boosted) return -1;
         if (!a.is_boosted && b.is_boosted) return 1;
