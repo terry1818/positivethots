@@ -403,7 +403,12 @@ const Index = () => {
       playThot();
       toast.success("Thot Sent! 💜", { description: "They'll see you stand out!" });
     }
-    setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
+    setSuggestions(prev => {
+      const next = prev.filter(s => s.id !== otherUserId);
+      const nextProfile = next[0];
+      if (nextProfile) setAnnouncedProfile(`Now viewing ${nextProfile.display_name || nextProfile.name}, age ${nextProfile.age}. ${nextProfile.compatibility_score ?? 0}% compatible.`);
+      return next;
+    });
   }, [currentUser, suggestions, sendSuperLike]);
 
   // Keyboard navigation for discovery
