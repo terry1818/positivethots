@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
+import { onDiscoveryRefresh } from "@/lib/discoveryEvents";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -209,6 +210,32 @@ const Index = () => {
   useEffect(() => {
     checkAuthAndSetup();
   }, []);
+
+  // Subscribe to discovery refresh events (e.g. from unlike on Likes page)
+  useEffect(() => {
+    const unsub = onDiscoveryRefresh(() => {
+      if (currentUser) loadSuggestions(currentUser.id, currentUser);
+    });
+    return unsub;
+  }, [currentUser]);
+
+  // Auto-skip profiles with no photo
+  useEffect(() => {
+    if (suggestions.length > 0 && !suggestions[0].profile_image) {
+      setSuggestions(prev => prev.slice(1));
+    }
+  }, [suggestions]);
+
+  // Refetch on window focus if suggestions are empty
+  useEffect(() => {
+    const handleFocus = () => {
+      if (currentUser && suggestions.length === 0) {
+        loadSuggestions(currentUser.id, currentUser);
+      }
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [currentUser, suggestions.length]);
   const handleResetFeed = useCallback(async () => {
     const lastReset = localStorage.getItem("pt_last_feed_reset");
     if (lastReset) {
@@ -324,6 +351,11 @@ const Index = () => {
     const boostedUserIds = new Set(boostsResult.data?.map(b => b.user_id) || []);
 
     const enhancedProfiles: EnhancedProfile[] = profilesResult.data
+      .filter(p => {
+        // Only include profiles that have at least one photo
+        const hasPhoto = photosByUser.get(p.id)?.length > 0 || p.profile_image;
+        return hasPhoto;
+      })
       .map(p => ({
         ...p,
         profile_image: photosByUser.get(p.id)?.[0] || p.profile_image || null,
@@ -780,7 +812,7 @@ const Index = () => {
                   <Undo2 className="h-5 w-5" />
                 </button>
               )}
-              {suggestions.slice(0, 3).map((profile, stackIdx) => {
+              {suggestions.filter(p => p.profile_image).slice(0, 3).map((profile, stackIdx) => {
                 const isMystery = mysteryProfiles.has(profile.id);
                 if (isMystery && stackIdx === 0) {
                   return (
