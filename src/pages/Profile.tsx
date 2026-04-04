@@ -66,6 +66,7 @@ const Profile = () => {
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [userPhotos, setUserPhotos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [boostLoading, setBoostLoading] = useState(false);
   const [hasActiveBoost, setHasActiveBoost] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
