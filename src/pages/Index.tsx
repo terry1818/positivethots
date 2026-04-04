@@ -793,7 +793,7 @@ const Index = () => {
           </div>
         ) : (
           <>
-            <div className="relative flex justify-center items-start px-4 pt-2 pb-32" data-walkthrough="discovery-card" data-tour="discovery-card" style={{ minHeight: '520px' }}>
+            <div className="relative flex justify-center items-start px-4 pt-2" data-walkthrough="discovery-card" data-tour="discovery-card" style={{ minHeight: '420px' }}>
               {/* Undo button */}
               {showUndoButton && lastPassedProfile && (
                 <button
