@@ -548,7 +548,13 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Distance Radar */}
+        {/* Relationships & Polycule */}
+        <PartnerLinkManager />
+
+        {/* Privacy & Incognito */}
+        <IncognitoToggle />
+
+
         <Card className="animate-fade-in" style={{ animationDelay: "90ms" }}>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
