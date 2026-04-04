@@ -178,17 +178,17 @@ const Premium = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-blob-float" />
-      <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl animate-blob-float [animation-delay:5s]" />
+      <div className={cn("absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl", !reducedMotion && "animate-blob-float")} aria-hidden="true" />
+      <div className={cn("absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl", !reducedMotion && "animate-blob-float [animation-delay:5s]")} aria-hidden="true" />
 
       <div className="container max-w-4xl mx-auto px-4 py-6 relative z-10">
         <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" /> Back
         </Button>
 
-        <div className="text-center mb-8 animate-fade-in">
+        <div className={cn("text-center mb-8", !reducedMotion && "animate-fade-in")}>
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <Crown className="h-8 w-8 text-primary animate-wiggle" />
+            <Crown className={cn("h-8 w-8 text-primary", !reducedMotion && "animate-wiggle")} />
           </div>
           <h1 className="text-3xl font-bold mb-2">Choose Your Plan</h1>
           <p className="text-muted-foreground">Unlock the full experience</p>
