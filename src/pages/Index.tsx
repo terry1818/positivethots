@@ -728,7 +728,7 @@ const Index = () => {
 
       {/* Nearby Users */}
       {isSharing && (
-        <div className="max-w-sm mx-auto px-4 mb-4">
+        <div className="max-w-md mx-auto px-4 mb-4">
           <NearbyUsers nearbyUsers={nearbyUsers} isSharing={isSharing} />
         </div>
       )}
