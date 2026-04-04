@@ -124,16 +124,14 @@ const Shop = () => {
         )}
 
         {error ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <ShoppingBag className="h-16 w-16 text-muted-foreground/40 mb-4" />
-            <h2 className="text-lg font-semibold text-foreground mb-2">Couldn't load products</h2>
-            <p className="text-sm text-muted-foreground max-w-xs mb-6">
-              We're having trouble reaching the store. Check your connection and try again.
-            </p>
-            <Button onClick={() => fetchProducts(activeCollection)} variant="outline">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Try Again
-            </Button>
+          <div className="flex items-center justify-center py-12">
+            <BrandedEmptyState
+              mascot="confused"
+              headline="Store is taking a break"
+              description="We're having trouble reaching the store. Check your connection and try again."
+              ctaLabel="Try Again"
+              onCtaClick={() => fetchProducts(activeCollection)}
+            />
           </div>
         ) : loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -148,12 +146,12 @@ const Shop = () => {
             ))}
           </div>
         ) : products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <ShoppingBag className="h-16 w-16 text-muted-foreground/40 mb-4" />
-            <h2 className="text-lg font-semibold text-foreground mb-2">No products yet</h2>
-            <p className="text-sm text-muted-foreground max-w-xs">
-              We're curating amazing products for you. Check back soon!
-            </p>
+          <div className="flex items-center justify-center py-12">
+            <BrandedEmptyState
+              mascot="heart"
+              headline="The shop is being stocked! 🛍️"
+              description="We're curating amazing products for you. Check back soon!"
+            />
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
