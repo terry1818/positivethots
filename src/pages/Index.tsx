@@ -705,6 +705,7 @@ const Index = () => {
               >
                 <Zap className="h-4 w-4" />
               </Button>
+              <IncognitoIndicator />
               <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => navigate("/settings")} aria-label="Settings">
                 <Settings className="h-6 w-6" />
               </Button>
