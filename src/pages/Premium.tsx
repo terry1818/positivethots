@@ -21,6 +21,7 @@ import {
   Star,
   Gift,
   Send,
+  Coins,
 } from "lucide-react";
 import {
   MONTHLY_TIERS,
@@ -32,7 +33,9 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-
+import { CoinBalanceWidget } from "@/components/coins/CoinBalanceWidget";
+import { GroupPricingCard } from "@/components/coins/GroupPricingCard";
+import { usePartnerLinks } from "@/hooks/usePartnerLinks";
 const tierIcons = {
   plus: Zap,
   premium: Crown,
