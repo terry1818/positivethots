@@ -214,16 +214,28 @@ export const BadgePathMap = ({
               </div>
             </button>
 
-            {/* Collapsed: show feature summary + action pills */}
+            {/* Collapsed: show compact feature cards + action pills */}
             {!isExpanded && (
-              <div className="flex flex-col items-center gap-1.5 pb-2">
-                {featureSummary && (
-                  <p className="text-sm text-muted-foreground text-center px-4 max-w-xs">{featureSummary}</p>
+              <div className="flex flex-col items-center gap-1.5 pb-2 px-4">
+                {td.features.length > 0 && (
+                  <div className="w-full max-w-xs space-y-1">
+                    {td.features.map(f => (
+                      <div key={f.key} className="flex items-center gap-2 px-2 py-1 rounded-lg bg-muted/20">
+                        <span className="text-sm leading-none">{f.icon}</span>
+                        <span className={cn(
+                          "text-sm font-medium flex-1",
+                          f.isUnlocked ? "text-success" : "text-muted-foreground"
+                        )}>
+                          {f.isUnlocked ? "✓ " : "🔒 "}{f.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 )}
                 {continueNode && (
                   <button
                     onClick={() => onModuleClick(td.modules.find(n => n.module.id === continueModuleId)?.module.slug || "")}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-base font-semibold hover:bg-indigo-500/25 transition-colors"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-sm font-semibold hover:bg-indigo-500/25 transition-colors"
                   >
                     ▶ Resume · Section {continueSectionNumber} · {continueProgressPercent}%
                   </button>
@@ -234,7 +246,7 @@ export const BadgePathMap = ({
                       const currentMod = td.modules.find(n => n.state === "current");
                       if (currentMod) onModuleClick(currentMod.module.slug);
                     }}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-base font-semibold hover:bg-destructive/25 transition-colors"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-sm font-semibold hover:bg-destructive/25 transition-colors"
                   >
                     🔥 {streakHoursLeft}h · Save your streak
                   </button>
