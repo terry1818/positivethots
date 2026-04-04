@@ -44,7 +44,7 @@ export const DailyRewardModal = () => {
         .single();
 
       const today = new Date().toISOString().split("T")[0];
-      if (profile?.last_daily_reward_date === today) return;
+      if ((profile as any)?.last_daily_reward_date === today) return;
 
       const r = rollReward();
       setReward(r);
