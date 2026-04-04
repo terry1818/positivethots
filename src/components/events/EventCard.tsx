@@ -44,8 +44,8 @@ const formatIcon = (format: string | null) => {
 };
 
 const tierBadge = (tier: string) => {
-  if (tier === "premium") return <Badge variant="secondary" className="text-xs bg-amber-500/10 text-amber-600 border-amber-500/20"><Crown className="h-3 w-3 mr-1" />Premium</Badge>;
-  if (tier === "adults_only") return <Badge variant="secondary" className="text-xs bg-rose-500/10 text-rose-600 border-rose-500/20">🔒 Adults Only</Badge>;
+  if (tier === "premium") return <Badge variant="secondary" className="text-xs bg-accent text-accent-foreground border-accent"><Crown className="h-3 w-3 mr-1" />Premium</Badge>;
+  if (tier === "adults_only") return <Badge variant="secondary" className="text-xs bg-destructive/10 text-destructive border-destructive/20">🔒 Adults Only</Badge>;
   return <Badge variant="secondary" className="text-xs">Community</Badge>;
 };
 
