@@ -200,7 +200,11 @@ const Messages = () => {
             </Button>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
+            <SearchInput placeholder="Search conversations..." ariaLabel="Search conversations" onSearch={handleSearch} />
+            {sortedMatches.length === 0 && searchQuery ? (
+              <p className="text-sm text-muted-foreground text-center py-8">No conversations matching &lsquo;{searchQuery}&rsquo;</p>
+            ) : null}
             {sortedMatches.map((match, idx) => {
               const lastMsg = lastMessages[match.id];
               const showOnline = isRecentlyActive((match.profile as any).last_active_at);
