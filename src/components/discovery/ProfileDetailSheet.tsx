@@ -117,13 +117,14 @@ export const ProfileDetailSheet = ({
 
         <div className="overflow-y-auto flex-1">
           {/* Photo carousel */}
-          <div className="relative h-56 w-full overflow-hidden">
+          <div className="relative h-[40vh] sm:h-[50vh] max-h-[500px] w-full overflow-hidden">
             {photos.length > 0 ? (
               <BlurImage
                 src={photos[safePhotoIndex] || "/placeholder.svg"}
                 alt={displayName}
                 className="h-full w-full"
                 loading="eager"
+                objectPosition={`center ${focalMap[photos[safePhotoIndex]] ?? 50}%`}
                 onError={() => handlePhotoError(photos[safePhotoIndex])}
               />
             ) : (

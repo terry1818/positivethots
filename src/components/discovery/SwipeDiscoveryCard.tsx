@@ -212,6 +212,7 @@ export const SwipeDiscoveryCard = memo(({
               className="h-full w-full"
               loading={isTop ? "eager" : "lazy"}
               fetchPriority={isTop ? "high" : undefined}
+              objectPosition={`center ${profile.photo_focal_points?.[photos[photoIndex]] ?? 50}%`}
               onError={() => handlePhotoError(photos[photoIndex])}
             />
           ) : (
