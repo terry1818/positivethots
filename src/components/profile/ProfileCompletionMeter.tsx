@@ -1,17 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, MessageSquare, Shield, BookOpen, User, Sparkles } from "lucide-react";
+import { Camera, MessageSquare, Shield, BookOpen, User, Sparkles, Plus } from "lucide-react";
+import type { NudgeAction } from "@/hooks/useProfileCompletion";
 
 const ICON_MAP: Record<string, any> = {
   Camera, MessageSquare, Shield, BookOpen, User, Sparkles,
 };
-
-interface NudgeAction {
-  icon: string;
-  label: string;
-  weight: string;
-  route: string;
-}
 
 interface ProfileCompletionMeterProps {
   percentage: number;
@@ -29,6 +23,8 @@ export const ProfileCompletionMeter = ({ percentage, nudges }: ProfileCompletion
 
   if (percentage >= 100) return null;
 
+  const topNudge = nudges[0];
+
   return (
     <div className="rounded-xl border border-border bg-card p-4 space-y-3 animate-fade-in">
       <div className="space-y-1.5">
@@ -43,14 +39,34 @@ export const ProfileCompletionMeter = ({ percentage, nudges }: ProfileCompletion
         </div>
       </div>
 
-      {nudges.length > 0 && (
-        <div className="space-y-2">
-          {nudges.map((nudge) => {
+      {/* Top nudge with motivation */}
+      {topNudge && (
+        <button
+          onClick={() => navigate(topNudge.route, { state: { focusSection: topNudge.section } })}
+          className="w-full flex items-center gap-2 text-left group"
+        >
+          <div className="rounded-full bg-primary/10 p-1.5 shrink-0">
+            <Plus className="h-3.5 w-3.5 text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-sm text-primary font-medium group-hover:underline">{topNudge.label}</span>
+            {topNudge.motivation && (
+              <p className="text-[11px] text-muted-foreground truncate">{topNudge.motivation}</p>
+            )}
+          </div>
+          <span className="text-xs text-primary font-medium shrink-0">{topNudge.weight}</span>
+        </button>
+      )}
+
+      {/* Remaining nudges */}
+      {nudges.length > 1 && (
+        <div className="space-y-1.5">
+          {nudges.slice(1).map((nudge) => {
             const Icon = ICON_MAP[nudge.icon] || BookOpen;
             return (
               <button
                 key={nudge.label}
-                onClick={() => navigate(nudge.route)}
+                onClick={() => navigate(nudge.route, { state: { focusSection: nudge.section } })}
                 className="w-full flex items-center gap-3 rounded-lg border border-border/50 bg-muted/30 p-2.5 text-left hover:bg-muted/50 transition-colors group"
               >
                 <div className="rounded-full bg-primary/10 p-1.5">
