@@ -43,6 +43,7 @@ const tierConfig: Record<string, { label: string; color: string; bgClass: string
 const tierOrder = ["foundation", "sexual_health", "identity", "relationships", "advanced"];
 
 const Learn = () => {
+  const [moduleSearchQuery, setModuleSearchQuery] = useState("");
   const [modules, setModules] = useState<Module[]>([]);
   const [userBadges, setUserBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
