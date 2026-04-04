@@ -6,7 +6,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles, MapPin, Share2, Undo2 } from "lucide-react";
+import { Heart, BookOpen, Shield, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles, MapPin, Share2, Undo2, RefreshCw } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { calculateCompatibilityBreakdown, type CompatibilityBreakdownResult } from "@/lib/compatibility";
 import { CompatibilityBreakdown } from "@/components/discovery/CompatibilityBreakdown";
@@ -57,6 +61,7 @@ interface DiscoveryProfile {
   zodiac_sign: string | null;
   languages: string[] | null;
   height_cm: number | null;
+  is_recycled?: boolean;
 }
 
 interface EnhancedProfile extends DiscoveryProfile {
@@ -169,6 +174,8 @@ const Index = () => {
   const [dailyUndoCount, setDailyUndoCount] = useState(0);
   const undoTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const prefersReducedMotion = useReducedMotion();
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resettingFeed, setResettingFeed] = useState(false);
 
   // Handle super like purchase redirect
   useEffect(() => {
@@ -180,6 +187,26 @@ const Index = () => {
   useEffect(() => {
     checkAuthAndSetup();
   }, []);
+  const handleResetFeed = useCallback(async () => {
+    const lastReset = localStorage.getItem("pt_last_feed_reset");
+    if (lastReset) {
+      const daysSince = Math.floor((Date.now() - parseInt(lastReset)) / (1000 * 60 * 60 * 24));
+      if (daysSince < 7) {
+        toast(`You can reset again in ${7 - daysSince} day${7 - daysSince === 1 ? '' : 's'}`);
+        setShowResetDialog(false);
+        return;
+      }
+    }
+    setResettingFeed(true);
+    const { data, error } = await supabase.rpc("reset_discovery_feed");
+    setResettingFeed(false);
+    setShowResetDialog(false);
+    if (error) { toast.error("Failed to reset feed"); return; }
+    const result = data as { reset_count: number; message: string } | null;
+    localStorage.setItem("pt_last_feed_reset", Date.now().toString());
+    toast.success(`Feed reset! ${result?.reset_count ?? 0} profiles will reappear. 🔄`);
+    if (currentUser) await loadSuggestions(currentUser.id, currentUser);
+  }, [currentUser]);
 
 
   const checkAuthAndSetup = async () => {
@@ -216,12 +243,11 @@ const Index = () => {
   };
 
   const loadSuggestions = async (userId: string, profile: Profile) => {
-    const [matchesResult, blockedResult, swipesResult] = await Promise.all([
+    const [matchesResult, blockedResult] = await Promise.all([
       supabase.from("matches").select("user1_id, user2_id")
         .or(`user1_id.eq.${userId},user2_id.eq.${userId}`),
       supabase.from("blocked_users").select("blocked_id, blocker_id")
         .or(`blocker_id.eq.${userId},blocked_id.eq.${userId}`),
-      supabase.from("swipes").select("swiped_id").eq("swiper_id", userId),
     ]);
 
     const matchedUserIds = new Set(matchesResult.data?.flatMap(m => [m.user1_id, m.user2_id]) || []);
@@ -234,9 +260,8 @@ const Index = () => {
       else blockedUserIds.add(row.blocker_id);
     });
 
-    const swipedUserIds = new Set(swipesResult.data?.map(s => s.swiped_id) || []);
-
-    const excludeIds = [userId, ...Array.from(matchedUserIds), ...Array.from(blockedUserIds), ...Array.from(swipedUserIds)];
+    // Only pass matched + blocked IDs; the RPC handles left-swipe recycling server-side
+    const excludeIds = [userId, ...Array.from(matchedUserIds), ...Array.from(blockedUserIds)];
 
     const [profilesResult, allBadgesResult, boostsResult] = await Promise.all([
       supabase.rpc("get_discovery_profiles", { _exclude_ids: excludeIds }),
@@ -412,8 +437,8 @@ const Index = () => {
       undoTimerRef.current = setTimeout(() => setShowUndoButton(false), 5000);
     }
 
-    const { error } = await supabase.from("swipes").insert({
-      swiper_id: currentUser.id, swiped_id: otherUserId, direction: "left",
+    const { error } = await supabase.rpc("record_pass", {
+      _swiper_id: currentUser.id, _swiped_id: otherUserId,
     });
     if (error) {
       setSuggestions(previousSuggestions);
@@ -672,7 +697,33 @@ const Index = () => {
               <Button variant="ghost" size="sm" onClick={() => navigate("/events")} className="min-h-[44px]" aria-label="Browse upcoming events">
                 🎪 Browse events
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="min-h-[44px]"
+                onClick={() => setShowResetDialog(true)}
+              >
+                <RefreshCw className="h-4 w-4 mr-1" /> Start Fresh
+              </Button>
             </div>
+
+            {/* Reset Feed Dialog */}
+            <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Reset your discovery feed?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Profiles you previously passed on will reappear (except those you passed 3+ times). You can only do this once per week.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleResetFeed} disabled={resettingFeed}>
+                    {resettingFeed ? "Resetting..." : "Reset Feed"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
 
             {/* Boost upsell card */}
             <Card className="p-6 text-center max-w-sm mx-auto w-full mt-4">
@@ -720,7 +771,17 @@ const Index = () => {
                   );
                 }
                 return (
-                  <SwipeDiscoveryCard
+                  <div key={profile.id} className="relative">
+                    {profile.is_recycled && stackIdx === 0 && (
+                      <div
+                        className="absolute top-3 left-3 z-20 flex items-center gap-1.5 bg-background/80 backdrop-blur-sm rounded-full px-3 py-1"
+                        aria-label="Previously viewed profile"
+                      >
+                        <RefreshCw className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">Second look</span>
+                      </div>
+                    )}
+                    <SwipeDiscoveryCard
                     key={profile.id}
                     profile={profile}
                     isTop={stackIdx === 0}
@@ -732,6 +793,7 @@ const Index = () => {
                     superLikeBalance={isUnlimited ? 999 : superLikeBalance}
                     onViewProfile={() => setDetailProfile(profile)}
                   />
+                  </div>
                 );
               })}
             </div>

@@ -19,7 +19,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2, MapPin, Lock, Gift, Copy, Users, Check, Ticket, Send, UserCog, X, BookOpen, Volume2, Vibrate } from "lucide-react";
+import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2, MapPin, Lock, Gift, Copy, Users, Check, Ticket, Send, UserCog, X, BookOpen, Volume2, Vibrate, RefreshCw, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
@@ -863,6 +863,54 @@ const Settings = () => {
 
         {/* External Platforms */}
         <LinkedAccountsCard />
+
+        {/* Discovery */}
+        <Card className="animate-fade-in" style={{ animationDelay: "140ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Compass className="h-5 w-5" /> Discovery
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" className="w-full justify-start gap-2">
+                  <RefreshCw className="h-4 w-4" />
+                  Reset Discovery Feed
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Reset your discovery feed?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Profiles you previously passed on will reappear (except those you passed 3+ times). You can only do this once per week.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={async () => {
+                    const lastReset = localStorage.getItem("pt_last_feed_reset");
+                    if (lastReset) {
+                      const daysSince = Math.floor((Date.now() - parseInt(lastReset)) / (1000 * 60 * 60 * 24));
+                      if (daysSince < 7) {
+                        toast(`You can reset again in ${7 - daysSince} day${7 - daysSince === 1 ? '' : 's'}`);
+                        return;
+                      }
+                    }
+                    const { data, error } = await supabase.rpc("reset_discovery_feed");
+                    if (error) { toast.error("Failed to reset feed"); return; }
+                    const result = data as { reset_count: number; message: string } | null;
+                    localStorage.setItem("pt_last_feed_reset", Date.now().toString());
+                    toast.success(`Feed reset! ${result?.reset_count ?? 0} profiles will reappear. 🔄`);
+                  }}>Reset Feed</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <p className="text-xs text-muted-foreground mt-2">
+              Passed profiles recycle after 7 days. Profiles passed 3+ times are permanently hidden.
+            </p>
+          </CardContent>
+        </Card>
 
         {/* Learning */}
         <Card className="animate-fade-in" style={{ animationDelay: "150ms" }}>

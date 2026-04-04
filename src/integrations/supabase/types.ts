@@ -1266,22 +1266,31 @@ export type Database = {
           created_at: string
           direction: string
           id: string
+          is_permanent: boolean
+          pass_count: number
           swiped_id: string
           swiper_id: string
+          updated_at: string
         }
         Insert: {
           created_at?: string
           direction: string
           id?: string
+          is_permanent?: boolean
+          pass_count?: number
           swiped_id: string
           swiper_id: string
+          updated_at?: string
         }
         Update: {
           created_at?: string
           direction?: string
           id?: string
+          is_permanent?: boolean
+          pass_count?: number
           swiped_id?: string
           swiper_id?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1675,6 +1684,7 @@ export type Database = {
           height_cm: number
           id: string
           interests: string[]
+          is_recycled: boolean
           is_verified: boolean
           languages: string[]
           location: string
@@ -1792,10 +1802,15 @@ export type Database = {
           read_ct: number
         }[]
       }
+      record_pass: {
+        Args: { _swiped_id: string; _swiper_id: string }
+        Returns: Json
+      }
       refresh_daily_super_likes: {
         Args: { _daily_limit?: number; _user_id: string }
         Returns: number
       }
+      reset_discovery_feed: { Args: never; Returns: Json }
       revoke_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
