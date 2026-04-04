@@ -330,7 +330,8 @@ export const ExerciseSession = ({
           <div className="space-y-4">
             <p className="text-lg font-medium leading-relaxed">{current.question}</p>
             <RadioGroup
-              value={mcSelected?.toString()}
+              key={current.id}
+              value={mcSelected !== null ? mcSelected.toString() : ""}
               onValueChange={(v) => !mcAnswered && setMcSelected(parseInt(v))}
               className="space-y-2"
             >
