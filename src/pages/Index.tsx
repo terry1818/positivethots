@@ -771,7 +771,17 @@ const Index = () => {
                   );
                 }
                 return (
-                  <SwipeDiscoveryCard
+                  <div key={profile.id} className="relative">
+                    {profile.is_recycled && stackIdx === 0 && (
+                      <div
+                        className="absolute top-3 left-3 z-20 flex items-center gap-1.5 bg-background/80 backdrop-blur-sm rounded-full px-3 py-1"
+                        aria-label="Previously viewed profile"
+                      >
+                        <RefreshCw className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">Second look</span>
+                      </div>
+                    )}
+                    <SwipeDiscoveryCard
                     key={profile.id}
                     profile={profile}
                     isTop={stackIdx === 0}
