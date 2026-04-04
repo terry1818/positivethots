@@ -234,6 +234,23 @@ const Profile = () => {
     return <PageSkeleton variant="profile" />;
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col pb-20">
+        <main className="flex-1 container max-w-md mx-auto px-4 py-6 flex items-center justify-center">
+          <BrandedEmptyState
+            mascot="confused"
+            headline="Couldn't load your profile"
+            description="Something went wrong on our end. Give it another try!"
+            ctaLabel="Try Again"
+            onCtaClick={() => { setError(false); setLoading(true); loadProfile(); }}
+          />
+        </main>
+        <BottomNav />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border bg-card">

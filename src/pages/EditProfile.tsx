@@ -207,6 +207,22 @@ const EditProfile = () => {
     return <PageSkeleton variant="profile" />;
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <main className="flex-1 container max-w-md mx-auto px-4 py-6 flex items-center justify-center">
+          <BrandedEmptyState
+            mascot="confused"
+            headline="Couldn't load profile editor"
+            description="Something went wrong on our end. Give it another try!"
+            ctaLabel="Try Again"
+            onCtaClick={() => { setError(false); setLoading(true); loadProfile(); }}
+          />
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card sticky top-0 z-40">
