@@ -162,7 +162,7 @@ const Profile = () => {
       setHasPendingPhotos((pendingCount ?? 0) > 0);
     } catch (error: any) {
       console.error("Error loading profile:", error);
-      toast.error("Failed to load profile");
+      setError(true);
     } finally {
       setLoading(false);
     }

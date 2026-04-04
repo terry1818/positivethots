@@ -97,7 +97,7 @@ const EditProfile = () => {
       })));
     } catch (error) {
       console.error("Error loading profile:", error);
-      toast.error("Failed to load profile");
+      setError(true);
     } finally {
       setLoading(false);
     }
