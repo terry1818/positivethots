@@ -48,7 +48,6 @@ interface SentLikeProfile {
 
 const LikesYou = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const reducedMotion = useReducedMotion();
   const [isPremium, setIsPremium] = useState(false);
   const { seen: likesTourSeen, markSeen: markLikesTourSeen } = useTutorialState("likes_tour");
