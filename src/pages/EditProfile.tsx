@@ -271,8 +271,22 @@ const EditProfile = () => {
             <AccordionTrigger className="text-base font-semibold py-4">About You</AccordionTrigger>
             <AccordionContent className="pb-4 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="bio">About Me</Label>
-                <Textarea id="bio" value={bio} onChange={(e) => { setBio(e.target.value); markChanged(); }} rows={4} maxLength={500} placeholder="Tell people about yourself..." className="focus-glow" />
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="bio">About Me</Label>
+                  <span className={cn("text-xs", bio.length > 500 ? "text-destructive" : "text-muted-foreground")}>{bio.length}/500</span>
+                </div>
+                <Textarea
+                  id="bio"
+                  value={bio}
+                  onChange={(e) => { setBio(e.target.value); markChanged(); setFieldErrors(prev => ({ ...prev, bio: "" })); }}
+                  rows={4}
+                  maxLength={500}
+                  placeholder="Tell people about yourself..."
+                  className="focus-glow"
+                  aria-invalid={!!fieldErrors.bio}
+                  aria-describedby={fieldErrors.bio ? "bio-error" : undefined}
+                />
+                <FieldError message={fieldErrors.bio} id="bio-error" />
               </div>
 
               {/* Prompts */}
