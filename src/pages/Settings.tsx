@@ -26,6 +26,8 @@ import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { LinkedAccountsCard } from "@/components/settings/LinkedAccountsCard";
 import { PartnerLinkManager } from "@/components/settings/PartnerLinkManager";
 import { IncognitoToggle } from "@/components/settings/IncognitoToggle";
+import { SpotifyConnect } from "@/components/spotify/SpotifyConnect";
+import { CrossAppLinksEditor } from "@/components/cross-app/CrossAppLinksEditor";
 
 const NotificationToggle = ({ label, description, storageKey, defaultOn = true }: { label: string; description: string; storageKey: string; defaultOn?: boolean }) => {
   const [enabled, setEnabled] = useState(() => {
@@ -553,6 +555,10 @@ const Settings = () => {
 
         {/* Privacy & Incognito */}
         <IncognitoToggle />
+
+        {/* Connections */}
+        <SpotifyConnect />
+        <CrossAppLinksEditor />
 
 
         <Card className="animate-fade-in" style={{ animationDelay: "90ms" }}>
