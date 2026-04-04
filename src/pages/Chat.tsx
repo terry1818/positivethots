@@ -184,8 +184,12 @@ const Chat = () => {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
         (payload) => {
           const newMsg = payload.new as Message;
-          if (newMsg.sender_id !== currentUser?.id) playMessage();
-          setMessages(prev => [...prev, { ...newMsg, delivered: true, read: newMsg.sender_id === session.user.id }]);
+          // Skip if we already have this message (from optimistic insert)
+          setMessages(prev => {
+            if (prev.some(m => m.id === newMsg.id)) return prev;
+            if (newMsg.sender_id !== session.user.id) playMessage();
+            return [...prev, { ...newMsg, delivered: true, read: newMsg.sender_id === session.user.id }];
+          });
         })
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_games', filter: `match_id=eq.${matchId}` },
         (payload) => {
@@ -220,10 +224,23 @@ const Chat = () => {
     lastSendTimestamp.current = now;
 
     const messageContent = newMessage.trim();
+    const optimisticId = `optimistic-${Date.now()}`;
     setNewMessage("");
     if (channelRef.current) {
       channelRef.current.send({ type: 'broadcast', event: 'typing', payload: { userId: currentUser.id, isTyping: false } });
     }
+
+    // Optimistic: immediately show message bubble with "sending" state
+    const optimisticMsg: EnhancedMessage = {
+      id: optimisticId,
+      match_id: matchId,
+      sender_id: currentUser.id,
+      content: messageContent,
+      created_at: new Date().toISOString(),
+      delivered: false,
+      read: false,
+    };
+    setMessages(prev => [...prev, optimisticMsg]);
 
     // Moderate message before sending
     try {
@@ -236,6 +253,7 @@ const Chat = () => {
         const errorBody = typeof modError === 'object' && modError !== null ? (modError as any) : {};
         if (errorBody.status === 429 || (typeof modError === 'string' && modError.includes('429'))) {
           toast.error("Slow down — you're sending too quickly.");
+          setMessages(prev => prev.filter(m => m.id !== optimisticId));
           setNewMessage(messageContent);
           return;
         }
@@ -243,11 +261,13 @@ const Chat = () => {
 
       if (modResult?.error && modResult.error.includes("Sending too fast")) {
         toast.error("Slow down — you're sending too quickly.");
+        setMessages(prev => prev.filter(m => m.id !== optimisticId));
         setNewMessage(messageContent);
         return;
       }
 
       if (modResult?.verdict === 'flagged') {
+        setMessages(prev => prev.filter(m => m.id !== optimisticId));
         await supabase.from("flagged_messages").insert({
           match_id: matchId,
           sender_id: currentUser.id,
@@ -262,10 +282,17 @@ const Chat = () => {
       console.error("Moderation check failed:", e);
     }
 
-    const { error } = await supabase.from("messages").insert({ match_id: matchId, sender_id: currentUser.id, content: messageContent });
-    if (error) { console.error("Error sending message:", error); toast.error("Failed to send message"); setNewMessage(messageContent); }
-    else {
+    const { data: insertedMsg, error } = await supabase.from("messages").insert({ match_id: matchId, sender_id: currentUser.id, content: messageContent }).select().single();
+    if (error) {
+      // Mark as failed — keep the bubble but show error state
+      console.error("Error sending message:", error);
+      setMessages(prev => prev.map(m => m.id === optimisticId ? { ...m, id: `failed-${Date.now()}`, delivered: false, read: false } : m));
+      toast.error("Failed to send message", { description: "Tap message to retry" });
+    } else {
+      // Replace optimistic message with real one
+      setMessages(prev => prev.map(m => m.id === optimisticId ? { ...insertedMsg, delivered: true, read: false } : m));
       trackEvent("message_sent", { match_id: matchId });
+      // Simulate read receipt after delay
       setTimeout(() => {
         setMessages(prev => prev.map(msg => msg.sender_id === currentUser.id && !msg.read ? { ...msg, read: true } : msg));
       }, 2000 + Math.random() * 3000);
@@ -508,10 +535,19 @@ const Chat = () => {
                         </div>
                       )}
                       <div className={cn("relative px-4 py-2.5 rounded-2xl",
-                        isOwn ? "bg-gradient-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none"
+                        isOwn ? "bg-gradient-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none",
+                        isOwn && message.id.startsWith("optimistic-") && "opacity-80",
+                        isOwn && message.id.startsWith("failed-") && "opacity-60"
                       )}>
                         <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
-                        {isOwn && (
+                        {isOwn && message.id.startsWith("failed-") ? (
+                          <button
+                            className="flex items-center gap-1 mt-1 text-xs text-destructive-foreground/80 hover:text-destructive-foreground"
+                            onClick={(e) => { e.stopPropagation(); setNewMessage(message.content); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
+                          >
+                            <span>Failed to send · Tap to retry</span>
+                          </button>
+                        ) : isOwn && (
                           <div className="flex justify-end items-center gap-1 mt-1">
                             <span className="text-xs opacity-70">{formatTime(message.created_at)}</span>
                             {message.read ? (
