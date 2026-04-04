@@ -270,7 +270,7 @@ const Settings = () => {
       URL.revokeObjectURL(url);
       toast.success("Your data has been exported!");
     } catch (error: any) {
-      toast.error(error.message || "Failed to export data");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setExporting(false);
     }
