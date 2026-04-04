@@ -148,7 +148,7 @@
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, sans-serif;
     padding-top: env(safe-area-inset-top);
-    background-color: #030712;
+    background-color: hsl(var(--background));
   }
 }
 

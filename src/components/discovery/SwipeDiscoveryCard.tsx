@@ -260,16 +260,18 @@ export const SwipeDiscoveryCard = memo(({
                 style={{ opacity: !isRight ? dragProgress * 0.5 : 0 }}
               />
               <div
-                className="absolute top-8 left-6 text-4xl font-bold text-success border-4 border-success rounded-2xl px-4 py-2 rotate-[-20deg] z-20"
+                className="absolute top-8 left-6 z-20 flex flex-col items-center bg-black/30 backdrop-blur-sm rounded-xl p-4 rotate-[-20deg]"
                 style={{ opacity: Math.max(0, Math.min(dragOffset.x / 100, 1)) }}
               >
-                Connect 💜
+                <Heart className="h-12 w-12 text-white drop-shadow-lg" fill="white" />
+                <span className="text-white font-bold text-lg drop-shadow-lg">Connect 💜</span>
               </div>
               <div
-                className="absolute top-8 right-6 text-4xl font-bold text-muted-foreground border-4 border-muted-foreground rounded-2xl px-4 py-2 rotate-[20deg] z-20"
+                className="absolute top-8 right-6 z-20 flex flex-col items-center bg-black/30 backdrop-blur-sm rounded-xl p-4 rotate-[20deg]"
                 style={{ opacity: Math.max(0, Math.min(-dragOffset.x / 100, 1)) }}
               >
-                Pass
+                <X className="h-12 w-12 text-white drop-shadow-lg" />
+                <span className="text-white font-bold text-lg drop-shadow-lg">Pass</span>
               </div>
             </>
           )}
