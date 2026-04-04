@@ -430,6 +430,7 @@ const Index = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [suggestions, loading, canSuperLike, handleConnect, handlePass, handleSuperLike]);
 
+  const handleBoostClick = async () => {
     trackEvent('discovery_empty_boost_clicked', {});
     try {
       const { data, error } = await supabase.functions.invoke("create-boost-payment");
