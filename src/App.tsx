@@ -32,6 +32,7 @@ const EditProfile = lazy(() => import("./pages/EditProfile"));
 const Settings = lazy(() => import("./pages/Settings"));
 const LikesYou = lazy(() => import("./pages/LikesYou"));
 const Premium = lazy(() => import("./pages/Premium"));
+const Wallet = lazy(() => import("./pages/Wallet"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 // Shop is now an external link — no in-app route needed
