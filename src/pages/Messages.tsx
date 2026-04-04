@@ -190,7 +190,7 @@ const Messages = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20">
       <header className="border-b border-border bg-card sticky top-0 z-10">
-        <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Logo size="md" showText={false} />
           <div className="w-10" />
         </div>
