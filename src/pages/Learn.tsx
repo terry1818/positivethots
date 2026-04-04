@@ -242,6 +242,48 @@ const Learn = () => {
     return <PageSkeleton variant="learn" />;
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col pb-20">
+        <header className="border-b border-border bg-card">
+          <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2.5">
+            <Logo size="md" showText={false} />
+          </div>
+        </header>
+        <main className="flex-1 container max-w-md mx-auto px-4 py-6 flex items-center justify-center">
+          <BrandedEmptyState
+            mascot="confused"
+            headline="Couldn't load your learning path"
+            description="Something went wrong on our end. Give it another try!"
+            ctaLabel="Try Again"
+            onCtaClick={() => { setError(false); setLoading(true); loadData(); }}
+          />
+        </main>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (modules.length === 0) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col pb-20">
+        <header className="border-b border-border bg-card">
+          <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2.5">
+            <Logo size="md" showText={false} />
+          </div>
+        </header>
+        <main className="flex-1 container max-w-md mx-auto px-4 py-6 flex items-center justify-center">
+          <BrandedEmptyState
+            mascot="confused"
+            headline="No modules available yet"
+            description="We're working on adding new learning content. Check back soon!"
+          />
+        </main>
+        <BottomNav />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20">
       <header className="border-b border-border bg-card">
