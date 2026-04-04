@@ -270,9 +270,9 @@ export const ScenarioPlayer = ({ scenarioId, onComplete, onBack }: ScenarioPlaye
   if (!currentScene) {
     return (
       <BrandedEmptyState
-        mascot="thinking"
+        mascot="confused"
         headline="Scene not found"
-        body="This scenario may be incomplete."
+        description="This scenario may be incomplete."
         ctaLabel="Go Back"
         onCtaClick={onBack}
       />
