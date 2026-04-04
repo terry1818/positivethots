@@ -170,7 +170,7 @@ const LikesYou = () => {
     <div className="min-h-screen bg-background flex flex-col pb-20">
       <MicroCelebration trigger={celebrationTrigger} emojis={["🎉", "💕", "✨", "💜"]} />
       <div className="flex-1 overflow-auto">
-        <div className="container max-w-md mx-auto px-4">
+        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4">
           <header className="border-b border-border bg-card py-3 flex items-center justify-between">
             <Logo size="md" showText={false} />
             <div className="flex items-center gap-2">
@@ -210,7 +210,7 @@ const LikesYou = () => {
                     description="Complete more badges to boost your profile visibility."
                     ctaLabel="Continue Learning"
                     onCtaClick={() => navigate("/learn")}
-                    className="py-6 [&_img]:max-h-[80px] [&_.mb-6]:mb-3 [&_.mb-2]:mb-1"
+                    className="py-6 [&_.mb-6]:mb-3 [&_.mb-2]:mb-1"
                   />
                   {!isPremium && (
                     <Card className="animate-pulse-border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-left">
@@ -258,7 +258,7 @@ const LikesYou = () => {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                   {likers.map((liker, idx) => (
                     <Card key={liker.id} className={cn("overflow-hidden relative", !reducedMotion && "animate-stagger-fade", liker.is_super_like && "ring-2 ring-amber-500/50")} style={!reducedMotion ? { animationDelay: `${idx * 80}ms` } : undefined}>
                       {liker.is_super_like && (

@@ -67,6 +67,15 @@ const RESOURCE_TITLE_OVERRIDES: Record<string, Partial<Resource>> = {
     url: PRODUCT_URL_OVERRIDES["1452169950"],
     author: "Nicola Ries Taggart",
   },
+  "Indivisible": {
+    image_url: "/resource-images/indivisible.svg",
+  },
+  "5 Calls": {
+    image_url: "/resource-images/5calls.svg",
+  },
+  "More Perfect Union": {
+    image_url: "/resource-images/moreperfectunion.svg",
+  },
 };
 
 const buildAmazonImageUrl = (asin: string) => LOCAL_IMAGE_OVERRIDES[asin] || `/resource-images/${asin}.jpg`;
