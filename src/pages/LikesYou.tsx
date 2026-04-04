@@ -51,6 +51,7 @@ const LikesYou = () => {
   const [likerCount, setLikerCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
+  const [unlikeTarget, setUnlikeTarget] = useState<SentLikeProfile | null>(null);
 
   // Sent likes state
   const [sentLikes, setSentLikes] = useState<SentLikeProfile[]>([]);
