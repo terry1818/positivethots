@@ -100,7 +100,7 @@ export const EventCard = ({
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-2">
             {isFree ? (
-              <span className="text-lg font-bold text-green-600">Free</span>
+              <span className="text-lg font-bold text-primary">Free</span>
             ) : discountedPrice ? (
               <>
                 <span className="text-lg font-bold text-primary">${discountedPrice}</span>
