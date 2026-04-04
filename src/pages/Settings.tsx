@@ -205,7 +205,7 @@ const Settings = () => {
       toast.success(`${codeType === "gift" ? "Gift" : "Referral"} code created: ${code}`);
       await loadMyCodes();
     } catch (err: any) {
-      toast.error(err.message || "Failed to create code");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setCreatingCode(false);
     }
