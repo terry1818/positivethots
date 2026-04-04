@@ -186,7 +186,7 @@ const Messages = () => {
               </div>
             ))}
           </div>
-        ) : matches.length === 0 ? (
+        ) : matches.length === 0 && !searchQuery ? (
           <div className="space-y-3">
             <BrandedEmptyState
               mascot="waving"
