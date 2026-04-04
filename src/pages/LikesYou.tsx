@@ -226,7 +226,7 @@ const LikesYou = () => {
   };
 
   const openProfileDetail = async (profileId: string) => {
-    const { data } = await supabase.rpc("get_public_profile", { _profile_id: profileId });
+    const { data } = await supabase.rpc("get_public_profile", { _user_id: profileId });
     if (data && data.length > 0) {
       const p = data[0] as any;
       setDetailProfile({
