@@ -204,7 +204,18 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [photoStats, setPhotoStats] = useState<Record<string, { score: number; impressions: number }>>({});
+  const [focalPhoto, setFocalPhoto] = useState<UserPhoto | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSaveFocalPoint = async (photoId: string, focalY: number) => {
+    try {
+      await supabase.from("user_photos").update({ focal_point_y: focalY } as any).eq("id", photoId);
+      toast.success("Focus point saved!");
+      onPhotosChange();
+    } catch {
+      toast.error("Failed to save focus point");
+    }
+  };
 
   const publicPhotos = photos.filter((p) => p.visibility === "public").sort((a, b) => a.order_index - b.order_index);
   const privatePhotos = photos.filter((p) => p.visibility === "private").sort((a, b) => a.order_index - b.order_index);
