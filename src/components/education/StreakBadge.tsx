@@ -1,5 +1,6 @@
 import { Flame, Snowflake } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getStreakMultiplierLabel } from "@/hooks/useLearningStats";
 
 interface StreakBadgeProps {
   streak: number;
