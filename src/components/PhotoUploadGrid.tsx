@@ -20,7 +20,82 @@ interface UserPhoto {
   moderation_status: string;
   moderation_reason: string | null;
   created_at: string;
+  focal_point_y?: number;
 }
+
+// Focal point selector modal
+const FocalPointSelector = ({
+  photo,
+  onClose,
+  onSave,
+}: {
+  photo: UserPhoto;
+  onClose: () => void;
+  onSave: (photoId: string, focalY: number) => void;
+}) => {
+  const [focalY, setFocalY] = useState(photo.focal_point_y ?? 50);
+  const imgRef = useRef<HTMLDivElement>(null);
+
+  const handleTap = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    const rect = imgRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+    const y = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100));
+    setFocalY(Math.round(y));
+  }, []);
+
+  return (
+    <Dialog open onOpenChange={() => onClose()}>
+      <DialogContent className="max-w-sm p-0 overflow-hidden">
+        <DialogHeader className="p-4 pb-2">
+          <DialogTitle className="text-base">Set Photo Focus</DialogTitle>
+          <p className="text-sm text-muted-foreground">Tap where the most important part of your photo is (e.g., your face)</p>
+        </DialogHeader>
+        <div
+          ref={imgRef}
+          className="relative w-full cursor-crosshair select-none"
+          style={{ maxHeight: "60vh" }}
+          onClick={handleTap}
+          onTouchStart={handleTap}
+        >
+          <img
+            src={photo.photo_url}
+            alt="Set focus point"
+            className="w-full h-auto"
+            draggable={false}
+          />
+          {/* Horizontal focus line */}
+          <div
+            className="absolute left-0 right-0 h-0.5 bg-primary shadow-[0_0_8px_2px_hsl(var(--primary)/0.5)] pointer-events-none transition-all duration-150"
+            style={{ top: `${focalY}%` }}
+          />
+          {/* Focus dot */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 h-6 w-6 rounded-full border-2 border-primary bg-primary/30 pointer-events-none transition-all duration-150 flex items-center justify-center"
+            style={{ top: `${focalY}%` }}
+          >
+            <Crosshair className="h-3 w-3 text-primary" />
+          </div>
+          {/* Preview crop zone */}
+          <div
+            className="absolute left-0 right-0 border border-dashed border-white/40 pointer-events-none transition-all duration-150"
+            style={{
+              top: `${Math.max(0, focalY - 25)}%`,
+              height: "50%",
+              maxHeight: `${100 - Math.max(0, focalY - 25)}%`,
+            }}
+          />
+        </div>
+        <div className="p-4 pt-2 flex gap-2">
+          <Button variant="outline" className="flex-1" onClick={onClose}>Cancel</Button>
+          <Button className="flex-1" onClick={() => { onSave(photo.id, focalY); onClose(); }}>
+            Save Focus
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 interface PhotoUploadGridProps {
   userId: string;
