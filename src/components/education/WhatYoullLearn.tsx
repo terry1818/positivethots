@@ -88,17 +88,17 @@ export const WhatYoullLearn = ({ moduleSlug, tier, estimatedMinutes }: WhatYoull
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Badge variant="outline" className={`text-xs ${tierColor}`}>
+          <Badge variant="outline" className={`text-sm ${tierColor}`}>
             <BarChart3 className="h-3 w-3 mr-1" />
             {difficulty}
           </Badge>
           {estimatedMinutes && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-sm">
               <Clock className="h-3 w-3 mr-1" />
               ~{estimatedMinutes} min
             </Badge>
           )}
-          <Badge variant="outline" className="text-xs text-muted-foreground">
+          <Badge variant="outline" className="text-sm text-muted-foreground">
             Based on {framework}
           </Badge>
         </div>

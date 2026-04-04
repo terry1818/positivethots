@@ -106,7 +106,7 @@ export const ValuePropositionScreen = ({ onBegin }: ValuePropositionScreenProps)
                 {FRAMEWORK_INFO.map((fw) => (
                   <div key={fw.name} className="rounded-lg border border-border p-3">
                     <p className="font-semibold text-sm text-foreground">{fw.name}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{fw.description}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{fw.description}</p>
                   </div>
                 ))}
               </div>

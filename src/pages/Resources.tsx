@@ -252,7 +252,7 @@ const Resources = () => {
                 >
                   {cat.icon}
                   {cat.label}
-                  <span className="text-xs opacity-70">({count})</span>
+                  <span className="text-sm opacity-70">({count})</span>
                 </button>
               );
             })}
@@ -299,7 +299,7 @@ const Resources = () => {
             <ShieldCheck className="w-5 h-5 text-purple-400" />
             <span className="text-sm font-medium text-gray-300">Affiliate Disclosure</span>
           </div>
-          <p className="text-xs text-gray-500 leading-relaxed">
+          <p className="text-sm text-gray-500 leading-relaxed">
             Positive Thots is a participant in the Amazon Services LLC Associates Program, an affiliate
             advertising program designed to provide a means for us to earn fees by linking to Amazon.com
             and affiliated sites. We only recommend products we believe in and that align with our mission

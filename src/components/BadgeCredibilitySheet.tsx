@@ -69,7 +69,7 @@ export const BadgeCredibilitySheet = ({
             <EducationBadge moduleSlug={moduleSlug} title={title} isEarned tier={tier} size="lg" />
             <div>
               <p className="text-lg font-bold">{title}</p>
-              <Badge variant="outline" className={`text-xs mt-1 ${tierColor}`}>
+              <Badge variant="outline" className={`text-sm mt-1 ${tierColor}`}>
                 {tierLabel}
               </Badge>
             </div>
@@ -82,13 +82,13 @@ export const BadgeCredibilitySheet = ({
           <div className="rounded-lg border border-border p-3 space-y-2">
             <div className="flex items-start gap-2">
               <Shield className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 This badge is based on evidence-based frameworks from AASECT, the Sexual Health Alliance, and Dr. John Gottman's relationship research.
               </p>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
-              <p className="text-xs font-medium text-foreground">Anti-cheat verified ✓</p>
+              <p className="text-sm font-medium text-foreground">Anti-cheat verified ✓</p>
             </div>
           </div>
         </div>

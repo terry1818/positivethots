@@ -219,9 +219,9 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border bg-card">
-        <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-center relative">
+        <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
           <Logo size="md" showText={false} />
-          <Button variant="ghost" size="icon" className="text-muted-foreground absolute right-4" onClick={() => navigate("/settings")} aria-label="Settings">
+          <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => navigate("/settings")} aria-label="Settings">
             <Settings className="h-6 w-6" />
           </Button>
         </div>
@@ -438,7 +438,7 @@ const Profile = () => {
               <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                 <item.icon className="h-5 w-5 text-foreground" />
               </div>
-              <span className="text-xs text-muted-foreground">{item.label}</span>
+              <span className="text-sm text-muted-foreground">{item.label}</span>
             </button>
           ))}
         </div>
@@ -510,7 +510,7 @@ const Profile = () => {
                   <Rocket className="h-4 w-4 text-accent" />
                   Profile Boost
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {hasActiveBoost
                     ? "Your profile is currently boosted! 🔥"
                     : hasFeature("profile_boost")
@@ -531,7 +531,7 @@ const Profile = () => {
 
         {/* EXPLORE section */}
         <div className="space-y-1.5">
-          <h2 className="text-xs font-semibold text-muted-foreground tracking-wider uppercase px-1">Explore</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground tracking-wider uppercase px-1">Explore</h2>
           <Card>
             <ProfileNavRow emoji="🎪" label="Events & Workshops" onClick={() => navigate("/events")} />
             <ProfileNavRow emoji="📚" label="Resources & Books" onClick={() => navigate("/resources")} />
@@ -542,7 +542,7 @@ const Profile = () => {
 
         {/* HEALTH & SAFETY section */}
         <div className="space-y-1.5">
-          <h2 className="text-xs font-semibold text-muted-foreground tracking-wider uppercase px-1">Health & Safety</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground tracking-wider uppercase px-1">Health & Safety</h2>
           <Card>
             <ProfileNavRow emoji="🔬" label="Find STD Testing" onClick={() => navigate("/testing-locations")} />
             <ProfileNavRow emoji="🏠" label="Test From Home" onClick={() => navigate("/health-testing")} />
@@ -553,7 +553,7 @@ const Profile = () => {
 
         {/* ACCOUNT section */}
         <div className="space-y-1.5">
-          <h2 className="text-xs font-semibold text-muted-foreground tracking-wider uppercase px-1">Account</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground tracking-wider uppercase px-1">Account</h2>
           <Card>
             <ProfileNavRow emoji="👑" label="Manage Subscription" onClick={() => navigate("/premium")} />
             <ProfileNavRow emoji="📄" label="Privacy Policy" onClick={() => navigate("/privacy")} />

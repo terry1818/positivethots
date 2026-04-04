@@ -153,9 +153,10 @@ const LikesYou = () => {
     <div className="min-h-screen bg-background flex flex-col pb-20">
       <MicroCelebration trigger={celebrationTrigger} emojis={["🎉", "💕", "✨", "💜"]} />
       <div className="flex-1 overflow-auto">
-        <div className="container max-w-md mx-auto px-4 py-6">
-          <header className="flex items-center justify-center mb-4">
-            <Logo size="md" />
+        <div className="container max-w-md mx-auto px-4">
+          <header className="border-b border-border bg-card py-4 flex items-center justify-between mb-4">
+            <Logo size="md" showText={false} />
+            <div className="w-10" />
           </header>
           <div className="flex items-center gap-2 mb-4">
             <Heart className="h-6 w-6 text-primary" />
@@ -185,21 +186,22 @@ const LikesYou = () => {
                   ))}
                 </div>
               ) : likerCount === 0 ? (
-                <div>
+                <div className="space-y-3">
                   <BrandedEmptyState
                     mascot="heart"
                     headline="Your admirers are on their way! 💜"
                     description="Complete more badges to boost your profile visibility."
                     ctaLabel="Continue Learning"
                     onCtaClick={() => navigate("/learn")}
+                    className="[&_img]:max-h-[140px]"
                   />
                   {!isPremium && (
-                    <Card className="animate-pulse-border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-left mt-4">
-                      <CardContent className="p-4 text-center">
-                        <Crown className="h-8 w-8 text-primary mx-auto mb-2 animate-wiggle" />
-                        <p className="font-semibold text-foreground mb-1">Unlock Premium</p>
-                        <p className="text-sm text-muted-foreground mb-3">See who likes you instantly — $9.99/mo.</p>
-                        <Button onClick={() => navigate("/premium")} className="w-full">
+                    <Card className="animate-pulse-border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 text-left">
+                      <CardContent className="p-3 text-center">
+                        <Crown className="h-6 w-6 text-primary mx-auto mb-1.5 animate-wiggle" />
+                        <p className="font-semibold text-foreground text-sm mb-0.5">Unlock Premium</p>
+                        <p className="text-sm text-muted-foreground mb-2">See who likes you instantly — $9.99/mo.</p>
+                        <Button onClick={() => navigate("/premium")} className="w-full" size="sm">
                           <Lock className="h-4 w-4 mr-2" />Go Premium
                         </Button>
                       </CardContent>
@@ -231,7 +233,7 @@ const LikesYou = () => {
                     >
                       See who likes you
                     </Button>
-                    <p className="text-xs text-muted-foreground mt-2">
+                    <p className="text-sm text-muted-foreground mt-2">
                       <button onClick={() => navigate("/learn")} className="hover:underline">
                         Not ready to upgrade? Keep learning to unlock features →
                       </button>
@@ -257,7 +259,7 @@ const LikesYou = () => {
                         )}
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
                           <p className="text-white font-semibold text-sm">{liker.name}, {liker.age}</p>
-                          {liker.location && <p className="text-white/80 text-xs">{liker.location}</p>}
+                          {liker.location && <p className="text-white/80 text-sm">{liker.location}</p>}
                         </div>
                       </div>
                       <div className="flex">
@@ -319,12 +321,12 @@ const LikesYou = () => {
                           <p className="text-white font-semibold text-sm">{profile.name}, {profile.age}</p>
                           <div className="flex items-center justify-between">
                             {profile.location && (
-                              <p className="text-white/80 text-xs flex items-center gap-0.5">
+                              <p className="text-white/80 text-sm flex items-center gap-0.5">
                                 <MapPin className="h-3 w-3" />{profile.location}
                               </p>
                             )}
                             {profile.swiped_at && (
-                              <span className="text-white/60 text-[10px]">
+                              <span className="text-white/60 text-sm">
                                 {formatRelativeTime(profile.swiped_at)}
                               </span>
                             )}

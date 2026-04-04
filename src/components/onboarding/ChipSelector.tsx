@@ -56,12 +56,12 @@ export const ChipSelector = ({ options, selected, onToggle, max, columns = 3, po
       >
         <span className="block truncate">{option.label}</span>
         {option.description && (
-          <span className={`block text-xs mt-0.5 truncate ${isSelected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+          <span className={`block text-sm mt-0.5 truncate ${isSelected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
             {option.description}
           </span>
         )}
         {isPopular && !isSelected && (
-          <span className="absolute top-1 right-1.5 text-[10px] text-primary/60 font-medium">Popular</span>
+          <span className="absolute top-1 right-1.5 text-sm text-primary/60 font-medium">Popular</span>
         )}
         {isSelected && (
           <X className="absolute top-1.5 right-1.5 h-3 w-3" />
@@ -85,7 +85,7 @@ export const ChipSelector = ({ options, selected, onToggle, max, columns = 3, po
           <button
             type="button"
             onClick={() => setShowAll(!showAll)}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             {showAll ? "Show less" : `More options (${otherItems.length})`}
           </button>

@@ -414,7 +414,7 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
                     <img src={photo.photo_url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover blur-lg" draggable={false} />
                     <div className="absolute inset-0 bg-background/60 flex flex-col items-center justify-center gap-1">
                       <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-[10px] text-muted-foreground font-medium">Under review</span>
+                      <span className="text-sm text-muted-foreground font-medium">Under review</span>
                     </div>
                   </div>
                 ) : (
@@ -443,7 +443,7 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
                   </div>
                 )}
                 {photo.moderation_status === "rejected" && photo.moderation_reason && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-destructive/90 text-destructive-foreground text-[10px] px-1 py-0.5 truncate">
+                  <div className="absolute bottom-0 left-0 right-0 bg-destructive/90 text-destructive-foreground text-sm px-1 py-0.5 truncate">
                     {photo.moderation_reason}
                   </div>
                 )}
@@ -487,7 +487,7 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
             <TabsTrigger value="private" className="flex-1">Private</TabsTrigger>
           </TabsList>
           <TabsContent value="public">
-            <p className="text-xs text-muted-foreground mb-2">
+            <p className="text-sm text-muted-foreground mb-2">
               Tap ⭐ on any photo to set it as your main profile photo. Drag to reorder.
             </p>
             {renderGrid(publicPhotos)}
@@ -498,7 +498,7 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
             )}
           </TabsContent>
           <TabsContent value="private">
-            <p className="text-xs text-muted-foreground mb-2">Private photos are not shared by default. You control who can see them.</p>
+            <p className="text-sm text-muted-foreground mb-2">Private photos are not shared by default. You control who can see them.</p>
             {renderGrid(privatePhotos)}
             <PrivatePhotoAccessManager userId={userId} />
           </TabsContent>

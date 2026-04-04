@@ -56,7 +56,7 @@ export const FlairBadges = memo(({ streak = 0, badgeCount = 0, createdAt, isVip,
         <Badge
           key={f.label}
           variant="secondary"
-          className="text-[10px] px-1.5 py-0 font-normal bg-background/60 backdrop-blur-sm border-border/50"
+          className="text-sm px-1.5 py-0 font-normal bg-background/60 backdrop-blur-sm border-border/50"
         >
           {f.emoji} {f.label}
         </Badge>

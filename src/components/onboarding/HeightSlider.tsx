@@ -27,7 +27,7 @@ export const HeightSlider = ({ value, onChange }: HeightSliderProps) => {
             type="button"
             size="sm"
             variant={unit === "ft" ? "default" : "ghost"}
-            className="h-7 px-3 text-xs"
+            className="h-7 px-3 text-sm"
             onClick={() => setUnit("ft")}
           >
             ft/in
@@ -36,7 +36,7 @@ export const HeightSlider = ({ value, onChange }: HeightSliderProps) => {
             type="button"
             size="sm"
             variant={unit === "cm" ? "default" : "ghost"}
-            className="h-7 px-3 text-xs"
+            className="h-7 px-3 text-sm"
             onClick={() => setUnit("cm")}
           >
             cm
@@ -59,7 +59,7 @@ export const HeightSlider = ({ value, onChange }: HeightSliderProps) => {
         className="py-4"
       />
 
-      <div className="flex justify-between text-xs text-muted-foreground">
+      <div className="flex justify-between text-sm text-muted-foreground">
         <span>{unit === "ft" ? cmToFeetInches(120) : "120 cm"}</span>
         <span>{unit === "ft" ? cmToFeetInches(220) : "220 cm"}</span>
       </div>

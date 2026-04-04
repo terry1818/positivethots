@@ -59,7 +59,7 @@ export const ForgotPasswordModal = () => {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <button type="button" className="text-xs text-primary hover:underline">
+        <button type="button" className="text-sm text-primary hover:underline">
           Forgot password?
         </button>
       </DialogTrigger>
@@ -82,7 +82,7 @@ export const ForgotPasswordModal = () => {
               Check your inbox (and spam folder) for{" "}
               <span className="font-medium text-foreground">{email.trim()}</span>
             </p>
-            <p className="text-xs text-muted-foreground text-center">
+            <p className="text-sm text-muted-foreground text-center">
               Use the most recent reset email only — newer requests invalidate older links.
             </p>
             <Button variant="ghost" size="sm" onClick={() => setSent(false)}>

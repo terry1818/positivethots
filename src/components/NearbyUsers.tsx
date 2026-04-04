@@ -104,7 +104,7 @@ export const NearbyUsers = ({ nearbyUsers, isSharing }: NearbyUsersProps) => {
           <div className="text-center py-6 text-muted-foreground">
             <MapPin className="h-8 w-8 mx-auto mb-2 opacity-50" />
             <p className="text-sm">No one nearby right now</p>
-            <p className="text-xs mt-1">People sharing their location within 500m will appear here</p>
+            <p className="text-sm mt-1">People sharing their location within 500m will appear here</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -125,7 +125,7 @@ export const NearbyUsers = ({ nearbyUsers, isSharing }: NearbyUsersProps) => {
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate">{p.name}</p>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MapPin className="h-3 w-3" />
                     {formatDistance(p.distance)}
                     <span>•</span>

@@ -213,11 +213,11 @@ export const MatchModal = ({
                   <div className="flex items-start gap-2">
                     <Shield className="h-4 w-4 text-white mt-0.5 shrink-0" />
                     <div>
-                      <p className="text-white/90 text-xs">
+                      <p className="text-white/90 text-sm">
                         Meeting someone new? Check out our safety tips before your first date.
                       </p>
                       <button
-                        className="text-white underline text-xs mt-1 hover:text-white/80"
+                        className="text-white underline text-sm mt-1 hover:text-white/80"
                         onClick={() => { onClose(); navigate("/privacy-policy"); }}
                       >
                         View Safety Tips →

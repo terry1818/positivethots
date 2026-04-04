@@ -34,7 +34,7 @@ export const StreakBadge = ({ streak, className, showFreeze, freezeCount = 0, fr
         )}
       </div>
       <span className={cn(
-        "text-sm font-bold",
+        "text-base font-bold",
         streak >= 100 ? "text-primary" :
         streak >= 30 ? "text-primary" :
         streak >= 7 ? "text-accent" :
@@ -45,7 +45,7 @@ export const StreakBadge = ({ streak, className, showFreeze, freezeCount = 0, fr
       {showFreeze && freezeCount > 0 && (
         <div className="flex items-center gap-0.5 ml-0.5">
           <Snowflake className="h-3 w-3 text-blue-400" />
-          <span className="text-[10px] text-blue-400 font-medium">{freezeCount}</span>
+          <span className="text-sm text-blue-400 font-medium">{freezeCount}</span>
         </div>
       )}
       {/* Legacy support */}
@@ -53,7 +53,7 @@ export const StreakBadge = ({ streak, className, showFreeze, freezeCount = 0, fr
         <Snowflake className="h-3 w-3 text-blue-400 ml-0.5 animate-pulse" />
       )}
       {atRisk && hoursLeft !== undefined && hoursLeft < 8 && (
-        <span className="text-[10px] text-destructive font-medium ml-1 animate-heartbeat">
+        <span className="text-sm text-destructive font-medium ml-1 animate-heartbeat">
           {hoursLeft}h left!
         </span>
       )}

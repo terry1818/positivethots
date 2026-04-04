@@ -219,7 +219,7 @@ export const BadgePathMap = ({
         <div className="fixed top-[72px] left-1/2 -translate-x-1/2 z-30 transition-all duration-300 animate-in fade-in slide-in-from-top-2">
           <div
             className={cn(
-              "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold border backdrop-blur-md bg-background/95 shadow-md",
+              "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold border backdrop-blur-md bg-background/95 shadow-md",
               activeInfo.config.border,
               activeInfo.config.color
             )}
@@ -249,14 +249,14 @@ export const BadgePathMap = ({
                 <div className="flex justify-center">
                   <div
                     className={cn(
-                      "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold border backdrop-blur-sm bg-background/95 shadow-sm",
+                      "inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold border backdrop-blur-sm bg-background/95 shadow-sm",
                       node.config.border,
                       node.config.color
                     )}
                   >
                     <span>{node.config.label}</span>
                     {node.tier === "advanced" && !isPremium && (
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 text-[10px] font-bold">
+                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 text-sm font-bold">
                         <Crown className="h-3 w-3" /> Premium
                       </span>
                     )}
@@ -276,7 +276,7 @@ export const BadgePathMap = ({
                         : "bg-muted/30 border-border"
                     )}>
                       <p className={cn(
-                        "text-[10px] font-bold uppercase tracking-wider mb-2",
+                        "text-sm font-bold uppercase tracking-wider mb-2",
                         isTierComplete ? "text-success" : "text-muted-foreground"
                       )}>
                         {isTierComplete ? "✓ Unlocked" : "🔒 Complete this tier to unlock"}
@@ -287,12 +287,12 @@ export const BadgePathMap = ({
                             <span className="text-base leading-none">{f.icon}</span>
                             <div className="flex-1 min-w-0">
                               <p className={cn(
-                                "text-xs font-semibold leading-tight",
+                                "text-sm font-semibold leading-tight",
                                 f.isUnlocked ? "text-foreground" : "text-muted-foreground"
                               )}>
                                 {f.label}
                               </p>
-                              <p className="text-[10px] text-muted-foreground leading-tight">
+                              <p className="text-sm text-muted-foreground leading-tight">
                                 {f.description}
                               </p>
                             </div>
@@ -406,7 +406,7 @@ export const BadgePathMap = ({
 
                 <span
                   className={cn(
-                    "text-xs leading-tight text-center max-w-[120px] line-clamp-2",
+                    "text-sm leading-tight text-center max-w-[120px] line-clamp-2",
                     state === "completed" && "text-success font-medium",
                     state === "current" && cn(config.color, "font-semibold"),
                     state === "unlocked" && "text-foreground",
@@ -418,7 +418,7 @@ export const BadgePathMap = ({
                 </span>
 
                 {state === "premium-locked" && (
-                  <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-amber-500">
+                  <span className="inline-flex items-center gap-0.5 text-sm font-bold text-amber-500">
                     <Crown className="h-3 w-3" /> Premium Required
                   </span>
                 )}
@@ -429,7 +429,7 @@ export const BadgePathMap = ({
                       e.stopPropagation();
                       onModuleClick(module.slug);
                     }}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-[11px] font-medium hover:bg-indigo-500/25 transition-colors"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-sm font-medium hover:bg-indigo-500/25 transition-colors"
                   >
                     ▶ Resume · Section {continueSectionNumber} · {continueProgressPercent}%
                   </button>
@@ -441,14 +441,14 @@ export const BadgePathMap = ({
                       e.stopPropagation();
                       onModuleClick(module.slug);
                     }}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-[11px] font-medium hover:bg-destructive/25 transition-colors"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-sm font-medium hover:bg-destructive/25 transition-colors"
                   >
                     🔥 {streakHoursLeft}h · Save your streak
                   </button>
                 )}
 
                 {state === "current" && (
-                  <span className={cn("text-[11px] font-bold uppercase tracking-wider", config.color)}>
+                  <span className={cn("text-sm font-bold uppercase tracking-wider", config.color)}>
                     Start →
                   </span>
                 )}

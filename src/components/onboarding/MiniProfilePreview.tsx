@@ -24,7 +24,7 @@ export const MiniProfilePreview = ({ name, profileImage, fields, visible }: Mini
           <p className="text-sm font-semibold text-foreground truncate">{name}</p>
           <div className="flex flex-wrap gap-1 mt-0.5">
             {fields.filter(f => f.value).slice(0, 3).map(f => (
-              <Badge key={f.label} variant="secondary" className="text-[10px] py-0 px-1.5">
+              <Badge key={f.label} variant="secondary" className="text-sm py-0 px-1.5">
                 {f.value}
               </Badge>
             ))}

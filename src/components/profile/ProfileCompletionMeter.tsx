@@ -51,10 +51,10 @@ export const ProfileCompletionMeter = ({ percentage, nudges }: ProfileCompletion
           <div className="flex-1 min-w-0">
             <span className="text-sm text-primary font-medium group-hover:underline">{topNudge.label}</span>
             {topNudge.motivation && (
-              <p className="text-[11px] text-muted-foreground truncate">{topNudge.motivation}</p>
+              <p className="text-sm text-muted-foreground truncate">{topNudge.motivation}</p>
             )}
           </div>
-          <span className="text-xs text-primary font-medium shrink-0">{topNudge.weight}</span>
+          <span className="text-sm text-primary font-medium shrink-0">{topNudge.weight}</span>
         </button>
       )}
 
@@ -73,7 +73,7 @@ export const ProfileCompletionMeter = ({ percentage, nudges }: ProfileCompletion
                   <Icon className="h-4 w-4 text-primary" />
                 </div>
                 <span className="text-sm text-foreground flex-1">{nudge.label}</span>
-                <span className="text-xs text-primary font-medium">{nudge.weight}</span>
+                <span className="text-sm text-primary font-medium">{nudge.weight}</span>
               </button>
             );
           })}

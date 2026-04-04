@@ -135,7 +135,7 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
 
   return (
     <div className="my-5 rounded-lg border-2 border-purple-400/40 bg-purple-500/5 p-4 space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-wider text-purple-400">
+      <p className="text-sm font-semibold uppercase tracking-wider text-purple-400">
         Quick Check 🧠
       </p>
       <p className="text-sm font-medium">{checkpoint.question}</p>
@@ -178,7 +178,7 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
               <><XCircle className="h-3.5 w-3.5 text-destructive" /> Not quite</>
             )}
           </p>
-          <p className="text-muted-foreground text-xs mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             {isCorrect ? checkpoint.explanation_correct : checkpoint.explanation_wrong}
           </p>
         </div>
@@ -189,7 +189,7 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
           variant="ghost"
           size="sm"
           onClick={() => setDismissed(true)}
-          className="text-xs text-purple-400 hover:text-purple-300"
+          className="text-sm text-purple-400 hover:text-purple-300"
         >
           Got it! Keep reading →
         </Button>
@@ -210,7 +210,7 @@ const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
       <div className="flex items-center border border-border rounded-md overflow-hidden">
         <button
           onClick={() => setVoiceGender("female")}
-          className={cn("px-2 py-1 text-xs font-medium transition-colors",
+          className={cn("px-2 py-1 text-sm font-medium transition-colors",
             voiceGender === "female" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
           aria-label="Female voice"
           aria-pressed={voiceGender === "female"}
@@ -219,7 +219,7 @@ const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
         </button>
         <button
           onClick={() => setVoiceGender("male")}
-          className={cn("px-2 py-1 text-xs font-medium transition-colors",
+          className={cn("px-2 py-1 text-sm font-medium transition-colors",
             voiceGender === "male" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
           aria-label="Male voice"
           aria-pressed={voiceGender === "male"}
@@ -230,26 +230,26 @@ const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
 
       {!isPlaying && !isPaused && (
         <Button variant="outline" size="sm" onClick={() => play(contentText)}
-          className="gap-1.5 text-xs" aria-label="Read section aloud" disabled={isLoading}>
+          className="gap-1.5 text-sm" aria-label="Read section aloud" disabled={isLoading}>
           {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Volume2 className="h-3.5 w-3.5" />}
           {isLoading ? "Loading…" : "Listen"}
         </Button>
       )}
       {isPlaying && (
         <Button variant="outline" size="sm" onClick={pause}
-          className="gap-1.5 text-xs" aria-label="Pause reading">
+          className="gap-1.5 text-sm" aria-label="Pause reading">
           <Pause className="h-3.5 w-3.5" /> Pause
         </Button>
       )}
       {isPaused && (
         <Button variant="outline" size="sm" onClick={resume}
-          className="gap-1.5 text-xs" aria-label="Resume reading">
+          className="gap-1.5 text-sm" aria-label="Resume reading">
           <Play className="h-3.5 w-3.5" /> Resume
         </Button>
       )}
       {(isPlaying || isPaused) && (
         <Button variant="ghost" size="sm" onClick={stop}
-          className="gap-1.5 text-xs text-muted-foreground" aria-label="Stop reading">
+          className="gap-1.5 text-sm text-muted-foreground" aria-label="Stop reading">
           <Square className="h-3 w-3" /> Stop
         </Button>
       )}
@@ -257,7 +257,7 @@ const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
         <div className="flex items-center gap-1 ml-auto">
           {RATES.map(r => (
             <button key={r} onClick={() => setRate(r)}
-              className={cn("text-[10px] px-1.5 py-0.5 rounded font-mono",
+              className={cn("text-sm px-1.5 py-0.5 rounded font-mono",
                 rate === r ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
               aria-label={`Speed ${r}x`} aria-pressed={rate === r}>
               {r}x
@@ -316,7 +316,7 @@ export const SectionContent = ({
         {section.estimated_minutes && (
           <>
             <span>•</span>
-            <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{section.estimated_minutes} min</span>
+            <span className="bg-muted px-2 py-0.5 rounded-full text-sm">{section.estimated_minutes} min</span>
           </>
         )}
         {isCompleted && <CheckCircle className="h-4 w-4 text-success ml-auto" />}

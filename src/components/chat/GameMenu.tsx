@@ -86,7 +86,7 @@ export const GameMenu = memo(({ matchId, currentUserId, otherUserId }: GameMenuP
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-56">
-        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">🎮 Play a Game</div>
+        <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">🎮 Play a Game</div>
         {GAMES.map((g) => (
           <DropdownMenuItem key={g.type} onClick={() => startGame(g.type, g.count)} disabled={starting}>
             <span className="mr-2">{g.emoji}</span>

@@ -10,6 +10,8 @@
 
 @layer base {
   :root {
+    --text-scale: 1;
+
     --background: 270 15% 98%;
     --foreground: 270 20% 15%;
 
@@ -113,6 +115,21 @@
     --sidebar-accent-foreground: 270 10% 90%;
     --sidebar-border: 270 15% 18%;
     --sidebar-ring: 270 55% 58%;
+  }
+}
+
+  .text-scale-small { --text-scale: 0.88; }
+  .text-scale-medium { --text-scale: 1; }
+  .text-scale-large { --text-scale: 1.15; }
+
+  html {
+    font-size: calc(18.9px * var(--text-scale));
+  }
+
+  @media (min-width: 769px) {
+    html {
+      font-size: calc(16px * var(--text-scale));
+    }
   }
 }
 

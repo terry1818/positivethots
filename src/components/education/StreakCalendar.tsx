@@ -35,7 +35,7 @@ export const StreakCalendar = ({ streak, lastActivityDate, freezeCount = 0 }: St
           const isActive = activeDays.has(day.dateStr);
           return (
             <div key={day.dateStr} className="flex flex-col items-center gap-1">
-              <span className="text-[10px] text-muted-foreground">{day.label}</span>
+              <span className="text-sm text-muted-foreground">{day.label}</span>
               <div className={cn(
                 "w-8 h-8 rounded-full flex items-center justify-center transition-all",
                 isActive
@@ -56,7 +56,7 @@ export const StreakCalendar = ({ streak, lastActivityDate, freezeCount = 0 }: St
       </div>
       {/* Freeze count display */}
       {freezeCount > 0 && (
-        <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+        <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
           <Snowflake className="h-3.5 w-3.5 text-blue-400" />
           <span>{freezeCount} streak freeze{freezeCount !== 1 ? 's' : ''} available</span>
         </div>

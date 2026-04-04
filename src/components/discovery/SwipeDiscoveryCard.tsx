@@ -273,12 +273,12 @@ export const SwipeDiscoveryCard = memo(({
           {/* Top badges */}
           <div className="absolute top-3 left-3 flex gap-1.5 z-10">
             {profile.is_boosted && (
-              <Badge className="bg-amber-500/90 text-white text-[10px] border-0">
+              <Badge className="bg-amber-500/90 text-white text-sm border-0">
                 <Zap className="h-3 w-3 mr-0.5" /> Boosted
               </Badge>
             )}
             {profile.verified && (
-              <Badge className="bg-success/90 text-white text-[10px] border-0">
+              <Badge className="bg-success/90 text-white text-sm border-0">
                 <Shield className="h-3 w-3 mr-0.5" /> Verified
               </Badge>
             )}
@@ -287,7 +287,7 @@ export const SwipeDiscoveryCard = memo(({
           {/* Compatibility badge */}
           {profile.compatibility_score != null && profile.compatibility_score > 0 && (
             <div className="absolute top-3 right-3 z-10" data-walkthrough="compatibility-score">
-              <Badge variant="secondary" className="bg-primary/90 text-primary-foreground text-xs font-bold">
+              <Badge variant="secondary" className="bg-primary/90 text-primary-foreground text-sm font-bold">
                 {profile.compatibility_score}% Match
               </Badge>
             </div>
@@ -313,7 +313,7 @@ export const SwipeDiscoveryCard = memo(({
                     onError={() => handlePhotoError(photos[0])}
                   />
                 ) : (
-                  <div className="h-full w-full rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground text-xs font-bold">
+                  <div className="h-full w-full rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground text-sm font-bold">
                     {displayName?.[0] || "?"}
                   </div>
                 )}
@@ -338,7 +338,7 @@ export const SwipeDiscoveryCard = memo(({
               className="mt-1.5"
             />
             {profile.relationship_style && (
-              <Badge variant="outline" className="mt-1 border-white/30 text-white/90 text-[10px]">
+              <Badge variant="outline" className="mt-1 border-white/30 text-white/90 text-sm">
                 {profile.relationship_style.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
               </Badge>
             )}
@@ -357,13 +357,13 @@ export const SwipeDiscoveryCard = memo(({
           {profile.compatibility_reasons && profile.compatibility_reasons.length > 0 && (
             <div className="space-y-0.5">
               {profile.compatibility_reasons.slice(0, 2).map((reason, i) => (
-                <p key={i} className="text-xs text-primary flex items-center gap-1">
+                <p key={i} className="text-sm text-primary flex items-center gap-1">
                   <Heart className="h-3 w-3 shrink-0" /> {reason}
                 </p>
               ))}
             </div>
           )}
-          <p className="text-[10px] text-muted-foreground flex items-center gap-0.5 justify-center pt-1">
+          <p className="text-sm text-muted-foreground flex items-center gap-0.5 justify-center pt-1">
             <ChevronDown className="h-3 w-3" /> Tap for full profile
           </p>
         </button>

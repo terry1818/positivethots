@@ -19,7 +19,7 @@ const STEPS = [
   {
     target: "action-buttons",
     title: "Pass, Connect, or Send a Thot",
-    description: "Pass, Connect, or Send a Thot — our version of a Super Like!",
+    description: "Pass, Connect, or Send a Thot — a special way to stand out!",
     position: "top" as const,
   },
   {
@@ -155,7 +155,7 @@ export const DiscoveryWalkthrough = ({ onComplete }: DiscoveryWalkthroughProps) 
           }}
         >
           <h3 className="font-semibold text-sm mb-1">{step.title}</h3>
-          <p className="text-xs text-muted-foreground mb-3">{step.description}</p>
+          <p className="text-sm text-muted-foreground mb-3">{step.description}</p>
           <div className="flex items-center justify-between">
             <div className="flex gap-1">
               {STEPS.map((_, i) => (
@@ -168,7 +168,7 @@ export const DiscoveryWalkthrough = ({ onComplete }: DiscoveryWalkthroughProps) 
                 />
               ))}
             </div>
-            <Button size="sm" onClick={handleNext} className="h-8 text-xs">
+            <Button size="sm" onClick={handleNext} className="h-8 text-sm">
               {isLast ? "Got it!" : "Next"}
             </Button>
           </div>

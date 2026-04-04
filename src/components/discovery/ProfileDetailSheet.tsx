@@ -148,7 +148,7 @@ export const ProfileDetailSheet = ({
             {/* Compatibility badge over photo */}
             {profile.compatibility_score != null && profile.compatibility_score > 0 && (
               <div className="absolute top-3 right-3 z-20">
-                <Badge className="bg-primary/90 text-primary-foreground text-xs font-bold">
+                <Badge className="bg-primary/90 text-primary-foreground text-sm font-bold">
                   {profile.compatibility_score}% Match
                 </Badge>
               </div>
@@ -179,7 +179,7 @@ export const ProfileDetailSheet = ({
             {/* Compatibility section */}
             {profile.compatibility_score != null && profile.compatibility_score > 0 && (
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Compatibility</p>
+                <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">Compatibility</p>
                 <div className="flex items-center gap-2 mb-2">
                   <Progress value={profile.compatibility_score} className="h-2 flex-1" />
                   <span className="text-sm font-bold text-primary">{profile.compatibility_score}%</span>
@@ -187,7 +187,7 @@ export const ProfileDetailSheet = ({
                 {profile.compatibility_reasons && profile.compatibility_reasons.length > 0 && (
                   <div className="space-y-1">
                     {profile.compatibility_reasons.slice(0, 3).map((reason, i) => (
-                      <p key={i} className="text-xs text-muted-foreground flex items-center gap-1.5">
+                      <p key={i} className="text-sm text-muted-foreground flex items-center gap-1.5">
                         <Heart className="h-3 w-3 text-primary shrink-0" /> {reason}
                       </p>
                     ))}
@@ -199,7 +199,7 @@ export const ProfileDetailSheet = ({
             {/* Education badges */}
             {badgeCount > 0 && (
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">
                   Education Badges ({badgeCount})
                 </p>
                 {badgeCount >= 20 && (
@@ -209,12 +209,12 @@ export const ProfileDetailSheet = ({
                 )}
                 <div className="flex flex-wrap gap-1.5">
                   {Array.from({ length: Math.min(badgeCount, 8) }).map((_, i) => (
-                    <Badge key={i} variant="secondary" className="text-[10px]">
+                    <Badge key={i} variant="secondary" className="text-sm">
                       ✓ Module {i + 1}
                     </Badge>
                   ))}
                   {badgeCount > 8 && (
-                    <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                    <Badge variant="outline" className="text-sm text-muted-foreground">
                       +{badgeCount - 8} more
                     </Badge>
                   )}
@@ -228,7 +228,7 @@ export const ProfileDetailSheet = ({
             {/* About */}
             {profile.bio && (
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">About</p>
+                <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-1">About</p>
                 <p className="text-sm text-foreground">{profile.bio}</p>
               </div>
             )}
@@ -236,7 +236,7 @@ export const ProfileDetailSheet = ({
             {/* Relationship style */}
             {(profile.relationship_style || profile.looking_for) && (
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
+                <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
                   Relationship Style
                 </p>
                 {profile.relationship_style && (
@@ -245,7 +245,7 @@ export const ProfileDetailSheet = ({
                   </Badge>
                 )}
                 {profile.looking_for && (
-                  <p className="text-xs text-muted-foreground">Looking for: {profile.looking_for}</p>
+                  <p className="text-sm text-muted-foreground">Looking for: {profile.looking_for}</p>
                 )}
               </div>
             )}
@@ -253,10 +253,10 @@ export const ProfileDetailSheet = ({
             {/* Interests */}
             {profile.interests && profile.interests.length > 0 && (
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5">Interests</p>
+                <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-1.5">Interests</p>
                 <div className="flex flex-wrap gap-1.5">
                   {profile.interests.map((interest, i) => (
-                    <Badge key={i} variant="outline" className="text-xs">
+                    <Badge key={i} variant="outline" className="text-sm">
                       {interest}
                     </Badge>
                   ))}

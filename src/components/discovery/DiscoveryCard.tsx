@@ -158,7 +158,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
           </div>
           {profile.pronouns && <p className="text-sm text-muted-foreground">{profile.pronouns}</p>}
           {profile.learning_level && profile.learning_level > 1 && (
-            <Badge variant="secondary" className="text-[10px] mt-0.5">
+            <Badge variant="secondary" className="text-sm mt-0.5">
               {getLevelName(profile.learning_level)} {getLevelEmoji(profile.learning_level)}
             </Badge>
           )}
@@ -172,7 +172,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
       {profile.compatibility_reasons && profile.compatibility_reasons.length > 0 && (profile.compatibility_score ?? 0) >= 50 && (
         <div className="flex flex-wrap gap-1 mb-2">
           {profile.compatibility_reasons.slice(0, 2).map((reason, i) => (
-            <span key={i} className="text-xs bg-muted/80 text-muted-foreground rounded-full px-2 py-0.5">
+            <span key={i} className="text-sm bg-muted/80 text-muted-foreground rounded-full px-2 py-0.5">
               {reason}
             </span>
           ))}
@@ -188,10 +188,10 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
       {profile.interests && profile.interests.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-4">
           {profile.interests.slice(0, 4).map((interest, i) => (
-            <Badge key={i} variant="outline" className="text-xs">{interest}</Badge>
+            <Badge key={i} variant="outline" className="text-sm">{interest}</Badge>
           ))}
           {profile.interests.length > 4 && (
-            <Badge variant="outline" className="text-xs">+{profile.interests.length - 4}</Badge>
+            <Badge variant="outline" className="text-sm">+{profile.interests.length - 4}</Badge>
           )}
         </div>
       )}

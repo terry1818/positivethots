@@ -243,7 +243,7 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
                   You've mastered <span className="font-bold text-foreground">{tierName}</span>!
                 </p>
                 {tierTopics[tierName || ""] && (
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-sm text-muted-foreground mt-2">
                     Covering {tierTopics[tierName || ""]}
                   </p>
                 )}
@@ -251,20 +251,20 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
 
               {/* Share section */}
               <div className="mt-5 pt-4 border-t border-border">
-                <p className="text-xs text-muted-foreground mb-3 flex items-center justify-center gap-1">
+                <p className="text-sm text-muted-foreground mb-3 flex items-center justify-center gap-1">
                   <Share2 className="h-3 w-3" /> Share your achievement
                 </p>
                 <div className="flex justify-center gap-2">
-                  <Button variant="outline" size="sm" onClick={handleShareTwitter} className="text-xs gap-1.5">
+                  <Button variant="outline" size="sm" onClick={handleShareTwitter} className="text-sm gap-1.5">
                     𝕏 Post
                   </Button>
-                  <Button variant="outline" size="sm" onClick={handleShareFacebook} className="text-xs gap-1.5">
+                  <Button variant="outline" size="sm" onClick={handleShareFacebook} className="text-sm gap-1.5">
                     Facebook
                   </Button>
-                  <Button variant="outline" size="sm" onClick={handleShareLinkedIn} className="text-xs gap-1.5">
+                  <Button variant="outline" size="sm" onClick={handleShareLinkedIn} className="text-sm gap-1.5">
                     LinkedIn
                   </Button>
-                  <Button variant="outline" size="sm" onClick={handleCopy} className="text-xs gap-1.5">
+                  <Button variant="outline" size="sm" onClick={handleCopy} className="text-sm gap-1.5">
                     {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                     {copied ? "Copied" : "Copy"}
                   </Button>

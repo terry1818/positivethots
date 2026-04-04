@@ -446,7 +446,7 @@ const Chat = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold truncate">{otherUser.name}</div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-sm text-muted-foreground">
                     {otherUser.learning_level && otherUser.learning_level > 1 && (
                       <span>{getLevelName(otherUser.learning_level)} {getLevelEmoji(otherUser.learning_level)}</span>
                     )}
@@ -491,7 +491,7 @@ const Chat = () => {
                 <Shield className="h-5 w-5 text-primary mt-0.5" />
                 <div className="flex-1">
                   <h3 className="font-semibold text-sm">Stay Safe</h3>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Never share personal information like your address or financial details. Report any concerning behavior immediately.
                   </p>
                 </div>
@@ -501,7 +501,7 @@ const Chat = () => {
 
           {/* Icebreaker suggestions — available for first 3 messages */}
           <div className="space-y-2">
-            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+            <p className="text-sm text-muted-foreground flex items-center gap-1.5">
               <MessageCircle className="h-3 w-3" />
               {messages.length === 0 ? "Start the conversation" : "Conversation starters"}
             </p>
@@ -510,7 +510,7 @@ const Chat = () => {
                 <button
                   key={i}
                   onClick={() => handleIcebreakerTap(text, i)}
-                  className="text-xs px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 text-foreground transition-colors border border-border"
+                  className="text-sm px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 text-foreground transition-colors border border-border"
                 >
                   {text}
                 </button>
@@ -557,7 +557,7 @@ const Chat = () => {
                 <div key={message.id}>
                   {showTimestamp && (
                     <div className="flex justify-center my-4">
-                      <Badge variant="secondary" className="text-xs"><Clock className="h-3 w-3 mr-1" />{formatTime(message.created_at)}</Badge>
+                      <Badge variant="secondary" className="text-sm"><Clock className="h-3 w-3 mr-1" />{formatTime(message.created_at)}</Badge>
                     </div>
                   )}
                   <div className={cn("flex", isOwn ? "justify-end" : "justify-start", isOwn ? "animate-slide-in-right-msg" : "animate-slide-in-left")}>
@@ -579,14 +579,14 @@ const Chat = () => {
                         <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
                         {isOwn && message.id.startsWith("failed-") ? (
                           <button
-                            className="flex items-center gap-1 mt-1 text-xs text-destructive-foreground/80 hover:text-destructive-foreground"
+                            className="flex items-center gap-1 mt-1 text-sm text-destructive-foreground/80 hover:text-destructive-foreground"
                             onClick={(e) => { e.stopPropagation(); setNewMessage(message.content); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
                           >
                             <span>Failed to send · Tap to retry</span>
                           </button>
                         ) : isOwn && (
                           <div className="flex justify-end items-center gap-1 mt-1">
-                            <span className="text-xs opacity-70">{formatTime(message.created_at)}</span>
+                            <span className="text-sm opacity-70">{formatTime(message.created_at)}</span>
                             {message.read ? (
                               <CheckCheck className="h-3 w-3 text-primary-foreground/90" />
                             ) : message.delivered ? (
@@ -694,7 +694,7 @@ const Chat = () => {
             )}
           </div>
           {newMessage.length > 800 && (
-            <div className="text-xs text-muted-foreground text-right mt-1">{newMessage.length}/1000</div>
+            <div className="text-sm text-muted-foreground text-right mt-1">{newMessage.length}/1000</div>
           )}
         </div>
       </div>

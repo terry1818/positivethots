@@ -26,7 +26,7 @@ export const QuizCombo = ({ combo }: QuizComboProps) => {
         <Flame className="h-4 w-4" />
       )}
       <span>COMBO x{combo}!</span>
-      {combo >= 5 && <span className="text-xs">🔥</span>}
+      {combo >= 5 && <span className="text-sm">🔥</span>}
     </div>
   );
 };

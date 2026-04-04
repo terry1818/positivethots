@@ -22,7 +22,7 @@ export const XPBar = ({ totalXP, level }: XPBarProps) => {
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-1 shrink-0">
           <Zap className="h-3.5 w-3.5 text-accent" />
-          <span className="text-xs font-bold text-accent">{totalXP} XP</span>
+          <span className="text-base font-bold text-accent">{totalXP} XP</span>
         </div>
         <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
           <div
@@ -30,18 +30,18 @@ export const XPBar = ({ totalXP, level }: XPBarProps) => {
             style={{ width: `${percent}%` }}
           />
         </div>
-        <span className="text-xs text-muted-foreground shrink-0 font-medium">
+        <span className="text-base text-muted-foreground shrink-0 font-medium">
           Lv.{level} → {level + 1}
         </span>
       </div>
 
       {/* Next reward hint row */}
       <div className="flex items-center justify-between px-0.5">
-        <span className="text-[10px] text-muted-foreground">
+        <span className="text-sm text-muted-foreground">
           {xpRemaining > 0 ? `${xpRemaining} XP to ${nextLevelName}` : "Level up!"}
         </span>
         {nextReward && (
-          <span className="text-[10px] text-accent font-semibold flex items-center gap-0.5">
+          <span className="text-sm text-accent font-semibold flex items-center gap-0.5">
             Next reward at Lv.{nextReward.level}: {nextReward.icon} {nextReward.label}
           </span>
         )}

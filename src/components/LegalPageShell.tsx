@@ -32,7 +32,7 @@ export const LegalPageShell = ({ title, toc, children }: LegalPageShellProps) =>
       {toc.length > 0 && (
         <nav className="border-b border-border bg-card" aria-label="Table of contents">
           <div className="container max-w-2xl mx-auto px-4 py-3">
-            <p className="text-xs text-muted-foreground mb-2 font-medium">Jump to section</p>
+            <p className="text-sm text-muted-foreground mb-2 font-medium">Jump to section</p>
             <div className="flex flex-wrap gap-x-4 gap-y-1">
               {toc.map(s => (
                 <a

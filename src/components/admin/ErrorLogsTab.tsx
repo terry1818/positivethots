@@ -59,13 +59,13 @@ export const ErrorLogsTab = () => {
             <TableBody>
               {logs.map((log) => (
                 <TableRow key={log.id}>
-                  <TableCell className="text-xs text-muted-foreground">
+                  <TableCell className="text-sm text-muted-foreground">
                     {new Date(log.created_at).toLocaleString()}
                   </TableCell>
                   <TableCell>
-                    <p className="text-xs font-mono truncate max-w-[300px]">{log.error_message}</p>
+                    <p className="text-sm font-mono truncate max-w-[300px]">{log.error_message}</p>
                   </TableCell>
-                  <TableCell className="text-xs text-muted-foreground truncate max-w-[150px]">
+                  <TableCell className="text-sm text-muted-foreground truncate max-w-[150px]">
                     {log.page_url?.replace(window.location.origin, "") || "—"}
                   </TableCell>
                 </TableRow>

@@ -109,7 +109,7 @@ export const ChatGameCard = memo(({ game, currentUserId, otherUserName, matchId 
         <div className="flex items-center gap-2 mb-3">
           <span className="text-lg">{gameInfo.emoji}</span>
           <span className="font-semibold text-sm">{gameInfo.label}</span>
-          <Badge variant="secondary" className="text-[10px] ml-auto">Complete ✓</Badge>
+          <Badge variant="secondary" className="text-sm ml-auto">Complete ✓</Badge>
         </div>
 
         {game.game_type === "truth_prompt" ? (
@@ -117,7 +117,7 @@ export const ChatGameCard = memo(({ game, currentUserId, otherUserName, matchId 
             <p className="text-sm font-medium text-foreground">{currentQ?.text}</p>
             <div className="bg-background/60 rounded-lg p-3 border border-border/50">
               <p className="text-sm italic">"{localState.truthResponse}"</p>
-              <p className="text-[10px] text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 — {localState.truthResponder === currentUserId ? "You" : otherUserName}
               </p>
             </div>
@@ -129,17 +129,17 @@ export const ChatGameCard = memo(({ game, currentUserId, otherUserName, matchId 
               const theirAns = otherAnswers[q.id];
               const match = myAns === theirAns;
               return (
-                <div key={q.id} className="text-xs space-y-1">
+                <div key={q.id} className="text-sm space-y-1">
                   <p className="font-medium text-foreground">{q.text}</p>
                   <div className="flex gap-2">
-                    <Badge variant={match ? "default" : "secondary"} className="text-[10px]">
+                    <Badge variant={match ? "default" : "secondary"} className="text-sm">
                       You: {typeof myAns === "number" ? q.options?.[myAns] : myAns}
                     </Badge>
-                    <Badge variant={match ? "default" : "outline"} className="text-[10px]">
+                    <Badge variant={match ? "default" : "outline"} className="text-sm">
                       {otherUserName}: {typeof theirAns === "number" ? q.options?.[theirAns] : theirAns}
                     </Badge>
                   </div>
-                  {match && <span className="text-[10px] text-primary">🎉 Match!</span>}
+                  {match && <span className="text-sm text-primary">🎉 Match!</span>}
                 </div>
               );
             })}
@@ -183,7 +183,7 @@ export const ChatGameCard = memo(({ game, currentUserId, otherUserName, matchId 
             </Button>
           </div>
         ) : (
-          <p className="text-xs text-muted-foreground italic">Waiting for {otherUserName} to answer...</p>
+          <p className="text-sm text-muted-foreground italic">Waiting for {otherUserName} to answer...</p>
         )}
       </Card>
     );
@@ -200,7 +200,7 @@ export const ChatGameCard = memo(({ game, currentUserId, otherUserName, matchId 
       <div className="flex items-center gap-2 mb-1">
         <span className="text-lg">{gameInfo.emoji}</span>
         <span className="font-semibold text-sm">{gameInfo.label}</span>
-        <span className="text-[10px] text-muted-foreground ml-auto">
+        <span className="text-sm text-muted-foreground ml-auto">
           {localState.currentIndex + 1}/{localState.questions.length}
         </span>
       </div>
@@ -208,7 +208,7 @@ export const ChatGameCard = memo(({ game, currentUserId, otherUserName, matchId 
 
       {iAlreadyAnswered ? (
         <div className="space-y-2">
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
+          <p className="text-sm text-muted-foreground flex items-center gap-1">
             <Check className="h-3 w-3 text-primary" /> You answered! Waiting for {otherUserName}...
           </p>
         </div>

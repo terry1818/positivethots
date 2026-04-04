@@ -105,7 +105,7 @@ export const ShareableAchievementCard = memo(
             <Button
               variant={cardFormat === "story" ? "default" : "outline"}
               size="sm"
-              className="text-xs flex-1"
+              className="text-sm flex-1"
               onClick={() => setCardFormat("story")}
             >
               Story 9:16
@@ -113,7 +113,7 @@ export const ShareableAchievementCard = memo(
             <Button
               variant={cardFormat === "square" ? "default" : "outline"}
               size="sm"
-              className="text-xs flex-1"
+              className="text-sm flex-1"
               onClick={() => setCardFormat("square")}
             >
               Square 1:1

@@ -30,7 +30,7 @@ export const SectionNav = ({ sections, progress, currentIndex, onSelect }: Secti
           key={section.id}
           onClick={() => onSelect(index)}
           className={cn(
-            "flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all min-w-0 shrink-0",
+            "flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all min-w-0 shrink-0",
             index === currentIndex
               ? "bg-primary text-primary-foreground"
               : isCompleted(section.id)

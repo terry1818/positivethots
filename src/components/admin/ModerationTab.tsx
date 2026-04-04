@@ -57,7 +57,7 @@ export const ModerationTab = () => {
           <MessageSquareWarning className="h-4 w-4 text-destructive" />
           Moderation Queue
           {pendingCount > 0 && (
-            <Badge variant="destructive" className="text-xs">{pendingCount}</Badge>
+            <Badge variant="destructive" className="text-sm">{pendingCount}</Badge>
           )}
         </h3>
         <Button variant="ghost" size="sm" onClick={loadMessages} disabled={loading}>
@@ -82,11 +82,11 @@ export const ModerationTab = () => {
             <TableBody>
               {messages.map((msg) => (
                 <TableRow key={msg.id}>
-                  <TableCell className="text-xs text-muted-foreground">
+                  <TableCell className="text-sm text-muted-foreground">
                     {new Date(msg.created_at).toLocaleString()}
                   </TableCell>
-                  <TableCell className="text-xs max-w-[200px] truncate">{msg.content}</TableCell>
-                  <TableCell className="text-xs text-muted-foreground">{msg.reason || "—"}</TableCell>
+                  <TableCell className="text-sm max-w-[200px] truncate">{msg.content}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{msg.reason || "—"}</TableCell>
                   <TableCell>
                     <Badge variant={msg.status === "pending" ? "destructive" : msg.status === "dismissed" ? "secondary" : "default"}>
                       {msg.status}

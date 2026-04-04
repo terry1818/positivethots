@@ -57,15 +57,15 @@ export const NpsTab = () => {
       <div className="grid grid-cols-3 gap-2">
         <Card className="p-3 text-center">
           <p className="text-2xl font-bold text-primary">{npsScore}</p>
-          <p className="text-xs text-muted-foreground">NPS Score</p>
+          <p className="text-sm text-muted-foreground">NPS Score</p>
         </Card>
         <Card className="p-3 text-center">
           <p className="text-2xl font-bold">{avg}</p>
-          <p className="text-xs text-muted-foreground">Avg Score</p>
+          <p className="text-sm text-muted-foreground">Avg Score</p>
         </Card>
         <Card className="p-3 text-center">
           <p className="text-2xl font-bold">{responses.length}</p>
-          <p className="text-xs text-muted-foreground">Responses</p>
+          <p className="text-sm text-muted-foreground">Responses</p>
         </Card>
       </div>
 
@@ -84,11 +84,11 @@ export const NpsTab = () => {
                 )}
                 style={{ height: `${(count / maxDist) * 100}%`, minHeight: count > 0 ? 4 : 0 }}
               />
-              <span className="text-[10px] text-muted-foreground">{i}</span>
+              <span className="text-sm text-muted-foreground">{i}</span>
             </div>
           ))}
         </div>
-        <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+        <div className="flex justify-between mt-2 text-sm text-muted-foreground">
           <span>Detractors: {detractors}</span>
           <span>Passives: {passives}</span>
           <span>Promoters: {promoters}</span>
@@ -105,12 +105,12 @@ export const NpsTab = () => {
             <div key={r.id} className="text-sm border rounded-lg p-2">
               <div className="flex items-center gap-2 mb-1">
                 <span className={cn(
-                  "text-xs font-bold px-1.5 py-0.5 rounded",
+                  "text-sm font-bold px-1.5 py-0.5 rounded",
                   r.score <= 6 ? "bg-destructive/10 text-destructive" :
                   r.score <= 8 ? "bg-yellow-500/10 text-yellow-600" :
                   "bg-primary/10 text-primary"
                 )}>{r.score}</span>
-                <span className="text-xs text-muted-foreground">{r.trigger_event}</span>
+                <span className="text-sm text-muted-foreground">{r.trigger_event}</span>
               </div>
               <p className="text-muted-foreground">{r.feedback}</p>
             </div>

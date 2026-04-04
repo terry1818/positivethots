@@ -104,11 +104,11 @@ export const BdsmTestSection = ({
             )}
           </div>
           {urlError && (
-            <p className="text-xs text-destructive">
+            <p className="text-sm text-destructive">
               URL must be a bdsmtest.org results link (e.g. https://bdsmtest.org/r/abc123)
             </p>
           )}
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Take the test at{" "}
             <a
               href="https://bdsmtest.org"
