@@ -63,6 +63,17 @@ const Messages = () => {
     loadMatches();
   }, []);
 
+  // Realtime subscription for new matches
+  useEffect(() => {
+    if (!userId) return;
+    const channel = supabase
+      .channel('matches-realtime')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'matches', filter: `user1_id=eq.${userId}` }, () => loadMatches())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'matches', filter: `user2_id=eq.${userId}` }, () => loadMatches())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [userId]);
+
   const checkAuth = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) navigate("/auth");
