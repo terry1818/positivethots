@@ -65,18 +65,18 @@ export const ProfileDetailSheet = ({
   const [failedPhotos, setFailedPhotos] = useState<Set<string>>(new Set());
 
   // Fetch approved photos from user_photos table (same source as discovery cards)
-  const { data: userPhotos } = useQuery({
+  const { data: userPhotosData } = useQuery({
     queryKey: ["profile-detail-photos", profile?.id],
     queryFn: async () => {
       if (!profile?.id) return [];
       const { data } = await supabase
         .from("user_photos")
-        .select("photo_url, order_index")
+        .select("photo_url, order_index, focal_point_y")
         .eq("user_id", profile.id)
         .eq("visibility", "public")
         .eq("moderation_status", "approved")
         .order("order_index", { ascending: true });
-      return data?.map(p => p.photo_url) || [];
+      return data?.map(p => ({ url: p.photo_url, focalY: Number(p.focal_point_y) || 50 })) || [];
     },
     enabled: !!profile?.id,
   });
