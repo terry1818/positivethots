@@ -739,7 +739,7 @@ const Index = () => {
       </div>
 
       {/* Curated Matches Grid */}
-      <div className="max-w-sm mx-auto px-4">
+      <div className="max-w-md mx-auto px-4">
         {suggestions.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[50vh] px-6 text-center">
             <BrandedEmptyState
