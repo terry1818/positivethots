@@ -838,7 +838,7 @@ const Onboarding = () => {
               {/* Step 11: Lifestyle */}
               {step === 11 && (
                 <div className="space-y-5">
-                  <StepHeader emoji="🌿" title="Lifestyle" subtitle="These appear as badges on your profile" />
+                  <StepHeader emoji="🌿" title="Lifestyle" subtitle="These appear as badges on your profile · Optional" />
                   {LIFESTYLE_CATEGORIES.map((cat, catIdx) => (
                     <div key={cat.key} className="space-y-1.5" style={{ animationDelay: `${catIdx * 0.05}s` }}>
                       <Label className="text-sm font-medium">{cat.label}</Label>
