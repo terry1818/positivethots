@@ -8,6 +8,7 @@ import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { EducationTierBadge } from "@/components/EducationTierBadge";
 import { FlairBadges } from "@/components/profile/FlairBadges";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 interface EnhancedProfile {
   id: string;
@@ -72,6 +73,7 @@ export const SwipeDiscoveryCard = memo(({
   const [photoIndex, setPhotoIndex] = useState(0);
   const [failedPhotos, setFailedPhotos] = useState<Set<string>>(new Set());
   const cardRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
 
   const allPhotos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
   const photos = allPhotos.filter(url => !failedPhotos.has(url));
@@ -160,7 +162,7 @@ export const SwipeDiscoveryCard = memo(({
     }, 400);
   };
 
-  const rotation = isDragging ? dragOffset.x / 20 : 0;
+  const rotation = isDragging && !reducedMotion ? dragOffset.x / 20 : 0;
   const dragProgress = isDragging ? Math.min(Math.abs(dragOffset.x) / 100, 1) : 0;
   const isRight = dragOffset.x > 0;
 

@@ -25,6 +25,26 @@ import { toast } from "sonner";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { LinkedAccountsCard } from "@/components/settings/LinkedAccountsCard";
 
+const NotificationToggle = ({ label, description, storageKey, defaultOn = true }: { label: string; description: string; storageKey: string; defaultOn?: boolean }) => {
+  const [enabled, setEnabled] = useState(() => {
+    const stored = localStorage.getItem(storageKey);
+    return stored !== null ? stored === "true" : defaultOn;
+  });
+  const toggle = (val: boolean) => {
+    setEnabled(val);
+    localStorage.setItem(storageKey, String(val));
+  };
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex-1 min-w-0">
+        <Label className="text-sm font-medium">{label}</Label>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </div>
+      <Switch checked={enabled} onCheckedChange={toggle} />
+    </div>
+  );
+};
+
 const PreferencesCard = () => {
   const { soundEnabled, hapticEnabled, setSoundEnabled, setHapticEnabled } = useSoundEffects();
   return (
@@ -32,20 +52,33 @@ const PreferencesCard = () => {
       <CardHeader>
         <CardTitle className="text-lg">Preferences</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Volume2 className="h-4 w-4 text-muted-foreground" />
-            <Label>Sound Effects</Label>
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Volume2 className="h-4 w-4 text-muted-foreground" />
+              <Label>Sound Effects</Label>
+            </div>
+            <Switch checked={soundEnabled} onCheckedChange={setSoundEnabled} />
           </div>
-          <Switch checked={soundEnabled} onCheckedChange={setSoundEnabled} />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Vibrate className="h-4 w-4 text-muted-foreground" />
+              <Label>Haptic Feedback</Label>
+            </div>
+            <Switch checked={hapticEnabled} onCheckedChange={setHapticEnabled} />
+          </div>
         </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Vibrate className="h-4 w-4 text-muted-foreground" />
-            <Label>Haptic Feedback</Label>
+
+        <div className="border-t border-border pt-4 space-y-3">
+          <h3 className="text-sm font-semibold">Notifications</h3>
+          <div className="space-y-3">
+            <NotificationToggle label="New Matches" description="When someone you Connected with says yes" storageKey="pt_notify_matches" />
+            <NotificationToggle label="New Messages" description="When you receive a chat message" storageKey="pt_notify_messages" />
+            <NotificationToggle label="Streak Reminders" description="Before your learning streak expires" storageKey="pt_notify_streaks" />
+            <NotificationToggle label="New Events" description="When events matching your interests are posted" storageKey="pt_notify_events" />
+            <NotificationToggle label="Weekly Digest" description="Summary of your activity and community highlights" defaultOn={false} storageKey="pt_notify_digest" />
           </div>
-          <Switch checked={hapticEnabled} onCheckedChange={setHapticEnabled} />
         </div>
       </CardContent>
     </Card>
