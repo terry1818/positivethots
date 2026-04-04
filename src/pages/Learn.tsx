@@ -12,10 +12,13 @@ import { XPBar } from "@/components/education/XPBar";
 import { StreakBadge } from "@/components/education/StreakBadge";
 import { StreakCalendar } from "@/components/education/StreakCalendar";
 import { DailyChallenge } from "@/components/education/DailyChallenge";
+import { DailySpinWheel } from "@/components/education/DailySpinWheel";
+import { NearMissCard } from "@/components/education/NearMissCard";
+import { StreakInterstitial } from "@/components/education/StreakInterstitial";
 
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
+import { useLearningStats, getLevelName, getStreakMultiplier } from "@/hooks/useLearningStats";
 import { StreakRestoreModal } from "@/components/education/StreakRestoreModal";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
