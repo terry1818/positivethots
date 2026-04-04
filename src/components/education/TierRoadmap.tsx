@@ -390,7 +390,7 @@ export const BadgePathMap = ({
                           {showStreakChip && (
                             <button
                               onClick={(e) => { e.stopPropagation(); onModuleClick(module.slug); }}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-base font-semibold hover:bg-destructive/25 transition-colors"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-destructive/15 border border-destructive/30 text-destructive text-sm font-semibold hover:bg-destructive/25 transition-colors"
                             >
                               🔥 {streakHoursLeft}h · Save your streak
                             </button>
