@@ -357,7 +357,12 @@ const Index = () => {
     } else {
       toast.success("Connection Sent", { description: "They'll be notified of your interest!" });
     }
-    setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
+    setSuggestions(prev => {
+      const next = prev.filter(s => s.id !== otherUserId);
+      const nextProfile = next[0];
+      if (nextProfile) setAnnouncedProfile(`Now viewing ${nextProfile.display_name || nextProfile.name}, age ${nextProfile.age}. ${nextProfile.compatibility_score ?? 0}% compatible.`);
+      return next;
+    });
   }, [currentUser, suggestions]);
 
   const handlePass = useCallback(async (otherUserId: string) => {
@@ -366,7 +371,12 @@ const Index = () => {
       swiper_id: currentUser.id, swiped_id: otherUserId, direction: "left",
     });
     trackEvent("swipe", { direction: "left", swiped_id: otherUserId });
-    setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
+    setSuggestions(prev => {
+      const next = prev.filter(s => s.id !== otherUserId);
+      const nextProfile = next[0];
+      if (nextProfile) setAnnouncedProfile(`Now viewing ${nextProfile.display_name || nextProfile.name}, age ${nextProfile.age}. ${nextProfile.compatibility_score ?? 0}% compatible.`);
+      return next;
+    });
   }, [currentUser]);
 
   const handleSuperLike = useCallback(async (otherUserId: string) => {

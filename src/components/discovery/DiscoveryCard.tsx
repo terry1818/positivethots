@@ -75,6 +75,7 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
           className="w-full h-full"
           loading={index === 0 ? "eager" : "lazy"}
           fetchPriority={index === 0 ? "high" : undefined}
+          sizes="(max-width: 375px) 343px, (max-width: 768px) 500px, 600px"
           onError={() => setImageError(true)}
         />
       ) : (
