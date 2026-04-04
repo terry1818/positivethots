@@ -55,7 +55,7 @@ const HealthTesting = () => {
         {/* FTC Disclosure */}
         <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 border border-border">
           <Info className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Some links are affiliate links. We earn a small commission at no extra cost to you. We only recommend services that support our community's health.
           </p>
         </div>
@@ -83,7 +83,7 @@ const HealthTesting = () => {
                     <h3 className="text-base font-semibold">{service.name}</h3>
                     <p className="text-sm text-muted-foreground">{service.description}</p>
                   </div>
-                  <Badge variant="secondary" className="text-xs flex-shrink-0 ml-2">
+                  <Badge variant="secondary" className="text-sm flex-shrink-0 ml-2">
                     {service.tag}
                   </Badge>
                 </div>
@@ -132,7 +132,7 @@ const HealthTesting = () => {
         {/* Trust Note */}
         <div className="flex items-start gap-2 px-2 pb-4">
           <Shield className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             All recommended services use CLIA-certified labs and HIPAA-compliant processes. Your results are private and confidential.
           </p>
         </div>

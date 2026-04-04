@@ -489,7 +489,7 @@ const LearnModule = () => {
                   </div>
                   {questions.length > 0 && (
                     <div className="space-y-1">
-                      <div className="flex justify-between text-xs text-muted-foreground">
+                      <div className="flex justify-between text-sm text-muted-foreground">
                         <span>Question {currentQuestionIndex + 1} of {questions.length}</span>
                         <span>{answeredQuestions.size}/{questions.length} answered</span>
                       </div>
@@ -579,7 +579,7 @@ const LearnModule = () => {
                                 )}
                               </p>
                               {!isCorrect && correctAnswer !== undefined && (
-                                <p className="text-xs text-muted-foreground">
+                                <p className="text-sm text-muted-foreground">
                                   Correct answer: <span className="font-medium text-foreground">{currentQuestion.options[correctAnswer]}</span>
                                 </p>
                               )}
@@ -637,7 +637,7 @@ const LearnModule = () => {
                       </Button>
                     </div>
                     {violationCount > 0 && (
-                      <p className="text-xs text-destructive text-center mt-2">⚠️ {violationCount} quiz integrity warning(s) recorded</p>
+                      <p className="text-sm text-destructive text-center mt-2">⚠️ {violationCount} quiz integrity warning(s) recorded</p>
                     )}
                   </>
                 ) : null}

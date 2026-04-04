@@ -273,7 +273,7 @@ const EditProfile = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="bio">About Me</Label>
-                  <span className={cn("text-xs", bio.length > 500 ? "text-destructive" : "text-muted-foreground")}>{bio.length}/500</span>
+                  <span className={cn("text-sm", bio.length > 500 ? "text-destructive" : "text-muted-foreground")}>{bio.length}/500</span>
                 </div>
                 <Textarea
                   id="bio"
@@ -292,7 +292,7 @@ const EditProfile = () => {
               {/* Prompts */}
               <div className="space-y-3">
                 <Label>Your Prompts</Label>
-                <p className="text-xs text-muted-foreground">Answer prompts so people get to know the real you</p>
+                <p className="text-sm text-muted-foreground">Answer prompts so people get to know the real you</p>
                 {prompts.map((prompt, idx) => (
                   <div key={idx} className="bg-muted/30 rounded-xl p-3 border border-border/50 space-y-2">
                     <div className="flex items-start justify-between gap-2">
@@ -320,7 +320,7 @@ const EditProfile = () => {
                             type="button"
                             onClick={() => changePromptQuestion(idx, q)}
                             className={cn(
-                              "block w-full text-left text-xs px-2 py-1.5 rounded-lg transition-colors",
+                              "block w-full text-left text-sm px-2 py-1.5 rounded-lg transition-colors",
                               q === prompt.prompt_question
                                 ? "bg-primary/10 text-primary"
                                 : "hover:bg-muted text-muted-foreground"
@@ -340,7 +340,7 @@ const EditProfile = () => {
                       rows={2}
                       className="text-sm resize-none"
                     />
-                    <p className="text-[10px] text-muted-foreground text-right">{prompt.prompt_response.length}/150</p>
+                    <p className="text-sm text-muted-foreground text-right">{prompt.prompt_response.length}/150</p>
                   </div>
                 ))}
 

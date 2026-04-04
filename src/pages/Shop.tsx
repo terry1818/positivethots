@@ -184,7 +184,7 @@ const Shop = () => {
                       {product.node.title}
                     </h3>
                     <div className="flex items-center justify-between">
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="secondary" className="text-sm">
                         {price.currencyCode} {parseFloat(price.amount).toFixed(2)}
                       </Badge>
                       <Button

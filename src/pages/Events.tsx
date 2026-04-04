@@ -229,18 +229,18 @@ const Events = () => {
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EventTier)} className="w-full">
           <TabsList className="w-full grid grid-cols-3 mb-4">
-            <TabsTrigger value="community" className="text-xs sm:text-sm">
+            <TabsTrigger value="community" className="text-sm sm:text-sm">
               🌐 Community
             </TabsTrigger>
-            <TabsTrigger value="premium" className="text-xs sm:text-sm">
+            <TabsTrigger value="premium" className="text-sm sm:text-sm">
               👑 Premium
             </TabsTrigger>
-            <TabsTrigger value="adults_only" className="text-xs sm:text-sm">
+            <TabsTrigger value="adults_only" className="text-sm sm:text-sm">
               🔒 Adults Only
             </TabsTrigger>
           </TabsList>
 
-          <p className="text-xs text-muted-foreground mb-3 text-center">{tierDescriptions[activeTab]}</p>
+          <p className="text-sm text-muted-foreground mb-3 text-center">{tierDescriptions[activeTab]}</p>
 
           <div className="mb-4">
             <SearchInput placeholder="Search events..." ariaLabel="Search events" onSearch={handleEventSearch} />

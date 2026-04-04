@@ -90,12 +90,12 @@ export const BottomNav = () => {
               <div className="relative">
                 <Icon className={cn("h-5 w-5 transition-transform duration-200", isActive && "scale-110")} aria-hidden="true" />
                 {showBadge && (
-                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center" aria-label={`${unreadCount} unread messages`}>
+                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-sm font-bold flex items-center justify-center" aria-label={`${unreadCount} unread messages`}>
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}
               </div>
-              <span className="text-[10px] font-medium" aria-hidden="true">{label}</span>
+              <span className="text-sm font-medium" aria-hidden="true">{label}</span>
               {isActive && (
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-gradient-to-r from-primary to-secondary" aria-hidden="true" />
               )}

@@ -20,7 +20,7 @@ export const KeyTakeaway = ({ takeaway, sectionTitle }: KeyTakeawayProps) => {
         <div className="flex items-start gap-3">
           <Lightbulb className="h-5 w-5 text-accent shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-xs font-bold text-accent uppercase tracking-wide mb-1">Key Takeaway</p>
+            <p className="text-sm font-bold text-accent uppercase tracking-wide mb-1">Key Takeaway</p>
             <p className="text-sm leading-relaxed">{takeaway}</p>
           </div>
           <button

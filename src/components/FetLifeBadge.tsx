@@ -20,7 +20,7 @@ export const FetLifeBadge = ({ username, status, size = "sm" }: FetLifeBadgeProp
           >
             <Link2 className={`${sizeClasses} text-[hsl(280,60%,50%)]`} />
             {size === "md" && (
-              <span className="text-xs font-medium text-[hsl(280,60%,50%)]">FL</span>
+              <span className="text-sm font-medium text-[hsl(280,60%,50%)]">FL</span>
             )}
           </span>
         </TooltipTrigger>

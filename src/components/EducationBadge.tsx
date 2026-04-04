@@ -69,7 +69,7 @@ export const EducationBadge = ({
   showLabel = false 
 }: EducationBadgeProps) => {
   const sizes = {
-    sm: "h-6 w-6 text-xs",
+    sm: "h-6 w-6 text-sm",
     md: "h-10 w-10 text-base",
     lg: "h-14 w-14 text-xl"
   };
@@ -100,7 +100,7 @@ export const EducationBadge = ({
       {showLabel && (
         <span className={cn(
           "text-center leading-tight",
-          size === "sm" ? "text-[10px]" : "text-xs",
+          size === "sm" ? "text-sm" : "text-sm",
           isEarned ? "text-foreground" : "text-muted-foreground"
         )}>
           {title}

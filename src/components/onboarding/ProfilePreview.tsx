@@ -51,13 +51,13 @@ export const ProfilePreview = (props: ProfilePreviewProps) => {
         {/* Key details */}
         <div className="flex flex-wrap gap-2">
           {props.gender && (
-            <Badge variant="secondary" className="text-xs">{props.gender}</Badge>
+            <Badge variant="secondary" className="text-sm">{props.gender}</Badge>
           )}
           {props.sexuality && (
-            <Badge variant="secondary" className="text-xs">{props.sexuality}</Badge>
+            <Badge variant="secondary" className="text-sm">{props.sexuality}</Badge>
           )}
           {props.relationshipStyle && (
-            <Badge variant="outline" className="text-xs">{props.relationshipStyle}</Badge>
+            <Badge variant="outline" className="text-sm">{props.relationshipStyle}</Badge>
           )}
         </div>
 
@@ -89,7 +89,7 @@ export const ProfilePreview = (props: ProfilePreviewProps) => {
         {props.desires.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {props.desires.slice(0, 6).map(d => (
-              <Badge key={d} className="text-xs bg-secondary/15 text-secondary border-0">{d}</Badge>
+              <Badge key={d} className="text-sm bg-secondary/15 text-secondary border-0">{d}</Badge>
             ))}
           </div>
         )}
@@ -98,10 +98,10 @@ export const ProfilePreview = (props: ProfilePreviewProps) => {
         {props.interests.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {props.interests.slice(0, 5).map(i => (
-              <Badge key={i} variant="outline" className="text-xs">{i}</Badge>
+              <Badge key={i} variant="outline" className="text-sm">{i}</Badge>
             ))}
             {props.interests.length > 5 && (
-              <Badge variant="outline" className="text-xs">+{props.interests.length - 5}</Badge>
+              <Badge variant="outline" className="text-sm">+{props.interests.length - 5}</Badge>
             )}
           </div>
         )}

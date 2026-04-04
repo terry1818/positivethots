@@ -40,7 +40,7 @@ export const PhaseInterstitial = ({ show, emoji, message, nextPhase, nextUp, onC
       {nextUp && (
         <p className="text-sm text-muted-foreground mt-2 animate-stagger-3">{nextUp}</p>
       )}
-      <p className="text-xs text-muted-foreground mt-6 animate-stagger-3">Tap to continue</p>
+      <p className="text-sm text-muted-foreground mt-6 animate-stagger-3">Tap to continue</p>
     </div>
   );
 };

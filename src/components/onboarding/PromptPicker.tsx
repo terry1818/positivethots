@@ -32,12 +32,12 @@ export const PromptPicker = ({ answers, onChange }: PromptPickerProps) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {answeredCount}/3 prompts answered {answeredCount < 2 && "(min 2)"}
         </p>
       </div>
       {answeredCount < 3 && (
-        <p className="text-xs text-primary/70 italic">
+        <p className="text-sm text-primary/70 italic">
           💡 Profiles with 3 prompts get 2x more connections
         </p>
       )}
@@ -84,14 +84,14 @@ export const PromptPicker = ({ answers, onChange }: PromptPickerProps) => {
                     className="text-sm resize-none"
                     autoFocus
                   />
-                  <p className="text-[10px] text-muted-foreground text-right">
+                  <p className="text-sm text-muted-foreground text-right">
                     {response.length}/150
                   </p>
                 </div>
               )}
 
               {!isExpanded && isAnswered && (
-                <p className="text-xs text-muted-foreground mt-1 ml-6 line-clamp-1">{response}</p>
+                <p className="text-sm text-muted-foreground mt-1 ml-6 line-clamp-1">{response}</p>
               )}
             </div>
           );

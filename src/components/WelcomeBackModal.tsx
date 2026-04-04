@@ -89,17 +89,17 @@ export const WelcomeBackModal = ({ previousChurnStatus }: WelcomeBackModalProps)
             <div className="bg-muted rounded-lg p-3">
               <Heart className="h-5 w-5 mx-auto text-secondary mb-1" />
               <p className="text-lg font-bold">{stats.newMatches}</p>
-              <p className="text-[10px] text-muted-foreground">Matches</p>
+              <p className="text-sm text-muted-foreground">Matches</p>
             </div>
             <div className="bg-muted rounded-lg p-3">
               <BookOpen className="h-5 w-5 mx-auto text-primary mb-1" />
               <p className="text-lg font-bold">{stats.newModules}</p>
-              <p className="text-[10px] text-muted-foreground">Courses</p>
+              <p className="text-sm text-muted-foreground">Courses</p>
             </div>
             <div className="bg-muted rounded-lg p-3">
               <Flame className="h-5 w-5 mx-auto text-destructive mb-1" />
               <p className="text-lg font-bold">{stats.streak}</p>
-              <p className="text-[10px] text-muted-foreground">Streak</p>
+              <p className="text-sm text-muted-foreground">Streak</p>
             </div>
           </div>
 

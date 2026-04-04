@@ -157,7 +157,7 @@ export const LinkedAccountsCard = () => {
             {isLinked && (
               <Badge
                 variant={fetlifeLink.status === "verified" ? "default" : "secondary"}
-                className="text-xs"
+                className="text-sm"
               >
                 {fetlifeLink.status === "verified" ? "✓ Verified" : "Self-Reported"}
               </Badge>

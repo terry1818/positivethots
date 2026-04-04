@@ -204,7 +204,7 @@ const Learn = () => {
               />
               {/* Streak urgency pill */}
               {isStreakAtRisk && stats && stats.current_streak > 0 && (
-                <span className="bg-destructive/15 border border-destructive/40 text-destructive text-xs font-bold rounded-full px-2 py-0.5">
+                <span className="bg-destructive/15 border border-destructive/40 text-destructive text-sm font-bold rounded-full px-2 py-0.5">
                   🔥 {streakHoursLeft}h left
                 </span>
               )}
@@ -217,7 +217,7 @@ const Learn = () => {
           {stats && (
             <div className="mt-3">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-muted-foreground">{getLevelName(stats.current_level)}</span>
+                <span className="text-sm text-muted-foreground">{getLevelName(stats.current_level)}</span>
               </div>
               <XPBar totalXP={stats.total_xp} level={stats.current_level} />
             </div>
@@ -246,7 +246,7 @@ const Learn = () => {
 
         {/* Community social proof */}
         {activeLearnerCount != null && activeLearnerCount > 0 && (
-          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground py-1">
+          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground py-1">
             <Users className="h-3 w-3" />
             <span>{activeLearnerCount.toLocaleString()} learners active today</span>
           </div>
@@ -259,7 +259,7 @@ const Learn = () => {
               <BookOpen className="h-4 w-4 text-primary" />
               Learning Path
             </h2>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-sm text-muted-foreground">
               <AnimatedCounter end={earnedCount} />/{totalBadges} badges
             </span>
           </div>
@@ -270,11 +270,11 @@ const Learn = () => {
             />
           </div>
           {requiredEarned === requiredModules.length && requiredModules.length > 0 ? (
-            <p className="text-xs text-success flex items-center gap-1">
+            <p className="text-sm text-success flex items-center gap-1">
               <CheckCircle className="h-3.5 w-3.5" />Discovery unlocked! Keep learning for more.
             </p>
           ) : (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Complete {requiredModules.length - requiredEarned} more foundation module{requiredModules.length - requiredEarned !== 1 ? 's' : ''} to unlock discovery
             </p>
           )}
@@ -306,7 +306,7 @@ const Learn = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-sm">You've completed the full curriculum! 🎓</h3>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Upgrade to VIP to earn your Verified Educator badge and host community events.
                   </p>
                   <Button size="sm" className="mt-3" onClick={() => navigate("/premium")}>
@@ -332,7 +332,7 @@ const Learn = () => {
             <BookMarked className="h-5 w-5 text-primary flex-shrink-0" />
             <div className="text-left">
               <span className="text-sm font-medium">Books & Products</span>
-              <p className="text-xs text-muted-foreground">Curated recommendations for your journey</p>
+              <p className="text-sm text-muted-foreground">Curated recommendations for your journey</p>
             </div>
           </Button>
           <Button
@@ -343,7 +343,7 @@ const Learn = () => {
             <NotebookPen className="h-5 w-5 text-primary flex-shrink-0" />
             <div className="text-left">
               <span className="text-sm font-medium">Reflection Journal</span>
-              <p className="text-xs text-muted-foreground">Track your growth and insights</p>
+              <p className="text-sm text-muted-foreground">Track your growth and insights</p>
             </div>
           </Button>
           <Button
@@ -354,7 +354,7 @@ const Learn = () => {
             <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
             <div className="text-left">
               <span className="text-sm font-medium">Find Testing Near You</span>
-              <p className="text-xs text-muted-foreground">Locate STD testing centers nearby</p>
+              <p className="text-sm text-muted-foreground">Locate STD testing centers nearby</p>
             </div>
           </Button>
           <Button
@@ -365,7 +365,7 @@ const Learn = () => {
             <HeartPulse className="h-5 w-5 text-primary flex-shrink-0" />
             <div className="text-left">
               <span className="text-sm font-medium">Test From Home</span>
-              <p className="text-xs text-muted-foreground">Discreet at-home STD testing kits</p>
+              <p className="text-sm text-muted-foreground">Discreet at-home STD testing kits</p>
             </div>
           </Button>
           <Button
@@ -376,7 +376,7 @@ const Learn = () => {
             <Megaphone className="h-5 w-5 text-primary flex-shrink-0" />
             <div className="text-left">
               <span className="text-sm font-medium">Advocacy & Action</span>
-              <p className="text-xs text-muted-foreground">Stand up for the freedoms that make ENM possible</p>
+              <p className="text-sm text-muted-foreground">Stand up for the freedoms that make ENM possible</p>
             </div>
           </Button>
         </section>
@@ -443,7 +443,7 @@ const LeaderboardCard = () => {
                     {entry.display_name} {isMe && "(You)"}
                   </p>
                 </div>
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="secondary" className="text-sm">
                   {entry.sections_completed} sections
                 </Badge>
               </div>

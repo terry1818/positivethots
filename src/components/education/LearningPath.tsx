@@ -77,7 +77,7 @@ export const LearningPath = ({ sections, progress, currentIndex, onSelect }: Lea
 
               {/* Title */}
               <span className={cn(
-                "text-[10px] leading-tight text-center max-w-[64px] line-clamp-2",
+                "text-sm leading-tight text-center max-w-[64px] line-clamp-2",
                 isCurrent ? "text-foreground font-semibold" :
                 completed ? "text-success" :
                 "text-muted-foreground"
@@ -86,7 +86,7 @@ export const LearningPath = ({ sections, progress, currentIndex, onSelect }: Lea
               </span>
 
               {/* Estimated time */}
-              <span className="text-[9px] text-muted-foreground">~3 min</span>
+              <span className="text-sm text-muted-foreground">~3 min</span>
             </button>
           );
         })}
@@ -105,7 +105,7 @@ export const LearningPath = ({ sections, progress, currentIndex, onSelect }: Lea
               <span className="text-lg">🎯</span>
             )}
           </div>
-          <span className="text-[10px] text-muted-foreground">Quiz</span>
+          <span className="text-sm text-muted-foreground">Quiz</span>
         </div>
       </div>
 

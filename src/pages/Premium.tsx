@@ -240,7 +240,7 @@ const Premium = () => {
             className="rounded-l-none"
           >
             Annual
-            <Badge className="ml-1.5 bg-accent text-accent-foreground text-[10px] px-1.5 py-0">Save 20%</Badge>
+            <Badge className="ml-1.5 bg-accent text-accent-foreground text-sm px-1.5 py-0">Save 20%</Badge>
           </Button>
         </div>
 
@@ -287,13 +287,13 @@ const Premium = () => {
                 )}
               >
                 {isHighlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-sm font-bold px-3 py-1 rounded-full">
                     Most Popular
                   </div>
                 )}
                 {isAnnual && (
                   <div className="absolute top-3 right-3">
-                    <Badge className="bg-accent text-accent-foreground text-[10px]">Save 20%</Badge>
+                    <Badge className="bg-accent text-accent-foreground text-sm">Save 20%</Badge>
                   </div>
                 )}
                 <CardHeader className="text-center pb-2">
@@ -306,7 +306,7 @@ const Premium = () => {
                       <>
                         <span className="text-3xl font-bold">${config.annualMonthlyEquivalent?.toFixed(2)}</span>
                         <span className="text-muted-foreground text-sm">/mo</span>
-                        <p className="text-xs text-muted-foreground mt-1">Billed ${config.price}/year</p>
+                        <p className="text-sm text-muted-foreground mt-1">Billed ${config.price}/year</p>
                       </>
                     ) : (
                       <>
@@ -335,7 +335,7 @@ const Premium = () => {
                     })}
                   </ul>
                   {isVip && (
-                    <p className="text-xs text-muted-foreground italic mb-4">
+                    <p className="text-sm text-muted-foreground italic mb-4">
                       VIP is for members who've completed the full curriculum and want to give back to the community.
                     </p>
                   )}
@@ -418,7 +418,7 @@ const Premium = () => {
           </CardContent>
         </Card>
 
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-center text-sm text-muted-foreground">
           Cancel anytime · {billingPeriod === "annual" ? "Billed annually" : "Billed monthly"} · Secure checkout via Stripe
         </p>
       </div>

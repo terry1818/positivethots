@@ -40,18 +40,18 @@ export const CompactProgressBar = ({ tiers, badgeCount, connectionCount }: Compa
           ].map(({ value, label, color }) => (
             <div key={label} className="flex flex-col items-center">
               <span className={cn("text-lg font-bold leading-none", color)}>{value}</span>
-              <span className="text-[9px] uppercase tracking-wide text-muted-foreground mt-0.5">{label}</span>
+              <span className="text-sm uppercase tracking-wide text-muted-foreground mt-0.5">{label}</span>
             </div>
           ))}
         </div>
         <div className="flex flex-col items-end gap-0.5">
           <span
-            className="flex items-center gap-1.5 bg-primary/20 text-primary rounded-full px-3 py-1.5 text-xs font-semibold"
+            className="flex items-center gap-1.5 bg-primary/20 text-primary rounded-full px-3 py-1.5 text-sm font-semibold"
           >
             <BookOpen className="h-3 w-3" />
             Keep Learning
           </span>
-          <span className="text-[9px] text-muted-foreground">tap to unlock more</span>
+          <span className="text-sm text-muted-foreground">tap to unlock more</span>
         </div>
       </div>
 
@@ -60,19 +60,19 @@ export const CompactProgressBar = ({ tiers, badgeCount, connectionCount }: Compa
         <div className="flex items-center gap-3 bg-primary/5 border border-primary/20 rounded-lg px-3 py-2 mb-3">
           <span className="text-base leading-none flex-shrink-0">{nextFeature.icon}</span>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-foreground truncate">
+            <p className="text-sm font-semibold text-foreground truncate">
               Next unlock: {nextFeature.label}
             </p>
-            <p className="text-[10px] text-muted-foreground truncate">
+            <p className="text-sm text-muted-foreground truncate">
               {nextTier.label} tier · {nextTier.totalModules - nextTier.earnedModules} badge{nextTier.totalModules - nextTier.earnedModules !== 1 ? "s" : ""} needed
             </p>
           </div>
-          <div className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-[10px] font-bold flex-shrink-0">
+          <div className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-sm font-bold flex-shrink-0">
             {nextTier.totalModules - nextTier.earnedModules} to go
           </div>
         </div>
       ) : tiers.length > 0 ? (
-        <p className="text-xs text-emerald-500 flex items-center gap-1 mb-3">
+        <p className="text-sm text-emerald-500 flex items-center gap-1 mb-3">
           <CheckCircle className="h-3.5 w-3.5" /> All features unlocked
         </p>
       ) : null}

@@ -44,7 +44,7 @@ const StarRating = ({ rating }: { rating: number }) => {
           }`}
         />
       ))}
-      <span className="text-xs text-muted-foreground ml-1">{rating}</span>
+      <span className="text-sm text-muted-foreground ml-1">{rating}</span>
     </div>
   );
 };
@@ -79,7 +79,7 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
       <ExternalLink className="absolute top-3 right-3 w-4 h-4 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity z-10" />
 
       {featured && (
-        <span className="absolute top-3 left-3 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full font-medium z-10">
+        <span className="absolute top-3 left-3 bg-purple-600 text-white text-sm px-2 py-0.5 rounded-full font-medium z-10">
           Recommended
         </span>
       )}
@@ -107,7 +107,7 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
         </h3>
 
         {resource.author && (
-          <p className="text-xs text-muted-foreground mt-1">{resource.author}</p>
+          <p className="text-sm text-muted-foreground mt-1">{resource.author}</p>
         )}
 
         {resource.description && (
@@ -118,11 +118,11 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
 
         <div className="flex items-center justify-between mt-auto pt-3">
           <div className="flex items-center gap-2">
-            <span className="bg-purple-500/20 text-purple-300 text-xs px-2 py-0.5 rounded-full">
+            <span className="bg-purple-500/20 text-purple-300 text-sm px-2 py-0.5 rounded-full">
               {resource.tag || categoryLabel[resource.category] || resource.category}
             </span>
             {resource.price && (
-              <span className="text-xs font-medium text-purple-400">{resource.price}</span>
+              <span className="text-sm font-medium text-purple-400">{resource.price}</span>
             )}
           </div>
           {resource.rating && resource.rating > 0 && (
@@ -130,7 +130,7 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
           )}
         </div>
 
-        <p className="text-[10px] text-gray-600 text-right mt-2">Affiliate link</p>
+        <p className="text-sm text-gray-600 text-right mt-2">Affiliate link</p>
       </div>
     </a>
   );

@@ -42,7 +42,7 @@ const CommunityGuidelines = () => (
             <span className="text-xl mt-0.5">{v.emoji}</span>
             <div>
               <p className="font-semibold text-sm m-0">{v.title}</p>
-              <p className="text-xs text-muted-foreground m-0">{v.desc}</p>
+              <p className="text-sm text-muted-foreground m-0">{v.desc}</p>
             </div>
           </div>
         ))}
@@ -80,7 +80,7 @@ const CommunityGuidelines = () => (
         ].map((item) => (
           <div key={item.behavior} className="border border-border rounded-lg p-3">
             <p className="text-sm font-medium m-0">{item.behavior}</p>
-            <Badge variant={item.severity === "immediate" ? "destructive" : "secondary"} className="mt-1.5 text-[10px]">
+            <Badge variant={item.severity === "immediate" ? "destructive" : "secondary"} className="mt-1.5 text-sm">
               {item.consequence}
             </Badge>
           </div>
@@ -139,18 +139,18 @@ const CommunityGuidelines = () => (
           { status: "Banned", color: "bg-destructive/10 text-destructive border-destructive/20", desc: "Permanent removal from the platform" },
         ].map((s) => (
           <div key={s.status} className={`flex items-center gap-3 rounded-lg border p-3 ${s.color}`}>
-            <Badge variant="outline" className={`shrink-0 text-xs ${s.color}`}>{s.status}</Badge>
-            <p className="text-xs text-muted-foreground m-0">{s.desc}</p>
+            <Badge variant="outline" className={`shrink-0 text-sm ${s.color}`}>{s.status}</Badge>
+            <p className="text-sm text-muted-foreground m-0">{s.desc}</p>
           </div>
         ))}
       </div>
     </Section>
 
     <div className="mt-10 pt-6 border-t border-border text-center">
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         These guidelines are subject to change. Continued use of Positive Thots constitutes acceptance of the current guidelines.
       </p>
-      <p className="text-xs text-muted-foreground mt-1">
+      <p className="text-sm text-muted-foreground mt-1">
         Questions? Contact us at{" "}
         <a href="mailto:legal@positivethots.com" className="text-primary hover:underline">legal@positivethots.com</a>
       </p>

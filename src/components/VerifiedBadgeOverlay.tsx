@@ -60,7 +60,7 @@ export const VerifiedBadgeOverlay = ({
             <ShieldCheck className={cn(sizes[size], "text-primary-foreground")} />
           </div>
         </TooltipTrigger>
-        <TooltipContent side="top" className="text-xs">
+        <TooltipContent side="top" className="text-sm">
           This person verified their identity with a selfie check
         </TooltipContent>
       </Tooltip>

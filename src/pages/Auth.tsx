@@ -216,17 +216,17 @@ const Auth = () => {
           {isSignUp && (
             <div className="pt-3 space-y-2">
               <div className="flex items-center justify-center gap-3 flex-wrap">
-                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <GraduationCap className="h-4 w-4 text-primary shrink-0" />Evidence-based courses
                 </span>
-                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <ShieldCheck className="h-4 w-4 text-primary shrink-0" />Education-verified community
                 </span>
-                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <Heart className="h-4 w-4 text-primary shrink-0" />Built for ethical non-monogamy
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground/70 text-center">Join 500+ members learning together</p>
+              <p className="text-sm text-muted-foreground/70 text-center">Join 500+ members learning together</p>
             </div>
           )}
         </CardHeader>
@@ -325,7 +325,7 @@ const Auth = () => {
               {/* Password requirements — visible during sign-up */}
               {isSignUp && password.length > 0 && (
                 <div className="space-y-1 mt-2 animate-fade-in">
-                  <div className={cn("flex items-center gap-1.5 text-xs transition-colors",
+                  <div className={cn("flex items-center gap-1.5 text-sm transition-colors",
                     password.length >= 6 ? "text-success" : "text-muted-foreground"
                   )}>
                     {password.length >= 6
@@ -346,7 +346,7 @@ const Auth = () => {
             </ShimmerButton>
 
             {isSignUp && (
-              <p className="text-xs text-muted-foreground text-center mt-1">
+              <p className="text-sm text-muted-foreground text-center mt-1">
                 Next: A quick profile setup, then start your learning journey ✨
               </p>
             )}
@@ -360,7 +360,7 @@ const Auth = () => {
           <div className="mt-4 text-center min-h-[40px] flex items-center justify-center">
             <p
               key={prefersReducedMotion ? 0 : testimonialIdx}
-              className={cn("text-xs text-muted-foreground italic", !prefersReducedMotion && "animate-fade-in")}
+              className={cn("text-sm text-muted-foreground italic", !prefersReducedMotion && "animate-fade-in")}
             >
               "{TESTIMONIALS[prefersReducedMotion ? 0 : testimonialIdx]}"
               <span className="block text-muted-foreground/60 mt-0.5 not-italic">— Positive Thots member</span>

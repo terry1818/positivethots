@@ -44,9 +44,9 @@ const formatIcon = (format: string | null) => {
 };
 
 const tierBadge = (tier: string) => {
-  if (tier === "premium") return <Badge variant="secondary" className="text-xs bg-accent text-accent-foreground border-accent"><Crown className="h-3 w-3 mr-1" />Premium</Badge>;
-  if (tier === "adults_only") return <Badge variant="secondary" className="text-xs bg-destructive/10 text-destructive border-destructive/20">🔒 Adults Only</Badge>;
-  return <Badge variant="secondary" className="text-xs">Community</Badge>;
+  if (tier === "premium") return <Badge variant="secondary" className="text-sm bg-accent text-accent-foreground border-accent"><Crown className="h-3 w-3 mr-1" />Premium</Badge>;
+  if (tier === "adults_only") return <Badge variant="secondary" className="text-sm bg-destructive/10 text-destructive border-destructive/20">🔒 Adults Only</Badge>;
+  return <Badge variant="secondary" className="text-sm">Community</Badge>;
 };
 
 export const EventCard = ({
@@ -78,7 +78,7 @@ export const EventCard = ({
             </Badge>
           )}
         </div>
-        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mt-1">
+        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mt-1">
           <span className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
             {format(eventDate, "MMM d, yyyy · h:mm a")}

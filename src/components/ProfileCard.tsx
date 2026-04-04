@@ -113,7 +113,7 @@ export const ProfileCard = ({
               </span>
             )}
             {profile.learning_level && profile.learning_level > 1 && (
-              <span className="bg-white/20 px-2 py-0.5 rounded text-xs">
+              <span className="bg-white/20 px-2 py-0.5 rounded text-sm">
                 {getLevelName(profile.learning_level)} {getLevelEmoji(profile.learning_level)}
               </span>
             )}
@@ -159,12 +159,12 @@ export const ProfileCard = ({
         {profile.interests && profile.interests.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {profile.interests.slice(0, 4).map((interest) => (
-              <Badge key={interest} variant="secondary" className="text-xs">
+              <Badge key={interest} variant="secondary" className="text-sm">
                 {interest}
               </Badge>
             ))}
             {profile.interests.length > 4 && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-sm">
                 +{profile.interests.length - 4}
               </Badge>
             )}

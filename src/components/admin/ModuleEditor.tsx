@@ -242,7 +242,7 @@ export const ModuleEditor = ({ module, onUpdate }: ModuleEditorProps) => {
                 value={formData.video_url}
                 onChange={(e) => setFormData(prev => ({ ...prev, video_url: e.target.value }))}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Use YouTube embed URLs (e.g., https://www.youtube.com/embed/xxxxx)
               </p>
             </div>
@@ -261,7 +261,7 @@ export const ModuleEditor = ({ module, onUpdate }: ModuleEditorProps) => {
                 onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
                 className="min-h-[300px] font-mono text-sm"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Use ## for headings, - for lists, **bold**, and [text](url) for links
               </p>
             </div>
@@ -283,7 +283,7 @@ export const ModuleEditor = ({ module, onUpdate }: ModuleEditorProps) => {
                 {sections.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
                     <p>No sections yet. Add sections to create a multi-part course.</p>
-                    <p className="text-xs mt-1">Without sections, the module uses its main content field.</p>
+                    <p className="text-sm mt-1">Without sections, the module uses its main content field.</p>
                   </div>
                 )}
 
@@ -308,7 +308,7 @@ export const ModuleEditor = ({ module, onUpdate }: ModuleEditorProps) => {
                     <CardContent className="space-y-3">
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1">
-                          <Label className="text-xs">Title</Label>
+                          <Label className="text-sm">Title</Label>
                           <Input
                             value={section.title}
                             onChange={(e) => updateSectionLocal(section.id, "title", e.target.value)}
@@ -316,7 +316,7 @@ export const ModuleEditor = ({ module, onUpdate }: ModuleEditorProps) => {
                           />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-xs">Content Type</Label>
+                          <Label className="text-sm">Content Type</Label>
                           <Select
                             value={section.content_type}
                             onValueChange={(v) => updateSectionLocal(section.id, "content_type", v)}
@@ -337,7 +337,7 @@ export const ModuleEditor = ({ module, onUpdate }: ModuleEditorProps) => {
 
                       {(section.content_type === 'video' || section.content_type === 'infographic') && (
                         <div className="space-y-1">
-                          <Label className="text-xs">
+                          <Label className="text-sm">
                             {section.content_type === 'video' ? 'YouTube Embed URL' : 'Image URL'}
                           </Label>
                           <Input
@@ -350,17 +350,17 @@ export const ModuleEditor = ({ module, onUpdate }: ModuleEditorProps) => {
 
                       {(section.content_type === 'article' || section.content_type === 'study') && (
                         <div className="space-y-1">
-                          <Label className="text-xs">Content (Markdown)</Label>
+                          <Label className="text-sm">Content (Markdown)</Label>
                           <Textarea
                             value={section.content_text || ""}
                             onChange={(e) => updateSectionLocal(section.id, "content_text", e.target.value)}
-                            className="min-h-[150px] font-mono text-xs"
+                            className="min-h-[150px] font-mono text-sm"
                           />
                         </div>
                       )}
 
                       <div className="space-y-1">
-                        <Label className="text-xs">Estimated Minutes</Label>
+                        <Label className="text-sm">Estimated Minutes</Label>
                         <Input
                           type="number"
                           value={section.estimated_minutes || 5}

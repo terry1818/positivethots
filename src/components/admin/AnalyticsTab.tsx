@@ -127,7 +127,7 @@ export const AnalyticsTab = () => {
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" />
             <div>
-              <p className="text-xs text-muted-foreground">Total Users</p>
+              <p className="text-sm text-muted-foreground">Total Users</p>
               <p className="text-lg font-bold">{funnel.totalUsers}</p>
             </div>
           </div>
@@ -136,8 +136,8 @@ export const AnalyticsTab = () => {
           <div className="flex items-center gap-2">
             <UserCheck className="h-4 w-4 text-success" />
             <div>
-              <p className="text-xs text-muted-foreground">Onboarded</p>
-              <p className="text-lg font-bold">{funnel.onboardedUsers} <span className="text-xs font-normal text-muted-foreground">({onboardingRate}%)</span></p>
+              <p className="text-sm text-muted-foreground">Onboarded</p>
+              <p className="text-lg font-bold">{funnel.onboardedUsers} <span className="text-sm font-normal text-muted-foreground">({onboardingRate}%)</span></p>
             </div>
           </div>
         </Card>
@@ -145,7 +145,7 @@ export const AnalyticsTab = () => {
           <div className="flex items-center gap-2">
             <Award className="h-4 w-4 text-accent" />
             <div>
-              <p className="text-xs text-muted-foreground">Users w/ 1+ Badge</p>
+              <p className="text-sm text-muted-foreground">Users w/ 1+ Badge</p>
               <p className="text-lg font-bold">{funnel.usersWithBadges}</p>
             </div>
           </div>
@@ -154,7 +154,7 @@ export const AnalyticsTab = () => {
           <div className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-secondary" />
             <div>
-              <p className="text-xs text-muted-foreground">Discovery (Swipes)</p>
+              <p className="text-sm text-muted-foreground">Discovery (Swipes)</p>
               <p className="text-lg font-bold">{funnel.usersInDiscovery}</p>
             </div>
           </div>
@@ -163,7 +163,7 @@ export const AnalyticsTab = () => {
           <div className="flex items-center gap-2">
             <CreditCard className="h-4 w-4 text-primary" />
             <div>
-              <p className="text-xs text-muted-foreground">Paid Subscribers</p>
+              <p className="text-sm text-muted-foreground">Paid Subscribers</p>
               <p className="text-lg font-bold">{funnel.paidSubscribers}</p>
             </div>
           </div>
@@ -172,7 +172,7 @@ export const AnalyticsTab = () => {
           <div className="flex items-center gap-2">
             <Percent className="h-4 w-4 text-success" />
             <div>
-              <p className="text-xs text-muted-foreground">Conversion Rate</p>
+              <p className="text-sm text-muted-foreground">Conversion Rate</p>
               <p className="text-lg font-bold">{conversionRate}%</p>
             </div>
           </div>
@@ -182,7 +182,7 @@ export const AnalyticsTab = () => {
       {/* Success Metrics */}
       <div className="flex items-center gap-2 pt-2">
         <Target className="h-4 w-4 text-primary" />
-        <h4 className="text-xs font-medium text-muted-foreground">Success Metrics (KPIs)</h4>
+        <h4 className="text-sm font-medium text-muted-foreground">Success Metrics (KPIs)</h4>
       </div>
 
       {success ? (
@@ -194,11 +194,11 @@ export const AnalyticsTab = () => {
                 <div className="flex items-start gap-2">
                   <Icon className={`h-4 w-4 mt-0.5 ${getStatusColor(value, target)}`} />
                   <div className="min-w-0">
-                    <p className="text-xs text-muted-foreground truncate">{label}</p>
+                    <p className="text-sm text-muted-foreground truncate">{label}</p>
                     <p className={`text-lg font-bold ${getStatusColor(value, target)}`}>
                       {value}{unit}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       Target: {target}{unit} · {description}
                     </p>
                   </div>
@@ -212,7 +212,7 @@ export const AnalyticsTab = () => {
       )}
 
       {/* Event Stats (Last 7 Days) */}
-      <h4 className="text-xs font-medium text-muted-foreground pt-2">Events (Last 7 Days) · {totalEvents} total</h4>
+      <h4 className="text-sm font-medium text-muted-foreground pt-2">Events (Last 7 Days) · {totalEvents} total</h4>
 
       {stats.length === 0 ? (
         <p className="text-sm text-muted-foreground py-4 text-center">No events tracked yet</p>

@@ -31,10 +31,10 @@ export const SessionGoal = ({ sectionsToday, goal = 3 }: SessionGoalProps) => {
         )} />
       </div>
       <div>
-        <p className="text-xs font-medium">
+        <p className="text-sm font-medium">
           {isComplete ? "🎉 Daily goal hit!" : "Today's Goal"}
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {progress}/{goal} sections completed
         </p>
       </div>

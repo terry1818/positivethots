@@ -35,7 +35,7 @@ export const EducationTierBadge = ({ badgeCount, size = "sm" }: EducationTierBad
             className={cn(
               "inline-flex items-center gap-0.5 rounded-full font-semibold border-0",
               tier.color,
-              size === "sm" ? "px-1.5 py-0.5 text-[9px]" : "px-2 py-0.5 text-[10px]"
+              size === "sm" ? "px-1.5 py-0.5 text-sm" : "px-2 py-0.5 text-sm"
             )}
           >
             {tier.icon === "star" ? (
@@ -46,7 +46,7 @@ export const EducationTierBadge = ({ badgeCount, size = "sm" }: EducationTierBad
             {tier.label}
           </div>
         </TooltipTrigger>
-        <TooltipContent side="top" className="text-xs">
+        <TooltipContent side="top" className="text-sm">
           Completed {badgeCount} of 20 education badges
         </TooltipContent>
       </Tooltip>

@@ -80,13 +80,13 @@ export const ReflectionPrompt = ({
             variant="ghost"
             size="sm"
             onClick={() => setIsEditing(true)}
-            className="text-xs gap-1"
+            className="text-sm gap-1"
           >
             <Pencil className="h-3 w-3" /> Edit
           </Button>
         </div>
         <p className="text-sm text-muted-foreground italic">"{response}"</p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Your reflections are private and saved to your Learning Journal.
         </p>
       </div>
@@ -115,13 +115,13 @@ export const ReflectionPrompt = ({
         {!hasSaved && (
           <button
             onClick={onSkip}
-            className="text-xs text-muted-foreground hover:text-foreground underline"
+            className="text-sm text-muted-foreground hover:text-foreground underline"
           >
             Skip reflection
           </button>
         )}
       </div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         Your reflections are private and saved to your Learning Journal.
       </p>
     </div>

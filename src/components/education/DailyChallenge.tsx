@@ -143,7 +143,7 @@ export const DailyChallenge = () => {
             )}
             <span className="text-sm font-bold">Daily Challenge</span>
           </div>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
             <Clock className="h-3 w-3" />
             <span>{hoursLeft}h left</span>
           </div>
@@ -155,14 +155,14 @@ export const DailyChallenge = () => {
           <div className="flex-1">
             <Progress value={progressPercent} className="h-2" />
           </div>
-          <span className="text-xs font-medium whitespace-nowrap">
+          <span className="text-sm font-medium whitespace-nowrap">
             {challenge.current_progress}/{challenge.target_value}
           </span>
         </div>
 
         <div className="flex items-center gap-1 mt-2">
           <Zap className="h-3 w-3 text-accent" />
-          <span className="text-xs text-accent font-bold">+{challenge.xp_reward} XP reward</span>
+          <span className="text-sm text-accent font-bold">+{challenge.xp_reward} XP reward</span>
         </div>
       </CardContent>
     </Card>

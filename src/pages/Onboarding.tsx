@@ -528,7 +528,7 @@ const Onboarding = () => {
               >
                 Keep Going — More to share
               </Button>
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-sm text-muted-foreground text-center">
                 You can always complete your profile later from Settings
               </p>
             </CardContent>
@@ -545,10 +545,10 @@ const Onboarding = () => {
               phaseEmoji={currentPhase?.emoji || "👋"}
             />
             <div>
-              <p className="text-xs font-semibold text-primary uppercase tracking-wider">
+              <p className="text-sm font-semibold text-primary uppercase tracking-wider">
                 {currentPhase?.label || "Welcome"}
               </p>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Step {step} of {TOTAL_STEPS}
               </p>
             </div>
@@ -667,7 +667,7 @@ const Onboarding = () => {
                     ))}
                   </div>
                   <div className="space-y-1 animate-stagger-3">
-                    <Label className="text-xs text-muted-foreground">Or type your own</Label>
+                    <Label className="text-sm text-muted-foreground">Or type your own</Label>
                     <Input
                       placeholder="e.g., ze/zir"
                       value={formData.customPronouns}
@@ -692,7 +692,7 @@ const Onboarding = () => {
                     </div>
                   )}
                   {photos.length === 0 && (
-                    <p className="text-xs text-destructive text-center">Upload at least 1 photo to continue</p>
+                    <p className="text-sm text-destructive text-center">Upload at least 1 photo to continue</p>
                   )}
                 </div>
               )}
@@ -732,7 +732,7 @@ const Onboarding = () => {
                       popularOptions={["Casual", "Friendship", "Poly", "Kink", "Connection", "Group"]}
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground text-center">{formData.desires.length}/10 selected</p>
+                  <p className="text-sm text-muted-foreground text-center">{formData.desires.length}/10 selected</p>
                 </div>
               )}
 
@@ -763,7 +763,7 @@ const Onboarding = () => {
                             {opt.description}
                           </span>
                           {isPopular && formData.relationshipStyle !== opt.value && (
-                            <span className="absolute top-2.5 right-3 text-[10px] text-primary/60 font-medium">Popular</span>
+                            <span className="absolute top-2.5 right-3 text-sm text-primary/60 font-medium">Popular</span>
                           )}
                         </button>
                       );
@@ -815,7 +815,7 @@ const Onboarding = () => {
                           key={z}
                           type="button"
                           onClick={() => updateField("zodiacSign", formData.zodiacSign === z ? "" : z)}
-                          className={`rounded-full px-3 py-1.5 text-xs font-medium border transition-all
+                          className={`rounded-full px-3 py-1.5 text-sm font-medium border transition-all
                             ${formData.zodiacSign === z
                               ? "bg-primary text-primary-foreground border-primary animate-chip-select"
                               : "bg-card text-foreground border-border hover:border-primary/50"
@@ -856,7 +856,7 @@ const Onboarding = () => {
                                 ...formData.lifestyle,
                                 [cat.key]: selected ? undefined : opt.toLowerCase(),
                               })}
-                              className={`rounded-full px-3 py-1.5 text-xs font-medium border transition-all
+                              className={`rounded-full px-3 py-1.5 text-sm font-medium border transition-all
                                 ${selected
                                   ? "bg-primary text-primary-foreground border-primary animate-chip-select"
                                   : "bg-card text-foreground border-border hover:border-primary/50"
@@ -885,7 +885,7 @@ const Onboarding = () => {
                       groupPopularFirst
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground text-center">{formData.interests.length} selected (min 3)</p>
+                  <p className="text-sm text-muted-foreground text-center">{formData.interests.length} selected (min 3)</p>
                 </div>
               )}
 
@@ -953,7 +953,7 @@ const Onboarding = () => {
             {step > 1 && (
               <div className="mt-6 pb-16 relative z-50 space-y-2">
                 {stepError && (
-                  <p role="alert" className="text-xs text-destructive text-center animate-fade-in">{stepError}</p>
+                  <p role="alert" className="text-sm text-destructive text-center animate-fade-in">{stepError}</p>
                 )}
                 <div className="flex gap-2">
                   <Button onClick={() => { setStepError(""); goBack(); }} variant="outline" className="flex-1">

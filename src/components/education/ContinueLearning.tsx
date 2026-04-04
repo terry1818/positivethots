@@ -159,15 +159,15 @@ export const ContinueLearning = () => {
                 className="transition-all duration-1000"
               />
             </svg>
-            <span className="absolute inset-0 flex items-center justify-center text-xs font-bold">
+            <span className="absolute inset-0 flex items-center justify-center text-sm font-bold">
               {progressPercent}%
             </span>
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="text-xs text-muted-foreground">Continue where you left off</p>
+            <p className="text-sm text-muted-foreground">Continue where you left off</p>
             <h3 className="font-bold text-sm truncate">{data.moduleTitle}</h3>
-            <p className="text-xs text-muted-foreground truncate">
+            <p className="text-sm text-muted-foreground truncate">
               Section {data.sectionNumber}: {data.sectionTitle}
             </p>
           </div>

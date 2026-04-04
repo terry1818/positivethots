@@ -231,7 +231,7 @@ const LikesYou = () => {
                     >
                       See who likes you
                     </Button>
-                    <p className="text-xs text-muted-foreground mt-2">
+                    <p className="text-sm text-muted-foreground mt-2">
                       <button onClick={() => navigate("/learn")} className="hover:underline">
                         Not ready to upgrade? Keep learning to unlock features →
                       </button>
@@ -257,7 +257,7 @@ const LikesYou = () => {
                         )}
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
                           <p className="text-white font-semibold text-sm">{liker.name}, {liker.age}</p>
-                          {liker.location && <p className="text-white/80 text-xs">{liker.location}</p>}
+                          {liker.location && <p className="text-white/80 text-sm">{liker.location}</p>}
                         </div>
                       </div>
                       <div className="flex">
@@ -319,12 +319,12 @@ const LikesYou = () => {
                           <p className="text-white font-semibold text-sm">{profile.name}, {profile.age}</p>
                           <div className="flex items-center justify-between">
                             {profile.location && (
-                              <p className="text-white/80 text-xs flex items-center gap-0.5">
+                              <p className="text-white/80 text-sm flex items-center gap-0.5">
                                 <MapPin className="h-3 w-3" />{profile.location}
                               </p>
                             )}
                             {profile.swiped_at && (
-                              <span className="text-white/60 text-[10px]">
+                              <span className="text-white/60 text-sm">
                                 {formatRelativeTime(profile.swiped_at)}
                               </span>
                             )}

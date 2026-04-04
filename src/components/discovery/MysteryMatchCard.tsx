@@ -165,7 +165,7 @@ export const MysteryMatchCard = memo(({
           <h3 className="text-xl font-bold text-foreground">{profile.name}, {profile.age}</h3>
           {profile.bio && <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{profile.bio}</p>}
           {compatibility >= 50 && (
-            <span className="inline-block mt-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-full px-2 py-0.5">
+            <span className="inline-block mt-1.5 text-sm font-semibold text-primary bg-primary/10 rounded-full px-2 py-0.5">
               {compatibility}% Match
             </span>
           )}

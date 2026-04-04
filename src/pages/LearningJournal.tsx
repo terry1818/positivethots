@@ -144,7 +144,7 @@ const LearningJournal = () => {
                   <CardContent className="p-4 space-y-1.5">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-medium">{r.module_sections.title}</p>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-sm text-muted-foreground">
                         {format(new Date(r.created_at), "MMMM d")}
                       </span>
                     </div>

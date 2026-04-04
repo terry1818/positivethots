@@ -387,7 +387,7 @@ const Settings = () => {
                   </Button>
                 </div>
                 {!isOwner && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     Only the app owner can grant or revoke admin roles.
                   </p>
                 )}
@@ -406,12 +406,12 @@ const Settings = () => {
                     {roleHolders.map((rh) => (
                       <div key={rh.id} className="flex items-center justify-between p-2 rounded-md border text-sm">
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="font-mono text-xs truncate max-w-[140px]">{rh.user_id}</span>
-                          <Badge variant={rh.role === "admin" ? "default" : "secondary"} className="text-xs">
+                          <span className="font-mono text-sm truncate max-w-[140px]">{rh.user_id}</span>
+                          <Badge variant={rh.role === "admin" ? "default" : "secondary"} className="text-sm">
                             {rh.role}
                           </Badge>
                           {rh.user_id === adminUserId && isOwner && (
-                            <Badge variant="outline" className="text-xs">Owner</Badge>
+                            <Badge variant="outline" className="text-sm">Owner</Badge>
                           )}
                         </div>
                         {rh.user_id !== user?.id && (isOwner || rh.role !== "admin") && (
@@ -500,7 +500,7 @@ const Settings = () => {
                 <Lock className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Locked</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     Complete all 5 Foundation courses to enable Distance Radar and find members near you in Discovery.
                   </p>
                 </div>
@@ -510,7 +510,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium">Share My Location</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       {isSharing
                         ? "Your location is visible to nearby users (auto-expires in 2 hours)"
                         : "Let nearby members find you in Discovery"}
@@ -522,9 +522,9 @@ const Settings = () => {
                   />
                 </div>
                 {locationError && (
-                  <p className="text-xs text-destructive">{locationError}</p>
+                  <p className="text-sm text-destructive">{locationError}</p>
                 )}
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   Your location is never stored permanently and expires automatically after 2 hours.
                 </p>
               </>
@@ -549,7 +549,7 @@ const Settings = () => {
                 <Lock className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Locked</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     Complete the Foundation tier first, then complete Advanced Topics to unlock event location sharing.
                   </p>
                 </div>
@@ -559,7 +559,7 @@ const Settings = () => {
                 <Lock className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Locked</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     Complete the Advanced Topics tier to unlock live location sharing at community events.
                   </p>
                 </div>
@@ -569,7 +569,7 @@ const Settings = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium">Share at Events</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       {isSharing
                         ? "Your live location is visible to nearby event attendees (auto-expires in 2 hours)"
                         : "Share your live location at events so nearby attendees can find you"}
@@ -581,9 +581,9 @@ const Settings = () => {
                   />
                 </div>
                 {locationError && (
-                  <p className="text-xs text-destructive">{locationError}</p>
+                  <p className="text-sm text-destructive">{locationError}</p>
                 )}
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   Auto-expires in 2 hours. Your location is never stored permanently.
                 </p>
               </>
@@ -636,7 +636,7 @@ const Settings = () => {
                   </>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 {codeType === "referral"
                   ? "Share your link — when your friend subscribes, you get 3 months Premium free!"
                   : `Gift a ${giftDays}-day free trial of ${giftTier.charAt(0).toUpperCase() + giftTier.slice(1)}`}
@@ -658,15 +658,15 @@ const Settings = () => {
                   <div className="grid grid-cols-3 gap-2 mb-3">
                     <Card className="p-2 text-center">
                       <p className="text-lg font-bold">{totalReferrals}</p>
-                      <p className="text-xs text-muted-foreground">Referrals</p>
+                      <p className="text-sm text-muted-foreground">Referrals</p>
                     </Card>
                     <Card className="p-2 text-center">
                       <p className="text-lg font-bold">{convertedToPaid}</p>
-                      <p className="text-xs text-muted-foreground">Converted</p>
+                      <p className="text-sm text-muted-foreground">Converted</p>
                     </Card>
                     <Card className="p-2 text-center">
                       <p className="text-lg font-bold">{rewardsEarned}</p>
-                      <p className="text-xs text-muted-foreground">Rewards</p>
+                      <p className="text-sm text-muted-foreground">Rewards</p>
                     </Card>
                   </div>
                 );
@@ -674,7 +674,7 @@ const Settings = () => {
               return null;
             })()}
             {myCodes.filter(c => c.created_by === user?.id).length > 0 && (
-              <p className="text-xs text-muted-foreground mb-2">
+              <p className="text-sm text-muted-foreground mb-2">
                 Share more — you earn a free boost for every friend who subscribes.
               </p>
             )}
@@ -691,7 +691,7 @@ const Settings = () => {
                 <Card className="p-4 text-center border-dashed">
                   <Users className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                   <p className="text-sm font-medium">Start earning rewards</p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Create a referral code and share it. Every friend who subscribes earns you a free 24-hour Profile Boost.
                   </p>
                 </Card>
@@ -701,18 +701,18 @@ const Settings = () => {
                     <div key={code.id} className="flex items-center justify-between p-2 rounded-md border text-sm">
                       <div className="flex items-center gap-2 min-w-0">
                         <span className="font-mono font-medium">{code.code}</span>
-                        <Badge variant={code.type === "referral" ? "default" : "secondary"} className="text-xs">
+                        <Badge variant={code.type === "referral" ? "default" : "secondary"} className="text-sm">
                           {code.type}
                         </Badge>
                         {code.type === "gift" && (
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-sm text-muted-foreground">
                             {code.tier} · {code.trial_days}d
                           </span>
                         )}
                       </div>
                       <div className="flex items-center gap-1 flex-shrink-0">
                         {code.redeemed_by ? (
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-sm">
                             {code.referred_subscribed ? "🎉 Subscribed" : "✅ Used"}
                           </Badge>
                         ) : (
@@ -726,7 +726,7 @@ const Settings = () => {
                           </Button>
                         )}
                         {code.reward_granted && (
-                          <Badge className="text-xs bg-primary/10 text-primary">
+                          <Badge className="text-sm bg-primary/10 text-primary">
                             🏆 Reward!
                           </Badge>
                         )}
@@ -846,7 +846,7 @@ const Settings = () => {
                 aria-describedby={passwordErrors.newPassword ? "new-password-error" : undefined}
               />
               {passwordErrors.newPassword && (
-                <p role="alert" id="new-password-error" className="text-xs text-destructive flex items-center gap-1 mt-1 animate-fade-in">
+                <p role="alert" id="new-password-error" className="text-sm text-destructive flex items-center gap-1 mt-1 animate-fade-in">
                   {passwordErrors.newPassword}
                 </p>
               )}
@@ -906,7 +906,7 @@ const Settings = () => {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-sm text-muted-foreground mt-2">
               Passed profiles recycle after 7 days. Profiles passed 3+ times are permanently hidden.
             </p>
           </CardContent>
@@ -1014,13 +1014,13 @@ const Settings = () => {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-            <p className="text-xs text-muted-foreground mt-2 text-center">
+            <p className="text-sm text-muted-foreground mt-2 text-center">
               We recommend exporting your data before deletion.
             </p>
           </CardContent>
         </Card>
 
-        <p className="text-xs text-muted-foreground text-center py-4">
+        <p className="text-sm text-muted-foreground text-center py-4">
           Positive Thots v1.0 • Made with ❤️
         </p>
       </main>

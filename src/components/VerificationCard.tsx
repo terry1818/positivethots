@@ -71,7 +71,7 @@ export const VerificationCard = ({
           <ShieldCheck className="h-6 w-6 text-amber-500" />
           <div>
             <p className="font-medium text-amber-700 dark:text-amber-400">Verification Unavailable</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               You need at least one approved profile photo before verifying your identity. Please upload a photo and wait for it to be approved.
             </p>
           </div>
@@ -87,7 +87,7 @@ export const VerificationCard = ({
           <ShieldCheck className="h-6 w-6 text-green-500" />
           <div>
             <p className="font-medium text-green-700 dark:text-green-400">Identity Verified</p>
-            <p className="text-xs text-muted-foreground">Your profile has a verified badge</p>
+            <p className="text-sm text-muted-foreground">Your profile has a verified badge</p>
           </div>
         </CardContent>
       </Card>
@@ -117,7 +117,7 @@ export const VerificationCard = ({
         {latestRequest?.status === "rejected" && (
           <div className="text-sm text-destructive bg-destructive/10 rounded-lg p-3">
             <p className="font-medium mb-1">Previous attempt unsuccessful</p>
-            <p className="text-xs">
+            <p className="text-sm">
               {latestRequest.reason || "Please try again with a clear, well-lit selfie that matches your profile photos."}
             </p>
           </div>
@@ -152,7 +152,7 @@ export const VerificationCard = ({
           )}
         </Button>
 
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="text-sm text-muted-foreground text-center">
           Your selfie is only used for verification and is never shown publicly.
         </p>
       </CardContent>

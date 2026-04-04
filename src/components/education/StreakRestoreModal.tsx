@@ -46,7 +46,7 @@ export const StreakRestoreModal = ({ open, streakCount, currentXP, onRestore, on
             </Button>
           </div>
           {!canAfford && (
-            <p className="text-xs text-destructive">Not enough XP to restore</p>
+            <p className="text-sm text-destructive">Not enough XP to restore</p>
           )}
         </div>
       </DialogContent>

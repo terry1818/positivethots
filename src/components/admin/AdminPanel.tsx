@@ -51,24 +51,24 @@ export const AdminPanel = ({ module, questions, onUpdate, standalone }: AdminPan
       <Tabs defaultValue={defaultTab}>
         <TabsList className="grid w-full grid-cols-5 h-auto">
           {module && (
-            <TabsTrigger value="content" className="text-xs gap-1">
+            <TabsTrigger value="content" className="text-sm gap-1">
               <BookOpen className="h-3 w-3" />
               Content
             </TabsTrigger>
           )}
-          <TabsTrigger value="analytics" className="text-xs gap-1">
+          <TabsTrigger value="analytics" className="text-sm gap-1">
             <BarChart3 className="h-3 w-3" />
             Analytics
           </TabsTrigger>
-          <TabsTrigger value="nps" className="text-xs gap-1">
+          <TabsTrigger value="nps" className="text-sm gap-1">
             <Star className="h-3 w-3" />
             NPS
           </TabsTrigger>
-          <TabsTrigger value="errors" className="text-xs gap-1">
+          <TabsTrigger value="errors" className="text-sm gap-1">
             <AlertTriangle className="h-3 w-3" />
             Errors
           </TabsTrigger>
-          <TabsTrigger value="moderation" className="text-xs gap-1">
+          <TabsTrigger value="moderation" className="text-sm gap-1">
             <MessageSquareWarning className="h-3 w-3" />
             Moderation
           </TabsTrigger>

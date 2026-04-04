@@ -119,7 +119,7 @@ const TestingLocator = () => {
         </Card>
 
         {/* Privacy Note */}
-        <p className="text-xs text-muted-foreground text-center px-4 pb-4">
+        <p className="text-sm text-muted-foreground text-center px-4 pb-4">
           🔒 We don't store your location. The map search runs entirely through Google Maps.
         </p>
       </main>

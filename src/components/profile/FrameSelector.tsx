@@ -20,7 +20,7 @@ export const FrameSelector = memo(({ earnedFrames, selectedFrame, onSelect, prof
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">Profile Frame</CardTitle>
-        <p className="text-xs text-muted-foreground">Choose a decorative border for your profile photo</p>
+        <p className="text-sm text-muted-foreground">Choose a decorative border for your profile photo</p>
       </CardHeader>
       <CardContent>
         {/* Preview */}
@@ -72,7 +72,7 @@ export const FrameSelector = memo(({ earnedFrames, selectedFrame, onSelect, prof
                     </div>
                   )}
                 </div>
-                <span className="text-[10px] font-medium text-foreground leading-tight">{frame.label}</span>
+                <span className="text-sm font-medium text-foreground leading-tight">{frame.label}</span>
               </button>
             );
           })}

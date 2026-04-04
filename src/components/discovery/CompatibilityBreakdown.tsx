@@ -59,7 +59,7 @@ export const CompatibilityBreakdown = memo(({
           <div key={factor.label} className="space-y-1">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium text-foreground">{factor.label}</span>
-              <span className="text-muted-foreground text-xs">
+              <span className="text-muted-foreground text-sm">
                 {factor.score}/{factor.maxScore}
               </span>
             </div>
@@ -78,7 +78,7 @@ export const CompatibilityBreakdown = memo(({
                   <Badge
                     key={d}
                     variant="secondary"
-                    className="text-xs px-2 py-0 font-normal"
+                    className="text-sm px-2 py-0 font-normal"
                   >
                     {d}
                   </Badge>
