@@ -560,7 +560,7 @@ const Index = () => {
 
       {/* Screen reader live region */}
       <div aria-live="polite" className="sr-only">
-        {suggestions.length > 0 && `Now viewing ${suggestions[0].display_name || suggestions[0].name}, age ${suggestions[0].age}`}
+        {announcedProfile}
       </div>
 
       {/* Curated Matches Grid */}
