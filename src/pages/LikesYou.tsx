@@ -12,6 +12,7 @@ import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
 import { Lock, Heart, Crown, Check, X, Star, MapPin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { Logo } from "@/components/Logo";
