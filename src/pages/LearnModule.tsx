@@ -693,6 +693,28 @@ const LearnModule = () => {
                     </Button>
                     <Button onClick={() => navigate("/learn")} className="flex-1">Back to Modules</Button>
                   </div>
+
+                  {/* Cross-links after completion */}
+                  {score >= 80 && (
+                    <div className="flex flex-col gap-2 mt-4">
+                      <button
+                        onClick={() => navigate("/journal")}
+                        className="flex items-center gap-2 text-sm text-muted-foreground border border-border rounded-lg p-3 hover:bg-muted/50 transition-colors text-left"
+                        aria-label="Open Reflection Journal"
+                      >
+                        <span>📓</span>
+                        <span>Reflect on what you learned → <span className="text-primary">Open Journal</span></span>
+                      </button>
+                      <button
+                        onClick={() => navigate("/events")}
+                        className="flex items-center gap-2 text-sm text-muted-foreground border border-border rounded-lg p-3 hover:bg-muted/50 transition-colors text-left"
+                        aria-label="Browse Events"
+                      >
+                        <span>🎪</span>
+                        <span>Put it into practice → <span className="text-primary">Browse Events</span></span>
+                      </button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}

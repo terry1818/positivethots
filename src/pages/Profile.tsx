@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock, Rocket, Crown, Award, ShoppingBag, Calendar } from "lucide-react";
+import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock, Rocket, Crown, Award, ShoppingBag, Calendar, Pencil, Share2, ChevronRight, ExternalLink } from "lucide-react";
 import { FetLifeBadge } from "@/components/FetLifeBadge";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
@@ -32,6 +32,31 @@ const relationshipStyleLabels: Record<string, string> = {
   polyamory: "Polyamorous", "open-relationship": "Open Relationship", swinging: "Swinging",
   "relationship-anarchy": "Relationship Anarchist", monogamish: "Monogamish", exploring: "Exploring ENM",
   "hierarchical-poly": "Hierarchical Poly", "solo-poly": "Solo Poly",
+};
+
+const ProfileNavRow = ({ emoji, label, onClick, href, external }: {
+  emoji: string; label: string; onClick?: () => void; href?: string; external?: boolean;
+}) => {
+  const content = (
+    <div className="flex items-center gap-3 px-4 py-3 min-h-[48px] hover:bg-muted/50 transition-colors border-b border-border last:border-b-0 cursor-pointer">
+      <span className="text-base">{emoji}</span>
+      <span className="text-sm flex-1">{label}</span>
+      {external ? (
+        <ExternalLink className="h-4 w-4 text-muted-foreground shrink-0" />
+      ) : (
+        <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+      )}
+    </div>
+  );
+
+  if (href) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={`${label} (opens in new tab)`}>
+        {content}
+      </a>
+    );
+  }
+  return <button onClick={onClick} className="w-full text-left">{content}</button>;
 };
 
 const Profile = () => {
@@ -393,6 +418,31 @@ const Profile = () => {
           </CardContent>
         </Card>
 
+        {/* Quick Actions */}
+        <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1">
+          {[
+            { icon: Pencil, label: "Edit", onClick: () => navigate("/profile/edit") },
+            { icon: Settings, label: "Settings", onClick: () => navigate("/settings") },
+            { icon: Share2, label: "Share", onClick: () => {
+              const url = `${window.location.origin}/profile`;
+              navigator.clipboard?.writeText(url);
+              toast.success("Profile link copied!");
+            }},
+            ...(!profile?.is_verified ? [{ icon: ShieldCheck, label: "Verify", onClick: () => navigate("/profile/edit") }] : []),
+          ].map((item) => (
+            <button
+              key={item.label}
+              onClick={item.onClick}
+              className="flex flex-col items-center gap-1.5 min-w-[60px] group"
+            >
+              <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                <item.icon className="h-5 w-5 text-foreground" />
+              </div>
+              <span className="text-xs text-muted-foreground">{item.label}</span>
+            </button>
+          ))}
+        </div>
+
         {/* Feature Unlocks */}
         {tiers.length > 0 && (
           <Card className="animate-fade-in">
@@ -451,56 +501,6 @@ const Profile = () => {
           </Card>
         )}
 
-        {/* Safety & Trust */}
-        <Card className="animate-fade-in">
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-              🛡️ Safety & Trust
-            </h3>
-            <div className="space-y-2.5">
-              {/* Verification Status */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm">
-                  <ShieldCheck className="h-4 w-4 text-primary" />
-                  <span>Identity Verification</span>
-                </div>
-                {profile?.is_verified ? (
-                  <Badge className="bg-success/10 text-success border-success/20 text-sm font-medium">
-                    <CheckCircle className="h-3 w-3 mr-1" />Verified
-                  </Badge>
-                ) : (
-                  <Button variant="outline" size="sm" className="text-sm h-9" onClick={() => navigate("/profile/edit")}>
-                    Verify Now
-                  </Button>
-                )}
-              </div>
-              {/* Education Level */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm">
-                  <BookOpen className="h-4 w-4 text-primary" />
-                  <span>Education Level</span>
-                </div>
-                <span className="text-sm text-muted-foreground">{badges.length}/20 badges</span>
-              </div>
-              {/* Community Standing */}
-              <div className="flex items-center justify-between min-h-[44px]">
-                <div className="flex items-center gap-2 text-sm">
-                  <Heart className="h-4 w-4 text-primary" />
-                  <span>Community Standing</span>
-                </div>
-                <Badge variant="secondary" className="text-sm px-3 py-1">Good Standing</Badge>
-              </div>
-              {/* Guidelines Link */}
-              <button
-                onClick={() => navigate("/community-guidelines")}
-                className="text-sm text-primary hover:underline w-full text-left pt-1 min-h-[44px] flex items-center"
-              >
-                View Community Guidelines →
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Boost */}
         <Card className="animate-fade-in">
           <CardContent className="p-4">
@@ -529,50 +529,47 @@ const Profile = () => {
           </CardContent>
         </Card>
 
-        {/* Quick Access Cards */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            variant="outline"
-            className="flex flex-col items-center gap-2 h-auto py-4 min-h-[72px] transition-all hover:-translate-y-0.5 hover:shadow-md"
-            onClick={() => navigate("/shop")}
-          >
-            <ShoppingBag className="h-5 w-5 text-primary" />
-            <span className="text-sm font-medium">Shop Merch</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="flex flex-col items-center gap-2 h-auto py-4 min-h-[72px] transition-all hover:-translate-y-0.5 hover:shadow-md"
-            onClick={() => navigate("/events")}
-          >
-            <Calendar className="h-5 w-5 text-primary" />
-            <span className="text-sm font-medium">Events</span>
-          </Button>
+        {/* EXPLORE section */}
+        <div className="space-y-1.5">
+          <h2 className="text-xs font-semibold text-muted-foreground tracking-wider uppercase px-1">Explore</h2>
+          <Card>
+            <ProfileNavRow emoji="🎪" label="Events & Workshops" onClick={() => navigate("/events")} />
+            <ProfileNavRow emoji="📚" label="Resources & Books" onClick={() => navigate("/resources")} />
+            <ProfileNavRow emoji="📓" label="Reflection Journal" onClick={() => navigate("/journal")} />
+            <ProfileNavRow emoji="🛍️" label="Merch Shop" href="https://positivethots.store" external />
+          </Card>
         </div>
 
-        {/* Actions */}
-        <div className="space-y-3">
-          <Button
-            variant="outline"
-            className="w-full justify-start text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
-            onClick={() => navigate("/profile/edit")}
-          >
-            <Settings className="mr-2 h-5 w-5" />Edit Profile
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-start text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
-            onClick={() => navigate("/resources")}
-          >
-            <BookOpen className="mr-2 h-5 w-5" />Recommended Resources
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-start text-left text-destructive hover:text-destructive transition-all hover:-translate-y-0.5 hover:shadow-md"
-            onClick={handleSignOut}
-          >
-            <LogOut className="mr-2 h-5 w-5" />Sign Out
-          </Button>
+        {/* HEALTH & SAFETY section */}
+        <div className="space-y-1.5">
+          <h2 className="text-xs font-semibold text-muted-foreground tracking-wider uppercase px-1">Health & Safety</h2>
+          <Card>
+            <ProfileNavRow emoji="🔬" label="Find STD Testing" onClick={() => navigate("/testing-locations")} />
+            <ProfileNavRow emoji="🏠" label="Test From Home" onClick={() => navigate("/health-testing")} />
+            <ProfileNavRow emoji="📋" label="Community Guidelines" onClick={() => navigate("/community-guidelines")} />
+            <ProfileNavRow emoji="🛡️" label="Safety Resources" onClick={() => navigate("/resources?tab=advocacy")} />
+          </Card>
         </div>
+
+        {/* ACCOUNT section */}
+        <div className="space-y-1.5">
+          <h2 className="text-xs font-semibold text-muted-foreground tracking-wider uppercase px-1">Account</h2>
+          <Card>
+            <ProfileNavRow emoji="👑" label="Manage Subscription" onClick={() => navigate("/premium")} />
+            <ProfileNavRow emoji="📄" label="Privacy Policy" onClick={() => navigate("/privacy")} />
+            <ProfileNavRow emoji="📄" label="Terms of Service" onClick={() => navigate("/terms")} />
+            <ProfileNavRow emoji="❓" label="Help & Support" href="mailto:support@positivethots.org" external />
+          </Card>
+        </div>
+
+        {/* Sign Out */}
+        <Button
+          variant="ghost"
+          className="w-full text-destructive hover:text-destructive"
+          onClick={handleSignOut}
+        >
+          <LogOut className="mr-2 h-5 w-5" />Sign Out
+        </Button>
       </main>
 
       <BottomNav />

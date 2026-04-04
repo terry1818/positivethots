@@ -98,6 +98,7 @@ const Chat = () => {
   const [onlineStatus, setOnlineStatus] = useState<"online" | "away" | "offline">("offline");
   const [lastSeen, setLastSeen] = useState<Date | null>(null);
   const [chatGames, setChatGames] = useState<any[]>([]);
+  const [compatBannerDismissed, setCompatBannerDismissed] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const channelRef = useRef<any>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -161,6 +162,17 @@ const Chat = () => {
 
     if (otherProfile) {
       setOtherUser(otherProfile);
+
+      // Pre-compute compatibility for banner
+      const storageKey = `pt_compat_banner_${matchId}`;
+      if (!localStorage.getItem(storageKey)) {
+        const [{ count: myB }, { count: theirB }] = await Promise.all([
+          supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", session.user.id),
+          supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", otherUserId),
+        ]);
+        const bd = calculateCompatibilityBreakdown(profile as any, otherProfile as any, myB || 0, theirB || 0);
+        setCompatBreakdown(bd);
+      }
     }
 
     const { data: existingMessages } = await supabase
@@ -506,6 +518,30 @@ const Chat = () => {
           </div>
         </div>
       )}
+
+      {/* Compatibility event banner */}
+      {(() => {
+        const score = compatBreakdown?.totalScore;
+        const storageKey = `pt_compat_banner_${matchId}`;
+        const alreadyDismissed = compatBannerDismissed || (typeof localStorage !== 'undefined' && localStorage.getItem(storageKey) === 'true');
+        if (score && score > 80 && !alreadyDismissed) {
+          return (
+            <div className="container max-w-4xl mx-auto px-4 pt-2">
+              <div className="bg-primary/10 rounded-lg p-2 flex items-center gap-2 text-sm animate-fade-in">
+                <span className="flex-1">You're {score}% compatible! Meet in person →{' '}
+                  <button onClick={() => navigate("/events")} className="text-primary font-medium hover:underline">Browse Events</button>
+                </span>
+                <button
+                  onClick={() => { setCompatBannerDismissed(true); localStorage.setItem(storageKey, 'true'); }}
+                  className="text-muted-foreground hover:text-foreground shrink-0 p-1"
+                  aria-label="Dismiss"
+                >✕</button>
+              </div>
+            </div>
+          );
+        }
+        return null;
+      })()}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">

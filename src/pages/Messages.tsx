@@ -185,13 +185,18 @@ const Messages = () => {
             ))}
           </div>
         ) : matches.length === 0 ? (
-          <BrandedEmptyState
-            mascot="waving"
-            headline="No messages yet! 💬"
-            description="When you and someone both say yes, you can start chatting here."
-            ctaLabel="Go to Discovery"
-            onCtaClick={() => navigate("/")}
-          />
+          <div className="space-y-3">
+            <BrandedEmptyState
+              mascot="waving"
+              headline="No messages yet! 💬"
+              description="When you and someone both say yes, you can start chatting here."
+              ctaLabel="Go to Discovery"
+              onCtaClick={() => navigate("/")}
+            />
+            <Button variant="ghost" className="w-full text-sm" onClick={() => navigate("/learn")} aria-label="Level up your conversation skills">
+              📚 Level up your conversation skills → Learn
+            </Button>
+          </div>
         ) : (
           <div className="space-y-2">
             {sortedMatches.map((match, idx) => {

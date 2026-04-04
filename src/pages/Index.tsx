@@ -614,12 +614,15 @@ const Index = () => {
               headline="You've seen everyone nearby! 🔭"
               description="New people join every day. We'll let you know when someone new arrives."
             />
-            <div className="flex gap-3 mt-6">
+            <div className="flex flex-wrap gap-3 mt-6">
               <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="min-h-[44px]">
                 <MapPin className="h-4 w-4 mr-1" /> Expand radius
               </Button>
               <Button size="sm" className="bg-gradient-to-r from-primary to-secondary text-primary-foreground min-h-[44px]" onClick={handleReferralClick}>
                 <Share2 className="h-4 w-4 mr-1" /> Invite friends
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/events")} className="min-h-[44px]" aria-label="Browse upcoming events">
+                🎪 Browse events
               </Button>
             </div>
 
