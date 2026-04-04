@@ -348,10 +348,10 @@ const Index = () => {
       .eq("moderation_status", "approved")
       .order("order_index", { ascending: true });
 
-    const photosByUser = new Map<string, string[]>();
+    const photosByUser = new Map<string, { url: string; focalY: number }[]>();
     userPhotos?.forEach(photo => {
       const existing = photosByUser.get(photo.user_id) || [];
-      existing.push(photo.photo_url);
+      existing.push({ url: photo.photo_url, focalY: Number(photo.focal_point_y) || 50 });
       photosByUser.set(photo.user_id, existing);
     });
 

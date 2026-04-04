@@ -79,7 +79,8 @@ export const BlurImage = memo(({
   prev.alt === next.alt &&
   prev.className === next.className &&
   prev.aspectRatio === next.aspectRatio &&
-  prev.fetchPriority === next.fetchPriority
+  prev.fetchPriority === next.fetchPriority &&
+  prev.objectPosition === next.objectPosition
 );
 
 BlurImage.displayName = "BlurImage";
