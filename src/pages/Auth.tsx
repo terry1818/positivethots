@@ -12,7 +12,8 @@ import { buildAuthRedirectUrl } from "@/lib/authRedirect";
 import { toast } from "sonner";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
-import { AlertCircle, Check, Circle } from "lucide-react";
+import { AlertCircle, Check, Circle, GraduationCap, ShieldCheck, Heart } from "lucide-react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 const signUpSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address").max(255, "Email too long"),
