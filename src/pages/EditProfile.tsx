@@ -20,6 +20,8 @@ import { syncEarnedFrames } from "@/hooks/useEarnedFrames";
 import { FieldError } from "@/components/FieldError";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { DesireTagSelector } from "@/components/profile-edit/DesireTagSelector";
+import { ChapterEditor } from "@/components/chapters/ChapterEditor";
+import { AstrologySetup } from "@/components/astrology/AstrologySetup";
 
 interface PromptRow {
   id?: string;
