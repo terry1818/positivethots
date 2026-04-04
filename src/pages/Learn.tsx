@@ -12,10 +12,13 @@ import { XPBar } from "@/components/education/XPBar";
 import { StreakBadge } from "@/components/education/StreakBadge";
 import { StreakCalendar } from "@/components/education/StreakCalendar";
 import { DailyChallenge } from "@/components/education/DailyChallenge";
+import { DailySpinWheel } from "@/components/education/DailySpinWheel";
+import { NearMissCard } from "@/components/education/NearMissCard";
+import { StreakInterstitial } from "@/components/education/StreakInterstitial";
 
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
+import { useLearningStats, getLevelName, getStreakMultiplier } from "@/hooks/useLearningStats";
 import { StreakRestoreModal } from "@/components/education/StreakRestoreModal";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -48,9 +51,11 @@ const Learn = () => {
   const [continueModuleId, setContinueModuleId] = useState<string | undefined>();
   const [continueSectionNumber, setContinueSectionNumber] = useState<number | undefined>();
   const [continueProgressPercent, setContinueProgressPercent] = useState<number | undefined>();
+  const [hasSpunToday, setHasSpunToday] = useState(true); // default true to prevent flash
+  const [showStreakInterstitial, setShowStreakInterstitial] = useState(false);
   const navigate = useNavigate();
   const handleModuleSearch = useCallback((q: string) => setModuleSearchQuery(q.toLowerCase()), []);
-  const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak } = useLearningStats();
+  const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak, awardXP } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const { tier: subscriptionTier } = useSubscription();
   const { seen: learnTourSeen, markSeen: markLearnTourSeen } = useTutorialState("learn_tour");
@@ -70,6 +75,18 @@ const Learn = () => {
       setTimeout(() => setShowLearnTour(true), 600);
     }
   }, [loading, learnTourSeen, modules.length]);
+
+  // Show streak interstitial on load if at risk
+  useEffect(() => {
+    if (!loading && isStreakAtRisk && stats && stats.current_streak >= 3 && streakHoursLeft <= 8) {
+      const dismissed = sessionStorage.getItem("pt_streak_interstitial_dismissed");
+      if (!dismissed) {
+        setTimeout(() => setShowStreakInterstitial(true), 1000);
+      }
+    }
+  }, [loading, isStreakAtRisk, stats, streakHoursLeft]);
+
+  // nearMissTier computed below after earnedModuleIds
 
   const loadData = async () => {
     try {
@@ -141,6 +158,18 @@ const Learn = () => {
         .eq("event_name", "module_section_viewed")
         .gte("created_at", last24h);
       setActiveLearnerCount(learnerCount && learnerCount > 0 ? learnerCount : null);
+
+      // Check daily spin status
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("last_daily_spin")
+        .eq("id", session.user.id)
+        .single();
+      const today = new Date().toISOString().split("T")[0];
+      setHasSpunToday((profileData as any)?.last_daily_spin === today);
+
+      // Show streak interstitial if at risk and haven't done activity today
+      // (delay slightly to avoid competing with page load)
     } catch (error: any) {
       console.error("Error loading education data:", error);
       toast.error("Failed to load education modules");
@@ -156,6 +185,23 @@ const Learn = () => {
   const requiredModules = useMemo(() => modules.filter(m => m.is_required), [modules]);
   const requiredEarned = useMemo(() => requiredModules.filter(m => earnedModuleIds.has(m.id)).length, [requiredModules, earnedModuleIds]);
   const progressPercent = totalBadges > 0 ? (earnedCount / totalBadges) * 100 : 0;
+
+  // Near-miss tier computation
+  const nearMissTier = useMemo(() => {
+    if (!tiers.length || !modules.length) return null;
+    for (const tier of tiers) {
+      const tierModules = modules.filter(m => m.tier === tier.tier);
+      const earnedInTier = tierModules.filter(m => earnedModuleIds.has(m.id)).length;
+      const remaining = tierModules.length - earnedInTier;
+      if (remaining > 0 && remaining <= 2) {
+        const firstLockedFeature = tier.features.find(f => !f.isUnlocked);
+        if (firstLockedFeature) {
+          return { badgesRemaining: remaining, featureLabel: firstLockedFeature.label, tierName: tier.tier.replace("_", " ") };
+        }
+      }
+    }
+    return null;
+  }, [tiers, modules, earnedModuleIds]);
 
   const isPremium = subscriptionTier !== "free";
 
@@ -248,6 +294,35 @@ const Learn = () => {
               <DailyChallenge />
             </CardContent>
           </Card>
+        )}
+
+        {/* Daily Spin Wheel */}
+        <DailySpinWheel
+          hasSpunToday={hasSpunToday}
+          onReward={async (reward) => {
+            setHasSpunToday(true);
+            if (reward.type === "xp" && awardXP) {
+              const multiplier = getStreakMultiplier(stats?.current_streak || 0);
+              const xpAmount = Math.round(reward.value * multiplier);
+              await awardXP(xpAmount, "daily_spin");
+              toast.success(`You won ${reward.emoji} +${xpAmount} XP${multiplier > 1 ? ` (${multiplier}× streak bonus!)` : ""}! 🎉`);
+            } else {
+              toast.success(`You won ${reward.emoji} ${reward.label}! 🎉`);
+            }
+          }}
+        />
+
+        {/* Near-miss nudge */}
+        {nearMissTier && (
+          <NearMissCard
+            badgesRemaining={nearMissTier.badgesRemaining}
+            featureLabel={nearMissTier.featureLabel}
+            tierName={nearMissTier.tierName}
+            onContinue={() => {
+              const currentMod = modules.find(m => !earnedModuleIds.has(m.id));
+              if (currentMod) navigate(`/learn/${currentMod.slug}`);
+            }}
+          />
         )}
 
         {/* Streak Restore Modal */}
@@ -366,6 +441,22 @@ const Learn = () => {
           tourKey="learn_tour"
           steps={learnTourSteps}
           onComplete={() => { setShowLearnTour(false); markLearnTourSeen(); }}
+        />
+      )}
+      {showStreakInterstitial && stats && (
+        <StreakInterstitial
+          streak={stats.current_streak}
+          hoursLeft={streakHoursLeft}
+          onSaveStreak={() => {
+            setShowStreakInterstitial(false);
+            sessionStorage.setItem("pt_streak_interstitial_dismissed", "true");
+            const currentMod = modules.find(m => !earnedModuleIds.has(m.id));
+            if (currentMod) navigate(`/learn/${currentMod.slug}`);
+          }}
+          onDismiss={() => {
+            setShowStreakInterstitial(false);
+            sessionStorage.setItem("pt_streak_interstitial_dismissed", "true");
+          }}
         />
       )}
     </div>

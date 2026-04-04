@@ -1,5 +1,6 @@
 import { Flame, Snowflake } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getStreakMultiplierLabel } from "@/hooks/useLearningStats";
 
 interface StreakBadgeProps {
   streak: number;
@@ -51,6 +52,12 @@ export const StreakBadge = ({ streak, className, showFreeze, freezeCount = 0, fr
       {/* Legacy support */}
       {showFreeze && freezeAvailable && !freezeCount && (
         <Snowflake className="h-3 w-3 text-blue-400 ml-0.5 animate-pulse" />
+      )}
+      {/* Streak multiplier */}
+      {getStreakMultiplierLabel(streak) && (
+        <span className="text-sm font-bold text-primary ml-0.5">
+          {getStreakMultiplierLabel(streak)} XP
+        </span>
       )}
       {atRisk && hoursLeft !== undefined && hoursLeft < 8 && (
         <span className="text-sm text-destructive font-medium ml-1 animate-heartbeat">

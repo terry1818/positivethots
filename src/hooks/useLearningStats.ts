@@ -41,6 +41,20 @@ export const calculateLevel = (totalXP: number): number => {
 const STREAK_MILESTONES = [3, 7, 14, 30, 100];
 export const isStreakMilestone = (streak: number) => STREAK_MILESTONES.includes(streak);
 
+/** Calculate XP multiplier based on streak length */
+export const getStreakMultiplier = (streak: number): number => {
+  if (streak >= 30) return 3;
+  if (streak >= 14) return 2.5;
+  if (streak >= 7) return 2;
+  if (streak >= 3) return 1.5;
+  return 1;
+};
+
+export const getStreakMultiplierLabel = (streak: number): string | null => {
+  const m = getStreakMultiplier(streak);
+  return m > 1 ? `${m}×` : null;
+};
+
 // Streak milestone XP bonuses
 export const STREAK_MILESTONE_XP: Record<number, number> = {
   7: 50,
