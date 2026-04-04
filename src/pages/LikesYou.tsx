@@ -142,7 +142,7 @@ const LikesYou = () => {
   const handleConnect = async (likerId: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    await supabase.from("swipes").insert({ swiper_id: user.id, swiped_id: likerId, direction: "right" });
+    await supabase.from("swipes").upsert({ swiper_id: user.id, swiped_id: likerId, direction: "right" }, { onConflict: "swiper_id,swiped_id" });
     const { data: matchId } = await supabase.rpc("check_match", { user1: user.id, user2: likerId });
     if (matchId) {
       setCelebrationTrigger(prev => prev + 1);
