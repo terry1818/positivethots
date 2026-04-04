@@ -793,7 +793,7 @@ const Index = () => {
           </div>
         ) : (
           <>
-            <div className="relative flex justify-center items-start px-4 pt-2" data-walkthrough="discovery-card" data-tour="discovery-card" style={{ minHeight: '420px' }}>
+            <div className="relative flex justify-center items-start px-4 pt-2" data-walkthrough="discovery-card" data-tour="discovery-card" style={{ height: 'calc(100vh - 280px)', minHeight: '340px' }}>
               {/* Undo button */}
               {showUndoButton && lastPassedProfile && (
                 <button
@@ -834,6 +834,7 @@ const Index = () => {
                     canSuperLike={canSuperLike}
                     superLikeBalance={isUnlimited ? 999 : superLikeBalance}
                     onViewProfile={() => setDetailProfile(profile)}
+                    onUpgradeSuperLike={() => navigate("/premium")}
                   />
                 );
               })}
