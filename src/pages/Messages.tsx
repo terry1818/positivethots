@@ -269,7 +269,7 @@ const Messages = () => {
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground truncate">
+                      <p className="text-sm text-muted-foreground truncate" data-tour={idx === 0 ? "messages-preview" : undefined}>
                         {lastMsg ? (
                           <>
                             {lastMsg.sender_id === userId && <span className="opacity-60">You: </span>}
