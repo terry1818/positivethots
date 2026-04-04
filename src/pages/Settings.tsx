@@ -345,6 +345,33 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* Display — Text Size */}
+        <Card className="animate-fade-in" style={{ animationDelay: "10ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg">Display</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Label className="mb-2 block">Text Size</Label>
+            <div className="flex gap-2">
+              {(["small", "medium", "large"] as const).map((size) => (
+                <Button
+                  key={size}
+                  variant={textScale === size ? "default" : "outline"}
+                  className={cn("flex-1 min-h-[44px] capitalize", textScale === size && "bg-primary text-primary-foreground")}
+                  onClick={() => {
+                    setTextScale(size);
+                    localStorage.setItem("pt_text_scale", size);
+                    document.documentElement.classList.remove("text-scale-small", "text-scale-medium", "text-scale-large");
+                    document.documentElement.classList.add(`text-scale-${size}`);
+                  }}
+                >
+                  {size}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Preferences */}
         <PreferencesCard />
 

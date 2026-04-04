@@ -30,7 +30,7 @@ export const XPBar = ({ totalXP, level }: XPBarProps) => {
             style={{ width: `${percent}%` }}
           />
         </div>
-        <span className="text-sm text-muted-foreground shrink-0 font-medium">
+        <span className="text-base text-muted-foreground shrink-0 font-medium">
           Lv.{level} → {level + 1}
         </span>
       </div>
