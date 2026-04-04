@@ -219,6 +219,7 @@ const Profile = () => {
                   alt={`${profile?.name} photo ${currentPhotoIndex + 1}`}
                   className="absolute inset-0 w-full h-full"
                   loading="eager"
+                  sizes="(max-width: 375px) 375px, 500px"
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center">

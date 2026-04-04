@@ -172,7 +172,7 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
     <Dialog open={!!type} onOpenChange={() => onClose()}>
       <DialogContent className="sm:max-w-sm text-center overflow-hidden">
         {/* Confetti */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
           {confetti.map(renderConfettiPiece)}
         </div>
 

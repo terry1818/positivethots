@@ -158,6 +158,7 @@ const Index = () => {
   const [matchBreakdown, setMatchBreakdown] = useState<CompatibilityBreakdownResult | null>(null);
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [breakdownName, setBreakdownName] = useState("");
+  const [announcedProfile, setAnnouncedProfile] = useState("");
 
   // Handle super like purchase redirect
   useEffect(() => {
@@ -356,7 +357,12 @@ const Index = () => {
     } else {
       toast.success("Connection Sent", { description: "They'll be notified of your interest!" });
     }
-    setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
+    setSuggestions(prev => {
+      const next = prev.filter(s => s.id !== otherUserId);
+      const nextProfile = next[0];
+      if (nextProfile) setAnnouncedProfile(`Now viewing ${nextProfile.display_name || nextProfile.name}, age ${nextProfile.age}. ${nextProfile.compatibility_score ?? 0}% compatible.`);
+      return next;
+    });
   }, [currentUser, suggestions]);
 
   const handlePass = useCallback(async (otherUserId: string) => {
@@ -365,7 +371,12 @@ const Index = () => {
       swiper_id: currentUser.id, swiped_id: otherUserId, direction: "left",
     });
     trackEvent("swipe", { direction: "left", swiped_id: otherUserId });
-    setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
+    setSuggestions(prev => {
+      const next = prev.filter(s => s.id !== otherUserId);
+      const nextProfile = next[0];
+      if (nextProfile) setAnnouncedProfile(`Now viewing ${nextProfile.display_name || nextProfile.name}, age ${nextProfile.age}. ${nextProfile.compatibility_score ?? 0}% compatible.`);
+      return next;
+    });
   }, [currentUser]);
 
   const handleSuperLike = useCallback(async (otherUserId: string) => {
@@ -392,7 +403,12 @@ const Index = () => {
       playThot();
       toast.success("Thot Sent! 💜", { description: "They'll see you stand out!" });
     }
-    setSuggestions(prev => prev.filter(s => s.id !== otherUserId));
+    setSuggestions(prev => {
+      const next = prev.filter(s => s.id !== otherUserId);
+      const nextProfile = next[0];
+      if (nextProfile) setAnnouncedProfile(`Now viewing ${nextProfile.display_name || nextProfile.name}, age ${nextProfile.age}. ${nextProfile.compatibility_score ?? 0}% compatible.`);
+      return next;
+    });
   }, [currentUser, suggestions, sendSuperLike]);
 
   // Keyboard navigation for discovery
@@ -560,7 +576,7 @@ const Index = () => {
 
       {/* Screen reader live region */}
       <div aria-live="polite" className="sr-only">
-        {suggestions.length > 0 && `Now viewing ${suggestions[0].display_name || suggestions[0].name}, age ${suggestions[0].age}`}
+        {announcedProfile}
       </div>
 
       {/* Curated Matches Grid */}

@@ -604,7 +604,7 @@ const Chat = () => {
                 className="pr-10 focus-glow"
                 maxLength={1000}
               />
-              <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8" aria-label="Emoji picker">
+              <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-11 w-11 min-h-[44px] min-w-[44px]" aria-label="Emoji picker">
                 <Smile className="h-4 w-4" />
               </Button>
             </div>
@@ -612,12 +612,12 @@ const Chat = () => {
               <Button
                 size="icon" aria-label="Send message"
                 onClick={handleSendMessage}
-                className={cn("h-10 w-10 bg-gradient-primary text-primary-foreground transition-all", newMessage.trim() && "animate-pulse-glow")}
+                className={cn("h-11 w-11 min-h-[44px] min-w-[44px] bg-gradient-primary text-primary-foreground transition-all", newMessage.trim() && "animate-pulse-glow")}
               >
                 <Send className="h-5 w-5" />
               </Button>
             ) : (
-              <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Voice message"><Mic className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" className="h-11 w-11 min-h-[44px] min-w-[44px]" aria-label="Voice message"><Mic className="h-5 w-5" /></Button>
             )}
           </div>
           {newMessage.length > 800 && (

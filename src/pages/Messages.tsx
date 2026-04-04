@@ -215,6 +215,7 @@ const Messages = () => {
                           aspectRatio="1/1"
                           loading={idx === 0 ? "eager" : "lazy"}
                           fetchPriority={idx === 0 ? "high" : undefined}
+                          sizes="48px"
                         />
                       </ProfileFrame>
                       {match.profile.is_verified ? (
