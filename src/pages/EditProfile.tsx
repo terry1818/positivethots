@@ -33,6 +33,8 @@ const EditProfile = () => {
   const [photos, setPhotos] = useState<any[]>([]);
   const [latestVerification, setLatestVerification] = useState<any>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
