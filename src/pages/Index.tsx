@@ -164,6 +164,11 @@ const Index = () => {
   const [announcedProfile, setAnnouncedProfile] = useState("");
   const [showWalkthrough, setShowWalkthrough] = useState(false);
   const [showSwipeTutorial, setShowSwipeTutorial] = useState(false);
+  const [lastPassedProfile, setLastPassedProfile] = useState<EnhancedProfile | null>(null);
+  const [showUndoButton, setShowUndoButton] = useState(false);
+  const [dailyUndoCount, setDailyUndoCount] = useState(0);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const prefersReducedMotion = useReducedMotion();
 
   // Handle super like purchase redirect
   useEffect(() => {
