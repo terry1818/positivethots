@@ -608,6 +608,13 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
           onChange={handleUpload}
         />
       </CardContent>
+      {focalPhoto && (
+        <FocalPointSelector
+          photo={focalPhoto}
+          onClose={() => setFocalPhoto(null)}
+          onSave={handleSaveFocalPoint}
+        />
+      )}
     </Card>
   );
 };
