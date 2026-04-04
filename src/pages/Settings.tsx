@@ -844,7 +844,7 @@ const Settings = () => {
                   setGiftEmail("");
                   await loadMyCodes();
                 } catch (err: any) {
-                  toast.error(err.message || "Failed to send gift");
+                  toast.error("Something went wrong. Please try again.");
                 } finally {
                   setSendingGift(false);
                 }
