@@ -157,10 +157,10 @@ const Premium = () => {
 
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative overflow-hidden">
-        <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl animate-blob-float" />
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl animate-blob-float [animation-delay:5s]" />
-        <div className="animate-bounce-in relative z-10 text-center">
-          <TierIcon className="h-16 w-16 text-primary mb-4 mx-auto animate-pulse-glow" />
+        <div className={cn("absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl", !reducedMotion && "animate-blob-float")} aria-hidden="true" />
+        <div className={cn("absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl", !reducedMotion && "animate-blob-float [animation-delay:5s]")} aria-hidden="true" />
+        <div className={cn("relative z-10 text-center", !reducedMotion && "animate-bounce-in")}>
+          <TierIcon className={cn("h-16 w-16 text-primary mb-4 mx-auto", !reducedMotion && "animate-pulse-glow")} />
           <h1 className="text-2xl font-bold mb-2">You're {currentConfig?.name ?? "Premium"}!</h1>
           <p className="text-muted-foreground mb-6">You have full access to your plan's features.</p>
           <div className="flex gap-3">
