@@ -31,6 +31,7 @@ import {
 } from "@/lib/subscriptionTiers";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 const tierIcons = {
   plus: Zap,
