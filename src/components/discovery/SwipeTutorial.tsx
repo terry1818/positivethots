@@ -32,8 +32,22 @@ export const SwipeTutorial = ({ onDismiss }: SwipeTutorialProps) => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleDismiss = () => {
+  const handleDismiss = async () => {
     localStorage.setItem(STORAGE_KEY, "true");
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase.from("profiles").select("tutorials_completed").eq("id", user.id).single();
+        if (profile) {
+          const existing: string[] = (profile as any).tutorials_completed || [];
+          if (!existing.includes("swipe_tutorial")) {
+            await supabase.from("profiles").update({
+              tutorials_completed: [...existing, "swipe_tutorial"],
+            } as any).eq("id", user.id);
+          }
+        }
+      }
+    } catch {}
     onDismiss();
   };
 

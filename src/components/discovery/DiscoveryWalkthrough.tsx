@@ -73,8 +73,29 @@ export const DiscoveryWalkthrough = ({ onComplete }: DiscoveryWalkthroughProps) 
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     localStorage.setItem(STORAGE_KEY, "true");
+    // Persist to database
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.rpc("award_xp", { _user_id: user.id, _amount: 0, _source: "tutorial_noop" }).then(() => {});
+        // Use raw SQL-style update for array_append
+        await supabase.from("profiles").update({
+          tutorials_completed: ["discovery_walkthrough"] as any,
+        }).eq("id", user.id);
+        // Re-fetch to do proper append
+        const { data: profile } = await supabase.from("profiles").select("tutorials_completed").eq("id", user.id).single();
+        if (profile) {
+          const existing: string[] = (profile as any).tutorials_completed || [];
+          if (!existing.includes("discovery_walkthrough")) {
+            await supabase.from("profiles").update({
+              tutorials_completed: [...existing, "discovery_walkthrough"],
+            } as any).eq("id", user.id);
+          }
+        }
+      }
+    } catch {}
     onComplete();
   };
 
