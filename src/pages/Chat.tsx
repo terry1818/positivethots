@@ -594,7 +594,12 @@ const Chat = () => {
               <Input
                 value={newMessage}
                 onChange={(e) => handleTyping(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                  }
+                }}
                 placeholder="Type a message..."
                 className="pr-10 focus-glow"
                 maxLength={1000}
