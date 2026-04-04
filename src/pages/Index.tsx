@@ -743,6 +743,19 @@ const Index = () => {
       />
 
       <BottomNav />
+
+      {/* First-time walkthrough */}
+      {showWalkthrough && suggestions.length > 0 && (
+        <DiscoveryWalkthrough onComplete={() => {
+          setShowWalkthrough(false);
+          if (shouldShowSwipeTutorial()) setShowSwipeTutorial(true);
+        }} />
+      )}
+
+      {/* Mobile swipe tutorial */}
+      {showSwipeTutorial && !showWalkthrough && (
+        <SwipeTutorial onDismiss={() => setShowSwipeTutorial(false)} />
+      )}
     </div>
   );
 };
