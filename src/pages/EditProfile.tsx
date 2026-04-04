@@ -208,7 +208,7 @@ const EditProfile = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card sticky top-0 z-40">
-        <div className="container max-w-md mx-auto px-4 py-4 flex items-center gap-3">
+        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} aria-label="Go back">
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -216,7 +216,7 @@ const EditProfile = () => {
         </div>
       </header>
 
-      <main className="container max-w-md mx-auto px-4 py-6 pb-36">
+      <main className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6 pb-36">
         <Accordion
           type="single"
           collapsible
@@ -439,7 +439,7 @@ const EditProfile = () => {
       {/* Floating Save Button */}
       {hasChanges && (
         <div className="fixed bottom-20 left-0 right-0 px-4 z-50 animate-fade-in">
-          <div className="container max-w-md mx-auto">
+          <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto">
             <Button
               className="w-full h-12 bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold shadow-lg rounded-xl"
               onClick={handleSave}

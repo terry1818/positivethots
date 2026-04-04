@@ -235,7 +235,7 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border bg-card">
-        <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Logo size="md" showText={false} />
           <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => navigate("/settings")} aria-label="Settings">
             <Settings className="h-6 w-6" />
@@ -243,7 +243,7 @@ const Profile = () => {
         </div>
       </header>
 
-      <main className="flex-1 container max-w-md mx-auto px-4 py-6 pb-24 space-y-4">
+      <main className="flex-1 container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6 pb-24 space-y-4">
         {/* Profile Completion Meter */}
         <div data-tour="profile-completion">
           <ProfileCompletionMeter percentage={percentage} nudges={nudges} />
