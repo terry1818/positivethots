@@ -10,6 +10,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { CookieConsent } from "@/components/CookieConsent";
 import { PageLoader } from "@/components/PageLoader";
 import { PageSkeleton } from "@/components/PageSkeleton";
+import { OfflineBanner } from "@/components/OfflineBanner";
 import { useCartSync } from "@/hooks/useCartSync";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
