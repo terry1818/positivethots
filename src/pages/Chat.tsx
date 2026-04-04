@@ -510,7 +510,7 @@ const Chat = () => {
 
       {/* Compatibility event banner */}
       {(() => {
-        const score = compatBreakdown?.overall;
+        const score = compatBreakdown?.totalScore;
         const storageKey = `pt_compat_banner_${matchId}`;
         const alreadyDismissed = compatBannerDismissed || (typeof localStorage !== 'undefined' && localStorage.getItem(storageKey) === 'true');
         if (score && score > 80 && !alreadyDismissed) {
