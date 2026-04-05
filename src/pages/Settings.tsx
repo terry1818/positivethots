@@ -425,14 +425,16 @@ const Settings = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button
-                onClick={() => navigate("/admin")}
-                className="w-full bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20"
-                variant="outline"
-              >
-                <Shield className="h-4 w-4 mr-2" />
-                Open Admin Dashboard
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => navigate("/admin")}
+                  className="flex-1 bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20"
+                  variant="outline"
+                >
+                  <Shield className="h-4 w-4 mr-2" />
+                  Admin Dashboard
+                </Button>
+              </div>
               <div className="space-y-3 p-3 rounded-lg bg-muted/50">
                 <p className="text-sm font-medium">Grant a Role</p>
                 <Input
