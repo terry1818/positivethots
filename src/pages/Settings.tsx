@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { LinkedAccountsCard } from "@/components/settings/LinkedAccountsCard";
+import { TwoFactorSetup } from "@/components/settings/TwoFactorSetup";
 import { PartnerLinkManager } from "@/components/settings/PartnerLinkManager";
 import { IncognitoToggle } from "@/components/settings/IncognitoToggle";
 import { SpotifyConnect } from "@/components/spotify/SpotifyConnect";
@@ -937,6 +938,9 @@ const Settings = () => {
             </Button>
           </CardContent>
         </Card>
+
+        {/* Two-Factor Authentication */}
+        <TwoFactorSetup />
 
         {/* External Platforms */}
         <LinkedAccountsCard />
