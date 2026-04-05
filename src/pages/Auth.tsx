@@ -105,17 +105,17 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const result = signUpSchema.safeParse({
+        const parsed = signUpSchema.safeParse({
           email: email.trim(),
           password,
           name: name.trim(),
-          age: parseInt(age) || 0,
+          dateOfBirth,
           agreedToTerms: agreedToTerms as true,
         });
 
-        if (!result.success) {
+        if (!parsed.success) {
           const errors: Record<string, string> = {};
-          result.error.errors.forEach(err => {
+          parsed.error.errors.forEach(err => {
             const field = err.path[0]?.toString();
             if (field && !errors[field]) errors[field] = err.message;
           });
