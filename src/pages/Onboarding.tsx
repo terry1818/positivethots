@@ -184,6 +184,10 @@ const Onboarding = () => {
     boundaries: "",
     location: "",
     prompts: [] as { question: string; response: string }[],
+    birthTime: "" as string,
+    birthTimeUnknown: false,
+    birthCity: "",
+    birthCountry: "",
   });
   const navigate = useNavigate();
 
