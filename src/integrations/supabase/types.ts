@@ -38,6 +38,35 @@ export type Database = {
         }
         Relationships: []
       }
+      announcement_dismissals: {
+        Row: {
+          announcement_id: string
+          dismissed_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          dismissed_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          dismissed_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_dismissals_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       announcements: {
         Row: {
           created_at: string
@@ -46,7 +75,10 @@ export type Database = {
           id: string
           is_active: boolean
           message: string
+          priority: string
+          starts_at: string
           target_audience: string
+          title: string | null
         }
         Insert: {
           created_at?: string
@@ -55,7 +87,10 @@ export type Database = {
           id?: string
           is_active?: boolean
           message: string
+          priority?: string
+          starts_at?: string
           target_audience?: string
+          title?: string | null
         }
         Update: {
           created_at?: string
@@ -64,7 +99,10 @@ export type Database = {
           id?: string
           is_active?: boolean
           message?: string
+          priority?: string
+          starts_at?: string
           target_audience?: string
+          title?: string | null
         }
         Relationships: []
       }
@@ -1477,6 +1515,7 @@ export type Database = {
           incognito_updated_at: string | null
           interests: string[] | null
           is_face_verified: boolean
+          is_suspended: boolean
           is_verified: boolean
           languages: string[] | null
           last_active_at: string | null
@@ -1501,6 +1540,9 @@ export type Database = {
           sexuality: string | null
           sti_last_tested: string | null
           sti_status: string | null
+          suspended_at: string | null
+          suspended_by: string | null
+          suspended_reason: string | null
           thots_coins_balance: number
           tutorials_completed: string[]
           updated_at: string
@@ -1537,6 +1579,7 @@ export type Database = {
           incognito_updated_at?: string | null
           interests?: string[] | null
           is_face_verified?: boolean
+          is_suspended?: boolean
           is_verified?: boolean
           languages?: string[] | null
           last_active_at?: string | null
@@ -1561,6 +1604,9 @@ export type Database = {
           sexuality?: string | null
           sti_last_tested?: string | null
           sti_status?: string | null
+          suspended_at?: string | null
+          suspended_by?: string | null
+          suspended_reason?: string | null
           thots_coins_balance?: number
           tutorials_completed?: string[]
           updated_at?: string
@@ -1597,6 +1643,7 @@ export type Database = {
           incognito_updated_at?: string | null
           interests?: string[] | null
           is_face_verified?: boolean
+          is_suspended?: boolean
           is_verified?: boolean
           languages?: string[] | null
           last_active_at?: string | null
@@ -1621,6 +1668,9 @@ export type Database = {
           sexuality?: string | null
           sti_last_tested?: string | null
           sti_status?: string | null
+          suspended_at?: string | null
+          suspended_by?: string | null
+          suspended_reason?: string | null
           thots_coins_balance?: number
           tutorials_completed?: string[]
           updated_at?: string
