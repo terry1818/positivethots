@@ -445,6 +445,9 @@ const Onboarding = () => {
           zodiac_sign: formData.zodiacSign || null,
           languages: formData.languages.length > 0 ? formData.languages : null,
           lifestyle: Object.keys(formData.lifestyle).length > 0 ? formData.lifestyle : null,
+          birth_time: formData.birthTimeUnknown ? null : (formData.birthTime || null),
+          birth_city: formData.birthCity.trim() || null,
+          birth_country: formData.birthCountry.trim() || null,
           onboarding_completed: true,
         } as any)
         .eq("id", session.user.id);
