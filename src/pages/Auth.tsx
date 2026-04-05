@@ -19,7 +19,14 @@ const signUpSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address").max(255, "Email too long"),
   password: z.string().min(6, "Password must be at least 6 characters").max(100, "Password too long"),
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name too long"),
-  age: z.number().min(18, "You must be 18 or older to join").max(100, "Please enter a valid age"),
+  dateOfBirth: z.string().min(1, "Date of birth is required").refine((val) => {
+    const dob = new Date(val);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age--;
+    return age >= 18;
+  }, "You must be 18 or older to join"),
   agreedToTerms: z.literal(true, { errorMap: () => ({ message: "You must agree to the Terms and Privacy Policy" }) }),
 });
 
