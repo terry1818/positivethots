@@ -88,7 +88,7 @@ const Auth = () => {
   };
 
   const focusFirstError = (errors: Record<string, string>) => {
-    const fieldOrder = isSignUp ? ['name', 'age', 'agreedToTerms', 'email', 'password'] : ['email', 'password'];
+    const fieldOrder = isSignUp ? ['name', 'dateOfBirth', 'agreedToTerms', 'email', 'password'] : ['email', 'password'];
     for (const field of fieldOrder) {
       if (errors[field]) {
         const el = formRef.current?.querySelector<HTMLInputElement>(`#${field}`);
