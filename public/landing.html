@@ -538,6 +538,32 @@
     });
   }, { threshold: 0.1 });
   document.querySelectorAll('.fade-in').forEach(function(el) { obs.observe(el); });
+
+  // Rotating tagline
+  var rtLines = [
+    "When you're back in the dating field \u2014 Think Positive Thots.<sup style='font-size:60%;vertical-align:super;opacity:0.7'>TM</sup>",
+    "Connection starts with a positive thot.<sup style='font-size:60%;vertical-align:super;opacity:0.7'>TM</sup>",
+    "Find your people. Think Positive Thots.<sup style='font-size:60%;vertical-align:super;opacity:0.7'>TM</sup>",
+    "Dating, reimagined for open minds. Think Positive Thots.<sup style='font-size:60%;vertical-align:super;opacity:0.7'>TM</sup>",
+  ];
+  var rtIdx = 0;
+  var rtEl = document.getElementById('rt-line');
+  var rtPaused = false;
+  document.addEventListener('visibilitychange', function() { rtPaused = document.hidden; });
+  var prefersRM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!prefersRM && rtEl) {
+    setInterval(function() {
+      if (rtPaused) return;
+      rtEl.style.transition = 'opacity 0.3s ease-in';
+      rtEl.style.opacity = '0';
+      setTimeout(function() {
+        rtIdx = (rtIdx + 1) % rtLines.length;
+        rtEl.innerHTML = rtLines[rtIdx];
+        rtEl.style.transition = 'opacity 0.3s ease-out';
+        rtEl.style.opacity = '1';
+      }, 300);
+    }, 5000);
+  }
 </script>
 </body>
 </html>
