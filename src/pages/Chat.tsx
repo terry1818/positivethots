@@ -241,8 +241,9 @@ const Chat = () => {
         _user_id: currentUser.id,
         _match_id: matchId,
       });
-      if (rlResult?.limited) {
-        const mins = rlResult.minutes_remaining || 1;
+      const rl = rlResult as any;
+      if (rl?.limited) {
+        const mins = rl.minutes_remaining || 1;
         toast.error(`You've reached your message limit for this match`, {
           description: `Try again in ${mins} minute${mins === 1 ? '' : 's'}. 💬`,
           duration: 6000,
