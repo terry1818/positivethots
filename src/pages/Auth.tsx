@@ -19,7 +19,14 @@ const signUpSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address").max(255, "Email too long"),
   password: z.string().min(6, "Password must be at least 6 characters").max(100, "Password too long"),
   name: z.string().trim().min(2, "Name must be at least 2 characters").max(100, "Name too long"),
-  age: z.number().min(18, "You must be 18 or older to join").max(100, "Please enter a valid age"),
+  dateOfBirth: z.string().min(1, "Date of birth is required").refine((val) => {
+    const dob = new Date(val);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) age--;
+    return age >= 18;
+  }, "You must be 18 or older to join"),
   agreedToTerms: z.literal(true, { errorMap: () => ({ message: "You must agree to the Terms and Privacy Policy" }) }),
 });
 
@@ -42,7 +49,7 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [age, setAge] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [loading, setLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -81,7 +88,7 @@ const Auth = () => {
   };
 
   const focusFirstError = (errors: Record<string, string>) => {
-    const fieldOrder = isSignUp ? ['name', 'age', 'agreedToTerms', 'email', 'password'] : ['email', 'password'];
+    const fieldOrder = isSignUp ? ['name', 'dateOfBirth', 'agreedToTerms', 'email', 'password'] : ['email', 'password'];
     for (const field of fieldOrder) {
       if (errors[field]) {
         const el = formRef.current?.querySelector<HTMLInputElement>(`#${field}`);
@@ -98,17 +105,17 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const result = signUpSchema.safeParse({
+        const parsed = signUpSchema.safeParse({
           email: email.trim(),
           password,
           name: name.trim(),
-          age: parseInt(age) || 0,
+          dateOfBirth,
           agreedToTerms: agreedToTerms as true,
         });
 
-        if (!result.success) {
+        if (!parsed.success) {
           const errors: Record<string, string> = {};
-          result.error.errors.forEach(err => {
+          parsed.error.errors.forEach(err => {
             const field = err.path[0]?.toString();
             if (field && !errors[field]) errors[field] = err.message;
           });
@@ -118,11 +125,18 @@ const Auth = () => {
           return;
         }
 
+        // Calculate age from DOB
+        const dob = new Date(dateOfBirth);
+        const today = new Date();
+        let computedAge = today.getFullYear() - dob.getFullYear();
+        const monthDiff = today.getMonth() - dob.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) computedAge--;
+
         const { data: authData, error: signUpError } = await supabase.auth.signUp({
           email: email.trim(), password,
           options: {
             emailRedirectTo: buildAuthRedirectUrl("/"),
-            data: { name: name.trim(), age: parseInt(age) },
+            data: { name: name.trim(), age: computedAge, date_of_birth: dateOfBirth },
           },
         });
         if (signUpError) throw signUpError;
@@ -133,10 +147,11 @@ const Auth = () => {
         }
         if (authData.user && authData.session) {
           const { error: profileError } = await supabase.from("profiles").insert({
-            id: authData.user.id, name: name.trim(), age: parseInt(age), bio: "",
+            id: authData.user.id, name: name.trim(), age: computedAge, bio: "",
             location: "Location not set",
+            date_of_birth: dateOfBirth,
             profile_image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${authData.user.id}`,
-          });
+          } as any);
           if (profileError) console.error("Profile creation error:", profileError);
           toast.success("Account created successfully!");
           navigate("/onboarding");
@@ -250,20 +265,19 @@ const Auth = () => {
                   <FieldError message={fieldErrors.name} id="name-error" />
                 </div>
                 <div className="space-y-1 animate-stagger-fade" style={{ animationDelay: "80ms" }}>
-                  <Label htmlFor="age">Age (18+)</Label>
+                  <Label htmlFor="dateOfBirth">Date of Birth (18+)</Label>
                   <Input
-                    id="age"
-                    type="number"
-                    placeholder="Your age"
-                    value={age}
-                    onChange={(e) => { setAge(e.target.value); clearFieldError('age'); }}
-                    min={18}
-                    max={100}
-                    className={cn("focus-glow min-h-[48px]", fieldErrors.age && "border-destructive/50 focus-visible:ring-destructive/30")}
-                    aria-describedby={fieldErrors.age ? "age-error" : undefined}
-                    aria-invalid={!!fieldErrors.age}
+                    id="dateOfBirth"
+                    type="date"
+                    value={dateOfBirth}
+                    onChange={(e) => { setDateOfBirth(e.target.value); clearFieldError('dateOfBirth'); }}
+                    max={new Date(new Date().getFullYear() - 18, new Date().getMonth(), new Date().getDate()).toISOString().split('T')[0]}
+                    min="1920-01-01"
+                    className={cn("focus-glow min-h-[48px]", fieldErrors.dateOfBirth && "border-destructive/50 focus-visible:ring-destructive/30")}
+                    aria-describedby={fieldErrors.dateOfBirth ? "dob-error" : undefined}
+                    aria-invalid={!!fieldErrors.dateOfBirth}
                   />
-                  <FieldError message={fieldErrors.age} id="age-error" />
+                  <FieldError message={fieldErrors.dateOfBirth} id="dob-error" />
                 </div>
               </>
             )}

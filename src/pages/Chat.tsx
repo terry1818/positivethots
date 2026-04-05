@@ -235,6 +235,26 @@ const Chat = () => {
     if (now - lastSendTimestamp.current < 500) return;
     lastSendTimestamp.current = now;
 
+    // Check hourly rate limit (30 msgs/hour per match)
+    try {
+      const { data: rlResult } = await supabase.rpc("check_message_rate_limit", {
+        _user_id: currentUser.id,
+        _match_id: matchId,
+      });
+      const rl = rlResult as any;
+      if (rl?.limited) {
+        const mins = rl.minutes_remaining || 1;
+        toast.error(`You've reached your message limit for this match`, {
+          description: `Try again in ${mins} minute${mins === 1 ? '' : 's'}. 💬`,
+          duration: 6000,
+        });
+        return;
+      }
+    } catch (e) {
+      // Fail open if rate limit check errors
+      console.error("Rate limit check failed:", e);
+    }
+
     const messageContent = newMessage.trim();
     const optimisticId = `optimistic-${Date.now()}`;
     setNewMessage("");

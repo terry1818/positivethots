@@ -1395,10 +1395,16 @@ export type Database = {
           bdsm_test_screenshot: string | null
           bdsm_test_url: string | null
           bio: string | null
+          birth_city: string | null
+          birth_country: string | null
+          birth_lat: number | null
+          birth_lng: number | null
+          birth_time: string | null
           boundaries: string | null
           churn_status: string
           created_at: string
           cross_app_links: Json | null
+          date_of_birth: string | null
           desires: string[] | null
           display_name: string | null
           earned_frames: string[]
@@ -1449,10 +1455,16 @@ export type Database = {
           bdsm_test_screenshot?: string | null
           bdsm_test_url?: string | null
           bio?: string | null
+          birth_city?: string | null
+          birth_country?: string | null
+          birth_lat?: number | null
+          birth_lng?: number | null
+          birth_time?: string | null
           boundaries?: string | null
           churn_status?: string
           created_at?: string
           cross_app_links?: Json | null
+          date_of_birth?: string | null
           desires?: string[] | null
           display_name?: string | null
           earned_frames?: string[]
@@ -1503,10 +1515,16 @@ export type Database = {
           bdsm_test_screenshot?: string | null
           bdsm_test_url?: string | null
           bio?: string | null
+          birth_city?: string | null
+          birth_country?: string | null
+          birth_lat?: number | null
+          birth_lng?: number | null
+          birth_time?: string | null
           boundaries?: string | null
           churn_status?: string
           created_at?: string
           cross_app_links?: Json | null
+          date_of_birth?: string | null
           desires?: string[] | null
           display_name?: string | null
           earned_frames?: string[]
@@ -2761,6 +2779,10 @@ export type Database = {
         Returns: Json
       }
       check_match: { Args: { user1: string; user2: string }; Returns: string }
+      check_message_rate_limit: {
+        Args: { _match_id: string; _user_id: string }
+        Returns: Json
+      }
       credit_coins: {
         Args: {
           p_amount: number

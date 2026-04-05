@@ -17,6 +17,7 @@ import { WelcomeBackModal } from "@/components/WelcomeBackModal";
 import { useNPSSurvey } from "@/hooks/useNPSSurvey";
 import { NpsModal } from "@/components/NpsModal";
 import { DailyRewardModal } from "@/components/rewards/DailyRewardModal";
+import { AppFooter } from "@/components/AppFooter";
 
 // Lazy-loaded route pages
 const Index = lazy(() => import("./pages/Index"));
@@ -45,6 +46,7 @@ const CommunityGuidelines = lazy(() => import("./pages/CommunityGuidelines"));
 const CelebrationDemo = lazy(() => import("./pages/CelebrationDemo"));
 const TestingLocator = lazy(() => import("./pages/TestingLocator"));
 const HealthTesting = lazy(() => import("./pages/HealthTesting"));
+const ContentCompliance = lazy(() => import("./pages/ContentCompliance"));
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -103,8 +105,10 @@ const AppContent = () => {
         <Route path="/testing-locations" element={<Suspense fallback={<PageLoader />}><TestingLocator /></Suspense>} />
         <Route path="/health-testing" element={<Suspense fallback={<PageLoader />}><HealthTesting /></Suspense>} />
         <Route path="/celebration-demo" element={<Suspense fallback={<PageLoader />}><CelebrationDemo /></Suspense>} />
+        <Route path="/2257" element={<Suspense fallback={<PageLoader />}><ContentCompliance /></Suspense>} />
         <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
       </Routes>
+      <AppFooter />
     </>
   );
 };
