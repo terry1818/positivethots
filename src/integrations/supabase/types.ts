@@ -38,6 +38,63 @@ export type Database = {
         }
         Relationships: []
       }
+      announcements: {
+        Row: {
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          message: string
+          target_audience: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          message: string
+          target_audience?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          message?: string
+          target_audience?: string
+        }
+        Relationships: []
+      }
+      audit_log: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          target_user_id: string | null
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_user_id?: string | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_user_id?: string | null
+        }
+        Relationships: []
+      }
       blocked_users: {
         Row: {
           blocked_id: string
@@ -2764,6 +2821,10 @@ export type Database = {
     }
     Functions: {
       activate_vip_boost: { Args: never; Returns: undefined }
+      admin_suspend_user: {
+        Args: { _suspend: boolean; _target_user_id: string }
+        Returns: undefined
+      }
       append_tutorial_completed: { Args: { _key: string }; Returns: undefined }
       award_badge: {
         Args: { _module_id: string; _quiz_score: number }
@@ -2815,6 +2876,16 @@ export type Database = {
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
+      }
+      get_admin_dashboard_stats: { Args: never; Returns: Json }
+      get_admin_user_list: {
+        Args: {
+          _filter?: string
+          _page?: number
+          _per_page?: number
+          _search?: string
+        }
+        Returns: Json
       }
       get_discovery_profiles: {
         Args: { _exclude_ids: string[] }
