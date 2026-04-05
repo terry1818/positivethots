@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EducationBadge } from "@/components/EducationBadge";
 import { X, BookOpen, Shield, Heart } from "lucide-react";
+import { BrandTagline } from "@/components/BrandTagline";
 
 const FOUNDATION_BADGES = [
   { slug: "consent-fundamentals", title: "Consent" },
