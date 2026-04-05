@@ -930,6 +930,7 @@ const Admin = () => {
               { value: "reports", icon: Flag, label: "Reports" },
               { value: "announcements", icon: Megaphone, label: "Announce" },
               { value: "audit", icon: ClipboardList, label: "Audit" },
+              { value: "edu-health", icon: HeartPulse, label: "Edu Health" },
             ].map(t => (
               <TabsTrigger key={t.value} value={t.value} role="tab"
                 className="text-xs gap-1 flex-1 min-w-[70px] min-h-[44px]">
