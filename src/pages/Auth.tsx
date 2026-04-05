@@ -265,20 +265,19 @@ const Auth = () => {
                   <FieldError message={fieldErrors.name} id="name-error" />
                 </div>
                 <div className="space-y-1 animate-stagger-fade" style={{ animationDelay: "80ms" }}>
-                  <Label htmlFor="age">Age (18+)</Label>
+                  <Label htmlFor="dateOfBirth">Date of Birth (18+)</Label>
                   <Input
-                    id="age"
-                    type="number"
-                    placeholder="Your age"
-                    value={age}
-                    onChange={(e) => { setAge(e.target.value); clearFieldError('age'); }}
-                    min={18}
-                    max={100}
-                    className={cn("focus-glow min-h-[48px]", fieldErrors.age && "border-destructive/50 focus-visible:ring-destructive/30")}
-                    aria-describedby={fieldErrors.age ? "age-error" : undefined}
-                    aria-invalid={!!fieldErrors.age}
+                    id="dateOfBirth"
+                    type="date"
+                    value={dateOfBirth}
+                    onChange={(e) => { setDateOfBirth(e.target.value); clearFieldError('dateOfBirth'); }}
+                    max={new Date(new Date().getFullYear() - 18, new Date().getMonth(), new Date().getDate()).toISOString().split('T')[0]}
+                    min="1920-01-01"
+                    className={cn("focus-glow min-h-[48px]", fieldErrors.dateOfBirth && "border-destructive/50 focus-visible:ring-destructive/30")}
+                    aria-describedby={fieldErrors.dateOfBirth ? "dob-error" : undefined}
+                    aria-invalid={!!fieldErrors.dateOfBirth}
                   />
-                  <FieldError message={fieldErrors.age} id="age-error" />
+                  <FieldError message={fieldErrors.dateOfBirth} id="dob-error" />
                 </div>
               </>
             )}
