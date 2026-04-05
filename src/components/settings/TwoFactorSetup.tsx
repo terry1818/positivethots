@@ -275,9 +275,9 @@ export const TwoFactorSetup = () => {
               <Button
                 className="flex-1"
                 onClick={handleVerify}
-                disabled={verifyCode.length !== 6 || status === "enrolling"}
+                disabled={verifyCode.length !== 6 || verifying}
               >
-                {status === "enrolling" ? (
+                {verifying ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   "Verify & Enable"
