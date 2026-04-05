@@ -19,8 +19,9 @@ import {
   BarChart3, Users, MessageSquare, Heart, Crown, Shield, TrendingUp, TrendingDown,
   Search, ChevronLeft, ChevronRight, AlertTriangle, Megaphone, BookOpen,
   Calendar, Link2, Eye, UserX, UserCheck, Trash2, Loader2, ArrowLeft,
-  Send, Flag, CheckCircle, XCircle, ClipboardList
+  Send, Flag, CheckCircle, XCircle, ClipboardList, HeartPulse
 } from "lucide-react";
+import { EducationConsistencyDashboard } from "@/components/admin/EducationConsistencyDashboard";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
@@ -929,6 +930,7 @@ const Admin = () => {
               { value: "reports", icon: Flag, label: "Reports" },
               { value: "announcements", icon: Megaphone, label: "Announce" },
               { value: "audit", icon: ClipboardList, label: "Audit" },
+              { value: "edu-health", icon: HeartPulse, label: "Edu Health" },
             ].map(t => (
               <TabsTrigger key={t.value} value={t.value} role="tab"
                 className="text-xs gap-1 flex-1 min-w-[70px] min-h-[44px]">
@@ -945,6 +947,7 @@ const Admin = () => {
             <TabsContent value="reports"><ReportsTab /></TabsContent>
             <TabsContent value="announcements"><AnnouncementsTab /></TabsContent>
             <TabsContent value="audit"><AuditLogTab /></TabsContent>
+            <TabsContent value="edu-health"><EducationConsistencyDashboard /></TabsContent>
           </div>
         </Tabs>
       </div>
