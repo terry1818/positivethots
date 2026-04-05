@@ -18,6 +18,7 @@ import { useNPSSurvey } from "@/hooks/useNPSSurvey";
 import { NpsModal } from "@/components/NpsModal";
 import { DailyRewardModal } from "@/components/rewards/DailyRewardModal";
 import { AppFooter } from "@/components/AppFooter";
+import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 
 // Lazy-loaded route pages
 const Index = lazy(() => import("./pages/Index"));
