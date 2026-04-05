@@ -593,10 +593,11 @@ const Onboarding = () => {
             )}
             <StepTransition stepKey={step} direction={direction}>
               {/* Step 1: Welcome */}
-              {step === 1 && (
+               {step === 1 && (
                 <div className="text-center space-y-6 py-4">
                   <span className="text-6xl block animate-bounce-in">👋</span>
                   <Logo size="lg" />
+                  <BrandTagline variant="secondary" className="mt-3" />
                   <div className="space-y-2 animate-stagger-1">
                     <h1 className="text-3xl font-bold text-foreground">
                       Hey, {userName}!
