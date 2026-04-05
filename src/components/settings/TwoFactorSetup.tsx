@@ -67,9 +67,11 @@ export const TwoFactorSetup = () => {
     }
   };
 
+  const [verifying, setVerifying] = useState(false);
+
   const handleVerify = async () => {
     if (!factorId || verifyCode.length !== 6) return;
-    setStatus("enrolling");
+    setVerifying(true);
     try {
       const challenge = await supabase.auth.mfa.challenge({ factorId });
       if (challenge.error) throw challenge.error;
