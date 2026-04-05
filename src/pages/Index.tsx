@@ -766,11 +766,14 @@ const Index = () => {
       <div className="flex-1 min-h-0 overflow-hidden max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 w-full">
         {suggestions.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full px-6 text-center overflow-y-auto">
-            <BrandedEmptyState
+          <BrandedEmptyState
               mascot="binoculars"
-              headline="You've seen everyone nearby! 🔭"
-              description="New people join every day. Keep connecting — your next match could be right around the corner! 💜"
+              headline="You've seen everyone nearby."
+              description="Expand your range or check back soon."
             />
+            <p className="text-xs text-[rgba(255,255,255,0.5)] mt-4" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+              Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup>
+            </p>
             <div className="flex flex-wrap gap-3 mt-6">
               <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="min-h-[44px]">
                 <MapPin className="h-4 w-4 mr-1" /> Expand radius

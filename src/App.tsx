@@ -19,6 +19,7 @@ import { NpsModal } from "@/components/NpsModal";
 import { DailyRewardModal } from "@/components/rewards/DailyRewardModal";
 import { AppFooter } from "@/components/AppFooter";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
+import { WelcomeBackBanner } from "@/components/WelcomeBackBanner";
 
 // Lazy-loaded route pages
 const Index = lazy(() => import("./pages/Index"));
@@ -79,6 +80,7 @@ const AppContent = () => {
     <>
       <OfflineBanner />
       <AnnouncementBanner />
+      <WelcomeBackBanner />
       <DailyRewardModal />
       <WelcomeBackModal previousChurnStatus={previousChurnStatus} />
       {pendingTrigger && <NpsModal triggerEvent={pendingTrigger} onClose={dismiss} />}

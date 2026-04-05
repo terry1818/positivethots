@@ -171,6 +171,14 @@ export const MatchModal = ({
                   You Both Said Yes 💜
                 </p>
               )}
+
+              {/* Brand tagline */}
+              <p
+                className={cn("text-white/60 text-sm mt-3", !prefersReducedMotion && "animate-fade-in")}
+                style={{ fontFamily: "Inter, system-ui, sans-serif", ...(prefersReducedMotion ? {} : { animationDelay: "0.5s", animationFillMode: "both" }) }}
+              >
+                Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup> — you both said yes.
+              </p>
             </div>
 
             <div className="flex justify-center mb-6">

@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { AlertCircle, Check, Circle, GraduationCap, ShieldCheck, Heart } from "lucide-react";
+import { BrandTagline } from "@/components/BrandTagline";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 const signUpSchema = z.object({
@@ -225,7 +226,10 @@ const Auth = () => {
         <CardHeader className="space-y-1 text-center">
           <div className="mb-4 flex justify-center"><Logo size="lg" /></div>
           <CardTitle className="text-2xl">{isSignUp ? "Create your account" : "Welcome back"}</CardTitle>
-          <CardDescription>{isSignUp ? "The dating app that teaches you to be a better partner" : "Sign in to continue your journey"}</CardDescription>
+          <BrandTagline variant="secondary" className="mt-1" />
+          <p className="text-sm text-muted-foreground/50 mt-1">
+            {isSignUp ? "The relationship wellness app that teaches you to be a better partner" : "Ready to meet like-minded people?"}
+          </p>
 
           {/* Value proposition icons */}
           {isSignUp && (

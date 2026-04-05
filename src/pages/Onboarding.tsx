@@ -23,6 +23,7 @@ import { MiniProfilePreview } from "@/components/onboarding/MiniProfilePreview";
 import { StepHeader } from "@/components/onboarding/StepHeader";
 import { PromptPicker } from "@/components/onboarding/PromptPicker";
 import { ValuePropositionScreen } from "@/components/onboarding/ValuePropositionScreen";
+import { BrandTagline } from "@/components/BrandTagline";
 
 // ── Option Data ──
 
@@ -593,10 +594,11 @@ const Onboarding = () => {
             )}
             <StepTransition stepKey={step} direction={direction}>
               {/* Step 1: Welcome */}
-              {step === 1 && (
+               {step === 1 && (
                 <div className="text-center space-y-6 py-4">
                   <span className="text-6xl block animate-bounce-in">👋</span>
                   <Logo size="lg" />
+                  <BrandTagline variant="secondary" className="mt-3" />
                   <div className="space-y-2 animate-stagger-1">
                     <h1 className="text-3xl font-bold text-foreground">
                       Hey, {userName}!
