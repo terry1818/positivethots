@@ -29,7 +29,7 @@ export const TwoFactorSetup = () => {
   const [unenrollCode, setUnenrollCode] = useState("");
 
   // Check current MFA status on mount
-  useState(() => {
+  const [initialized] = useState(() => {
     const checkStatus = async () => {
       try {
         const { data, error } = await supabase.auth.mfa.listFactors();
@@ -45,6 +45,7 @@ export const TwoFactorSetup = () => {
       }
     };
     checkStatus();
+    return true;
   });
 
   const handleEnroll = async () => {
