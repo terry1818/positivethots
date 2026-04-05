@@ -803,7 +803,7 @@ const Onboarding = () => {
                 </div>
               )}
 
-              {/* Step 10: Height, Zodiac, Languages */}
+              {/* Step 10: Height, Zodiac, Languages, Birth Info */}
               {step === 10 && (
                 <div className="space-y-6">
                   <StepHeader emoji="📏" title="A bit more about you" subtitle="All optional — share what you like · Optional" />
@@ -811,7 +811,58 @@ const Onboarding = () => {
                     <Label className="text-sm font-medium">Height</Label>
                     <HeightSlider value={formData.heightCm} onChange={(v) => updateField("heightCm", v)} />
                   </div>
+
+                  {/* Birth Time for Astrology */}
                   <div className="space-y-2 animate-stagger-2">
+                    <Label className="text-sm font-medium">🕐 Time of Birth <span className="text-muted-foreground font-normal">(for rising sign)</span></Label>
+                    {formData.birthTimeUnknown ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">I don't know my birth time</span>
+                        <Button variant="ghost" size="sm" onClick={() => { updateField("birthTimeUnknown", false); }}>Change</Button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2 items-center">
+                        <Input
+                          type="time"
+                          value={formData.birthTime}
+                          onChange={(e) => updateField("birthTime", e.target.value)}
+                          className="flex-1 min-h-[48px]"
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => { updateField("birthTimeUnknown", true); updateField("birthTime", ""); }}
+                          className="whitespace-nowrap text-xs"
+                        >
+                          I don't know
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Birth Place for Natal Chart */}
+                  <div className="space-y-2 animate-stagger-3">
+                    <Label className="text-sm font-medium">📍 Place of Birth <span className="text-muted-foreground font-normal">(for natal chart)</span></Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Input
+                        placeholder="City"
+                        value={formData.birthCity}
+                        onChange={(e) => updateField("birthCity", e.target.value)}
+                        maxLength={100}
+                        className="min-h-[48px]"
+                      />
+                      <Input
+                        placeholder="Country"
+                        value={formData.birthCountry}
+                        onChange={(e) => updateField("birthCountry", e.target.value)}
+                        maxLength={100}
+                        className="min-h-[48px]"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">Used for astrology compatibility. Not shown on your profile.</p>
+                  </div>
+
+                  <div className="space-y-2 animate-stagger-3">
                     <Label className="text-sm font-medium">♈ Zodiac Sign</Label>
                     <div className="flex flex-wrap gap-1.5">
                       {ZODIAC_OPTIONS.map(z => (
@@ -830,7 +881,7 @@ const Onboarding = () => {
                       ))}
                     </div>
                   </div>
-                  <div className="space-y-2 animate-stagger-3">
+                  <div className="space-y-2">
                     <Label className="text-sm font-medium">🌍 Languages</Label>
                     <ChipSelector
                       options={LANGUAGE_OPTIONS}
