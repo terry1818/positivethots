@@ -44,8 +44,9 @@ export const ValuePropositionScreen = ({ onBegin }: ValuePropositionScreenProps)
             <BookOpen className="h-8 w-8 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground leading-tight">
-            You're about to do something most dating apps never ask.
+            You're in!
           </h1>
+          <BrandTagline variant="secondary" className="mt-2" />
           <p className="text-muted-foreground leading-relaxed">
             Before you meet anyone, you'll learn what most people never do — consent, communication, and emotional intelligence. Built on the same frameworks therapists use with their clients. This is what makes every match on Positive Thots different.
           </p>

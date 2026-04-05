@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { AlertCircle, Check, Circle, GraduationCap, ShieldCheck, Heart } from "lucide-react";
+import { BrandTagline } from "@/components/BrandTagline";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 const signUpSchema = z.object({

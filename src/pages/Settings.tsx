@@ -1111,9 +1111,20 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        <p className="text-sm text-muted-foreground text-center py-4">
-          Positive Thots v1.0 • Made with ❤️
-        </p>
+        <div className="text-center py-6 space-y-2">
+          <p className="text-xs text-[rgba(255,255,255,0.5)]" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+            Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup>
+          </p>
+          <p className="text-xs text-[rgba(255,255,255,0.4)]">
+            © 2026 Rhea &amp; Associates LLC
+          </p>
+          <p className="text-[11px] text-[rgba(255,255,255,0.3)] leading-relaxed max-w-xs mx-auto">
+            Positive Thots<sup style={{ fontSize: "60%" }}>TM</sup>, Send a Thot<sup style={{ fontSize: "60%" }}>TM</sup>, You Both Said Yes<sup style={{ fontSize: "60%" }}>TM</sup>, Connect<sup style={{ fontSize: "60%" }}>TM</sup>, Pass<sup style={{ fontSize: "60%" }}>TM</sup>, and Thot Pack<sup style={{ fontSize: "60%" }}>TM</sup> are trademarks of Rhea &amp; Associates LLC, pending USPTO registration.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Positive Thots v1.0
+          </p>
+        </div>
       </main>
     </div>
   );

@@ -23,6 +23,7 @@ import { MiniProfilePreview } from "@/components/onboarding/MiniProfilePreview";
 import { StepHeader } from "@/components/onboarding/StepHeader";
 import { PromptPicker } from "@/components/onboarding/PromptPicker";
 import { ValuePropositionScreen } from "@/components/onboarding/ValuePropositionScreen";
+import { BrandTagline } from "@/components/BrandTagline";
 
 // ── Option Data ──
 
