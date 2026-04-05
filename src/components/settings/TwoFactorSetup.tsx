@@ -91,11 +91,13 @@ export const TwoFactorSetup = () => {
       setFactorId(null);
       setVerifyCode("");
       setStatus("idle");
+      setVerifying(false);
       toast.success("Two-factor authentication enabled! 🔒");
     } catch (err: any) {
       console.error("MFA verify error:", err);
       toast.error(err.message?.includes("Invalid") ? "Invalid code. Please try again." : "Verification failed. Please try again.");
       setStatus("verifying");
+      setVerifying(false);
     }
   };
 
