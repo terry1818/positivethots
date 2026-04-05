@@ -939,6 +939,9 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* Two-Factor Authentication */}
+        <TwoFactorSetup />
+
         {/* External Platforms */}
         <LinkedAccountsCard />
 
