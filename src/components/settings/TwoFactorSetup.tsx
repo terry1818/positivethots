@@ -173,7 +173,7 @@ export const TwoFactorSetup = () => {
         <CardTitle className="text-lg flex items-center gap-2">
           <Shield className="h-5 w-5" /> Two-Factor Authentication
           {isEnabled && (
-            <Badge className="bg-green-500/10 text-green-500 border-green-500/30 text-xs">
+            <Badge variant="outline" className="text-xs border-primary/30 text-primary">
               <ShieldCheck className="h-3 w-3 mr-1" /> Enabled
             </Badge>
           )}
