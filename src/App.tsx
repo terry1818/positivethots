@@ -47,6 +47,7 @@ const CelebrationDemo = lazy(() => import("./pages/CelebrationDemo"));
 const TestingLocator = lazy(() => import("./pages/TestingLocator"));
 const HealthTesting = lazy(() => import("./pages/HealthTesting"));
 const ContentCompliance = lazy(() => import("./pages/ContentCompliance"));
+const Admin = lazy(() => import("./pages/Admin"));
 
 export const queryClient = new QueryClient({
   defaultOptions: {
