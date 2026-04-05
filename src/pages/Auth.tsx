@@ -125,11 +125,18 @@ const Auth = () => {
           return;
         }
 
+        // Calculate age from DOB
+        const dob = new Date(dateOfBirth);
+        const today = new Date();
+        let computedAge = today.getFullYear() - dob.getFullYear();
+        const monthDiff = today.getMonth() - dob.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) computedAge--;
+
         const { data: authData, error: signUpError } = await supabase.auth.signUp({
           email: email.trim(), password,
           options: {
             emailRedirectTo: buildAuthRedirectUrl("/"),
-            data: { name: name.trim(), age: parseInt(age) },
+            data: { name: name.trim(), age: computedAge, date_of_birth: dateOfBirth },
           },
         });
         if (signUpError) throw signUpError;
@@ -140,10 +147,11 @@ const Auth = () => {
         }
         if (authData.user && authData.session) {
           const { error: profileError } = await supabase.from("profiles").insert({
-            id: authData.user.id, name: name.trim(), age: parseInt(age), bio: "",
+            id: authData.user.id, name: name.trim(), age: computedAge, bio: "",
             location: "Location not set",
+            date_of_birth: dateOfBirth,
             profile_image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${authData.user.id}`,
-          });
+          } as any);
           if (profileError) console.error("Profile creation error:", profileError);
           toast.success("Account created successfully!");
           navigate("/onboarding");
