@@ -78,6 +78,7 @@ const AppContent = () => {
   return (
     <>
       <OfflineBanner />
+      <AnnouncementBanner />
       <DailyRewardModal />
       <WelcomeBackModal previousChurnStatus={previousChurnStatus} />
       {pendingTrigger && <NpsModal triggerEvent={pendingTrigger} onClose={dismiss} />}

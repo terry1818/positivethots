@@ -365,9 +365,11 @@ const Index = () => {
 
     const enhancedProfiles: EnhancedProfile[] = profilesResult.data
       .filter(p => {
-        // Only include profiles that have at least one approved public photo
+        // Only include profiles that have at least one approved public photo and are not suspended
         const approvedPhotos = photosByUser.get(p.id);
-        return approvedPhotos && approvedPhotos.length > 0;
+        if (!approvedPhotos || approvedPhotos.length === 0) return false;
+        if ((p as any).is_suspended) return false;
+        return true;
       })
       .map(p => {
         const userPhotoData = photosByUser.get(p.id) || [];
