@@ -107,6 +107,7 @@ const AppContent = () => {
         <Route path="/health-testing" element={<Suspense fallback={<PageLoader />}><HealthTesting /></Suspense>} />
         <Route path="/celebration-demo" element={<Suspense fallback={<PageLoader />}><CelebrationDemo /></Suspense>} />
         <Route path="/2257" element={<Suspense fallback={<PageLoader />}><ContentCompliance /></Suspense>} />
+        <Route path="/admin" element={<Suspense fallback={<PageLoader />}><Admin /></Suspense>} />
         <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
       </Routes>
       <AppFooter />
