@@ -110,10 +110,18 @@ const Chat = () => {
   useEffect(() => {
     loadChatData();
     return () => {
+      setIsTyping(false);
       if (channelRef.current) supabase.removeChannel(channelRef.current);
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     };
   }, [matchId]);
+
+  // Safety timeout: clear typing indicator after 5 seconds of no updates
+  useEffect(() => {
+    if (!isTyping) return;
+    const timeout = setTimeout(() => setIsTyping(false), 5000);
+    return () => clearTimeout(timeout);
+  }, [isTyping]);
 
   useEffect(() => { scrollToBottom(); }, [messages]);
 
