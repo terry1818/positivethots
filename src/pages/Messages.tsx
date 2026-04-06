@@ -76,7 +76,7 @@ const Messages = () => {
   useEffect(() => {
     if (!userId) return;
     const channel = supabase
-      .channel('matches-realtime')
+      .channel(`matches-realtime-${userId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'matches', filter: `user1_id=eq.${userId}` }, () => loadMatches())
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'matches', filter: `user2_id=eq.${userId}` }, () => loadMatches())
       .subscribe();

@@ -110,10 +110,18 @@ const Chat = () => {
   useEffect(() => {
     loadChatData();
     return () => {
+      setIsTyping(false);
       if (channelRef.current) supabase.removeChannel(channelRef.current);
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     };
   }, [matchId]);
+
+  // Safety timeout: clear typing indicator after 5 seconds of no updates
+  useEffect(() => {
+    if (!isTyping) return;
+    const timeout = setTimeout(() => setIsTyping(false), 5000);
+    return () => clearTimeout(timeout);
+  }, [isTyping]);
 
   useEffect(() => { scrollToBottom(); }, [messages]);
 
@@ -192,7 +200,7 @@ const Chat = () => {
       .order("created_at", { ascending: true });
     if (existingGames) setChatGames(existingGames as any[]);
 
-    const channel = supabase.channel(`chat:${matchId}`)
+    const channel = supabase.channel(`chat-${matchId}-${session.user.id}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
         (payload) => {
           const newMsg = payload.new as Message;
@@ -274,11 +282,15 @@ const Chat = () => {
     };
     setMessages(prev => [...prev, optimisticMsg]);
 
-    // Moderate message before sending
+    // Moderate message before sending — race against 5s timeout
     try {
-      const { data: modResult, error: modError } = await supabase.functions.invoke('moderate-message', {
+      const moderatePromise = supabase.functions.invoke('moderate-message', {
         body: { content: messageContent, sender_id: currentUser.id, match_id: matchId },
       });
+      const timeoutPromise = new Promise<{ data: null; error: { message: string } }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: { message: "Moderation timed out" } }), 5000)
+      );
+      const { data: modResult, error: modError } = await Promise.race([moderatePromise, timeoutPromise]);
 
       // Handle rate limiting
       if (modError) {
@@ -289,6 +301,8 @@ const Chat = () => {
           setNewMessage(messageContent);
           return;
         }
+        // For other errors (including timeout), fall through to send anyway
+        console.warn("Moderation check issue:", modError);
       }
 
       if (modResult?.error && modResult.error.includes("Sending too fast")) {
