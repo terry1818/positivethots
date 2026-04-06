@@ -165,8 +165,7 @@ const Chat = () => {
       setOtherUser(otherProfile);
 
       // Pre-compute compatibility for banner
-      const storageKey = `pt_compat_banner_${matchId}`;
-      if (!localStorage.getItem(storageKey)) {
+      if (!useSessionStore.getState().isBannerDismissed(`compat_banner_${matchId}`)) {
         const [{ count: myB }, { count: theirB }] = await Promise.all([
           supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", session.user.id),
           supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", otherUserId),
