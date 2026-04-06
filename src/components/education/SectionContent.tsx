@@ -6,6 +6,7 @@ import { KeyTakeaway } from "./KeyTakeaway";
 import { ReflectionPrompt } from "./ReflectionPrompt";
 import { cn } from "@/lib/utils";
 import { useReadAloud } from "@/hooks/useReadAloud";
+import DOMPurify from 'dompurify';
 
 interface CheckpointQuestion {
   id: string;
@@ -104,7 +105,7 @@ const renderParagraph = (paragraph: string, i: number) => {
       return `<a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="text-secondary underline hover:text-secondary/80">${escapeHtml(text)}</a>`;
     }
   );
-  return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: withLinks }} />;
+  return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(withLinks) }} />;
 };
 
 const renderMarkdown = (content: string, checkpoints?: CheckpointQuestion[]) => {

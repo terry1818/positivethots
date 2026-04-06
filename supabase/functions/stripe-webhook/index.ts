@@ -307,6 +307,7 @@ async function processReferralReward(
     const msg = err instanceof Error ? err.message : String(err);
     logStep("Error processing referral reward", { message: msg });
     // Don't throw — referral reward failure shouldn't fail the webhook
+  }
 }
 
 async function handleOneTimePayment(supabase: any, session: Stripe.Checkout.Session) {
@@ -376,5 +377,4 @@ async function handleOneTimePayment(supabase: any, session: Stripe.Checkout.Sess
       logStep("Profile boost activated", { userId });
     }
   }
-}
 }

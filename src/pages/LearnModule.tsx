@@ -24,6 +24,7 @@ import { ChevronLeft, CheckCircle, CheckCircle2, XCircle, Award, BookOpen, Lock,
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/PageSkeleton";
+import DOMPurify from 'dompurify';
 
 interface Module {
   id: string;
@@ -297,7 +298,7 @@ const LearnModule = () => {
           return `<a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="text-secondary underline hover:text-secondary/80">${escapeHtml(text)}</a>`;
         }
       );
-      return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: withLinks }} />;
+      return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(withLinks) }} />;
     });
   };
 

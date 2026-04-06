@@ -91,7 +91,16 @@ serve(async (req) => {
       customerId = customers.data[0].id;
     }
 
-    const origin = req.headers.get("origin") || "https://positivethots.lovable.app";
+    const ALLOWED_ORIGINS = [
+      "https://positivethots.lovable.app",
+      "https://positivethots.app",
+      "http://localhost:5173",
+      "http://localhost:8080",
+    ];
+    const rawOrigin = req.headers.get("origin");
+    const origin = rawOrigin && ALLOWED_ORIGINS.includes(rawOrigin)
+      ? rawOrigin
+      : "https://positivethots.lovable.app";
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,

@@ -32,13 +32,18 @@ serve(async (req) => {
       "price_1TDkQ9AEIVQtquY2C4kfHe4d",
       "price_1TDjjHQL8g2unk5Zfe9VvytG",
       "price_1TDkQpAEIVQtquY2s6feqEgV",
-      "ANNUAL_PLUS_PRICE_ID",
-      "ANNUAL_PREMIUM_PRICE_ID",
-      "ANNUAL_VIP_PRICE_ID",
     ]);
     if (!ALLOWED_PRICES.has(price_id)) throw new Error("Invalid price_id");
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) {
+      return new Response(
+        JSON.stringify({ error: "Payment system not configured" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const stripe = new Stripe(stripeKey, {
       apiVersion: "2025-08-27.basil",
     });
 
@@ -53,8 +58,18 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: price_id, quantity: 1 }],
       mode: "subscription",
-      success_url: `${req.headers.get("origin")}/likes?success=true`,
-      cancel_url: `${req.headers.get("origin")}/premium`,
+      success_url: (() => {
+        const ALLOWED_ORIGINS = ["https://positivethots.lovable.app", "https://positivethots.app", "http://localhost:5173", "http://localhost:8080"];
+        const raw = req.headers.get("origin");
+        const safe = raw && ALLOWED_ORIGINS.includes(raw) ? raw : "https://positivethots.lovable.app";
+        return `${safe}/likes?success=true`;
+      })(),
+      cancel_url: (() => {
+        const ALLOWED_ORIGINS = ["https://positivethots.lovable.app", "https://positivethots.app", "http://localhost:5173", "http://localhost:8080"];
+        const raw = req.headers.get("origin");
+        const safe = raw && ALLOWED_ORIGINS.includes(raw) ? raw : "https://positivethots.lovable.app";
+        return `${safe}/premium`;
+      })(),
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
