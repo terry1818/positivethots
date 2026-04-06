@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
 import { onDiscoveryRefresh } from "@/lib/discoveryEvents";
+import { useSessionStore } from "@/stores/sessionStore";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
