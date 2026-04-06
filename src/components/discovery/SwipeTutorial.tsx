@@ -33,7 +33,6 @@ export const SwipeTutorial = ({ onDismiss }: SwipeTutorialProps) => {
   }, []);
 
   const handleDismiss = async () => {
-    localStorage.setItem(STORAGE_KEY, "true");
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
