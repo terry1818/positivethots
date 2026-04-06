@@ -137,7 +137,7 @@ const Chat = () => {
       .from("education_modules")
       .select("id")
       .eq("slug", "consent-basics")
-      .single();
+      .maybeSingle();
 
     if (consentModule) {
       const { data: badge } = await supabase
