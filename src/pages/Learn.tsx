@@ -99,7 +99,7 @@ const Learn = () => {
       const [modulesResult, badgesResult, sectionsResult, progressResult] = await Promise.all([
         supabase.from("education_modules").select("*").order("order_index"),
         supabase.from("user_badges").select("module_id, earned_at").eq("user_id", session.user.id),
-        supabase.from("module_sections").select("id, module_id"),
+        supabase.from("module_sections").select("id, module_id, section_number").order("section_number"),
         supabase.from("user_section_progress").select("section_id, completed").eq("user_id", session.user.id).eq("completed", true),
       ]);
       if (modulesResult.error) throw modulesResult.error;
