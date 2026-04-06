@@ -96,9 +96,9 @@ export const CompatibilityBreakdown = memo(({
             <MessageCircle className="h-3.5 w-3.5" />
             <span>Conversation starters</span>
           </div>
-          {icebreakers.map((text, idx) => (
+          {icebreakers.map((text) => (
             <button
-              key={idx}
+              key={text}
               onClick={() => handleCopy(text, idx)}
               className="w-full text-left p-2.5 rounded-lg bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-colors text-sm text-foreground group"
             >
