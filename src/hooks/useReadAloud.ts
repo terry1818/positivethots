@@ -153,7 +153,8 @@ export function useReadAloud() {
         setIsLoading(false);
         return;
       } catch {
-        // Fallback
+        usingCloudRef.current = false;
+        playWithSpeechSynthesis(clean);
       }
     }
 

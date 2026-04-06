@@ -62,11 +62,22 @@ export const useModuleProgress = (moduleId: string) => {
     loadData();
   }, [loadData]);
 
-  // Auto-save timer
+  // Track page visibility for idle detection
+  useEffect(() => {
+    const handleVisibility = () => {
+      isVisibleRef.current = !document.hidden;
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, []);
+
+  // Auto-save timer — only counts time when page is visible
   useEffect(() => {
     if (sections.length === 0) return;
 
     timerRef.current = setInterval(async () => {
+      if (!isVisibleRef.current) return;
+
       elapsedRef.current += 30;
       const currentSection = sections[currentSectionIndex];
       if (!currentSection) return;

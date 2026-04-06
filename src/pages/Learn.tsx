@@ -146,10 +146,22 @@ const Learn = () => {
           const earnedIds = new Set(badges.map(b => b.module_id));
           if (!earnedIds.has(sectionData.module_id)) {
             const mp = progressMap[sectionData.module_id];
-            const pct = mp && mp.total > 0 ? Math.round((mp.completed / mp.total) * 100) : 0;
-            setContinueModuleId(sectionData.module_id);
-            setContinueSectionNumber(sectionData.section_number);
-            setContinueProgressPercent(Math.min(pct, 90));
+            if (mp) {
+              // Find first incomplete section number
+              const firstIncomplete = mp.sections?.find((s: any) => !s.completed);
+              const sectionNumber = firstIncomplete
+                ? firstIncomplete.section_number || sectionData.section_number
+                : sectionData.section_number;
+              const pct = mp.total > 0 ? Math.round((mp.completed / mp.total) * 100) : 0;
+              setContinueModuleId(sectionData.module_id);
+              setContinueSectionNumber(sectionNumber);
+              setContinueProgressPercent(Math.min(pct, 95));
+            } else {
+              const pct = 0;
+              setContinueModuleId(sectionData.module_id);
+              setContinueSectionNumber(sectionData.section_number);
+              setContinueProgressPercent(pct);
+            }
           }
         }
       }
