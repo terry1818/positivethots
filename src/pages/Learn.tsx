@@ -83,8 +83,7 @@ const Learn = () => {
   // Show streak interstitial on load if at risk
   useEffect(() => {
     if (!loading && isStreakAtRisk && stats && stats.current_streak >= 3 && streakHoursLeft <= 8) {
-      const dismissed = sessionStorage.getItem("pt_streak_interstitial_dismissed");
-      if (!dismissed) {
+      if (!useSessionStore.getState().isBannerDismissed("streak_interstitial")) {
         setTimeout(() => setShowStreakInterstitial(true), 1000);
       }
     }
