@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSessionStore } from "@/stores/sessionStore";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useAdminRole } from "@/hooks/useAdminRole";
