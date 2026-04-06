@@ -137,7 +137,7 @@ const Chat = () => {
       .from("education_modules")
       .select("id")
       .eq("slug", "consent-basics")
-      .single();
+      .maybeSingle();
 
     if (consentModule) {
       const { data: badge } = await supabase
@@ -158,12 +158,12 @@ const Chat = () => {
       }
     }
 
-    const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
-    if (!profile) return;
+    const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
+    if (profileError || !profile) { toast.error("Could not load your profile"); navigate("/messages"); return; }
     setCurrentUser(profile);
 
-    const { data: match } = await supabase.from("matches").select("user1_id, user2_id").eq("id", matchId).single();
-    if (!match) { toast.error("Match not found"); navigate("/messages"); return; }
+    const { data: match, error: matchError } = await supabase.from("matches").select("user1_id, user2_id").eq("id", matchId).single();
+    if (matchError || !match) { toast.error("Match not found"); navigate("/messages"); return; }
 
     const otherUserId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
     const { data: otherProfileData } = await supabase.rpc("get_public_profile", { _user_id: otherUserId });

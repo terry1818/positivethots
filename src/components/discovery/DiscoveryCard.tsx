@@ -171,8 +171,8 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
       {/* Compatibility reasons */}
       {profile.compatibility_reasons && profile.compatibility_reasons.length > 0 && (profile.compatibility_score ?? 0) >= 50 && (
         <div className="flex flex-wrap gap-1 mb-2">
-          {profile.compatibility_reasons.slice(0, 2).map((reason, i) => (
-            <span key={i} className="text-sm bg-muted/80 text-muted-foreground rounded-full px-2 py-0.5">
+          {profile.compatibility_reasons.slice(0, 2).map((reason) => (
+            <span key={reason} className="text-sm bg-muted/80 text-muted-foreground rounded-full px-2 py-0.5">
               {reason}
             </span>
           ))}
@@ -187,8 +187,8 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
       )}
       {profile.interests && profile.interests.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-4">
-          {profile.interests.slice(0, 4).map((interest, i) => (
-            <Badge key={i} variant="outline" className="text-sm">{interest}</Badge>
+          {profile.interests.slice(0, 4).map((interest) => (
+            <Badge key={interest} variant="outline" className="text-sm">{interest}</Badge>
           ))}
           {profile.interests.length > 4 && (
             <Badge variant="outline" className="text-sm">+{profile.interests.length - 4}</Badge>

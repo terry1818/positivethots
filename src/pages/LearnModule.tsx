@@ -153,7 +153,11 @@ const LearnModule = () => {
 
       const { data: moduleData, error: moduleError } = await supabase
         .from("education_modules").select("*").eq("slug", slug).single();
-      if (moduleError) throw moduleError;
+      if (moduleError || !moduleData) {
+        toast.error("Course not found");
+        navigate("/learn");
+        return;
+      }
       setModule(moduleData);
       setModuleId(moduleData.id);
 
