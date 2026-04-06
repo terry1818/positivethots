@@ -16,18 +16,12 @@ function stripMarkdown(text: string): string {
 
 export type VoiceGender = "female" | "male";
 const RATES = [0.8, 1.0, 1.25, 1.5] as const;
-const VOICE_PREF_KEY = "pt_voice_gender";
+// In-memory voice preference (loaded from user_preferences on mount)
+let _voicePref: VoiceGender = "female";
 
 // In-memory cache for audio URLs
 const audioCache = new Map<string, string>();
 
-function getStoredVoice(): VoiceGender {
-  try {
-    const v = localStorage.getItem(VOICE_PREF_KEY);
-    if (v === "male" || v === "female") return v;
-  } catch {}
-  return "female";
-}
 
 function pickBestVoice(voices: SpeechSynthesisVoice[], gender: VoiceGender): SpeechSynthesisVoice | null {
   if (!voices.length) return null;
@@ -75,7 +69,7 @@ export function useReadAloud() {
   const [isPaused, setIsPaused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [rate, setRateState] = useState(1.0);
-  const [voiceGender, setVoiceGenderState] = useState<VoiceGender>(getStoredVoice);
+  const [voiceGender, setVoiceGenderState] = useState<VoiceGender>(_voicePref);
   const [isSupported] = useState(() => typeof window !== "undefined" && ("speechSynthesis" in window || true));
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -105,7 +99,7 @@ export function useReadAloud() {
 
   const setVoiceGender = useCallback((g: VoiceGender) => {
     setVoiceGenderState(g);
-    try { localStorage.setItem(VOICE_PREF_KEY, g); } catch {}
+    _voicePref = g;
   }, []);
 
   const playWithSpeechSynthesis = useCallback((text: string) => {

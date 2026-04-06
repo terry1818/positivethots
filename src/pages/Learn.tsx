@@ -3,6 +3,7 @@ import { useTutorialState } from "@/hooks/useTutorialState";
 import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useSessionStore } from "@/stores/sessionStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -83,8 +84,7 @@ const Learn = () => {
   // Show streak interstitial on load if at risk
   useEffect(() => {
     if (!loading && isStreakAtRisk && stats && stats.current_streak >= 3 && streakHoursLeft <= 8) {
-      const dismissed = sessionStorage.getItem("pt_streak_interstitial_dismissed");
-      if (!dismissed) {
+      if (!useSessionStore.getState().isBannerDismissed("streak_interstitial")) {
         setTimeout(() => setShowStreakInterstitial(true), 1000);
       }
     }
@@ -499,13 +499,13 @@ const Learn = () => {
           hoursLeft={streakHoursLeft}
           onSaveStreak={() => {
             setShowStreakInterstitial(false);
-            sessionStorage.setItem("pt_streak_interstitial_dismissed", "true");
+            useSessionStore.getState().dismissBanner("streak_interstitial");
             const currentMod = modules.find(m => !earnedModuleIds.has(m.id));
             if (currentMod) navigate(`/learn/${currentMod.slug}`);
           }}
           onDismiss={() => {
             setShowStreakInterstitial(false);
-            sessionStorage.setItem("pt_streak_interstitial_dismissed", "true");
+            useSessionStore.getState().dismissBanner("streak_interstitial");
           }}
         />
       )}

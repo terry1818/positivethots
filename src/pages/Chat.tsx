@@ -28,6 +28,7 @@ import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { calculateCompatibilityBreakdown, type CompatibilityBreakdownResult } from "@/lib/compatibility";
 import { CompatibilityBreakdown } from "@/components/discovery/CompatibilityBreakdown";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
+import { useSessionStore } from "@/stores/sessionStore";
 import { ChatGameCard } from "@/components/chat/ChatGameCard";
 import { GameMenu } from "@/components/chat/GameMenu";
 
@@ -164,8 +165,7 @@ const Chat = () => {
       setOtherUser(otherProfile);
 
       // Pre-compute compatibility for banner
-      const storageKey = `pt_compat_banner_${matchId}`;
-      if (!localStorage.getItem(storageKey)) {
+      if (!useSessionStore.getState().isBannerDismissed(`compat_banner_${matchId}`)) {
         const [{ count: myB }, { count: theirB }] = await Promise.all([
           supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", session.user.id),
           supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", otherUserId),
@@ -544,8 +544,8 @@ const Chat = () => {
       {/* Compatibility event banner */}
       {(() => {
         const score = compatBreakdown?.totalScore;
-        const storageKey = `pt_compat_banner_${matchId}`;
-        const alreadyDismissed = compatBannerDismissed || (typeof localStorage !== 'undefined' && localStorage.getItem(storageKey) === 'true');
+        const storageKey = `compat_banner_${matchId}`;
+        const alreadyDismissed = compatBannerDismissed || useSessionStore.getState().isBannerDismissed(storageKey);
         if (score && score > 80 && !alreadyDismissed) {
           return (
             <div className="container max-w-4xl mx-auto px-4 pt-2">
@@ -554,7 +554,7 @@ const Chat = () => {
                   <button onClick={() => navigate("/events")} className="text-primary font-medium hover:underline">Browse Events</button>
                 </span>
                 <button
-                  onClick={() => { setCompatBannerDismissed(true); localStorage.setItem(storageKey, 'true'); }}
+                  onClick={() => { setCompatBannerDismissed(true); useSessionStore.getState().dismissBanner(storageKey); }}
                   className="text-muted-foreground hover:text-foreground shrink-0 p-1"
                   aria-label="Dismiss"
                 >✕</button>

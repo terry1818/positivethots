@@ -18,10 +18,18 @@ export const useUnreadMessages = () => {
 
       if (!matches?.length) return;
 
-      // Get last read timestamps from localStorage
-      const lastReadMap: Record<string, string> = JSON.parse(
-        localStorage.getItem(`unread_${user.id}`) || "{}"
-      );
+      // Get last read timestamps from message_read_receipts table
+      const { data: receipts } = await supabase
+        .from("message_read_receipts" as any)
+        .select("match_id, last_read_at")
+        .eq("user_id", user.id);
+
+      const lastReadMap: Record<string, string> = {};
+      if (receipts) {
+        for (const r of receipts as any[]) {
+          lastReadMap[r.match_id] = r.last_read_at;
+        }
+      }
 
       let total = 0;
       for (const match of matches) {
@@ -58,15 +66,22 @@ export const useUnreadMessages = () => {
     };
   }, [user]);
 
-  const markRead = (matchId: string) => {
+  const markRead = async (matchId: string) => {
     if (!user) return;
-    const lastReadMap: Record<string, string> = JSON.parse(
-      localStorage.getItem(`unread_${user.id}`) || "{}"
-    );
-    lastReadMap[matchId] = new Date().toISOString();
-    localStorage.setItem(`unread_${user.id}`, JSON.stringify(lastReadMap));
-    // Recalculate (simple approach: just decrement isn't reliable, so refetch)
+    const now = new Date().toISOString();
+
+    // Optimistic update
     setUnreadCount((c) => Math.max(0, c - 1));
+
+    // Persist to database
+    await supabase.from("message_read_receipts" as any).upsert(
+      {
+        user_id: user.id,
+        match_id: matchId,
+        last_read_at: now,
+      },
+      { onConflict: "user_id,match_id" }
+    );
   };
 
   return { unreadCount, markRead };

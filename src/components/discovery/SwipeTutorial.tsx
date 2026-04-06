@@ -33,7 +33,6 @@ export const SwipeTutorial = ({ onDismiss }: SwipeTutorialProps) => {
   }, []);
 
   const handleDismiss = async () => {
-    localStorage.setItem(STORAGE_KEY, "true");
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -101,8 +100,12 @@ export const SwipeTutorial = ({ onDismiss }: SwipeTutorialProps) => {
   );
 };
 
+/**
+ * Whether to show the swipe tutorial. Now always returns true for mobile;
+ * the actual gating is done by the tutorials_completed profile field.
+ */
 export const shouldShowSwipeTutorial = (): boolean => {
   if (typeof window === "undefined") return false;
-  if (window.innerWidth >= 768) return false; // desktop only
-  return !localStorage.getItem(STORAGE_KEY);
+  if (window.innerWidth >= 768) return false;
+  return true; // Let the caller check tutorials_completed
 };

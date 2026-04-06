@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSessionStore } from "@/stores/sessionStore";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useAdminRole } from "@/hooks/useAdminRole";
@@ -30,14 +31,32 @@ import { IncognitoToggle } from "@/components/settings/IncognitoToggle";
 import { SpotifyConnect } from "@/components/spotify/SpotifyConnect";
 import { CrossAppLinksEditor } from "@/components/cross-app/CrossAppLinksEditor";
 
-const NotificationToggle = ({ label, description, storageKey, defaultOn = true }: { label: string; description: string; storageKey: string; defaultOn?: boolean }) => {
-  const [enabled, setEnabled] = useState(() => {
-    const stored = localStorage.getItem(storageKey);
-    return stored !== null ? stored === "true" : defaultOn;
-  });
-  const toggle = (val: boolean) => {
+const NotificationToggle = ({ label, description, prefKey, defaultOn = true }: { label: string; description: string; prefKey: string; defaultOn?: boolean }) => {
+  const { user } = useAuth();
+  const [enabled, setEnabled] = useState(defaultOn);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("user_preferences" as any)
+        .select("value")
+        .eq("user_id", user.id)
+        .eq("key", prefKey)
+        .maybeSingle();
+      if (data) setEnabled((data as any).value === true);
+      setLoaded(true);
+    })();
+  }, [user, prefKey]);
+
+  const toggle = async (val: boolean) => {
     setEnabled(val);
-    localStorage.setItem(storageKey, String(val));
+    if (!user) return;
+    await supabase.from("user_preferences" as any).upsert(
+      { user_id: user.id, key: prefKey, value: val, updated_at: new Date().toISOString() },
+      { onConflict: "user_id,key" }
+    );
   };
   return (
     <div className="flex items-center justify-between gap-3">
@@ -78,11 +97,11 @@ const PreferencesCard = () => {
         <div className="border-t border-border pt-4 space-y-3">
           <h3 className="text-sm font-semibold">Notifications</h3>
           <div className="space-y-3">
-            <NotificationToggle label="New Matches" description="When someone you Connected with says yes" storageKey="pt_notify_matches" />
-            <NotificationToggle label="New Messages" description="When you receive a chat message" storageKey="pt_notify_messages" />
-            <NotificationToggle label="Streak Reminders" description="Before your learning streak expires" storageKey="pt_notify_streaks" />
-            <NotificationToggle label="New Events" description="When events matching your interests are posted" storageKey="pt_notify_events" />
-            <NotificationToggle label="Weekly Digest" description="Summary of your activity and community highlights" defaultOn={false} storageKey="pt_notify_digest" />
+            <NotificationToggle label="New Matches" description="When someone you Connected with says yes" prefKey="pt_notify_matches" />
+            <NotificationToggle label="New Messages" description="When you receive a chat message" prefKey="pt_notify_messages" />
+            <NotificationToggle label="Streak Reminders" description="Before your learning streak expires" prefKey="pt_notify_streaks" />
+            <NotificationToggle label="New Events" description="When events matching your interests are posted" prefKey="pt_notify_events" />
+            <NotificationToggle label="Weekly Digest" description="Summary of your activity and community highlights" defaultOn={false} prefKey="pt_notify_digest" />
           </div>
         </div>
       </CardContent>
@@ -118,9 +137,28 @@ const Settings = () => {
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [managingPortal, setManagingPortal] = useState(false);
-  const [textScale, setTextScale] = useState<"small" | "medium" | "large">(() => {
-    return (localStorage.getItem("pt_text_scale") as "small" | "medium" | "large") || "medium";
-  });
+  const [textScale, setTextScale] = useState<"small" | "medium" | "large">("medium");
+
+  // Load text scale from user preferences
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("user_preferences" as any)
+        .select("value")
+        .eq("user_id", user.id)
+        .eq("key", "pt_text_scale")
+        .maybeSingle();
+      if (data) {
+        const val = (data as any).value;
+        if (val === "small" || val === "medium" || val === "large") {
+          setTextScale(val);
+          document.documentElement.classList.remove("text-scale-small", "text-scale-medium", "text-scale-large");
+          document.documentElement.classList.add(`text-scale-${val}`);
+        }
+      }
+    })();
+  }, [user]);
 
   // Promo code generation
   const [codeType, setCodeType] = useState<"gift" | "referral">("referral");
@@ -401,9 +439,14 @@ const Settings = () => {
                   className={cn("flex-1 min-h-[44px] capitalize", textScale === size && "bg-primary text-primary-foreground")}
                   onClick={() => {
                     setTextScale(size);
-                    localStorage.setItem("pt_text_scale", size);
                     document.documentElement.classList.remove("text-scale-small", "text-scale-medium", "text-scale-large");
                     document.documentElement.classList.add(`text-scale-${size}`);
+                    if (user) {
+                      supabase.from("user_preferences" as any).upsert(
+                        { user_id: user.id, key: "pt_text_scale", value: size, updated_at: new Date().toISOString() },
+                        { onConflict: "user_id,key" }
+                      );
+                    }
                   }}
                 >
                   {size}
@@ -980,9 +1023,9 @@ const Settings = () => {
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={async () => {
-                    const lastReset = localStorage.getItem("pt_last_feed_reset");
+                    const lastReset = useSessionStore.getState().getSessionData("pt_last_feed_reset", null);
                     if (lastReset) {
-                      const daysSince = Math.floor((Date.now() - parseInt(lastReset)) / (1000 * 60 * 60 * 24));
+                      const daysSince = Math.floor((Date.now() - lastReset) / (1000 * 60 * 60 * 24));
                       if (daysSince < 7) {
                         toast(`You can reset again in ${7 - daysSince} day${7 - daysSince === 1 ? '' : 's'}`);
                         return;
@@ -991,7 +1034,7 @@ const Settings = () => {
                     const { data, error } = await supabase.rpc("reset_discovery_feed");
                     if (error) { toast.error("Something went wrong. Please try again."); return; }
                     const result = data as { reset_count: number; message: string } | null;
-                    localStorage.setItem("pt_last_feed_reset", Date.now().toString());
+                    useSessionStore.getState().setSessionData("pt_last_feed_reset", Date.now());
                     toast.success(`Feed reset! ${result?.reset_count ?? 0} profiles will reappear. 🔄`);
                   }}>Reset Feed</AlertDialogAction>
                 </AlertDialogFooter>

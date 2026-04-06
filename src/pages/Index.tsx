@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
 import { onDiscoveryRefresh } from "@/lib/discoveryEvents";
+import { useSessionStore } from "@/stores/sessionStore";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -250,9 +251,9 @@ const Index = () => {
     return () => window.removeEventListener("focus", handleFocus);
   }, [currentUser, suggestions.length]);
   const handleResetFeed = useCallback(async () => {
-    const lastReset = localStorage.getItem("pt_last_feed_reset");
+    const lastReset = useSessionStore.getState().getSessionData("pt_last_feed_reset", null);
     if (lastReset) {
-      const daysSince = Math.floor((Date.now() - parseInt(lastReset)) / (1000 * 60 * 60 * 24));
+      const daysSince = Math.floor((Date.now() - lastReset) / (1000 * 60 * 60 * 24));
       if (daysSince < 7) {
         toast(`You can reset again in ${7 - daysSince} day${7 - daysSince === 1 ? '' : 's'}`);
         setShowResetDialog(false);
@@ -265,7 +266,7 @@ const Index = () => {
     setShowResetDialog(false);
     if (error) { toast.error("Failed to reset feed"); return; }
     const result = data as { reset_count: number; message: string } | null;
-    localStorage.setItem("pt_last_feed_reset", Date.now().toString());
+    useSessionStore.getState().setSessionData("pt_last_feed_reset", Date.now());
     toast.success(`Feed reset! ${result?.reset_count ?? 0} profiles will reappear. 🔄`);
     if (currentUser) await loadSuggestions(currentUser.id, currentUser);
   }, [currentUser]);
@@ -296,14 +297,8 @@ const Index = () => {
     await loadSuggestions(session.user.id, profile);
     setLoading(false);
 
-    // Sync tutorial flags from DB → localStorage
-    const tutorialsCompleted: string[] = (profile as any).tutorials_completed || [];
-    if (tutorialsCompleted.includes("discovery_walkthrough") && !localStorage.getItem("pt_discovery_walkthrough_seen")) {
-      localStorage.setItem("pt_discovery_walkthrough_seen", "true");
-    }
-    if (tutorialsCompleted.includes("swipe_tutorial") && !localStorage.getItem("pt_swipe_tutorial_seen")) {
-      localStorage.setItem("pt_swipe_tutorial_seen", "true");
-    }
+    // Tutorial flags are managed by useTutorialState hook (DB-backed)
+    // No localStorage sync needed
 
     // Show walkthrough for first-time users — only if profiles exist
     // (suggestions set after loadSuggestions, so we defer check)

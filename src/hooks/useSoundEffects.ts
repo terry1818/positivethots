@@ -9,26 +9,33 @@ import {
 } from "@/lib/soundGenerator";
 import { isNative } from "@/lib/capacitor";
 
-const SOUND_KEY = "sound_effects_enabled";
-const HAPTIC_KEY = "haptic_feedback_enabled";
-
 // Tiny external store so all consumers stay in sync without context
+let _soundEnabled = true;
+let _hapticEnabled = true;
+
 const listeners = new Set<() => void>();
 function notify() { listeners.forEach((l) => l()); }
 
 function getSoundEnabled(): boolean {
-  try { return localStorage.getItem(SOUND_KEY) !== "false"; } catch { return true; }
+  return _soundEnabled;
 }
 function getHapticEnabled(): boolean {
-  try { return localStorage.getItem(HAPTIC_KEY) !== "false"; } catch { return true; }
+  return _hapticEnabled;
 }
 
 export function setSoundEnabled(v: boolean) {
-  localStorage.setItem(SOUND_KEY, String(v));
+  _soundEnabled = v;
   notify();
 }
 export function setHapticEnabled(v: boolean) {
-  localStorage.setItem(HAPTIC_KEY, String(v));
+  _hapticEnabled = v;
+  notify();
+}
+
+/** Initialize from persisted preferences (call once on app load) */
+export function initSoundPreferences(sound: boolean, haptic: boolean) {
+  _soundEnabled = sound;
+  _hapticEnabled = haptic;
   notify();
 }
 
@@ -38,56 +45,24 @@ function subscribe(cb: () => void) {
 }
 
 async function haptic(style: "light" | "medium" | "heavy") {
-  if (!isNative()) {
-    // Web fallback
-    if (navigator.vibrate) {
-      const ms = style === "light" ? 10 : style === "medium" ? 25 : 50;
-      navigator.vibrate(ms);
-    }
-    return;
-  }
+  if (!_hapticEnabled) return;
   try {
-    const { Haptics, ImpactStyle } = await import("@capacitor/haptics" as any);
-    const map = { light: ImpactStyle.Light, medium: ImpactStyle.Medium, heavy: ImpactStyle.Heavy };
-    await Haptics.impact({ style: map[style] });
-  } catch {
-    // plugin not available
-  }
+    const { haptic: triggerHaptic } = await import("@/lib/haptics");
+    const patterns: Record<string, number> = { light: 10, medium: 30, heavy: 50 };
+    triggerHaptic(patterns[style] || 30);
+  } catch {}
 }
 
 export function useSoundEffects() {
   const soundEnabled = useSyncExternalStore(subscribe, getSoundEnabled, () => true);
   const hapticEnabled = useSyncExternalStore(subscribe, getHapticEnabled, () => true);
 
-  const playMatch = useCallback(() => {
-    if (soundEnabled) playMatchSound();
-    if (hapticEnabled) haptic("medium");
-  }, [soundEnabled, hapticEnabled]);
-
-  const playMessage = useCallback(() => {
-    if (soundEnabled) playMessageSound();
-    if (hapticEnabled) haptic("light");
-  }, [soundEnabled, hapticEnabled]);
-
-  const playBadgeUnlock = useCallback(() => {
-    if (soundEnabled) playBadgeUnlockSound();
-    if (hapticEnabled) haptic("heavy");
-  }, [soundEnabled, hapticEnabled]);
-
-  const playThot = useCallback(() => {
-    if (soundEnabled) playThotSound();
-    if (hapticEnabled) haptic("medium");
-  }, [soundEnabled, hapticEnabled]);
-
-  const playStreakMilestone = useCallback(() => {
-    if (soundEnabled) playStreakMilestoneSound();
-    if (hapticEnabled) haptic("heavy");
-  }, [soundEnabled, hapticEnabled]);
-
-  const playButtonTap = useCallback(() => {
-    if (soundEnabled) playButtonTapSound();
-    if (hapticEnabled) haptic("light");
-  }, [soundEnabled, hapticEnabled]);
+  const playMatch = useCallback(() => { if (_soundEnabled) playMatchSound(); haptic("heavy"); }, []);
+  const playMessage = useCallback(() => { if (_soundEnabled) playMessageSound(); haptic("light"); }, []);
+  const playBadgeUnlock = useCallback(() => { if (_soundEnabled) playBadgeUnlockSound(); haptic("heavy"); }, []);
+  const playThot = useCallback(() => { if (_soundEnabled) playThotSound(); haptic("medium"); }, []);
+  const playStreakMilestone = useCallback(() => { if (_soundEnabled) playStreakMilestoneSound(); haptic("heavy"); }, []);
+  const playButtonTap = useCallback(() => { if (_soundEnabled) playButtonTapSound(); haptic("light"); }, []);
 
   return {
     soundEnabled,

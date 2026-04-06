@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useSessionStore } from "@/stores/sessionStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -70,7 +71,7 @@ const Auth = () => {
   useEffect(() => {
     const refCode = searchParams.get("ref");
     if (refCode) {
-      sessionStorage.setItem("referralCode", refCode.toUpperCase());
+      useSessionStore.getState().setReferralCode(refCode.toUpperCase());
     }
   }, [searchParams]);
 

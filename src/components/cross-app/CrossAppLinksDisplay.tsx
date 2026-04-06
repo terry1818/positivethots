@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useCrossAppLinksProfile, SUPPORTED_PLATFORMS, type CrossAppLink } from "@/hooks/useCrossAppLinks";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useSessionStore } from "@/stores/sessionStore";
 
 interface CrossAppLinksDisplayProps {
   userId: string;
@@ -10,15 +11,13 @@ interface CrossAppLinksDisplayProps {
 export const CrossAppLinksDisplay = ({ userId }: CrossAppLinksDisplayProps) => {
   const { data: links = [] } = useCrossAppLinksProfile(userId);
   const [interstitialLink, setInterstitialLink] = useState<CrossAppLink | null>(null);
+  const isBannerDismissed = useSessionStore((s) => s.isBannerDismissed);
+  const dismissBanner = useSessionStore((s) => s.dismissBanner);
 
   if (links.length === 0) return null;
 
-  const hasSeenWarning = () => {
-    return sessionStorage.getItem("pt_external_link_warned") === "true";
-  };
-
   const handleLinkClick = (link: CrossAppLink) => {
-    if (hasSeenWarning()) {
+    if (isBannerDismissed("external_link_warning")) {
       window.open(link.url, "_blank", "noopener,noreferrer");
     } else {
       setInterstitialLink(link);
@@ -27,7 +26,7 @@ export const CrossAppLinksDisplay = ({ userId }: CrossAppLinksDisplayProps) => {
 
   const confirmNavigate = () => {
     if (!interstitialLink) return;
-    sessionStorage.setItem("pt_external_link_warned", "true");
+    dismissBanner("external_link_warning");
     window.open(interstitialLink.url, "_blank", "noopener,noreferrer");
     setInterstitialLink(null);
   };

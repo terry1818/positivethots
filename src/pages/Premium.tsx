@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useSessionStore } from "@/stores/sessionStore";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -59,12 +60,12 @@ const Premium = () => {
   const [giftDays, setGiftDays] = useState("14");
   const [sendingGift, setSendingGift] = useState(false);
 
-  // Pre-fill from sessionStorage (referral flow)
+  // Pre-fill from session store (referral flow)
   useEffect(() => {
-    const refCode = sessionStorage.getItem("referralCode");
+    const refCode = useSessionStore.getState().referralCode;
     if (refCode) {
       setPromoCode(refCode);
-      sessionStorage.removeItem("referralCode");
+      useSessionStore.getState().setReferralCode(null);
     }
   }, []);
 
