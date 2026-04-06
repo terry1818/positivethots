@@ -32,13 +32,18 @@ serve(async (req) => {
       "price_1TDkQ9AEIVQtquY2C4kfHe4d",
       "price_1TDjjHQL8g2unk5Zfe9VvytG",
       "price_1TDkQpAEIVQtquY2s6feqEgV",
-      "ANNUAL_PLUS_PRICE_ID",
-      "ANNUAL_PREMIUM_PRICE_ID",
-      "ANNUAL_VIP_PRICE_ID",
     ]);
     if (!ALLOWED_PRICES.has(price_id)) throw new Error("Invalid price_id");
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) {
+      return new Response(
+        JSON.stringify({ error: "Payment system not configured" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const stripe = new Stripe(stripeKey, {
       apiVersion: "2025-08-27.basil",
     });
 
