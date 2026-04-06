@@ -112,7 +112,7 @@ const LearnModule = () => {
     reload: reloadProgress,
   } = useModuleProgress(moduleId);
 
-  const { violations, violationCount } = useAntiCheat({
+  const { violations, violationCount, isDisqualified } = useAntiCheat({
     enabled: showQuiz && !submitted,
     onViolation: (type) => console.log(`Quiz violation detected: ${type}`),
   });
