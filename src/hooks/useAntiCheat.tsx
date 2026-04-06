@@ -144,5 +144,7 @@
      };
    }, [enabled, recordViolation]);
  
-   return { violations, isTabActive, violationCount: violations.length };
- };
+  const isDisqualified = violations.length >= 3;
+
+  return { violations, isTabActive, violationCount: violations.length, isDisqualified };
+};
