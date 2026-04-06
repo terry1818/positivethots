@@ -200,7 +200,7 @@ const Chat = () => {
       .order("created_at", { ascending: true });
     if (existingGames) setChatGames(existingGames as any[]);
 
-    const channel = supabase.channel(`chat:${matchId}`)
+    const channel = supabase.channel(`chat-${matchId}-${session.user.id}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
         (payload) => {
           const newMsg = payload.new as Message;
