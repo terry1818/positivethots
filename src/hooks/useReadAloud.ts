@@ -66,7 +66,7 @@ export function useReadAloud() {
   const [isPaused, setIsPaused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [rate, setRateState] = useState(1.0);
-  const [voiceGender, setVoiceGenderState] = useState<VoiceGender>(getStoredVoice);
+  const [voiceGender, setVoiceGenderState] = useState<VoiceGender>(_voicePref);
   const [isSupported] = useState(() => typeof window !== "undefined" && ("speechSynthesis" in window || true));
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
