@@ -493,7 +493,27 @@ const LearnModule = () => {
         ) : (
           <>
             {/* Exercise Session - mixed exercise types */}
-            {questions.length === 0 ? (
+            {isDisqualified && !submitted ? (
+              <Card className="border-destructive">
+                <CardContent className="py-12 text-center">
+                  <XCircle className="h-12 w-12 mx-auto text-destructive mb-3" />
+                  <h3 className="font-semibold mb-2">Quiz Attempt Ended</h3>
+                  <p className="text-muted-foreground mb-4">
+                    This quiz attempt has been ended due to multiple violations.
+                  </p>
+                  <Button onClick={() => {
+                    setShowQuiz(false);
+                    setSubmitted(false);
+                    setAnswers({});
+                    setCurrentQuestionIndex(0);
+                    setAnsweredQuestions(new Set());
+                    setShowFeedback(false);
+                  }} variant="secondary">
+                    Restart Quiz
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : questions.length === 0 ? (
               <Card className="border-dashed">
                 <CardContent className="py-12 text-center">
                   <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
@@ -524,11 +544,10 @@ const LearnModule = () => {
                   setSubmitted(true);
 
                   if (passed) {
-                    // Submit quiz via RPC for badge awarding
                     try {
                       const answersArray = questions.map(q => ({
                         question_id: q.id,
-                        selected_answer: q.correct_answer ?? 0, // placeholder — server validates
+                        selected_answer: q.correct_answer ?? 0,
                       }));
                       await supabase.rpc("submit_quiz", {
                         _module_id: module.id,
