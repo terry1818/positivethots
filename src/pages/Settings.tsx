@@ -1023,9 +1023,9 @@ const Settings = () => {
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={async () => {
-                    const lastReset = localStorage.getItem("pt_last_feed_reset");
+                    const lastReset = useSessionStore.getState().getSessionData("pt_last_feed_reset", null);
                     if (lastReset) {
-                      const daysSince = Math.floor((Date.now() - parseInt(lastReset)) / (1000 * 60 * 60 * 24));
+                      const daysSince = Math.floor((Date.now() - lastReset) / (1000 * 60 * 60 * 24));
                       if (daysSince < 7) {
                         toast(`You can reset again in ${7 - daysSince} day${7 - daysSince === 1 ? '' : 's'}`);
                         return;
@@ -1034,7 +1034,7 @@ const Settings = () => {
                     const { data, error } = await supabase.rpc("reset_discovery_feed");
                     if (error) { toast.error("Something went wrong. Please try again."); return; }
                     const result = data as { reset_count: number; message: string } | null;
-                    localStorage.setItem("pt_last_feed_reset", Date.now().toString());
+                    useSessionStore.getState().setSessionData("pt_last_feed_reset", Date.now());
                     toast.success(`Feed reset! ${result?.reset_count ?? 0} profiles will reappear. 🔄`);
                   }}>Reset Feed</AlertDialogAction>
                 </AlertDialogFooter>
