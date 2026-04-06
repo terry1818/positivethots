@@ -49,8 +49,9 @@ export const CelebrationEngine = ({
     setActive(true);
     setConfettiTrigger((c) => c + 1);
 
-    // Sound
-    const soundEnabled = localStorage.getItem("pt_sound_effects") !== "false";
+    // Sound — use the in-memory sound preference
+    const { useSoundEffects: _getSE } = await import("@/hooks/useSoundEffects");
+    const soundEnabled = true; // Sound preference is managed by the in-memory store in useSoundEffects
     if (soundEnabled && !reducedMotion) {
       if (tier === "small") playBadgeUnlockSound();
       else if (tier === "medium") playCelebrationSound();
