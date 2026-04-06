@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface PhaseInterstitialProps {
   show: boolean;
@@ -11,17 +11,21 @@ interface PhaseInterstitialProps {
 
 export const PhaseInterstitial = ({ show, emoji, message, nextPhase, nextUp, onComplete }: PhaseInterstitialProps) => {
   const [visible, setVisible] = useState(false);
+  const innerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (show) {
       setVisible(true);
-      const timer = setTimeout(() => {
+      const outerTimer = setTimeout(() => {
         setVisible(false);
-        setTimeout(onComplete, 300);
+        innerTimerRef.current = setTimeout(onComplete, 300);
       }, 2200);
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(outerTimer);
+        if (innerTimerRef.current) clearTimeout(innerTimerRef.current);
+      };
     }
-  }, [show]);
+  }, [show, onComplete]);
 
   if (!show && !visible) return null;
 

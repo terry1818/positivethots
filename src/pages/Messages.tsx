@@ -126,8 +126,8 @@ const Messages = () => {
         return !blockedUserIds.has(otherId);
       });
 
-      // Fetch profiles and last messages in parallel
-      const matchesWithProfiles = await Promise.all(
+      // Fetch profiles and last messages in parallel (resilient — one failure doesn't block others)
+      const profileResults = await Promise.allSettled(
         filteredMatches.map(async (match) => {
           const otherId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
           const { data: profileData } = await supabase
@@ -145,6 +145,10 @@ const Messages = () => {
           };
         })
       );
+      const matchesWithProfiles = profileResults
+        .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
+        .map(r => r.value)
+        .filter(Boolean);
 
       // Fetch last messages for all matches
       const lastMsgs: Record<string, LastMessage> = {};

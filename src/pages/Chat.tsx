@@ -162,8 +162,8 @@ const Chat = () => {
     if (profileError || !profile) { toast.error("Could not load your profile"); navigate("/messages"); return; }
     setCurrentUser(profile);
 
-    const { data: match } = await supabase.from("matches").select("user1_id, user2_id").eq("id", matchId).single();
-    if (!match) { toast.error("Match not found"); navigate("/messages"); return; }
+    const { data: match, error: matchError } = await supabase.from("matches").select("user1_id, user2_id").eq("id", matchId).single();
+    if (matchError || !match) { toast.error("Match not found"); navigate("/messages"); return; }
 
     const otherUserId = match.user1_id === session.user.id ? match.user2_id : match.user1_id;
     const { data: otherProfileData } = await supabase.rpc("get_public_profile", { _user_id: otherUserId });

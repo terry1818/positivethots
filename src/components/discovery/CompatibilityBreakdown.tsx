@@ -99,7 +99,7 @@ export const CompatibilityBreakdown = memo(({
           {icebreakers.map((text) => (
             <button
               key={text}
-              onClick={() => handleCopy(text, idx)}
+              onClick={() => handleCopy(text, icebreakers.indexOf(text))}
               className="w-full text-left p-2.5 rounded-lg bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-colors text-sm text-foreground group"
             >
               <div className="flex items-start gap-2">

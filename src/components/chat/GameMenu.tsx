@@ -50,7 +50,7 @@ export const GameMenu = memo(({ matchId, currentUserId, otherUserId }: GameMenuP
       const selected = shuffled.slice(0, questionCount);
 
       const gameState: any = {
-        questions: shuffled.map((q: any) => ({
+        questions: selected.map((q: any) => ({
           id: q.id,
           text: q.question_text,
           options: q.options || undefined,

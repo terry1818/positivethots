@@ -187,8 +187,8 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
       )}
       {profile.interests && profile.interests.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-4">
-          {profile.interests.slice(0, 4).map((interest, i) => (
-            <Badge key={i} variant="outline" className="text-sm">{interest}</Badge>
+          {profile.interests.slice(0, 4).map((interest) => (
+            <Badge key={interest} variant="outline" className="text-sm">{interest}</Badge>
           ))}
           {profile.interests.length > 4 && (
             <Badge variant="outline" className="text-sm">+{profile.interests.length - 4}</Badge>
