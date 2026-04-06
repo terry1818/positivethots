@@ -28,6 +28,7 @@ import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { calculateCompatibilityBreakdown, type CompatibilityBreakdownResult } from "@/lib/compatibility";
 import { CompatibilityBreakdown } from "@/components/discovery/CompatibilityBreakdown";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
+import { useSessionStore } from "@/stores/sessionStore";
 import { ChatGameCard } from "@/components/chat/ChatGameCard";
 import { GameMenu } from "@/components/chat/GameMenu";
 
