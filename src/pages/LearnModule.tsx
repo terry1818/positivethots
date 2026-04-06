@@ -24,6 +24,7 @@ import { ChevronLeft, CheckCircle, CheckCircle2, XCircle, Award, BookOpen, Lock,
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/PageSkeleton";
+import DOMPurify from 'dompurify';
 
 interface Module {
   id: string;
