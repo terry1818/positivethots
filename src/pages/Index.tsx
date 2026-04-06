@@ -296,14 +296,8 @@ const Index = () => {
     await loadSuggestions(session.user.id, profile);
     setLoading(false);
 
-    // Sync tutorial flags from DB → localStorage
-    const tutorialsCompleted: string[] = (profile as any).tutorials_completed || [];
-    if (tutorialsCompleted.includes("discovery_walkthrough") && !localStorage.getItem("pt_discovery_walkthrough_seen")) {
-      localStorage.setItem("pt_discovery_walkthrough_seen", "true");
-    }
-    if (tutorialsCompleted.includes("swipe_tutorial") && !localStorage.getItem("pt_swipe_tutorial_seen")) {
-      localStorage.setItem("pt_swipe_tutorial_seen", "true");
-    }
+    // Tutorial flags are managed by useTutorialState hook (DB-backed)
+    // No localStorage sync needed
 
     // Show walkthrough for first-time users — only if profiles exist
     // (suggestions set after loadSuggestions, so we defer check)
