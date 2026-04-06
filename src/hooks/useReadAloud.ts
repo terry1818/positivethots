@@ -96,7 +96,7 @@ export function useReadAloud() {
 
   const setVoiceGender = useCallback((g: VoiceGender) => {
     setVoiceGenderState(g);
-    try { localStorage.setItem(VOICE_PREF_KEY, g); } catch {}
+    _voicePref = g;
   }, []);
 
   const playWithSpeechSynthesis = useCallback((text: string) => {

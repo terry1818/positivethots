@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
+import { useSessionStore } from "@/stores/sessionStore";
 
 const COMMUNITY_SLOGANS = [
   "You found your people. Keep thinking Positive Thots.",
@@ -12,18 +13,19 @@ export const WelcomeBackBanner = () => {
   const prefersReducedMotion = useReducedMotion();
   const [show, setShow] = useState(false);
   const [message, setMessage] = useState("");
+  const isBannerDismissed = useSessionStore((s) => s.isBannerDismissed);
+  const dismissBanner = useSessionStore((s) => s.dismissBanner);
 
   useEffect(() => {
     // Only show ~30% of the time, max once per session
-    const shown = sessionStorage.getItem("pt_welcome_banner_shown");
-    if (shown) return;
+    if (isBannerDismissed("welcome_back")) return;
     if (Math.random() > 0.3) return;
 
     // Pick a random slogan
     const slogan = COMMUNITY_SLOGANS[Math.floor(Math.random() * COMMUNITY_SLOGANS.length)];
     setMessage(slogan);
     setShow(true);
-    sessionStorage.setItem("pt_welcome_banner_shown", "1");
+    dismissBanner("welcome_back");
 
     // Auto-dismiss after 3 seconds
     const timer = setTimeout(() => setShow(false), 3000);
