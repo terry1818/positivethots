@@ -235,7 +235,7 @@ export const BadgePathMap = ({
                 {continueNode && (
                   <button
                     onClick={() => onModuleClick(td.modules.find(n => n.module.id === continueModuleId)?.module.slug || "")}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 text-sm font-semibold hover:bg-indigo-500/25 transition-colors"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary text-sm font-semibold hover:bg-primary/25 transition-colors"
                   >
                     ▶ Resume · Section {continueSectionNumber} · {continueProgressPercent}%
                   </button>
