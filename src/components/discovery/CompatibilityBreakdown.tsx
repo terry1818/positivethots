@@ -107,7 +107,7 @@ export const CompatibilityBreakdown = memo(({
                 <span className="flex-1">{text}</span>
                 <Copy className={cn(
                   "h-3.5 w-3.5 shrink-0 mt-0.5 transition-colors",
-                  copiedIdx === idx ? "text-primary" : "text-muted-foreground group-hover:text-primary"
+                  copiedIdx === icebreakers.indexOf(text) ? "text-primary" : "text-muted-foreground group-hover:text-primary"
                 )} />
               </div>
             </button>
