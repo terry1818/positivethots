@@ -306,6 +306,16 @@ async function processReferralReward(
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     logStep("Error processing referral reward", { message: msg });
+    // Log to error_logs table so admins can detect and retry failed rewards
+    try {
+      await supabase.from("error_logs").insert({
+        error_message: `Referral reward failed: ${msg}`,
+        error_stack: JSON.stringify({ subscribedUserId }),
+        page_url: "stripe-webhook/processReferralReward",
+      });
+    } catch {
+      // If even error logging fails, at least the logStep above captured it
+    }
     // Don't throw — referral reward failure shouldn't fail the webhook
   }
 }

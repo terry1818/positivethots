@@ -106,13 +106,13 @@ export const SwipeCard = ({ profile, onSwipe, isTop }: SwipeCardProps) => {
               className="absolute top-8 left-8 text-6xl font-bold text-success border-4 border-success rounded-2xl px-6 py-3 rotate-[-20deg]"
               style={{ opacity: Math.min(dragOffset.x / 100, 1) }}
             >
-              LIKE
+              Connect
             </div>
             <div
               className="absolute top-8 right-8 text-6xl font-bold text-destructive border-4 border-destructive rounded-2xl px-6 py-3 rotate-[20deg]"
               style={{ opacity: Math.min(-dragOffset.x / 100, 1) }}
             >
-              NOPE
+              Pass
             </div>
           </>
         )}
