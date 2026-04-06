@@ -30,14 +30,32 @@ import { IncognitoToggle } from "@/components/settings/IncognitoToggle";
 import { SpotifyConnect } from "@/components/spotify/SpotifyConnect";
 import { CrossAppLinksEditor } from "@/components/cross-app/CrossAppLinksEditor";
 
-const NotificationToggle = ({ label, description, storageKey, defaultOn = true }: { label: string; description: string; storageKey: string; defaultOn?: boolean }) => {
-  const [enabled, setEnabled] = useState(() => {
-    const stored = localStorage.getItem(storageKey);
-    return stored !== null ? stored === "true" : defaultOn;
-  });
-  const toggle = (val: boolean) => {
+const NotificationToggle = ({ label, description, prefKey, defaultOn = true }: { label: string; description: string; prefKey: string; defaultOn?: boolean }) => {
+  const { user } = useAuth();
+  const [enabled, setEnabled] = useState(defaultOn);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("user_preferences" as any)
+        .select("value")
+        .eq("user_id", user.id)
+        .eq("key", prefKey)
+        .maybeSingle();
+      if (data) setEnabled((data as any).value === true);
+      setLoaded(true);
+    })();
+  }, [user, prefKey]);
+
+  const toggle = async (val: boolean) => {
     setEnabled(val);
-    localStorage.setItem(storageKey, String(val));
+    if (!user) return;
+    await supabase.from("user_preferences" as any).upsert(
+      { user_id: user.id, key: prefKey, value: val, updated_at: new Date().toISOString() },
+      { onConflict: "user_id,key" }
+    );
   };
   return (
     <div className="flex items-center justify-between gap-3">
