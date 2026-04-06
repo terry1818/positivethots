@@ -158,8 +158,8 @@ const Chat = () => {
       }
     }
 
-    const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
-    if (!profile) return;
+    const { data: profile, error: profileError } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
+    if (profileError || !profile) { toast.error("Could not load your profile"); navigate("/messages"); return; }
     setCurrentUser(profile);
 
     const { data: match } = await supabase.from("matches").select("user1_id, user2_id").eq("id", matchId).single();
