@@ -2,17 +2,13 @@ import { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
- * Manages tutorial seen/unseen state with localStorage + database persistence.
+ * Manages tutorial seen/unseen state with database persistence.
  * @param key Tutorial identifier (e.g. "learn_tour", "likes_tour")
  */
 export function useTutorialState(key: string) {
-  const storageKey = `pt_tutorial_${key}`;
+  const [seen, setSeen] = useState(false);
 
-  const [seen, setSeen] = useState(() => {
-    return localStorage.getItem(storageKey) === "true";
-  });
-
-  // Sync from database on mount (in case user switched devices)
+  // Sync from database on mount
   useEffect(() => {
     if (seen) return;
     let cancelled = false;
@@ -28,16 +24,14 @@ export function useTutorialState(key: string) {
         if (cancelled) return;
         const completed: string[] = (profile as any)?.tutorials_completed || [];
         if (completed.includes(key)) {
-          localStorage.setItem(storageKey, "true");
           setSeen(true);
         }
       } catch {}
     })();
     return () => { cancelled = true; };
-  }, [key, storageKey, seen]);
+  }, [key, seen]);
 
   const markSeen = useCallback(async () => {
-    localStorage.setItem(storageKey, "true");
     setSeen(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -45,7 +39,7 @@ export function useTutorialState(key: string) {
         await supabase.rpc("append_tutorial_completed" as any, { _key: key });
       }
     } catch {}
-  }, [key, storageKey]);
+  }, [key]);
 
   return { seen, markSeen };
 }
