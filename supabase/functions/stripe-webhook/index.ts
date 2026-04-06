@@ -378,4 +378,3 @@ async function handleOneTimePayment(supabase: any, session: Stripe.Checkout.Sess
     }
   }
 }
-}
