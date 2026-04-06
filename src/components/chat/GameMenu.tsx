@@ -41,7 +41,13 @@ export const GameMenu = memo(({ matchId, currentUserId, otherUserId }: GameMenuP
       }
 
       // Shuffle and pick
-      const shuffled = (questions as any[]).sort(() => Math.random() - 0.5).slice(0, questionCount);
+      // Fisher-Yates shuffle for unbiased randomization
+      const shuffled = [...(questions as any[])];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      const selected = shuffled.slice(0, questionCount);
 
       const gameState: any = {
         questions: shuffled.map((q: any) => ({
