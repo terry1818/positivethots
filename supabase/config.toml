@@ -47,5 +47,7 @@ project_id = "zcsnqvncqzpleqoctzfc"
     verify_jwt = false
   [functions.notify-onboarding-incomplete]
     verify_jwt = false
+  [functions.shopify-proxy]
+    verify_jwt = false
   [functions.resource-image-proxy]
     verify_jwt = false
