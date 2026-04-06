@@ -10,24 +10,37 @@
    const [violations, setViolations] = useState<string[]>([]);
    const [isTabActive, setIsTabActive] = useState(true);
  
-   const recordViolation = useCallback((type: string) => {
-     setViolations(prev => [...prev, type]);
-     onViolation?.(type);
-     
-     const messages: Record<string, string> = {
-       "tab-switch": "Please stay on this tab during the quiz",
-       "copy": "Copying is disabled during the quiz",
-       "paste": "Pasting is disabled during the quiz",
-       "cut": "Cutting is disabled during the quiz",
-       "screenshot": "Screenshots are not allowed during the quiz",
-       "context-menu": "Right-click is disabled during the quiz",
-       "select": "Text selection is limited during the quiz",
-     };
-     
-     toast.warning(messages[type] || "Please focus on the quiz", {
-       duration: 3000,
-     });
-   }, [onViolation]);
+  const recordViolation = useCallback((type: string) => {
+    setViolations(prev => {
+      const next = [...prev, type];
+      const remaining = 3 - next.length;
+
+      const messages: Record<string, string> = {
+        "tab-switch": "Please stay on this tab during the quiz",
+        "copy": "Copying is disabled during the quiz",
+        "paste": "Pasting is disabled during the quiz",
+        "cut": "Cutting is disabled during the quiz",
+        "screenshot": "Screenshots are not allowed during the quiz",
+        "context-menu": "Right-click is disabled during the quiz",
+        "select": "Text selection is limited during the quiz",
+      };
+
+      if (remaining > 0) {
+        toast.warning(messages[type] || "Please focus on the quiz", {
+          description: `${remaining} more violation${remaining === 1 ? '' : 's'} will end this attempt.`,
+          duration: 4000,
+        });
+      } else if (remaining === 0) {
+        toast.error("Quiz attempt ended", {
+          description: "Too many violations detected. You'll need to restart this quiz.",
+          duration: 6000,
+        });
+      }
+
+      return next;
+    });
+    onViolation?.(type);
+  }, [onViolation]);
  
    useEffect(() => {
      if (!enabled) return;
@@ -131,5 +144,7 @@
      };
    }, [enabled, recordViolation]);
  
-   return { violations, isTabActive, violationCount: violations.length };
- };
+  const isDisqualified = violations.length >= 3;
+
+  return { violations, isTabActive, violationCount: violations.length, isDisqualified };
+};

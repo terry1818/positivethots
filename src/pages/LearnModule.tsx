@@ -112,7 +112,7 @@ const LearnModule = () => {
     reload: reloadProgress,
   } = useModuleProgress(moduleId);
 
-  const { violations, violationCount } = useAntiCheat({
+  const { violations, violationCount, isDisqualified } = useAntiCheat({
     enabled: showQuiz && !submitted,
     onViolation: (type) => console.log(`Quiz violation detected: ${type}`),
   });
@@ -189,33 +189,39 @@ const LearnModule = () => {
     }
   };
 
-  // Award XP on section complete
+  // Award XP on section complete — atomic: both succeed or neither
   const handleSectionComplete = useCallback(async (sectionId: string) => {
-    await markComplete(sectionId);
-    const result = await awardXP(10, "section_complete", sectionId);
-    setXpPopup({ show: true, amount: result.newXP });
+    try {
+      const [, result] = await Promise.all([
+        markComplete(sectionId),
+        awardXP(10, "section_complete", sectionId),
+      ]);
+      setXpPopup({ show: true, amount: result.newXP });
 
-    if (result.leveledUp) {
-      const newLevel = stats?.current_level ? stats.current_level + 1 : 2;
-      setTimeout(() => setCelebration({ type: "level_up", level: newLevel }), 1600);
+      if (result.leveledUp) {
+        const newLevel = stats?.current_level ? stats.current_level + 1 : 2;
+        setTimeout(() => setCelebration({ type: "level_up", level: newLevel }), 1600);
 
-      const reward = LEVEL_REWARDS[newLevel];
-      if (reward) {
-        setTimeout(() => {
-          toast.success(`${reward.icon} Level ${newLevel} reward: ${reward.label}!`, {
-            description: "Added to your account automatically.",
-            duration: 5000,
-          });
-        }, 2400);
+        const reward = LEVEL_REWARDS[newLevel];
+        if (reward) {
+          setTimeout(() => {
+            toast.success(`${reward.icon} Level ${newLevel} reward: ${reward.label}!`, {
+              description: "Added to your account automatically.",
+              duration: 5000,
+            });
+          }, 2400);
+        }
+      } else if (result.streakMilestone) {
+        setTimeout(() => setCelebration({ type: "streak_milestone", streak: result.newStreak }), 1600);
+        try {
+          await supabase.functions.invoke('grant-streak-reward', { body: { streak: result.newStreak } });
+        } catch (e) {
+          console.error("Failed to grant streak reward:", e);
+        }
       }
-    } else if (result.streakMilestone) {
-      setTimeout(() => setCelebration({ type: "streak_milestone", streak: result.newStreak }), 1600);
-      // Grant streak milestone reward
-      try {
-        await supabase.functions.invoke('grant-streak-reward', { body: { streak: result.newStreak } });
-      } catch (e) {
-        console.error("Failed to grant streak reward:", e);
-      }
+    } catch (error) {
+      console.error("Section completion failed:", error);
+      toast.error("Failed to save progress. Please try again.");
     }
   }, [markComplete, awardXP, stats]);
 
@@ -487,7 +493,27 @@ const LearnModule = () => {
         ) : (
           <>
             {/* Exercise Session - mixed exercise types */}
-            {questions.length === 0 ? (
+            {isDisqualified && !submitted ? (
+              <Card className="border-destructive">
+                <CardContent className="py-12 text-center">
+                  <XCircle className="h-12 w-12 mx-auto text-destructive mb-3" />
+                  <h3 className="font-semibold mb-2">Quiz Attempt Ended</h3>
+                  <p className="text-muted-foreground mb-4">
+                    This quiz attempt has been ended due to multiple violations.
+                  </p>
+                  <Button onClick={() => {
+                    setShowQuiz(false);
+                    setSubmitted(false);
+                    setAnswers({});
+                    setCurrentQuestionIndex(0);
+                    setAnsweredQuestions(new Set());
+                    setShowFeedback(false);
+                  }} variant="secondary">
+                    Restart Quiz
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : questions.length === 0 ? (
               <Card className="border-dashed">
                 <CardContent className="py-12 text-center">
                   <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
@@ -518,11 +544,10 @@ const LearnModule = () => {
                   setSubmitted(true);
 
                   if (passed) {
-                    // Submit quiz via RPC for badge awarding
                     try {
                       const answersArray = questions.map(q => ({
                         question_id: q.id,
-                        selected_answer: q.correct_answer ?? 0, // placeholder — server validates
+                        selected_answer: q.correct_answer ?? 0,
                       }));
                       await supabase.rpc("submit_quiz", {
                         _module_id: module.id,

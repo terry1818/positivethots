@@ -99,7 +99,7 @@ const Learn = () => {
       const [modulesResult, badgesResult, sectionsResult, progressResult] = await Promise.all([
         supabase.from("education_modules").select("*").order("order_index"),
         supabase.from("user_badges").select("module_id, earned_at").eq("user_id", session.user.id),
-        supabase.from("module_sections").select("id, module_id"),
+        supabase.from("module_sections").select("id, module_id, section_number").order("section_number"),
         supabase.from("user_section_progress").select("section_id, completed").eq("user_id", session.user.id).eq("completed", true),
       ]);
       if (modulesResult.error) throw modulesResult.error;
@@ -147,9 +147,18 @@ const Learn = () => {
           if (!earnedIds.has(sectionData.module_id)) {
             const mp = progressMap[sectionData.module_id];
             const pct = mp && mp.total > 0 ? Math.round((mp.completed / mp.total) * 100) : 0;
+
+            // Find first incomplete section in this module
+            const moduleSections = sections.filter(s => s.module_id === sectionData.module_id);
+            const firstIncompleteSection = moduleSections.find(s => !completedSectionIds.has(s.id));
+
             setContinueModuleId(sectionData.module_id);
-            setContinueSectionNumber(sectionData.section_number);
-            setContinueProgressPercent(Math.min(pct, 90));
+            setContinueSectionNumber(
+              firstIncompleteSection
+                ? (firstIncompleteSection as any).section_number || sectionData.section_number
+                : sectionData.section_number
+            );
+            setContinueProgressPercent(Math.min(pct, 95));
           }
         }
       }

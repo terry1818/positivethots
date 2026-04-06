@@ -140,7 +140,7 @@ export const ContinueLearning = () => {
   const rawPercent = data.totalSections > 0
     ? Math.round((data.completedSections / data.totalSections) * 100)
     : 0;
-  const progressPercent = rawPercent >= 100 ? 90 : rawPercent;
+  const progressPercent = rawPercent >= 100 ? 95 : rawPercent;
 
   return (
     <Card className="bg-gradient-to-br from-primary/15 to-accent/15 border-primary/20 animate-fade-in overflow-hidden">

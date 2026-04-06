@@ -141,7 +141,7 @@ export function useReadAloud() {
         audio.playbackRate = rate;
         audio.onended = () => { setIsPlaying(false); setIsPaused(false); usingCloudRef.current = false; };
         audio.onerror = () => {
-          // Fallback to browser
+          usingCloudRef.current = false;
           toast.info("Using device voice", { duration: 2000 });
           playWithSpeechSynthesis(clean);
         };
@@ -153,7 +153,8 @@ export function useReadAloud() {
         setIsLoading(false);
         return;
       } catch {
-        // Fallback
+        usingCloudRef.current = false;
+        playWithSpeechSynthesis(clean);
       }
     }
 

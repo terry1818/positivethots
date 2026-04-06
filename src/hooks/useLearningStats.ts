@@ -240,17 +240,8 @@ export const useLearningStats = () => {
         });
       }
 
-      // Award streak milestone bonus XP
-      const milestoneXP = STREAK_MILESTONE_XP[result.new_streak];
-      if (milestoneXP && streakMilestone) {
-        // Fire and forget bonus XP for milestone
-        supabase.rpc("award_xp", {
-          _user_id: userId,
-          _amount: milestoneXP,
-          _source: "streak_milestone",
-          _source_id: `streak_${result.new_streak}`,
-        }).then(() => {});
-      }
+      // Streak milestone bonus XP is handled server-side by award_xp RPC
+      // and the grant-streak-reward Edge Function — no duplicate call needed
 
       setStats(prev => prev ? {
         ...prev,
