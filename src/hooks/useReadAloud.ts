@@ -19,6 +19,9 @@ const RATES = [0.8, 1.0, 1.25, 1.5] as const;
 // In-memory voice preference (loaded from user_preferences on mount)
 let _voicePref: VoiceGender = "female";
 
+// In-memory cache for audio URLs
+const audioCache = new Map<string, string>();
+
 
 function pickBestVoice(voices: SpeechSynthesisVoice[], gender: VoiceGender): SpeechSynthesisVoice | null {
   if (!voices.length) return null;

@@ -70,7 +70,6 @@ const Auth = () => {
   useEffect(() => {
     const refCode = searchParams.get("ref");
     if (refCode) {
-      const { useSessionStore } = require("@/stores/sessionStore");
       useSessionStore.getState().setReferralCode(refCode.toUpperCase());
     }
   }, [searchParams]);
