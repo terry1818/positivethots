@@ -107,23 +107,6 @@ export const SwipeDiscoveryCard = memo(({
     }
   }, [photos.length, photoIndex]);
 
-  // Passive touch listeners for smoother scrolling
-  useEffect(() => {
-    const el = cardRef.current;
-    if (!el || !isTop) return;
-    const onTouchStart = (e: TouchEvent) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
-    const onTouchMove = (e: TouchEvent) => handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
-    const onTouchEnd = () => handleDragEnd();
-    el.addEventListener("touchstart", onTouchStart, { passive: true });
-    el.addEventListener("touchmove", onTouchMove, { passive: true });
-    el.addEventListener("touchend", onTouchEnd, { passive: true });
-    return () => {
-      el.removeEventListener("touchstart", onTouchStart);
-      el.removeEventListener("touchmove", onTouchMove);
-      el.removeEventListener("touchend", onTouchEnd);
-    };
-  }, [isTop, handleDragStart, handleDragMove, handleDragEnd]);
-
   // Drag handlers — wrapped in useCallback for stable references
   const handleDragStart = useCallback((clientX: number, clientY: number) => {
     if (!isTop) return;
@@ -157,6 +140,23 @@ export const SwipeDiscoveryCard = memo(({
       return { x: 0, y: 0 };
     });
   }, [isTop, onConnect, onPass, profile.id]);
+
+  // Passive touch listeners for smoother scrolling
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el || !isTop) return;
+    const onTouchStart = (e: TouchEvent) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY);
+    const onTouchMove = (e: TouchEvent) => handleDragMove(e.touches[0].clientX, e.touches[0].clientY);
+    const onTouchEnd = () => handleDragEnd();
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: true });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [isTop, handleDragStart, handleDragMove, handleDragEnd]);
 
   const handleButtonSwipe = (direction: "left" | "right") => {
     if (!isTop) return;
