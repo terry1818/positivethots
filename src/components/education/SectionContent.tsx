@@ -6,6 +6,7 @@ import { KeyTakeaway } from "./KeyTakeaway";
 import { ReflectionPrompt } from "./ReflectionPrompt";
 import { cn } from "@/lib/utils";
 import { useReadAloud } from "@/hooks/useReadAloud";
+import DOMPurify from 'dompurify';
 
 interface CheckpointQuestion {
   id: string;
