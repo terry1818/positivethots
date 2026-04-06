@@ -26,6 +26,7 @@ export const useModuleProgress = (moduleId: string) => {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const elapsedRef = useRef(0);
+  const isVisibleRef = useRef(true);
 
   const loadData = useCallback(async () => {
     try {
