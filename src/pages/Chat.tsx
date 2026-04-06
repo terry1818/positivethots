@@ -544,8 +544,8 @@ const Chat = () => {
       {/* Compatibility event banner */}
       {(() => {
         const score = compatBreakdown?.totalScore;
-        const storageKey = `pt_compat_banner_${matchId}`;
-        const alreadyDismissed = compatBannerDismissed || (typeof localStorage !== 'undefined' && localStorage.getItem(storageKey) === 'true');
+        const storageKey = `compat_banner_${matchId}`;
+        const alreadyDismissed = compatBannerDismissed || useSessionStore.getState().isBannerDismissed(storageKey);
         if (score && score > 80 && !alreadyDismissed) {
           return (
             <div className="container max-w-4xl mx-auto px-4 pt-2">
@@ -554,7 +554,7 @@ const Chat = () => {
                   <button onClick={() => navigate("/events")} className="text-primary font-medium hover:underline">Browse Events</button>
                 </span>
                 <button
-                  onClick={() => { setCompatBannerDismissed(true); localStorage.setItem(storageKey, 'true'); }}
+                  onClick={() => { setCompatBannerDismissed(true); useSessionStore.getState().dismissBanner(storageKey); }}
                   className="text-muted-foreground hover:text-foreground shrink-0 p-1"
                   aria-label="Dismiss"
                 >✕</button>
