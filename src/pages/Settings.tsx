@@ -136,9 +136,28 @@ const Settings = () => {
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [managingPortal, setManagingPortal] = useState(false);
-  const [textScale, setTextScale] = useState<"small" | "medium" | "large">(() => {
-    return (localStorage.getItem("pt_text_scale") as "small" | "medium" | "large") || "medium";
-  });
+  const [textScale, setTextScale] = useState<"small" | "medium" | "large">("medium");
+
+  // Load text scale from user preferences
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("user_preferences" as any)
+        .select("value")
+        .eq("user_id", user.id)
+        .eq("key", "pt_text_scale")
+        .maybeSingle();
+      if (data) {
+        const val = (data as any).value;
+        if (val === "small" || val === "medium" || val === "large") {
+          setTextScale(val);
+          document.documentElement.classList.remove("text-scale-small", "text-scale-medium", "text-scale-large");
+          document.documentElement.classList.add(`text-scale-${val}`);
+        }
+      }
+    })();
+  }, [user]);
 
   // Promo code generation
   const [codeType, setCodeType] = useState<"gift" | "referral">("referral");
