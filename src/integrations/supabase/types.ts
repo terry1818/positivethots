@@ -1109,6 +1109,32 @@ export type Database = {
         }
         Relationships: []
       }
+      message_read_receipts: {
+        Row: {
+          last_read_at: string
+          match_id: string
+          user_id: string
+        }
+        Insert: {
+          last_read_at?: string
+          match_id: string
+          user_id: string
+        }
+        Update: {
+          last_read_at?: string
+          match_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_read_receipts_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -2402,6 +2428,30 @@ export type Database = {
           storage_path?: string
           user_id?: string
           visibility?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string | null
+          user_id: string
+          value: Json
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string | null
+          user_id: string
+          value?: Json
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string | null
+          user_id?: string
+          value?: Json
         }
         Relationships: []
       }
