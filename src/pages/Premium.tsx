@@ -62,7 +62,6 @@ const Premium = () => {
 
   // Pre-fill from session store (referral flow)
   useEffect(() => {
-    const { useSessionStore } = require("@/stores/sessionStore") as any;
     const refCode = useSessionStore.getState().referralCode;
     if (refCode) {
       setPromoCode(refCode);

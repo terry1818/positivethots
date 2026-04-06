@@ -96,11 +96,11 @@ const PreferencesCard = () => {
         <div className="border-t border-border pt-4 space-y-3">
           <h3 className="text-sm font-semibold">Notifications</h3>
           <div className="space-y-3">
-            <NotificationToggle label="New Matches" description="When someone you Connected with says yes" storageKey="pt_notify_matches" />
-            <NotificationToggle label="New Messages" description="When you receive a chat message" storageKey="pt_notify_messages" />
-            <NotificationToggle label="Streak Reminders" description="Before your learning streak expires" storageKey="pt_notify_streaks" />
-            <NotificationToggle label="New Events" description="When events matching your interests are posted" storageKey="pt_notify_events" />
-            <NotificationToggle label="Weekly Digest" description="Summary of your activity and community highlights" defaultOn={false} storageKey="pt_notify_digest" />
+            <NotificationToggle label="New Matches" description="When someone you Connected with says yes" prefKey="pt_notify_matches" />
+            <NotificationToggle label="New Messages" description="When you receive a chat message" prefKey="pt_notify_messages" />
+            <NotificationToggle label="Streak Reminders" description="Before your learning streak expires" prefKey="pt_notify_streaks" />
+            <NotificationToggle label="New Events" description="When events matching your interests are posted" prefKey="pt_notify_events" />
+            <NotificationToggle label="Weekly Digest" description="Summary of your activity and community highlights" defaultOn={false} prefKey="pt_notify_digest" />
           </div>
         </div>
       </CardContent>
