@@ -3,6 +3,7 @@ import { useTutorialState } from "@/hooks/useTutorialState";
 import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useSessionStore } from "@/stores/sessionStore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
