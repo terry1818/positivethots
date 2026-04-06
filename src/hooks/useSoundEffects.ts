@@ -47,8 +47,9 @@ function subscribe(cb: () => void) {
 async function haptic(style: "light" | "medium" | "heavy") {
   if (!_hapticEnabled) return;
   try {
-    const { triggerHaptic } = await import("@/lib/haptics");
-    triggerHaptic(style);
+    const { haptic: triggerHaptic } = await import("@/lib/haptics");
+    const patterns: Record<string, number> = { light: 10, medium: 30, heavy: 50 };
+    triggerHaptic(patterns[style] || 30);
   } catch {}
 }
 
