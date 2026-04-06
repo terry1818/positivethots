@@ -171,8 +171,8 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
       {/* Compatibility reasons */}
       {profile.compatibility_reasons && profile.compatibility_reasons.length > 0 && (profile.compatibility_score ?? 0) >= 50 && (
         <div className="flex flex-wrap gap-1 mb-2">
-          {profile.compatibility_reasons.slice(0, 2).map((reason, i) => (
-            <span key={i} className="text-sm bg-muted/80 text-muted-foreground rounded-full px-2 py-0.5">
+          {profile.compatibility_reasons.slice(0, 2).map((reason) => (
+            <span key={reason} className="text-sm bg-muted/80 text-muted-foreground rounded-full px-2 py-0.5">
               {reason}
             </span>
           ))}
