@@ -28,8 +28,6 @@ const STEPS: TourStep[] = [
   },
 ];
 
-const STORAGE_KEY = "pt_discovery_walkthrough_seen";
-
 interface DiscoveryWalkthroughProps {
   onComplete: () => void;
 }
@@ -49,6 +47,11 @@ export const DiscoveryWalkthrough = ({ onComplete }: DiscoveryWalkthroughProps) 
   );
 };
 
+/**
+ * Check if walkthrough should show. Now relies on the tutorials_completed
+ * field in the profiles table (via useTutorialState), so this function
+ * just returns true — the actual gating is done by useTutorialState.seen.
+ */
 export const shouldShowWalkthrough = (): boolean => {
-  return !localStorage.getItem(STORAGE_KEY) && !localStorage.getItem("pt_tutorial_discovery_walkthrough");
+  return true; // Let useTutorialState handle the check
 };

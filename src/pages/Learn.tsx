@@ -498,13 +498,13 @@ const Learn = () => {
           hoursLeft={streakHoursLeft}
           onSaveStreak={() => {
             setShowStreakInterstitial(false);
-            sessionStorage.setItem("pt_streak_interstitial_dismissed", "true");
+            useSessionStore.getState().dismissBanner("streak_interstitial");
             const currentMod = modules.find(m => !earnedModuleIds.has(m.id));
             if (currentMod) navigate(`/learn/${currentMod.slug}`);
           }}
           onDismiss={() => {
             setShowStreakInterstitial(false);
-            sessionStorage.setItem("pt_streak_interstitial_dismissed", "true");
+            useSessionStore.getState().dismissBanner("streak_interstitial");
           }}
         />
       )}

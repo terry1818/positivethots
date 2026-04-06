@@ -2,23 +2,45 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Cookie } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useSessionStore } from "@/stores/sessionStore";
 
 export const CookieConsent = () => {
+  const { user } = useAuth();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem("cookie-consent");
-    if (!consent) setVisible(true);
-  }, []);
+    // If already dismissed in this session, don't show
+    if (useSessionStore.getState().isBannerDismissed("cookie_consent")) return;
 
-  const accept = () => {
-    localStorage.setItem("cookie-consent", "accepted");
-    setVisible(false);
-  };
+    if (!user) {
+      // No user logged in — show consent (can't check DB)
+      setVisible(true);
+      return;
+    }
 
-  const decline = () => {
-    localStorage.setItem("cookie-consent", "declined");
+    // Check DB for saved consent
+    (async () => {
+      const { data } = await supabase
+        .from("user_preferences" as any)
+        .select("value")
+        .eq("user_id", user.id)
+        .eq("key", "cookie_consent")
+        .maybeSingle();
+      if (!data) setVisible(true);
+    })();
+  }, [user]);
+
+  const respond = async (choice: "accepted" | "declined") => {
+    useSessionStore.getState().dismissBanner("cookie_consent");
     setVisible(false);
+    if (user) {
+      await supabase.from("user_preferences" as any).upsert(
+        { user_id: user.id, key: "cookie_consent", value: choice, updated_at: new Date().toISOString() },
+        { onConflict: "user_id,key" }
+      );
+    }
   };
 
   if (!visible) return null;
@@ -34,8 +56,8 @@ export const CookieConsent = () => {
               See our <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a> for details.
             </p>
             <div className="flex gap-2">
-              <Button size="sm" onClick={accept}>Accept</Button>
-              <Button size="sm" variant="outline" onClick={decline}>Decline Non-Essential</Button>
+              <Button size="sm" onClick={() => respond("accepted")}>Accept</Button>
+              <Button size="sm" variant="outline" onClick={() => respond("declined")}>Decline Non-Essential</Button>
             </div>
           </div>
         </div>

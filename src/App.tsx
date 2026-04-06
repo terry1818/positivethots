@@ -69,11 +69,11 @@ const AppContent = () => {
   const { previousChurnStatus } = useActivityTracker();
   const { pendingTrigger, dismiss } = useNPSSurvey();
 
-  // Apply text scale on mount
+  // Apply text scale on mount (load from DB via user preferences)
   useEffect(() => {
-    const scale = localStorage.getItem("pt_text_scale") || "medium";
+    // Default to medium; the Settings page will update when preferences load
     document.documentElement.classList.remove("text-scale-small", "text-scale-medium", "text-scale-large");
-    document.documentElement.classList.add(`text-scale-${scale}`);
+    document.documentElement.classList.add("text-scale-medium");
   }, []);
 
   return (
