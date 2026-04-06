@@ -124,35 +124,39 @@ export const SwipeDiscoveryCard = memo(({
     };
   }, [isTop]);
 
-  // Drag handlers
-  const handleDragStart = (clientX: number, clientY: number) => {
+  // Drag handlers — wrapped in useCallback for stable references
+  const handleDragStart = useCallback((clientX: number, clientY: number) => {
     if (!isTop) return;
     setIsDragging(true);
     setDragStart({ x: clientX, y: clientY });
-  };
+  }, [isTop]);
 
-  const handleDragMove = (clientX: number, clientY: number) => {
-    if (!isDragging || !isTop) return;
-    setDragOffset({ x: clientX - dragStart.x, y: clientY - dragStart.y });
-  };
+  const handleDragMove = useCallback((clientX: number, clientY: number) => {
+    if (!isTop) return;
+    setDragOffset(prev => {
+      const el = cardRef.current;
+      if (!el) return prev;
+      return { x: clientX - dragStart.x, y: clientY - dragStart.y };
+    });
+  }, [isTop, dragStart]);
 
-  const handleDragEnd = () => {
-    if (!isDragging || !isTop) return;
+  const handleDragEnd = useCallback(() => {
+    if (!isTop) return;
     setIsDragging(false);
-    const threshold = 100;
-    if (Math.abs(dragOffset.x) > threshold) {
-      const direction = dragOffset.x > 0 ? "right" : "left";
-      setAnimate(direction);
-      // Haptic feedback at swipe threshold
-      try { navigator?.vibrate?.([30]); } catch {}
-      setTimeout(() => {
-        if (direction === "right") onConnect(profile.id);
-        else onPass(profile.id);
-      }, 400);
-    } else {
-      setDragOffset({ x: 0, y: 0 });
-    }
-  };
+    setDragOffset(prev => {
+      const threshold = 100;
+      if (Math.abs(prev.x) > threshold) {
+        const direction = prev.x > 0 ? "right" : "left";
+        setAnimate(direction);
+        try { navigator?.vibrate?.([30]); } catch {}
+        setTimeout(() => {
+          if (direction === "right") onConnect(profile.id);
+          else onPass(profile.id);
+        }, 400);
+      }
+      return { x: 0, y: 0 };
+    });
+  }, [isTop, onConnect, onPass, profile.id]);
 
   const handleButtonSwipe = (direction: "left" | "right") => {
     if (!isTop) return;
