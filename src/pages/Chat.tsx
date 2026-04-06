@@ -282,11 +282,15 @@ const Chat = () => {
     };
     setMessages(prev => [...prev, optimisticMsg]);
 
-    // Moderate message before sending
+    // Moderate message before sending — race against 5s timeout
     try {
-      const { data: modResult, error: modError } = await supabase.functions.invoke('moderate-message', {
+      const moderatePromise = supabase.functions.invoke('moderate-message', {
         body: { content: messageContent, sender_id: currentUser.id, match_id: matchId },
       });
+      const timeoutPromise = new Promise<{ data: null; error: { message: string } }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: { message: "Moderation timed out" } }), 5000)
+      );
+      const { data: modResult, error: modError } = await Promise.race([moderatePromise, timeoutPromise]);
 
       // Handle rate limiting
       if (modError) {
@@ -297,6 +301,8 @@ const Chat = () => {
           setNewMessage(messageContent);
           return;
         }
+        // For other errors (including timeout), fall through to send anyway
+        console.warn("Moderation check issue:", modError);
       }
 
       if (modResult?.error && modResult.error.includes("Sending too fast")) {

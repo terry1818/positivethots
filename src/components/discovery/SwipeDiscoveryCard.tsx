@@ -122,7 +122,7 @@ export const SwipeDiscoveryCard = memo(({
       el.removeEventListener("touchmove", onTouchMove);
       el.removeEventListener("touchend", onTouchEnd);
     };
-  }, [isTop]);
+  }, [isTop, handleDragStart, handleDragMove, handleDragEnd]);
 
   // Drag handlers — wrapped in useCallback for stable references
   const handleDragStart = useCallback((clientX: number, clientY: number) => {

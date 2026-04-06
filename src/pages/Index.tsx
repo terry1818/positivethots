@@ -490,7 +490,12 @@ const Index = () => {
 
     const { data: matchData, error: matchError } = await supabase
       .rpc("check_match", { user1: currentUser.id, user2: otherUserId });
-    if (matchError) { console.error("Match check error:", matchError); return; }
+    if (matchError) {
+      console.error("Match check error:", matchError);
+      setSuggestions(previousSuggestions);
+      toast.error("Connection couldn't be saved. Please try again.");
+      return;
+    }
 
     if (matchData) {
       trackEvent("match", { matched_user_id: otherUserId });

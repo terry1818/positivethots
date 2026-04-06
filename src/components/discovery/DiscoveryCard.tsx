@@ -148,10 +148,10 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); setBadgeSheetOpen(true); }}
-                  className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                   aria-label="Badge info"
                 >
-                  <Info className="h-3 w-3" />
+                  <Info className="h-4 w-4" />
                 </button>
               </>
             )}
