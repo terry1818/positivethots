@@ -438,9 +438,14 @@ const Settings = () => {
                   className={cn("flex-1 min-h-[44px] capitalize", textScale === size && "bg-primary text-primary-foreground")}
                   onClick={() => {
                     setTextScale(size);
-                    localStorage.setItem("pt_text_scale", size);
                     document.documentElement.classList.remove("text-scale-small", "text-scale-medium", "text-scale-large");
                     document.documentElement.classList.add(`text-scale-${size}`);
+                    if (user) {
+                      supabase.from("user_preferences" as any).upsert(
+                        { user_id: user.id, key: "pt_text_scale", value: size, updated_at: new Date().toISOString() },
+                        { onConflict: "user_id,key" }
+                      );
+                    }
                   }}
                 >
                   {size}

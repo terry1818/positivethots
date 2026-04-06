@@ -59,12 +59,13 @@ const Premium = () => {
   const [giftDays, setGiftDays] = useState("14");
   const [sendingGift, setSendingGift] = useState(false);
 
-  // Pre-fill from sessionStorage (referral flow)
+  // Pre-fill from session store (referral flow)
   useEffect(() => {
-    const refCode = sessionStorage.getItem("referralCode");
+    const { useSessionStore } = require("@/stores/sessionStore") as any;
+    const refCode = useSessionStore.getState().referralCode;
     if (refCode) {
       setPromoCode(refCode);
-      sessionStorage.removeItem("referralCode");
+      useSessionStore.getState().setReferralCode(null);
     }
   }, []);
 
