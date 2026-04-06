@@ -101,6 +101,24 @@ serve(async (req) => {
     const origin = rawOrigin && ALLOWED_ORIGINS.includes(rawOrigin)
       ? rawOrigin
       : "https://positivethots.lovable.app";
+    // Atomically mark code as redeemed BEFORE creating checkout (prevents race condition)
+    const { error: updateError, data: updateResult } = await supabase
+      .from("promo_codes")
+      .update({
+        redeemed_by: user.id,
+        redeemed_at: new Date().toISOString(),
+      })
+      .eq("id", promoCode.id)
+      .is("redeemed_by", null)
+      .select();
+
+    if (updateError || !updateResult || updateResult.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "This promo code has already been redeemed" }),
+        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -114,20 +132,6 @@ serve(async (req) => {
       cancel_url: `${origin}/premium`,
       metadata: { promo_code_id: promoCode.id, user_id: user.id },
     });
-
-    // Mark code as redeemed
-    const { error: updateError } = await supabase
-      .from("promo_codes")
-      .update({
-        redeemed_by: user.id,
-        redeemed_at: new Date().toISOString(),
-      })
-      .eq("id", promoCode.id)
-      .is("redeemed_by", null);
-
-    if (updateError) {
-      logStep("Error marking code redeemed", { error: updateError.message });
-    }
 
     logStep("Checkout session created", { sessionId: session.id, trialDays });
     return new Response(JSON.stringify({ url: session.url }), {
