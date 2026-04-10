@@ -387,6 +387,7 @@ const UserManagementTab = () => {
             <SelectItem value="new">New (7d)</SelectItem>
           </SelectContent>
         </Select>
+        <DemoAccountButton onRefresh={fetchUsers} />
       </div>
 
       {/* Desktop Table (md+) */}
