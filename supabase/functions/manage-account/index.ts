@@ -28,7 +28,12 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await supabaseUser.auth.getUser(token);
     if (authError || !user) throw new Error("Unauthorized");
 
-    const { action } = await req.json();
+    const body = await req.json();
+    const { action, targetUserId } = body;
+
+    if (targetUserId != null && typeof targetUserId !== "string") {
+      throw new Error("Invalid target user.");
+    }
 
     if (action === "export") {
       // Export user data
@@ -70,7 +75,23 @@ serve(async (req) => {
 
     if (action === "delete") {
       // Delete all user data in order (respecting foreign keys)
-      const userId = user.id;
+      let userId = user.id;
+
+      if (targetUserId) {
+        const { data: adminRole, error: adminRoleError } = await supabaseAdmin
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .eq("role", "admin")
+          .maybeSingle();
+
+        if (adminRoleError || !adminRole) throw new Error("Unauthorized");
+        if (targetUserId === user.id) {
+          throw new Error("Use Account Settings to delete your own account.");
+        }
+
+        userId = targetUserId;
+      }
 
       // Get match IDs for message cleanup
       const { data: userMatches } = await supabaseAdmin
@@ -121,7 +142,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("[manage-account] error:", error);
     const msg = error instanceof Error ? error.message : String(error);
-    const isUserError = msg === "No authorization header" || msg === "Unauthorized" || msg === "Invalid action. Use 'export' or 'delete'.";
+    const isUserError = msg === "No authorization header" || msg === "Unauthorized" || msg === "Invalid target user." || msg === "Use Account Settings to delete your own account." || msg === "Invalid action. Use 'export' or 'delete'.";
     return new Response(JSON.stringify({ error: isUserError ? msg : "An unexpected error occurred. Please try again." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: isUserError ? 400 : 500,
