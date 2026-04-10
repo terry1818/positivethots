@@ -260,6 +260,7 @@ const UserManagementTab = () => {
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleteStep, setDeleteStep] = useState(0);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const { logAction } = useAuditLog();
   const perPage = 20;
 
@@ -269,7 +270,8 @@ const UserManagementTab = () => {
     setLoading(true);
     setError(false);
     try {
-      const [usersRes, demoRes] = await Promise.all([
+      const [{ data: authData }, usersRes, demoRes] = await Promise.all([
+        supabase.auth.getUser(),
         supabase.rpc("get_admin_user_list", {
           _search: search, _filter: filter, _page: page, _per_page: perPage,
         }),
@@ -277,6 +279,7 @@ const UserManagementTab = () => {
       ]);
       if (usersRes.error) throw usersRes.error;
       const d = usersRes.data as any;
+      setCurrentUserId(authData.user?.id ?? null);
       setUsers(d.users || []);
       setTotal(d.total || 0);
       setDemoUserIds(new Set((demoRes.data || []).map((r: any) => r.target_user_id).filter(Boolean)));
@@ -347,6 +350,14 @@ const UserManagementTab = () => {
 
   const deleteUser = async () => {
     if (!deleteTarget) return;
+    if (deleteTarget.id === currentUserId) {
+      toast.error("Use Account Settings to delete your own account.");
+      setDeleteTarget(null);
+      setDeleteStep(0);
+      setDeleteConfirmText("");
+      return;
+    }
+
     setActionLoading(deleteTarget.id);
     try {
       await logAction("delete_user", deleteTarget.id, { name: deleteTarget.display_name || deleteTarget.name });
@@ -453,9 +464,9 @@ const UserManagementTab = () => {
                       {isSuspended(u) ? <UserCheck className="h-4 w-4" /> : <UserX className="h-4 w-4" />}
                     </Button>
                     <Button size="icon" variant="destructive" className="min-h-[44px] min-w-[44px]"
-                      disabled={actionLoading === u.id}
+                      disabled={actionLoading === u.id || u.id === currentUserId}
                       onClick={() => { setDeleteTarget(u); setDeleteStep(1); }}
-                      aria-label={`Delete account for ${name(u)}`}>
+                      aria-label={u.id === currentUserId ? `You can't delete your own account here` : `Delete account for ${name(u)}`}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -508,9 +519,9 @@ const UserManagementTab = () => {
                   {isSuspended(u) ? <UserCheck className="h-4 w-4" /> : <UserX className="h-4 w-4" />}
                 </Button>
                 <Button size="icon" variant="destructive" className="min-h-[44px] min-w-[44px]"
-                  disabled={actionLoading === u.id}
+                  disabled={actionLoading === u.id || u.id === currentUserId}
                   onClick={() => { setDeleteTarget(u); setDeleteStep(1); }}
-                  aria-label={`Delete account for ${name(u)}`}>
+                  aria-label={u.id === currentUserId ? `You can't delete your own account here` : `Delete account for ${name(u)}`}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
