@@ -19,8 +19,9 @@ import {
   BarChart3, Users, MessageSquare, Heart, Crown, Shield, TrendingUp, TrendingDown,
   Search, ChevronLeft, ChevronRight, AlertTriangle, Megaphone, BookOpen,
   Calendar, Link2, Eye, UserX, UserCheck, Trash2, Loader2, ArrowLeft,
-  Send, Flag, CheckCircle, XCircle, ClipboardList, HeartPulse
+  Send, Flag, CheckCircle, XCircle, ClipboardList, HeartPulse, UserPlus
 } from "lucide-react";
+import { DemoAccountButton, DemoBadge } from "@/components/admin/DemoAccountManager";
 import { EducationConsistencyDashboard } from "@/components/admin/EducationConsistencyDashboard";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
