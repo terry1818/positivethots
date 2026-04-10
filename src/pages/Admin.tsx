@@ -427,6 +427,7 @@ const UserManagementTab = () => {
                 <td className="p-3 text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>{new Date(u.created_at).toLocaleDateString()}</td>
                 <td className="p-3">
                   <div className="flex flex-wrap gap-1">
+                    {demoUserIds.has(u.id) && <DemoBadge />}
                     {u.is_admin && <Badge className="text-[10px] px-1.5 bg-primary text-primary-foreground">Admin</Badge>}
                     {u.is_premium && <Badge className="text-[10px] px-1.5 bg-yellow-600 text-yellow-50">Premium</Badge>}
                     {u.is_verified && <Badge className="text-[10px] px-1.5 bg-green-600 text-white">Verified</Badge>}
@@ -480,6 +481,7 @@ const UserManagementTab = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-sm font-medium truncate">{name(u)}</span>
+                    {demoUserIds.has(u.id) && <DemoBadge />}
                     {u.is_admin && <Badge className="text-[10px] px-1.5 bg-primary text-primary-foreground">Admin</Badge>}
                     {u.is_premium && <Badge className="text-[10px] px-1.5 bg-yellow-600 text-yellow-50">VIP</Badge>}
                     {isSuspended(u) && <Badge className="text-[10px] px-1.5 bg-[#DC2626] text-[#1A1A1A] font-semibold">Suspended</Badge>}
