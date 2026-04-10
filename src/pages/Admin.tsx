@@ -19,8 +19,9 @@ import {
   BarChart3, Users, MessageSquare, Heart, Crown, Shield, TrendingUp, TrendingDown,
   Search, ChevronLeft, ChevronRight, AlertTriangle, Megaphone, BookOpen,
   Calendar, Link2, Eye, UserX, UserCheck, Trash2, Loader2, ArrowLeft,
-  Send, Flag, CheckCircle, XCircle, ClipboardList, HeartPulse
+  Send, Flag, CheckCircle, XCircle, ClipboardList, HeartPulse, UserPlus
 } from "lucide-react";
+import { DemoAccountButton, DemoBadge } from "@/components/admin/DemoAccountManager";
 import { EducationConsistencyDashboard } from "@/components/admin/EducationConsistencyDashboard";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -262,17 +263,23 @@ const UserManagementTab = () => {
   const { logAction } = useAuditLog();
   const perPage = 20;
 
+  const [demoUserIds, setDemoUserIds] = useState<Set<string>>(new Set());
+
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError(false);
     try {
-      const { data, error: err } = await supabase.rpc("get_admin_user_list", {
-        _search: search, _filter: filter, _page: page, _per_page: perPage,
-      });
-      if (err) throw err;
-      const d = data as any;
+      const [usersRes, demoRes] = await Promise.all([
+        supabase.rpc("get_admin_user_list", {
+          _search: search, _filter: filter, _page: page, _per_page: perPage,
+        }),
+        supabase.from("audit_log").select("target_user_id").eq("action", "create_demo_account"),
+      ]);
+      if (usersRes.error) throw usersRes.error;
+      const d = usersRes.data as any;
       setUsers(d.users || []);
       setTotal(d.total || 0);
+      setDemoUserIds(new Set((demoRes.data || []).map((r: any) => r.target_user_id).filter(Boolean)));
     } catch {
       setError(true);
     }
@@ -386,6 +393,7 @@ const UserManagementTab = () => {
             <SelectItem value="new">New (7d)</SelectItem>
           </SelectContent>
         </Select>
+        <DemoAccountButton onRefresh={fetchUsers} />
       </div>
 
       {/* Desktop Table (md+) */}
@@ -419,6 +427,7 @@ const UserManagementTab = () => {
                 <td className="p-3 text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>{new Date(u.created_at).toLocaleDateString()}</td>
                 <td className="p-3">
                   <div className="flex flex-wrap gap-1">
+                    {demoUserIds.has(u.id) && <DemoBadge />}
                     {u.is_admin && <Badge className="text-[10px] px-1.5 bg-primary text-primary-foreground">Admin</Badge>}
                     {u.is_premium && <Badge className="text-[10px] px-1.5 bg-yellow-600 text-yellow-50">Premium</Badge>}
                     {u.is_verified && <Badge className="text-[10px] px-1.5 bg-green-600 text-white">Verified</Badge>}
@@ -472,6 +481,7 @@ const UserManagementTab = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-sm font-medium truncate">{name(u)}</span>
+                    {demoUserIds.has(u.id) && <DemoBadge />}
                     {u.is_admin && <Badge className="text-[10px] px-1.5 bg-primary text-primary-foreground">Admin</Badge>}
                     {u.is_premium && <Badge className="text-[10px] px-1.5 bg-yellow-600 text-yellow-50">VIP</Badge>}
                     {isSuspended(u) && <Badge className="text-[10px] px-1.5 bg-[#DC2626] text-[#1A1A1A] font-semibold">Suspended</Badge>}
