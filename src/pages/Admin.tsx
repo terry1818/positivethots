@@ -263,17 +263,23 @@ const UserManagementTab = () => {
   const { logAction } = useAuditLog();
   const perPage = 20;
 
+  const [demoUserIds, setDemoUserIds] = useState<Set<string>>(new Set());
+
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError(false);
     try {
-      const { data, error: err } = await supabase.rpc("get_admin_user_list", {
-        _search: search, _filter: filter, _page: page, _per_page: perPage,
-      });
-      if (err) throw err;
-      const d = data as any;
+      const [usersRes, demoRes] = await Promise.all([
+        supabase.rpc("get_admin_user_list", {
+          _search: search, _filter: filter, _page: page, _per_page: perPage,
+        }),
+        supabase.from("audit_log").select("target_user_id").eq("action", "create_demo_account"),
+      ]);
+      if (usersRes.error) throw usersRes.error;
+      const d = usersRes.data as any;
       setUsers(d.users || []);
       setTotal(d.total || 0);
+      setDemoUserIds(new Set((demoRes.data || []).map((r: any) => r.target_user_id).filter(Boolean)));
     } catch {
       setError(true);
     }
