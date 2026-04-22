@@ -9,7 +9,7 @@ export const FeaturedSpotlight = ({ resources }: { resources: Resource[] }) => {
       <div className="mb-4">
         <div className="flex items-center gap-2 mb-1">
           <Sparkles className="w-5 h-5 text-purple-400" />
-          <h2 className="text-xl font-semibold text-white">Positive Thots Picks</h2>
+          <h2 className="text-xl font-semibold text-white">Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> Picks</h2>
         </div>
         <p className="text-sm text-gray-500">Our top recommendations to start your journey</p>
       </div>

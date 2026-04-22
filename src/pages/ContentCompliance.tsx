@@ -14,7 +14,7 @@ const ContentCompliance = () => (
 
     <h2 id="statement" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">1. Compliance Statement</h2>
     <p className="mb-4 leading-relaxed text-muted-foreground">
-      Positive Thots ("the App") is committed to full compliance with 18 U.S.C. § 2257 and 28 C.F.R. Part 75 regarding record-keeping requirements for visual depictions of actual sexually explicit conduct.
+      Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> ("the App") is committed to full compliance with 18 U.S.C. § 2257 and 28 C.F.R. Part 75 regarding record-keeping requirements for visual depictions of actual sexually explicit conduct.
     </p>
 
     <h2 id="exemption" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">2. Exemption Status</h2>

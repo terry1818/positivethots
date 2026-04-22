@@ -155,7 +155,7 @@ export const AstrologySetup = () => {
         })}
 
         <p className="text-xs text-muted-foreground text-center pt-2">
-          Astrology on Positive Thots is just for fun — a great conversation starter, not a compatibility guarantee! 🔮
+          Astrology on Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> is just for fun — a great conversation starter, not a compatibility guarantee! 🔮
         </p>
       </CardContent>
     </Card>

@@ -57,7 +57,7 @@ export const CrossAppLinksDisplay = ({ userId }: CrossAppLinksDisplayProps) => {
       <Dialog open={!!interstitialLink} onOpenChange={() => setInterstitialLink(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Leaving Positive Thots</DialogTitle>
+            <DialogTitle>Leaving Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup></DialogTitle>
             <DialogDescription>
               You're about to visit{" "}
               <strong>

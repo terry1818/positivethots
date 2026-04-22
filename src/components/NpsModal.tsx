@@ -66,7 +66,7 @@ export const NpsModal = ({ triggerEvent, onClose }: NpsModalProps) => {
             <Star className="h-8 w-8 mx-auto text-primary mb-3" />
             <h2 className="text-lg font-semibold text-foreground mb-1">
               How likely are you to recommend{" "}
-              <span className="text-primary">Positive Thots</span> to a friend?
+              <span className="text-primary">Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup></span> to a friend?
             </h2>
             <p className="text-sm text-muted-foreground mb-5">0 = Not at all likely · 10 = Extremely likely</p>
             <div className="flex gap-1.5 justify-center flex-wrap">
