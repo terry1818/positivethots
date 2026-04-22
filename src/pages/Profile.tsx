@@ -132,7 +132,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (searchParams.get("boost") === "success") {
-      toast.success("Profile Boosted! 🚀", { description: "You'll appear at the top of discovery for 24 hours." });
+      toast.success("Your profile is boosted!", { description: "Extra visibility for the next 30 minutes." });
       checkActiveBoost();
     }
   }, [searchParams]);
