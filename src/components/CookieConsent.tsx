@@ -52,12 +52,10 @@ export const CookieConsent = () => {
           <Cookie className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
           <div className="flex-1">
             <p className="text-sm text-muted-foreground mb-3">
-              We use essential cookies to keep you signed in and functional cookies to improve your experience. 
-              See our <a href="/privacy" className="text-primary hover:underline">Privacy Policy</a> for details.
+              We use essential cookies to keep the app running. We don't use tracking cookies or share your data with advertisers.
             </p>
             <div className="flex gap-2">
-              <Button size="sm" onClick={() => respond("accepted")}>Accept</Button>
-              <Button size="sm" variant="outline" onClick={() => respond("declined")}>Decline Non-Essential</Button>
+              <Button size="sm" onClick={() => respond("accepted")}>Got It</Button>
             </div>
           </div>
         </div>
