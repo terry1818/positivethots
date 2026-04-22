@@ -22,6 +22,7 @@ import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { DesireTagSelector } from "@/components/profile-edit/DesireTagSelector";
 import { ChapterEditor } from "@/components/chapters/ChapterEditor";
 import { AstrologySetup } from "@/components/astrology/AstrologySetup";
+import { UnsavedChangesPrompt } from "@/components/profile-edit/UnsavedChangesPrompt";
 
 interface PromptRow {
   id?: string;
