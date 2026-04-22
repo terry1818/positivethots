@@ -607,8 +607,15 @@ const LearnModule = () => {
                     const xpResult = await awardXP(quizXP + perfectBonus, scorePercent === 100 ? "quiz_perfect" : "quiz_pass", module.id);
                     setXpPopup({ show: true, amount: xpResult.newXP });
 
+                    const isFoundationComplete = await checkFoundationComplete(module.id);
                     setTimeout(() => {
-                      setCelebration({ type: "badge_earned", badgeTitle: module.title });
+                      setCelebration({
+                        type: "badge_earned",
+                        badgeTitle: module.title,
+                        badgeSlug: module.slug,
+                        badgeTier: module.tier,
+                        isFoundationComplete,
+                      });
                     }, 1600);
                   }
                 }}
