@@ -1,5 +1,10 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { getCorsHeaders } from '../_shared/cors.ts'
+import {
+  buildSafePayload,
+  getShowPreviewsPref,
+  withinDailyLimit,
+} from '../_shared/notification-privacy.ts'
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req)
@@ -53,20 +58,27 @@ Deno.serve(async (req) => {
         .limit(1)
 
       if (tokens && tokens.length > 0) {
-        // Send push notification
-        await supabase.functions.invoke('send-push-notification', {
-          body: {
-            userId: profile.id,
-            title: 'Almost there! 🌟',
-            body: "You're close to unlocking Discovery. Finish setting up your profile.",
-            data: { url: '/onboarding' },
-          },
-        })
+        const allowed = await withinDailyLimit(supabase, profile.id, 'onboarding_nudge')
+        if (!allowed) continue
+
+        const showPreviews = await getShowPreviewsPref(supabase, profile.id)
+        const payload = buildSafePayload(
+          'onboarding_nudge',
+          "You're close to unlocking Discovery. Finish setting up your profile.",
+          showPreviews,
+          { fullTitle: 'Almost there! 🌟' }
+        )
+
+        console.log(
+          `Push onboarding_nudge → ${profile.id} previews=${showPreviews ? 'on' : 'off'}\n` +
+            `  lock: ${payload.lockScreenTitle} — ${payload.lockScreenBody}\n` +
+            `  full: ${payload.fullTitle} — ${payload.fullBody}`
+        )
 
         await supabase.from('analytics_events').insert({
           user_id: profile.id,
           event_name: 'push_notification_sent',
-          event_data: { type: 'onboarding_nudge' },
+          event_data: { type: 'onboarding_nudge', previews: showPreviews },
         })
         processed++
       }
