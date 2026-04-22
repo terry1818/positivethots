@@ -385,7 +385,7 @@ const Premium = () => {
                 )}
               >
                 {isHighlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-sm font-bold px-3 py-1 rounded-full">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                     Most Popular
                   </div>
                 )}
@@ -399,12 +399,17 @@ const Premium = () => {
                     <Icon className="h-6 w-6 text-primary" />
                   </div>
                   <CardTitle className="text-lg">{config.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    {TIER_DESCRIPTORS[config.tier as keyof typeof TIER_DESCRIPTORS]}
+                  </p>
                   <div className="mt-2">
                     {isAnnual ? (
                       <>
-                        <span className="text-3xl font-bold">${config.annualMonthlyEquivalent?.toFixed(2)}</span>
-                        <span className="text-muted-foreground text-sm">/mo</span>
-                        <p className="text-sm text-muted-foreground mt-1">Billed ${config.price}/year</p>
+                        <span className="text-3xl font-bold">${config.price}</span>
+                        <span className="text-muted-foreground text-sm">/year</span>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          (${config.annualMonthlyEquivalent?.toFixed(2)}/mo)
+                        </p>
                       </>
                     ) : (
                       <>
@@ -437,22 +442,26 @@ const Premium = () => {
                       VIP is for members who've completed the full curriculum and want to give back to the community.
                     </p>
                   )}
-                  <ShimmerButton
-                    className={cn(
-                      "w-full",
-                      isHighlighted
-                        ? "bg-gradient-to-r from-primary to-secondary"
-                        : "bg-primary"
-                    )}
-                    onClick={() => handleSubscribe(config.priceId)}
-                    disabled={loading !== null}
-                  >
-                    {loading === config.priceId ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      `Get ${config.name}`
-                    )}
-                  </ShimmerButton>
+                  {currentTier === config.tier ? (
+                    <Badge className="w-full justify-center py-1.5" variant="secondary">Current Plan</Badge>
+                  ) : (
+                    <ShimmerButton
+                      className={cn(
+                        "w-full",
+                        isHighlighted
+                          ? "bg-gradient-to-r from-primary to-secondary"
+                          : "bg-primary"
+                      )}
+                      onClick={() => handleSubscribe(config.priceId)}
+                      disabled={loading !== null}
+                    >
+                      {loading === config.priceId ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        `Start ${config.name}`
+                      )}
+                    </ShimmerButton>
+                  )}
                 </CardContent>
               </Card>
             );
