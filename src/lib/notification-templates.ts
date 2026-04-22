@@ -39,8 +39,8 @@ export function getStreakCriticalNotification(streakCount: number): Notification
 
 export function getStreakLostNotification(): NotificationTemplate {
   return {
-    title: "We'll help you bounce back 💪",
-    body: "Your streak reset, but your knowledge didn't. Start a new streak today!",
+    title: "Streak reset",
+    body: "No worries — start a new one today.",
   };
 }
 

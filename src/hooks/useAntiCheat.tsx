@@ -16,7 +16,7 @@
       const remaining = 3 - next.length;
 
       const messages: Record<string, string> = {
-        "tab-switch": "Please stay on this tab during the quiz",
+        "tab-switch": "Heads up — switching tabs pauses the quiz. This is about what you've learned, not what you can look up.",
         "copy": "Copying is disabled during the quiz",
         "paste": "Pasting is disabled during the quiz",
         "cut": "Cutting is disabled during the quiz",
