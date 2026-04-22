@@ -78,8 +78,8 @@ serve(async (req) => {
         body = data?.preview || "Someone sent you a message";
         break;
       case "super_like":
-        title = "Super Like! ⭐";
-        body = "Someone super liked you!";
+        title = "You got a Thot! ⭐";
+        body = "Someone sent you a Thot!";
         break;
       case "boost_expired":
         title = "Boost Expired";

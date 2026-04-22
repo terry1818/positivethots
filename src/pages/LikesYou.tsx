@@ -392,7 +392,7 @@ const LikesYou = () => {
                 <div className="text-center py-16 text-muted-foreground">
                   <Heart className="h-12 w-12 mx-auto mb-3 opacity-30" />
                   <p className="text-lg font-medium">No likes sent yet</p>
-                  <p className="text-sm">Profiles you swipe right on will appear here.</p>
+                  <p className="text-sm">Profiles you Connect with will appear here.</p>
                 </div>
               ) : (
               <div className="grid grid-cols-2 gap-3">

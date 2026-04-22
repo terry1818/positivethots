@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
             .from("super_like_balance")
             .insert({ user_id: user.id, balance: 1 });
         }
-        rewards.push("+1 Super Like");
+        rewards.push("+1 Thot");
       },
       5: async () => {
         // Streak freeze
@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
             .from("super_like_balance")
             .insert({ user_id: user.id, balance: 2 });
         }
-        rewards.push("+2 Super Likes");
+        rewards.push("+2 Thots");
       },
       10: async () => {
         // +1 boost credit
