@@ -88,7 +88,7 @@ export const MatchModal = ({
 
   const subText = celebrationType === 'milestone'
     ? `Your ${matchCount}th match! 🎉`
-    : `You and ${firstName} connected 💜`;
+    : `You and ${firstName} want to connect. Say hi!`;
 
   const gradientClass = celebrationType === 'thot_match'
     ? "from-primary via-pink-500 to-secondary"
@@ -204,7 +204,7 @@ export const MatchModal = ({
                   onSendMessage();
                 }}
               >
-                Say hi to {firstName} 👋
+                Send a Message
               </Button>
               <Button
                 size="lg"
@@ -212,7 +212,7 @@ export const MatchModal = ({
                 className="w-full h-10 text-white hover:bg-white/20 text-sm"
                 onClick={onClose}
               >
-                Keep discovering
+                Keep Browsing
               </Button>
 
               {/* First-match safety prompt */}
