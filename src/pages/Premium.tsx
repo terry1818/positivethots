@@ -531,6 +531,20 @@ const Premium = () => {
         <p className="text-center text-sm text-muted-foreground mt-6">
           Cancel anytime · {billingPeriod === "annual" ? "Billed annually" : "Billed monthly"} · Secure checkout via Stripe
         </p>
+
+        <p className="text-xs text-muted-foreground text-center mt-4 max-w-2xl mx-auto leading-relaxed">
+          Subscriptions auto-renew at the end of each billing period unless canceled at least 24 hours before the renewal date. You can manage or cancel your subscription in your account settings. See our{" "}
+          <button onClick={() => navigate("/terms")} className="underline hover:text-foreground">
+            Terms of Service
+          </button>{" "}
+          for full details.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default Premium;
       </div>
     </div>
   );
