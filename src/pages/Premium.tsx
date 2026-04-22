@@ -69,12 +69,35 @@ const Premium = () => {
     }
   }, []);
 
-  // Show success toast if redirected after redemption
+  const [showCanceledNotice, setShowCanceledNotice] = useState(false);
+  const [showFailedNotice, setShowFailedNotice] = useState(false);
+
+  // Show success toast if redirected after redemption / handle return from Stripe
   useEffect(() => {
     if (searchParams.get("redeemed") === "true") {
       toast.success("Your trial has started! Welcome aboard 🎉");
     }
+    if (searchParams.get("canceled") === "true") {
+      setShowCanceledNotice(true);
+    }
+    if (searchParams.get("failed") === "true") {
+      setShowFailedNotice(true);
+    }
   }, [searchParams]);
+
+  // Tier-specific feature highlights for the welcome card after success
+  const TIER_HIGHLIGHTS: Record<string, string[]> = {
+    plus: ["See who liked you", "Send 5 Thots per day", "Advanced discovery filters"],
+    premium: ["Everything in Plus", "Priority visibility in Discovery", "Advanced compatibility filters"],
+    vip: ["Everything in Premium", "Unlimited Thots", "1 free Profile Boost per month"],
+  };
+
+  // Short descriptors for each tier card
+  const TIER_DESCRIPTORS: Record<string, string> = {
+    plus: "See who likes you",
+    premium: "The full experience",
+    vip: "Go all in",
+  };
 
   const handleSubscribe = async (priceId: string) => {
     setLoading(priceId);
