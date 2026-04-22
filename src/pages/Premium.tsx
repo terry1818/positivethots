@@ -246,8 +246,48 @@ const Premium = () => {
             <Crown className={cn("h-8 w-8 text-primary", !reducedMotion && "animate-wiggle")} />
           </div>
           <h1 className="text-3xl font-bold mb-2">Choose Your Plan</h1>
-          <p className="text-muted-foreground">Unlock the full experience</p>
+          <p className="text-muted-foreground">Every plan unlocks better connections.</p>
         </div>
+
+        {/* Payment failed banner */}
+        {showFailedNotice && (
+          <Card className="mb-6 border-destructive/40 bg-destructive/5 animate-fade-in">
+            <CardContent className="pt-6">
+              <h2 className="font-bold text-base mb-1">Payment didn't go through</h2>
+              <p className="text-sm text-muted-foreground mb-3">
+                Your card was declined. This usually means the card expired or has insufficient funds.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" onClick={() => setShowFailedNotice(false)}>
+                  Try Another Payment Method
+                </Button>
+                <Button size="sm" variant="link" asChild>
+                  <a href="mailto:billing@positivethots.com">Contact Support</a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Subscription canceled banner */}
+        {showCanceledNotice && (
+          <Card className="mb-6 border-primary/30 bg-primary/5 animate-fade-in">
+            <CardContent className="pt-6">
+              <h2 className="font-bold text-base mb-1">We're sorry to see you go</h2>
+              <p className="text-sm text-muted-foreground mb-3">
+                Your features stay active until the end of your billing period. You can resubscribe anytime.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" onClick={() => setShowCanceledNotice(false)}>
+                  Resubscribe
+                </Button>
+                <Button size="sm" variant="link" onClick={() => navigate("/")}>
+                  Continue with Free
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Promo Code Section */}
         <Card className="mb-6 animate-fade-in border-dashed border-primary/30">
