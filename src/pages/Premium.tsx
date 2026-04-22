@@ -181,21 +181,46 @@ const Premium = () => {
   if (isPremium) {
     const currentConfig = MONTHLY_TIERS.find((t) => t.tier === currentTier);
     const TierIcon = tierIcons[currentTier as keyof typeof tierIcons] ?? Crown;
+    const justSubscribed = searchParams.get("success") === "true";
+    const highlights = TIER_HIGHLIGHTS[currentTier as keyof typeof TIER_HIGHLIGHTS] ?? [];
 
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative overflow-hidden">
         <div className={cn("absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl", !reducedMotion && "animate-blob-float")} aria-hidden="true" />
         <div className={cn("absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl", !reducedMotion && "animate-blob-float [animation-delay:5s]")} aria-hidden="true" />
-        <div className={cn("relative z-10 text-center", !reducedMotion && "animate-bounce-in")}>
+        <div className={cn("relative z-10 text-center max-w-md", !reducedMotion && "animate-bounce-in")}>
           <TierIcon className={cn("h-16 w-16 text-primary mb-4 mx-auto", !reducedMotion && "animate-pulse-glow")} />
-          <h1 className="text-2xl font-bold mb-2">You're {currentConfig?.name ?? "Premium"}!</h1>
-          <p className="text-muted-foreground mb-6">You have full access to your plan's features.</p>
-          <div className="flex gap-3">
-            <Button onClick={() => navigate("/likes")}>View Your Likes</Button>
-            <Button variant="outline" onClick={() => navigate("/settings")}>
-              Manage Plan
-            </Button>
-          </div>
+          {justSubscribed ? (
+            <>
+              <h1 className="text-2xl font-bold mb-2">Welcome to {currentConfig?.name ?? "Premium"}!</h1>
+              <p className="text-muted-foreground mb-4">Your subscription is active. Here's what you just unlocked:</p>
+              {highlights.length > 0 && (
+                <ul className="text-left space-y-2 mb-6 mx-auto inline-block">
+                  {highlights.map((h) => (
+                    <li key={h} className="flex items-start gap-2">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="flex gap-3 justify-center flex-wrap">
+                <Button onClick={() => navigate("/")}>Explore Your New Features</Button>
+                <Button variant="outline" onClick={() => navigate("/settings")}>Manage Plan</Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h1 className="text-2xl font-bold mb-2">You're {currentConfig?.name ?? "Premium"}!</h1>
+              <p className="text-muted-foreground mb-6">You have full access to your plan's features.</p>
+              <div className="flex gap-3 justify-center">
+                <Button onClick={() => navigate("/likes")}>View Your Likes</Button>
+                <Button variant="outline" onClick={() => navigate("/settings")}>
+                  Manage Plan
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     );
