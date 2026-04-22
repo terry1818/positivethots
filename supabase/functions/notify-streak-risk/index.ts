@@ -1,6 +1,11 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
+import {
+  buildSafePayload,
+  getShowPreviewsPref,
+  withinDailyLimit,
+} from "../_shared/notification-privacy.ts";
 
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
@@ -19,7 +24,6 @@ serve(async (req) => {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().split("T")[0];
 
-    // Find users whose last activity was yesterday and have an active streak
     const { data: atRiskUsers, error } = await supabaseAdmin
       .from("user_learning_stats")
       .select("user_id, current_streak, streak_freezes")
@@ -39,25 +43,36 @@ serve(async (req) => {
         .from("device_tokens")
         .select("token, platform")
         .eq("user_id", user.user_id);
+      if (!tokens || tokens.length === 0) continue;
 
-      if (tokens && tokens.length > 0) {
-        const freezeMsg = user.streak_freezes > 0
-          ? ` You have ${user.streak_freezes} streak freeze${user.streak_freezes !== 1 ? 's' : ''} available.`
-          : " You have no streak freezes left!";
+      const allowed = await withinDailyLimit(supabaseAdmin, user.user_id, "streak_risk");
+      if (!allowed) continue;
 
-        console.log(`Push: Streak risk to ${user.user_id} - ${user.current_streak} day streak.${freezeMsg}`);
-        sentCount++;
+      const showPreviews = await getShowPreviewsPref(supabaseAdmin, user.user_id);
+      const payload = buildSafePayload(
+        "streak_risk",
+        `Your ${user.current_streak}-day streak ends today. Open a course to keep it going.`,
+        showPreviews,
+        { fullTitle: "Keep your streak alive" }
+      );
 
-        await supabaseAdmin.from("analytics_events").insert({
-          user_id: user.user_id,
-          event_name: "push_notification_sent",
-          event_data: {
-            type: "streak_risk",
-            streak: user.current_streak,
-            freezes_available: user.streak_freezes,
-          },
-        });
-      }
+      console.log(
+        `Push streak_risk → ${user.user_id} previews=${showPreviews ? "on" : "off"}\n` +
+          `  lock: ${payload.lockScreenTitle} — ${payload.lockScreenBody}\n` +
+          `  full: ${payload.fullTitle} — ${payload.fullBody}`
+      );
+      sentCount++;
+
+      await supabaseAdmin.from("analytics_events").insert({
+        user_id: user.user_id,
+        event_name: "push_notification_sent",
+        event_data: {
+          type: "streak_risk",
+          streak: user.current_streak,
+          freezes_available: user.streak_freezes,
+          previews: showPreviews,
+        },
+      });
     }
 
     return new Response(JSON.stringify({ sent: sentCount, total_at_risk: atRiskUsers.length }), {

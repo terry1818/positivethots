@@ -1,6 +1,11 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
+import {
+  buildSafePayload,
+  getShowPreviewsPref,
+  withinDailyLimit,
+} from "../_shared/notification-privacy.ts";
 
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
@@ -19,7 +24,6 @@ serve(async (req) => {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
     const targetDate = sevenDaysAgo.toISOString().split("T")[0];
 
-    // Find users whose last activity was exactly 7 days ago
     const { data: inactiveUsers, error } = await supabaseAdmin
       .from("user_learning_stats")
       .select("user_id")
@@ -38,22 +42,37 @@ serve(async (req) => {
         .from("device_tokens")
         .select("token, platform")
         .eq("user_id", user.user_id);
+      if (!tokens || tokens.length === 0) continue;
 
-      if (tokens && tokens.length > 0) {
-        console.log(`Push: Winback to ${user.user_id} - "We miss you 💜"`);
-        sentCount++;
+      const allowed = await withinDailyLimit(supabaseAdmin, user.user_id, "winback");
+      if (!allowed) continue;
 
-        await supabaseAdmin.from("analytics_events").insert({
-          user_id: user.user_id,
-          event_name: "push_notification_sent",
-          event_data: { type: "winback" },
-        });
-      }
+      const showPreviews = await getShowPreviewsPref(supabaseAdmin, user.user_id);
+      const payload = buildSafePayload(
+        "winback",
+        "We saved your progress. Ready to jump back in? Just one lesson!",
+        showPreviews,
+        { fullTitle: "It's been a while..." }
+      );
+
+      console.log(
+        `Push winback → ${user.user_id} previews=${showPreviews ? "on" : "off"}\n` +
+          `  lock: ${payload.lockScreenTitle} — ${payload.lockScreenBody}\n` +
+          `  full: ${payload.fullTitle} — ${payload.fullBody}`
+      );
+      sentCount++;
+
+      await supabaseAdmin.from("analytics_events").insert({
+        user_id: user.user_id,
+        event_name: "push_notification_sent",
+        event_data: { type: "winback", previews: showPreviews },
+      });
     }
 
-    return new Response(JSON.stringify({ sent: sentCount, total_inactive: inactiveUsers.length }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ sent: sentCount, total_inactive: inactiveUsers.length }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
