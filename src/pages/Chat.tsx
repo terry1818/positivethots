@@ -511,7 +511,17 @@ const Chat = () => {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold truncate">{otherUser.name}</div>
+                  <div className="font-semibold truncate flex items-center gap-1">
+                    <span className="truncate">{otherUser.name}</span>
+                    {(otherUser as any).is_verified && (
+                      <BadgeCheck className="h-4 w-4 text-primary shrink-0" aria-label="Verified" />
+                    )}
+                    {compatBreakdown?.totalScore != null && compatBreakdown.totalScore > 0 && (
+                      <span className="text-sm font-normal text-muted-foreground shrink-0">
+                        · {compatBreakdown.totalScore}% Compatible
+                      </span>
+                    )}
+                  </div>
                   <div className="text-sm text-muted-foreground">
                     {otherUser.learning_level && otherUser.learning_level > 1 && (
                       <span>{getLevelName(otherUser.learning_level)} {getLevelEmoji(otherUser.learning_level)}</span>
@@ -542,6 +552,13 @@ const Chat = () => {
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuItem className="sm:hidden"><Phone className="h-4 w-4 mr-2" />Voice Call</DropdownMenuItem>
                   <DropdownMenuItem className="sm:hidden"><Video className="h-4 w-4 mr-2" />Video Call</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowSafetyTips(true)}>
+                    <Shield className="h-4 w-4 mr-2" />Safety Tips
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setShowUnmatchDialog(true)} className="text-destructive focus:text-destructive">
+                    <UserMinus className="h-4 w-4 mr-2" />Unmatch {otherUser?.name}
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
