@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   Send, ArrowLeft, Phone, Video, MoreVertical,
-  Image as ImageIcon, Mic, Smile, Gift, Shield, Flag, UserX, Clock, Check, CheckCheck, MessageCircle, Heart
+  Image as ImageIcon, Mic, Smile, Gift, Shield, Flag, UserX, Clock, Check, CheckCheck, MessageCircle, Heart, BadgeCheck, AlertCircle, UserMinus
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -252,8 +252,8 @@ const Chat = () => {
       const rl = rlResult as any;
       if (rl?.limited) {
         const mins = rl.minutes_remaining || 1;
-        toast.error(`You've reached your message limit for this match`, {
-          description: `Try again in ${mins} minute${mins === 1 ? '' : 's'}. 💬`,
+        toast.warning("You're messaging faster than usual", {
+          description: `Take a breath — your messages will resume in ${mins} minute${mins === 1 ? '' : 's'}.`,
           duration: 6000,
         });
         return;
@@ -296,7 +296,7 @@ const Chat = () => {
       if (modError) {
         const errorBody = typeof modError === 'object' && modError !== null ? (modError as any) : {};
         if (errorBody.status === 429 || (typeof modError === 'string' && modError.includes('429'))) {
-          toast.error("Slow down — you're sending too quickly.");
+          toast.warning("Take a breath — you're sending too quickly.");
           setMessages(prev => prev.filter(m => m.id !== optimisticId));
           setNewMessage(messageContent);
           return;
@@ -306,7 +306,7 @@ const Chat = () => {
       }
 
       if (modResult?.error && modResult.error.includes("Sending too fast")) {
-        toast.error("Slow down — you're sending too quickly.");
+        toast.warning("Take a breath — you're sending too quickly.");
         setMessages(prev => prev.filter(m => m.id !== optimisticId));
         setNewMessage(messageContent);
         return;
@@ -333,7 +333,7 @@ const Chat = () => {
       // Mark as failed — keep the bubble but show error state
       console.error("Error sending message:", error);
       setMessages(prev => prev.map(m => m.id === optimisticId ? { ...m, id: `failed-${Date.now()}`, delivered: false, read: false } : m));
-      toast.error("Failed to send message", { description: "Tap message to retry" });
+      toast.error("Message didn't send", { description: "Tap the message to retry or delete." });
     } else {
       // Replace optimistic message with real one
       setMessages(prev => prev.map(m => m.id === optimisticId ? { ...insertedMsg, delivered: true, read: false } : m));
@@ -404,16 +404,48 @@ const Chat = () => {
 
   const handleBlock = async () => {
     if (!currentUser || !otherUser) return;
+    let undone = false;
     try {
       const { error } = await supabase.from("blocked_users").insert({
         blocker_id: currentUser.id,
         blocked_id: otherUser.id,
       });
       if (error && !error.message.includes("duplicate")) throw error;
-      toast.success("User Blocked", { description: "You won't see this user anymore." });
-      navigate("/messages");
+      toast.success(`You've blocked ${otherUser.name}`, {
+        description: "You won't see each other's profiles or messages anymore.",
+        duration: 10000,
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            undone = true;
+            await supabase.from("blocked_users")
+              .delete()
+              .eq("blocker_id", currentUser.id)
+              .eq("blocked_id", otherUser.id);
+            toast.info(`Unblocked ${otherUser.name}`);
+          },
+        },
+      });
+      setTimeout(() => { if (!undone) navigate("/messages"); }, 1200);
     } catch (err: any) {
       toast.error("Something went wrong. Please try again.");
+    }
+  };
+
+  const [showUnmatchDialog, setShowUnmatchDialog] = useState(false);
+  const [showSafetyTips, setShowSafetyTips] = useState(false);
+
+  const handleUnmatch = async () => {
+    if (!currentUser || !otherUser || !matchId) return;
+    try {
+      // Delete messages and the match itself; partners are removed for both sides
+      await supabase.from("messages").delete().eq("match_id", matchId);
+      const { error } = await supabase.from("matches").delete().eq("id", matchId);
+      if (error) throw error;
+      toast.success(`You've unmatched with ${otherUser.name}.`);
+      navigate("/messages");
+    } catch (err: any) {
+      toast.error("Couldn't unmatch right now. Please try again.");
     }
   };
 
@@ -479,7 +511,17 @@ const Chat = () => {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold truncate">{otherUser.name}</div>
+                  <div className="font-semibold truncate flex items-center gap-1">
+                    <span className="truncate">{otherUser.name}</span>
+                    {(otherUser as any).is_verified && (
+                      <BadgeCheck className="h-4 w-4 text-primary shrink-0" aria-label="Verified" />
+                    )}
+                    {compatBreakdown?.totalScore != null && compatBreakdown.totalScore > 0 && (
+                      <span className="text-sm font-normal text-muted-foreground shrink-0">
+                        · {compatBreakdown.totalScore}% Compatible
+                      </span>
+                    )}
+                  </div>
                   <div className="text-sm text-muted-foreground">
                     {otherUser.learning_level && otherUser.learning_level > 1 && (
                       <span>{getLevelName(otherUser.learning_level)} {getLevelEmoji(otherUser.learning_level)}</span>
@@ -510,6 +552,13 @@ const Chat = () => {
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuItem className="sm:hidden"><Phone className="h-4 w-4 mr-2" />Voice Call</DropdownMenuItem>
                   <DropdownMenuItem className="sm:hidden"><Video className="h-4 w-4 mr-2" />Video Call</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowSafetyTips(true)}>
+                    <Shield className="h-4 w-4 mr-2" />Safety Tips
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setShowUnmatchDialog(true)} className="text-destructive focus:text-destructive">
+                    <UserMinus className="h-4 w-4 mr-2" />Unmatch {otherUser?.name}
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -613,12 +662,18 @@ const Chat = () => {
                       )}>
                         <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
                         {isOwn && message.id.startsWith("failed-") ? (
-                          <button
-                            className="flex items-center gap-1 mt-1 text-sm text-destructive-foreground/80 hover:text-destructive-foreground"
-                            onClick={(e) => { e.stopPropagation(); setNewMessage(message.content); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
-                          >
-                            <span>Failed to send · Tap to retry</span>
-                          </button>
+                          <div className="mt-1 flex items-center justify-end gap-2 text-sm">
+                            <AlertCircle className="h-3.5 w-3.5 text-destructive" />
+                            <span className="text-destructive">Not sent</span>
+                            <button
+                              className="underline hover:no-underline text-destructive"
+                              onClick={(e) => { e.stopPropagation(); setNewMessage(message.content); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
+                            >Retry</button>
+                            <button
+                              className="underline hover:no-underline text-muted-foreground"
+                              onClick={(e) => { e.stopPropagation(); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
+                            >Delete</button>
+                          </div>
                         ) : isOwn && (
                           <div className="flex justify-end items-center gap-1 mt-1">
                             <span className="text-sm opacity-70">{formatTime(message.created_at)}</span>
@@ -662,11 +717,14 @@ const Chat = () => {
                       <div className="w-full h-full flex items-center justify-center text-sm">{otherUser.name?.[0]}</div>
                     )}
                   </div>
-                  <div className="bg-muted px-4 py-3 rounded-2xl rounded-bl-none">
-                    <div className="flex gap-1.5">
-                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" />
-                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.2s" }} />
-                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.4s" }} />
+                  <div className="bg-muted px-4 py-2.5 rounded-2xl rounded-bl-none">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1.5">
+                        <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" />
+                        <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.2s" }} />
+                        <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.4s" }} />
+                      </div>
+                      <span className="text-sm text-muted-foreground">{otherUser.name} is typing</span>
                     </div>
                   </div>
                 </div>
@@ -774,21 +832,82 @@ const Chat = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Block {otherUser?.name}?</AlertDialogTitle>
             <AlertDialogDescription>
-              They won't be able to see your profile or contact you. This can be reversed in Settings.
+              They won't be able to see your profile or contact you. You can unblock them anytime in Settings.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Keep Connection</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => { setShowBlockDialog(false); handleBlock(); }}
             >
-              Block
+              Block {otherUser?.name}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Unmatch confirmation dialog */}
+      <AlertDialog open={showUnmatchDialog} onOpenChange={setShowUnmatchDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unmatch with {otherUser?.name}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This removes the connection and deletes the conversation for both of you. This can't be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Connection</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { setShowUnmatchDialog(false); handleUnmatch(); }}
+            >
+              Unmatch
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Safety Tips bottom sheet */}
+      <Sheet open={showSafetyTips} onOpenChange={setShowSafetyTips}>
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary" />
+              Safety Tips
+            </SheetTitle>
+          </SheetHeader>
+          <div className="py-4 space-y-3 text-sm">
+            <div className="flex items-start gap-3">
+              <span className="text-primary font-bold">•</span>
+              <p>Never share financial information.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-primary font-bold">•</span>
+              <p>Meet in public places for first dates.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-primary font-bold">•</span>
+              <p>Tell a friend where you're going.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-primary font-bold">•</span>
+              <p>Trust your instincts — if something feels off, it probably is.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-primary font-bold">•</span>
+              <p>Report anyone who makes you uncomfortable.</p>
+            </div>
+            <Button
+              variant="outline"
+              className="w-full mt-4"
+              onClick={() => { setShowSafetyTips(false); navigate("/community-guidelines"); }}
+            >
+              Read our full Safety Policy
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
       {/* Compatibility Breakdown Sheet */}
       <Sheet open={showCompatibility} onOpenChange={setShowCompatibility}>
         <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
