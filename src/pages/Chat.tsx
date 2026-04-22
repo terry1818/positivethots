@@ -662,12 +662,18 @@ const Chat = () => {
                       )}>
                         <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
                         {isOwn && message.id.startsWith("failed-") ? (
-                          <button
-                            className="flex items-center gap-1 mt-1 text-sm text-destructive-foreground/80 hover:text-destructive-foreground"
-                            onClick={(e) => { e.stopPropagation(); setNewMessage(message.content); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
-                          >
-                            <span>Failed to send · Tap to retry</span>
-                          </button>
+                          <div className="mt-1 flex items-center justify-end gap-2 text-sm">
+                            <AlertCircle className="h-3.5 w-3.5 text-destructive" />
+                            <span className="text-destructive">Not sent</span>
+                            <button
+                              className="underline hover:no-underline text-destructive"
+                              onClick={(e) => { e.stopPropagation(); setNewMessage(message.content); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
+                            >Retry</button>
+                            <button
+                              className="underline hover:no-underline text-muted-foreground"
+                              onClick={(e) => { e.stopPropagation(); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
+                            >Delete</button>
+                          </div>
                         ) : isOwn && (
                           <div className="flex justify-end items-center gap-1 mt-1">
                             <span className="text-sm opacity-70">{formatTime(message.created_at)}</span>
@@ -711,11 +717,14 @@ const Chat = () => {
                       <div className="w-full h-full flex items-center justify-center text-sm">{otherUser.name?.[0]}</div>
                     )}
                   </div>
-                  <div className="bg-muted px-4 py-3 rounded-2xl rounded-bl-none">
-                    <div className="flex gap-1.5">
-                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" />
-                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.2s" }} />
-                      <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.4s" }} />
+                  <div className="bg-muted px-4 py-2.5 rounded-2xl rounded-bl-none">
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1.5">
+                        <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" />
+                        <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.2s" }} />
+                        <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.4s" }} />
+                      </div>
+                      <span className="text-sm text-muted-foreground">{otherUser.name} is typing</span>
                     </div>
                   </div>
                 </div>
@@ -823,21 +832,82 @@ const Chat = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Block {otherUser?.name}?</AlertDialogTitle>
             <AlertDialogDescription>
-              They won't be able to see your profile or contact you. This can be reversed in Settings.
+              They won't be able to see your profile or contact you. You can unblock them anytime in Settings.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Keep Connection</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => { setShowBlockDialog(false); handleBlock(); }}
             >
-              Block
+              Block {otherUser?.name}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Unmatch confirmation dialog */}
+      <AlertDialog open={showUnmatchDialog} onOpenChange={setShowUnmatchDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unmatch with {otherUser?.name}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This removes the connection and deletes the conversation for both of you. This can't be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Connection</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { setShowUnmatchDialog(false); handleUnmatch(); }}
+            >
+              Unmatch
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Safety Tips bottom sheet */}
+      <Sheet open={showSafetyTips} onOpenChange={setShowSafetyTips}>
+        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary" />
+              Safety Tips
+            </SheetTitle>
+          </SheetHeader>
+          <div className="py-4 space-y-3 text-sm">
+            <div className="flex items-start gap-3">
+              <span className="text-primary font-bold">•</span>
+              <p>Never share financial information.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-primary font-bold">•</span>
+              <p>Meet in public places for first dates.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-primary font-bold">•</span>
+              <p>Tell a friend where you're going.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-primary font-bold">•</span>
+              <p>Trust your instincts — if something feels off, it probably is.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <span className="text-primary font-bold">•</span>
+              <p>Report anyone who makes you uncomfortable.</p>
+            </div>
+            <Button
+              variant="outline"
+              className="w-full mt-4"
+              onClick={() => { setShowSafetyTips(false); navigate("/community-guidelines"); }}
+            >
+              Read our full Safety Policy
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
       {/* Compatibility Breakdown Sheet */}
       <Sheet open={showCompatibility} onOpenChange={setShowCompatibility}>
         <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
