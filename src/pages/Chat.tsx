@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   Send, ArrowLeft, Phone, Video, MoreVertical,
-  Image as ImageIcon, Mic, Smile, Gift, Shield, Flag, UserX, Clock, Check, CheckCheck, MessageCircle, Heart
+  Image as ImageIcon, Mic, Smile, Gift, Shield, Flag, UserX, Clock, Check, CheckCheck, MessageCircle, Heart, BadgeCheck, AlertCircle, UserMinus
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -252,8 +252,8 @@ const Chat = () => {
       const rl = rlResult as any;
       if (rl?.limited) {
         const mins = rl.minutes_remaining || 1;
-        toast.error(`You've reached your message limit for this match`, {
-          description: `Try again in ${mins} minute${mins === 1 ? '' : 's'}. 💬`,
+        toast.warning("You're messaging faster than usual", {
+          description: `Take a breath — your messages will resume in ${mins} minute${mins === 1 ? '' : 's'}.`,
           duration: 6000,
         });
         return;
@@ -296,7 +296,7 @@ const Chat = () => {
       if (modError) {
         const errorBody = typeof modError === 'object' && modError !== null ? (modError as any) : {};
         if (errorBody.status === 429 || (typeof modError === 'string' && modError.includes('429'))) {
-          toast.error("Slow down — you're sending too quickly.");
+          toast.warning("Take a breath — you're sending too quickly.");
           setMessages(prev => prev.filter(m => m.id !== optimisticId));
           setNewMessage(messageContent);
           return;
@@ -306,7 +306,7 @@ const Chat = () => {
       }
 
       if (modResult?.error && modResult.error.includes("Sending too fast")) {
-        toast.error("Slow down — you're sending too quickly.");
+        toast.warning("Take a breath — you're sending too quickly.");
         setMessages(prev => prev.filter(m => m.id !== optimisticId));
         setNewMessage(messageContent);
         return;
@@ -333,7 +333,7 @@ const Chat = () => {
       // Mark as failed — keep the bubble but show error state
       console.error("Error sending message:", error);
       setMessages(prev => prev.map(m => m.id === optimisticId ? { ...m, id: `failed-${Date.now()}`, delivered: false, read: false } : m));
-      toast.error("Failed to send message", { description: "Tap message to retry" });
+      toast.error("Message didn't send", { description: "Tap the message to retry or delete." });
     } else {
       // Replace optimistic message with real one
       setMessages(prev => prev.map(m => m.id === optimisticId ? { ...insertedMsg, delivered: true, read: false } : m));
@@ -404,16 +404,48 @@ const Chat = () => {
 
   const handleBlock = async () => {
     if (!currentUser || !otherUser) return;
+    let undone = false;
     try {
       const { error } = await supabase.from("blocked_users").insert({
         blocker_id: currentUser.id,
         blocked_id: otherUser.id,
       });
       if (error && !error.message.includes("duplicate")) throw error;
-      toast.success("User Blocked", { description: "You won't see this user anymore." });
-      navigate("/messages");
+      toast.success(`You've blocked ${otherUser.name}`, {
+        description: "You won't see each other's profiles or messages anymore.",
+        duration: 10000,
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            undone = true;
+            await supabase.from("blocked_users")
+              .delete()
+              .eq("blocker_id", currentUser.id)
+              .eq("blocked_id", otherUser.id);
+            toast.info(`Unblocked ${otherUser.name}`);
+          },
+        },
+      });
+      setTimeout(() => { if (!undone) navigate("/messages"); }, 1200);
     } catch (err: any) {
       toast.error("Something went wrong. Please try again.");
+    }
+  };
+
+  const [showUnmatchDialog, setShowUnmatchDialog] = useState(false);
+  const [showSafetyTips, setShowSafetyTips] = useState(false);
+
+  const handleUnmatch = async () => {
+    if (!currentUser || !otherUser || !matchId) return;
+    try {
+      // Delete messages and the match itself; partners are removed for both sides
+      await supabase.from("messages").delete().eq("match_id", matchId);
+      const { error } = await supabase.from("matches").delete().eq("id", matchId);
+      if (error) throw error;
+      toast.success(`You've unmatched with ${otherUser.name}.`);
+      navigate("/messages");
+    } catch (err: any) {
+      toast.error("Couldn't unmatch right now. Please try again.");
     }
   };
 
