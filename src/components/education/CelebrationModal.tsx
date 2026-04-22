@@ -236,12 +236,26 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, badgeSlug, b
               )}
             </>
           )}
-          {type === "badge_earned" && (
+          {type === "badge_earned" && !isFoundationComplete && (
             <>
               <Zap className="h-16 w-16 mx-auto text-success mb-4 animate-bounce" />
-              <h2 className="text-2xl font-bold mb-2">Badge Earned! 🏅</h2>
+              <h2 className="text-2xl font-bold mb-2">
+                Badge Earned: {badgeTitle} 💜
+              </h2>
               <p className="text-muted-foreground">
-                You completed <span className="font-bold text-foreground">{badgeTitle}</span>!
+                {getBadgeBody(badgeSlug, badgeTitle)}
+              </p>
+            </>
+          )}
+          {type === "badge_earned" && isFoundationComplete && (
+            <>
+              <div className="relative mx-auto w-20 h-20 mb-4">
+                <Star className="h-16 w-16 mx-auto text-accent animate-bounce" />
+                <div className="absolute inset-0 rounded-full animate-ripple-complete bg-accent/30" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Foundation Complete! 🎉</h2>
+              <p className="text-muted-foreground">
+                Discovery is now unlocked. Start connecting with people who've done the work too.
               </p>
             </>
           )}
@@ -304,9 +318,22 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, badgeSlug, b
               <Share2 className="h-4 w-4" /> Share Badge Card
             </Button>
           )}
-          <Button onClick={onClose} className="mt-2 w-full">
-            Continue
-          </Button>
+          {type === "badge_earned" && isFoundationComplete ? (
+            <Button
+              onClick={() => { onClose(); navigate("/"); }}
+              className="mt-2 w-full"
+            >
+              Go to Discovery
+            </Button>
+          ) : type === "badge_earned" ? (
+            <Button onClick={onClose} className="mt-2 w-full">
+              Continue Learning
+            </Button>
+          ) : (
+            <Button onClick={onClose} className="mt-2 w-full">
+              Continue
+            </Button>
+          )}
         </div>
       </DialogContent>
 
