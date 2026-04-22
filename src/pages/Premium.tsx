@@ -69,12 +69,35 @@ const Premium = () => {
     }
   }, []);
 
-  // Show success toast if redirected after redemption
+  const [showCanceledNotice, setShowCanceledNotice] = useState(false);
+  const [showFailedNotice, setShowFailedNotice] = useState(false);
+
+  // Show success toast if redirected after redemption / handle return from Stripe
   useEffect(() => {
     if (searchParams.get("redeemed") === "true") {
       toast.success("Your trial has started! Welcome aboard 🎉");
     }
+    if (searchParams.get("canceled") === "true") {
+      setShowCanceledNotice(true);
+    }
+    if (searchParams.get("failed") === "true") {
+      setShowFailedNotice(true);
+    }
   }, [searchParams]);
+
+  // Tier-specific feature highlights for the welcome card after success
+  const TIER_HIGHLIGHTS: Record<string, string[]> = {
+    plus: ["See who liked you", "Send 5 Thots per day", "Advanced discovery filters"],
+    premium: ["Everything in Plus", "Priority visibility in Discovery", "Advanced compatibility filters"],
+    vip: ["Everything in Premium", "Unlimited Thots", "1 free Profile Boost per month"],
+  };
+
+  // Short descriptors for each tier card
+  const TIER_DESCRIPTORS: Record<string, string> = {
+    plus: "See who likes you",
+    premium: "The full experience",
+    vip: "Go all in",
+  };
 
   const handleSubscribe = async (priceId: string) => {
     setLoading(priceId);
@@ -158,21 +181,46 @@ const Premium = () => {
   if (isPremium) {
     const currentConfig = MONTHLY_TIERS.find((t) => t.tier === currentTier);
     const TierIcon = tierIcons[currentTier as keyof typeof tierIcons] ?? Crown;
+    const justSubscribed = searchParams.get("success") === "true";
+    const highlights = TIER_HIGHLIGHTS[currentTier as keyof typeof TIER_HIGHLIGHTS] ?? [];
 
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative overflow-hidden">
         <div className={cn("absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl", !reducedMotion && "animate-blob-float")} aria-hidden="true" />
         <div className={cn("absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl", !reducedMotion && "animate-blob-float [animation-delay:5s]")} aria-hidden="true" />
-        <div className={cn("relative z-10 text-center", !reducedMotion && "animate-bounce-in")}>
+        <div className={cn("relative z-10 text-center max-w-md", !reducedMotion && "animate-bounce-in")}>
           <TierIcon className={cn("h-16 w-16 text-primary mb-4 mx-auto", !reducedMotion && "animate-pulse-glow")} />
-          <h1 className="text-2xl font-bold mb-2">You're {currentConfig?.name ?? "Premium"}!</h1>
-          <p className="text-muted-foreground mb-6">You have full access to your plan's features.</p>
-          <div className="flex gap-3">
-            <Button onClick={() => navigate("/likes")}>View Your Likes</Button>
-            <Button variant="outline" onClick={() => navigate("/settings")}>
-              Manage Plan
-            </Button>
-          </div>
+          {justSubscribed ? (
+            <>
+              <h1 className="text-2xl font-bold mb-2">Welcome to {currentConfig?.name ?? "Premium"}!</h1>
+              <p className="text-muted-foreground mb-4">Your subscription is active. Here's what you just unlocked:</p>
+              {highlights.length > 0 && (
+                <ul className="text-left space-y-2 mb-6 mx-auto inline-block">
+                  {highlights.map((h) => (
+                    <li key={h} className="flex items-start gap-2">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="flex gap-3 justify-center flex-wrap">
+                <Button onClick={() => navigate("/")}>Explore Your New Features</Button>
+                <Button variant="outline" onClick={() => navigate("/settings")}>Manage Plan</Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h1 className="text-2xl font-bold mb-2">You're {currentConfig?.name ?? "Premium"}!</h1>
+              <p className="text-muted-foreground mb-6">You have full access to your plan's features.</p>
+              <div className="flex gap-3 justify-center">
+                <Button onClick={() => navigate("/likes")}>View Your Likes</Button>
+                <Button variant="outline" onClick={() => navigate("/settings")}>
+                  Manage Plan
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     );
@@ -198,8 +246,48 @@ const Premium = () => {
             <Crown className={cn("h-8 w-8 text-primary", !reducedMotion && "animate-wiggle")} />
           </div>
           <h1 className="text-3xl font-bold mb-2">Choose Your Plan</h1>
-          <p className="text-muted-foreground">Unlock the full experience</p>
+          <p className="text-muted-foreground">Every plan unlocks better connections.</p>
         </div>
+
+        {/* Payment failed banner */}
+        {showFailedNotice && (
+          <Card className="mb-6 border-destructive/40 bg-destructive/5 animate-fade-in">
+            <CardContent className="pt-6">
+              <h2 className="font-bold text-base mb-1">Payment didn't go through</h2>
+              <p className="text-sm text-muted-foreground mb-3">
+                Your card was declined. This usually means the card expired or has insufficient funds.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" onClick={() => setShowFailedNotice(false)}>
+                  Try Another Payment Method
+                </Button>
+                <Button size="sm" variant="link" asChild>
+                  <a href="mailto:billing@positivethots.com">Contact Support</a>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Subscription canceled banner */}
+        {showCanceledNotice && (
+          <Card className="mb-6 border-primary/30 bg-primary/5 animate-fade-in">
+            <CardContent className="pt-6">
+              <h2 className="font-bold text-base mb-1">We're sorry to see you go</h2>
+              <p className="text-sm text-muted-foreground mb-3">
+                Your features stay active until the end of your billing period. You can resubscribe anytime.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" onClick={() => setShowCanceledNotice(false)}>
+                  Resubscribe
+                </Button>
+                <Button size="sm" variant="link" onClick={() => navigate("/")}>
+                  Continue with Free
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Promo Code Section */}
         <Card className="mb-6 animate-fade-in border-dashed border-primary/30">
@@ -231,24 +319,26 @@ const Premium = () => {
         </Card>
 
         {/* Billing Period Toggle */}
-        <div className="flex items-center justify-center gap-1 mb-6 animate-fade-in">
-          <Button
-            variant={billingPeriod === "monthly" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setBillingPeriod("monthly")}
-            className="rounded-r-none"
-          >
-            Monthly
-          </Button>
-          <Button
-            variant={billingPeriod === "annual" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setBillingPeriod("annual")}
-            className="rounded-l-none"
-          >
-            Annual
-            <Badge className="ml-1.5 bg-accent text-accent-foreground text-sm px-1.5 py-0">Save 20%</Badge>
-          </Button>
+        <div className="flex flex-col items-center gap-2 mb-6 animate-fade-in">
+          <div className="flex items-center justify-center gap-1">
+            <Button
+              variant={billingPeriod === "monthly" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setBillingPeriod("monthly")}
+              className="rounded-r-none"
+            >
+              Monthly
+            </Button>
+            <Button
+              variant={billingPeriod === "annual" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setBillingPeriod("annual")}
+              className="rounded-l-none"
+            >
+              Annual
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground">Save 20% with annual billing</p>
         </div>
 
         {/* Free Tier */}
@@ -258,6 +348,7 @@ const Premium = () => {
               <Heart className="h-6 w-6 text-muted-foreground" />
             </div>
             <CardTitle className="text-lg">Free</CardTitle>
+            <p className="text-sm text-muted-foreground">Learn the basics</p>
             <div className="mt-2">
               <span className="text-3xl font-bold">$0</span>
               <span className="text-muted-foreground text-sm">/forever</span>
@@ -294,7 +385,7 @@ const Premium = () => {
                 )}
               >
                 {isHighlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-sm font-bold px-3 py-1 rounded-full">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                     Most Popular
                   </div>
                 )}
@@ -308,12 +399,17 @@ const Premium = () => {
                     <Icon className="h-6 w-6 text-primary" />
                   </div>
                   <CardTitle className="text-lg">{config.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    {TIER_DESCRIPTORS[config.tier as keyof typeof TIER_DESCRIPTORS]}
+                  </p>
                   <div className="mt-2">
                     {isAnnual ? (
                       <>
-                        <span className="text-3xl font-bold">${config.annualMonthlyEquivalent?.toFixed(2)}</span>
-                        <span className="text-muted-foreground text-sm">/mo</span>
-                        <p className="text-sm text-muted-foreground mt-1">Billed ${config.price}/year</p>
+                        <span className="text-3xl font-bold">${config.price}</span>
+                        <span className="text-muted-foreground text-sm">/year</span>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          (${config.annualMonthlyEquivalent?.toFixed(2)}/mo)
+                        </p>
                       </>
                     ) : (
                       <>
@@ -346,22 +442,26 @@ const Premium = () => {
                       VIP is for members who've completed the full curriculum and want to give back to the community.
                     </p>
                   )}
-                  <ShimmerButton
-                    className={cn(
-                      "w-full",
-                      isHighlighted
-                        ? "bg-gradient-to-r from-primary to-secondary"
-                        : "bg-primary"
-                    )}
-                    onClick={() => handleSubscribe(config.priceId)}
-                    disabled={loading !== null}
-                  >
-                    {loading === config.priceId ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      `Get ${config.name}`
-                    )}
-                  </ShimmerButton>
+                  {currentTier === config.tier ? (
+                    <Badge className="w-full justify-center py-1.5" variant="secondary">Current Plan</Badge>
+                  ) : (
+                    <ShimmerButton
+                      className={cn(
+                        "w-full",
+                        isHighlighted
+                          ? "bg-gradient-to-r from-primary to-secondary"
+                          : "bg-primary"
+                      )}
+                      onClick={() => handleSubscribe(config.priceId)}
+                      disabled={loading !== null}
+                    >
+                      {loading === config.priceId ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        `Start ${config.name}`
+                      )}
+                    </ShimmerButton>
+                  )}
                 </CardContent>
               </Card>
             );
@@ -430,6 +530,14 @@ const Premium = () => {
 
         <p className="text-center text-sm text-muted-foreground mt-6">
           Cancel anytime · {billingPeriod === "annual" ? "Billed annually" : "Billed monthly"} · Secure checkout via Stripe
+        </p>
+
+        <p className="text-xs text-muted-foreground text-center mt-4 max-w-2xl mx-auto leading-relaxed">
+          Subscriptions auto-renew at the end of each billing period unless canceled at least 24 hours before the renewal date. You can manage or cancel your subscription in your account settings. See our{" "}
+          <button onClick={() => navigate("/terms")} className="underline hover:text-foreground">
+            Terms of Service
+          </button>{" "}
+          for full details.
         </p>
       </div>
     </div>

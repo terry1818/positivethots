@@ -132,7 +132,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (searchParams.get("boost") === "success") {
-      toast.success("Profile Boosted! 🚀", { description: "You'll appear at the top of discovery for 24 hours." });
+      toast.success("Your profile is boosted!", { description: "Extra visibility for the next 30 minutes." });
       checkActiveBoost();
     }
   }, [searchParams]);
@@ -199,7 +199,7 @@ const Profile = () => {
           }
         } else {
           setHasActiveBoost(true);
-          toast.success("Profile Boosted! 🚀", { description: "You'll appear at the top of discovery for 24 hours." });
+          toast.success("Your profile is boosted!", { description: "Extra visibility for the next 30 minutes." });
           setBoostLoading(false);
           return;
         }
@@ -575,7 +575,7 @@ const Profile = () => {
                     ? "Your profile is currently boosted! 🔥"
                     : hasFeature("profile_boost")
                       ? "1 free boost/month with VIP"
-                      : "Get to the top of discovery — $2.99"}
+                      : "Get 30 minutes of priority visibility in Discovery — $2.99"}
                 </p>
               </div>
               <Button
@@ -583,7 +583,7 @@ const Profile = () => {
                 disabled={hasActiveBoost || boostLoading}
                 onClick={handleBoostProfile}
               >
-                {boostLoading ? "..." : hasActiveBoost ? "Active" : "Boost"}
+                {boostLoading ? "..." : hasActiveBoost ? "Active" : "Boost My Profile"}
               </Button>
             </div>
           </CardContent>
