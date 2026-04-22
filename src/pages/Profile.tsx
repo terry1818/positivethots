@@ -575,7 +575,7 @@ const Profile = () => {
                     ? "Your profile is currently boosted! 🔥"
                     : hasFeature("profile_boost")
                       ? "1 free boost/month with VIP"
-                      : "Get to the top of discovery — $2.99"}
+                      : "Get 30 minutes of priority visibility in Discovery — $2.99"}
                 </p>
               </div>
               <Button
@@ -583,7 +583,7 @@ const Profile = () => {
                 disabled={hasActiveBoost || boostLoading}
                 onClick={handleBoostProfile}
               >
-                {boostLoading ? "..." : hasActiveBoost ? "Active" : "Boost"}
+                {boostLoading ? "..." : hasActiveBoost ? "Active" : "Boost My Profile"}
               </Button>
             </div>
           </CardContent>
