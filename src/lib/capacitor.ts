@@ -120,6 +120,20 @@ function base64ToBlob(base64: string, format: string): Blob {
 
 /**
  * Register for push notifications on native platforms.
+ *
+ * IMPORTANT: Show the in-app explainer dialog BEFORE calling this function so
+ * users understand what notifications they'll receive AND that lock-screen
+ * previews are hidden by default for privacy. The OS-level prompt that
+ * `requestPermissions()` triggers is yes/no with no room for context.
+ *
+ * Recommended pre-prompt copy:
+ *   Title: "Stay in the loop"
+ *   Body:  "Positive Thots can send you notifications for new matches,
+ *           messages, and learning reminders. For your privacy, notification
+ *           previews are hidden on your lock screen by default. You can
+ *           change this in Settings."
+ *   Buttons: "Allow Notifications" / "Not Now"
+ *
  * Stores the device token in the database for the current user.
  * Returns the device token or null.
  */
