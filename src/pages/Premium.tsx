@@ -545,9 +545,3 @@ const Premium = () => {
 };
 
 export default Premium;
-      </div>
-    </div>
-  );
-};
-
-export default Premium;
