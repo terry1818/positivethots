@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,9 @@ interface CelebrationModalProps {
   level?: number;
   streak?: number;
   badgeTitle?: string;
+  badgeSlug?: string;
+  badgeTier?: string | null;
+  isFoundationComplete?: boolean;
   tierName?: string;
   onClose: () => void;
 }
@@ -56,7 +60,26 @@ const BRAND_COLORS = [
 ];
 
 
-export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, onClose }: CelebrationModalProps) => {
+// Per-badge body copy keyed by slug fragments. Falls back to a generic
+// advanced-badge message if no specific match is found.
+const badgeBodyByKeyword: Array<{ match: RegExp; body: string }> = [
+  { match: /consent/i, body: "You now understand the building blocks of enthusiastic consent. That's a big deal." },
+  { match: /communication/i, body: "Better conversations start here. You've got the tools." },
+  { match: /(sexual[-_ ]?health|sti|safer[-_ ]?sex)/i, body: "Knowledge is power — and safety." },
+  { match: /desire/i, body: "Understanding desire is the first step to expressing it." },
+  { match: /(emotional[-_ ]?intelligence|eq)/i, body: "You've just leveled up the most important relationship skill there is." },
+];
+
+const getBadgeBody = (slug?: string, title?: string): string => {
+  const haystack = `${slug || ""} ${title || ""}`;
+  for (const entry of badgeBodyByKeyword) {
+    if (entry.match.test(haystack)) return entry.body;
+  }
+  return "Another badge earned. You're becoming a relationship expert.";
+};
+
+export const CelebrationModal = ({ type, level, streak, badgeTitle, badgeSlug, badgeTier, isFoundationComplete, tierName, onClose }: CelebrationModalProps) => {
+  const navigate = useNavigate();
   const prefersReducedMotion = useReducedMotion();
   const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string; size: number; shape: string }>>([]);
   const [copied, setCopied] = useState(false);
@@ -213,12 +236,26 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
               )}
             </>
           )}
-          {type === "badge_earned" && (
+          {type === "badge_earned" && !isFoundationComplete && (
             <>
               <Zap className="h-16 w-16 mx-auto text-success mb-4 animate-bounce" />
-              <h2 className="text-2xl font-bold mb-2">Badge Earned! 🏅</h2>
+              <h2 className="text-2xl font-bold mb-2">
+                Badge Earned: {badgeTitle} 💜
+              </h2>
               <p className="text-muted-foreground">
-                You completed <span className="font-bold text-foreground">{badgeTitle}</span>!
+                {getBadgeBody(badgeSlug, badgeTitle)}
+              </p>
+            </>
+          )}
+          {type === "badge_earned" && isFoundationComplete && (
+            <>
+              <div className="relative mx-auto w-20 h-20 mb-4">
+                <Star className="h-16 w-16 mx-auto text-accent animate-bounce" />
+                <div className="absolute inset-0 rounded-full animate-ripple-complete bg-accent/30" />
+              </div>
+              <h2 className="text-2xl font-bold mb-2">Foundation Complete! 🎉</h2>
+              <p className="text-muted-foreground">
+                Discovery is now unlocked. Start connecting with people who've done the work too.
               </p>
             </>
           )}
@@ -281,9 +318,22 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
               <Share2 className="h-4 w-4" /> Share Badge Card
             </Button>
           )}
-          <Button onClick={onClose} className="mt-2 w-full">
-            Continue
-          </Button>
+          {type === "badge_earned" && isFoundationComplete ? (
+            <Button
+              onClick={() => { onClose(); navigate("/"); }}
+              className="mt-2 w-full"
+            >
+              Go to Discovery
+            </Button>
+          ) : type === "badge_earned" ? (
+            <Button onClick={onClose} className="mt-2 w-full">
+              Continue Learning
+            </Button>
+          ) : (
+            <Button onClick={onClose} className="mt-2 w-full">
+              Continue
+            </Button>
+          )}
         </div>
       </DialogContent>
 

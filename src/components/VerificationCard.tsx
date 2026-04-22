@@ -51,9 +51,9 @@ export const VerificationCard = ({
       });
 
       if (result?.verified) {
-        toast.success("You're verified! 🎉");
+        toast.success("Verified! Your profile now shows a checkmark.");
       } else {
-        toast.error(result?.reason || "Verification could not be confirmed. Please try again with a clear, well-lit selfie.");
+        toast.error("We couldn't verify your photo. Try again in good lighting with your face clearly visible.");
       }
       onVerificationChange();
     } catch (err) {
@@ -99,29 +99,49 @@ export const VerificationCard = ({
       <CardHeader className="pb-3">
         <CardTitle className="text-lg flex items-center gap-2">
           <ShieldCheck className="h-5 w-5" />
-          Get Verified
+          Verify Your Photos
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         <p className="text-sm text-muted-foreground">
-          Take a selfie to verify your identity. We compare it with your profile photos to confirm you're real — not a catfish. Verified users get a trust badge on their profile.
+          Take a quick selfie to prove your photos are really you. Verified profiles get a checkmark badge.
         </p>
 
         {latestRequest?.status === "pending" && (
-          <Badge variant="secondary" className="gap-1">
-            <Loader2 className="h-3 w-3 animate-spin" />
-            Verification in progress...
-          </Badge>
+          <div className="space-y-1">
+            <Badge variant="secondary" className="gap-1">
+              <Loader2 className="h-3 w-3 animate-spin" />
+              Verification in progress
+            </Badge>
+            <p className="text-xs text-muted-foreground">Usually takes under an hour.</p>
+          </div>
         )}
 
         {latestRequest?.status === "rejected" && (
-          <div className="text-sm text-destructive bg-destructive/10 rounded-lg p-3">
-            <p className="font-medium mb-1">Previous attempt unsuccessful</p>
+          <div className="text-sm text-destructive bg-destructive/10 rounded-lg p-3 space-y-2">
             <p className="text-sm">
-              {latestRequest.reason || "Please try again with a clear, well-lit selfie that matches your profile photos."}
+              We couldn't verify your photo. Try again in good lighting with your face clearly visible.
             </p>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={submitting}
+            >
+              Try Again
+            </Button>
           </div>
         )}
+
+        {/* Privacy disclosure — required for biometric data compliance (BIPA) */}
+        <div className="text-xs text-muted-foreground bg-muted/40 rounded-lg p-3 border border-border/50">
+          <p className="flex items-start gap-2">
+            <ShieldCheck className="h-3.5 w-3.5 mt-0.5 shrink-0 text-muted-foreground" />
+            <span>
+              Your verification selfie is stored securely and deleted within 7 days. It's only used to confirm your identity — never shared or shown on your profile.
+            </span>
+          </p>
+        </div>
 
         {/* Hidden file input — capture="user" opens front camera on mobile */}
         <input
@@ -135,7 +155,7 @@ export const VerificationCard = ({
 
         <Button
           onClick={() => fileInputRef.current?.click()}
-          disabled={submitting}
+          disabled={submitting || latestRequest?.status === "pending"}
           variant="outline"
           className="w-full"
         >
@@ -147,14 +167,10 @@ export const VerificationCard = ({
           ) : (
             <>
               <Camera className="h-4 w-4 mr-2" />
-              Take Verification Selfie
+              Verify Your Photos
             </>
           )}
         </Button>
-
-        <p className="text-sm text-muted-foreground text-center">
-          Your selfie is only used for verification and is never shown publicly.
-        </p>
       </CardContent>
     </Card>
   );

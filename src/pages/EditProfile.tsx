@@ -22,6 +22,7 @@ import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { DesireTagSelector } from "@/components/profile-edit/DesireTagSelector";
 import { ChapterEditor } from "@/components/chapters/ChapterEditor";
 import { AstrologySetup } from "@/components/astrology/AstrologySetup";
+import { UnsavedChangesPrompt } from "@/components/profile-edit/UnsavedChangesPrompt";
 
 interface PromptRow {
   id?: string;
@@ -491,11 +492,18 @@ const EditProfile = () => {
               disabled={saving}
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-              {saving ? "Saving..." : "Save changes"}
+              {saving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </div>
       )}
+
+      {/* Unsaved changes confirm dialog */}
+      <UnsavedChangesPrompt
+        hasChanges={hasChanges}
+        saving={saving}
+        onSave={handleSave}
+      />
     </div>
   );
 };
