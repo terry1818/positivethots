@@ -199,7 +199,7 @@ const Profile = () => {
           }
         } else {
           setHasActiveBoost(true);
-          toast.success("Profile Boosted! 🚀", { description: "You'll appear at the top of discovery for 24 hours." });
+          toast.success("Your profile is boosted!", { description: "Extra visibility for the next 30 minutes." });
           setBoostLoading(false);
           return;
         }
