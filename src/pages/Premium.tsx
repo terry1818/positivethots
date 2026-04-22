@@ -319,24 +319,26 @@ const Premium = () => {
         </Card>
 
         {/* Billing Period Toggle */}
-        <div className="flex items-center justify-center gap-1 mb-6 animate-fade-in">
-          <Button
-            variant={billingPeriod === "monthly" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setBillingPeriod("monthly")}
-            className="rounded-r-none"
-          >
-            Monthly
-          </Button>
-          <Button
-            variant={billingPeriod === "annual" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setBillingPeriod("annual")}
-            className="rounded-l-none"
-          >
-            Annual
-            <Badge className="ml-1.5 bg-accent text-accent-foreground text-sm px-1.5 py-0">Save 20%</Badge>
-          </Button>
+        <div className="flex flex-col items-center gap-2 mb-6 animate-fade-in">
+          <div className="flex items-center justify-center gap-1">
+            <Button
+              variant={billingPeriod === "monthly" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setBillingPeriod("monthly")}
+              className="rounded-r-none"
+            >
+              Monthly
+            </Button>
+            <Button
+              variant={billingPeriod === "annual" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setBillingPeriod("annual")}
+              className="rounded-l-none"
+            >
+              Annual
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground">Save 20% with annual billing</p>
         </div>
 
         {/* Free Tier */}
