@@ -8,7 +8,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
-import { ChevronRight, ChevronLeft, SkipForward, Check, Sparkles, ArrowRight } from "lucide-react";
+import { ChevronRight, ChevronLeft, SkipForward, Check, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
+
+// Small inline consent notice for sensitive-data steps (CCPA/GDPR transparency)
+const ConsentNotice = ({ children }: { children: React.ReactNode }) => (
+  <div className="flex items-start gap-2 mt-3 px-3 py-2 rounded-lg bg-muted/40 border border-border/50">
+    <ShieldCheck className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
+    <p className="text-xs text-muted-foreground leading-relaxed">{children}</p>
+  </div>
+);
 import { toast } from "sonner";
 import { StepTransition } from "@/components/onboarding/StepTransition";
 import { ChipSelector } from "@/components/onboarding/ChipSelector";
