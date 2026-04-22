@@ -133,7 +133,7 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
     try {
       await navigator.clipboard.writeText(getShareText());
       setCopied(true);
-      toast({ title: "Copied!", description: "Achievement text copied to clipboard." });
+      toast({ title: "Copied!", description: "Badge text copied to clipboard." });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({ title: "Copy failed", variant: "destructive" });
@@ -252,7 +252,7 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
               {/* Share section */}
               <div className="mt-5 pt-4 border-t border-border">
                 <p className="text-sm text-muted-foreground mb-3 flex items-center justify-center gap-1">
-                  <Share2 className="h-3 w-3" /> Share your achievement
+                  <Share2 className="h-3 w-3" /> Share your badge
                 </p>
                 <div className="flex justify-center gap-2">
                   <Button variant="outline" size="sm" onClick={handleShareTwitter} className="text-sm gap-1.5">
@@ -278,7 +278,7 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, on
               onClick={() => setShareOpen(true)}
               className="mt-4 w-full gap-2 border-primary/30 text-primary hover:bg-primary/10"
             >
-              <Share2 className="h-4 w-4" /> Share Achievement Card
+              <Share2 className="h-4 w-4" /> Share Badge Card
             </Button>
           )}
           <Button onClick={onClose} className="mt-2 w-full">
