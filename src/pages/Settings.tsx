@@ -97,6 +97,12 @@ const PreferencesCard = () => {
         <div className="border-t border-border pt-4 space-y-3">
           <h3 className="text-sm font-semibold">Notifications</h3>
           <div className="space-y-3">
+            <NotificationToggle
+              label="Show notification previews"
+              description="When off, notification previews are hidden on your lock screen for privacy. You'll still receive notifications."
+              prefKey="pt_notify_show_previews"
+              defaultOn={false}
+            />
             <NotificationToggle label="New Matches" description="When someone you Connected with says yes" prefKey="pt_notify_matches" />
             <NotificationToggle label="New Messages" description="When you receive a chat message" prefKey="pt_notify_messages" />
             <NotificationToggle label="Streak Reminders" description="Before your learning streak expires" prefKey="pt_notify_streaks" />
