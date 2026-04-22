@@ -8,7 +8,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
-import { ChevronRight, ChevronLeft, SkipForward, Check, Sparkles, ArrowRight } from "lucide-react";
+import { ChevronRight, ChevronLeft, SkipForward, Check, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
+
+// Small inline consent notice for sensitive-data steps (CCPA/GDPR transparency)
+const ConsentNotice = ({ children }: { children: React.ReactNode }) => (
+  <div className="flex items-start gap-2 mt-3 px-3 py-2 rounded-lg bg-muted/40 border border-border/50">
+    <ShieldCheck className="h-3.5 w-3.5 text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
+    <p className="text-xs text-muted-foreground leading-relaxed">{children}</p>
+  </div>
+);
 import { toast } from "sonner";
 import { StepTransition } from "@/components/onboarding/StepTransition";
 import { ChipSelector } from "@/components/onboarding/ChipSelector";
@@ -645,7 +653,7 @@ const Onboarding = () => {
               {/* Step 3: Gender */}
               {step === 3 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="🌈" title="How do you identify?" subtitle="Select what fits you best · Required" />
+                  <StepHeader emoji="🌈" title="How do you identify?" subtitle="Choose as many as feel right. This helps us personalize your experience." />
                   <div className="animate-stagger-2">
                     <ChipSelector
                       options={GENDER_OPTIONS}
@@ -655,13 +663,16 @@ const Onboarding = () => {
                       columns={2}
                     />
                   </div>
+                  <ConsentNotice>
+                    We use this to personalize your experience and help find compatible connections. Only shown to people you connect with. You can change or remove this anytime in Settings.
+                  </ConsentNotice>
                 </div>
               )}
 
               {/* Step 4: Pronouns */}
               {step === 4 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="💬" title="Your pronouns" subtitle="Displayed on your profile · Required" />
+                  <StepHeader emoji="💬" title="What are your pronouns?" subtitle="We'll use these on your profile so people know how to refer to you." />
                   <div className="flex flex-wrap gap-2 animate-stagger-2">
                     {PRONOUN_PRESETS.map(p => (
                       <button
@@ -693,7 +704,7 @@ const Onboarding = () => {
               {/* Step 5: Photo Upload (moved earlier) */}
               {step === 5 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="📸" title="Add a photo" subtitle="At least 1 photo required · Required" />
+                  <StepHeader emoji="📸" title="Add your first photo" subtitle="At least one photo is required. Show your face clearly — no sunglasses, no group shots." />
                   {userId && (
                     <div className="animate-stagger-1">
                       <PhotoUploadGrid
@@ -704,7 +715,7 @@ const Onboarding = () => {
                     </div>
                   )}
                   {photos.length === 0 && (
-                    <p className="text-sm text-destructive text-center">Upload at least 1 photo to continue</p>
+                    <p className="text-sm text-destructive text-center">We need at least one photo to create your profile. This helps people know who they're connecting with.</p>
                   )}
                 </div>
               )}
@@ -712,7 +723,7 @@ const Onboarding = () => {
               {/* Step 6: Sexuality */}
               {step === 6 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="🔥" title="Your sexuality" subtitle="This is shown on your profile · Optional" />
+                  <StepHeader emoji="🔥" title="How do you describe your sexuality?" subtitle="Select all that apply. Only shown to people you choose." />
                   <div className="animate-stagger-2">
                     <ChipSelector
                       options={SEXUALITY_OPTIONS}
@@ -723,13 +734,16 @@ const Onboarding = () => {
                       popularOptions={["Bisexual", "Pansexual", "Straight", "Queer", "Heteroflexible"]}
                     />
                   </div>
+                  <ConsentNotice>
+                    We ask about your sexuality to help find compatible connections. This information is stored securely and only shared with people you connect with.
+                  </ConsentNotice>
                 </div>
               )}
 
               {/* Step 7: Desires */}
               {step === 7 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="⭐" title="What are you looking for?" subtitle="Select up to 10 — be honest! · Optional" />
+                  <StepHeader emoji="⭐" title="What are you looking for?" subtitle="This helps us understand what kind of connections you're open to." />
                   <div className="flex gap-1 mb-2 animate-stagger-1">
                     <GlossaryTooltip term="ENM" />
                     <GlossaryTooltip term="GGG" />
@@ -745,13 +759,16 @@ const Onboarding = () => {
                     />
                   </div>
                   <p className="text-sm text-muted-foreground text-center">{formData.desires.length}/10 selected</p>
+                  <ConsentNotice>
+                    Your selections help us show you relevant profiles. You can update these anytime in Settings.
+                  </ConsentNotice>
                 </div>
               )}
 
               {/* Step 8: Relationship Style */}
               {step === 8 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="🔗" title="Relationship style" subtitle="How do you approach relationships? · Required" />
+                  <StepHeader emoji="🔗" title="What's your relationship style?" subtitle="There's no wrong answer. This helps people understand where you're coming from." />
                   <div className="flex gap-1 mb-1 animate-stagger-1">
                     <GlossaryTooltip term="Solo Poly" />
                     <GlossaryTooltip term="Relationship Anarchy" />
@@ -781,13 +798,16 @@ const Onboarding = () => {
                       );
                     })}
                   </div>
+                  <ConsentNotice>
+                    This is visible on your profile and used for compatibility matching. You can change it anytime.
+                  </ConsentNotice>
                 </div>
               )}
 
               {/* Step 9: Relationship Status */}
               {step === 9 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="💜" title="Current status" subtitle="Where are you right now? · Required" />
+                  <StepHeader emoji="💜" title="What's your current relationship status?" subtitle="This is visible on your profile." />
                   <div className="flex gap-1 mb-1 animate-stagger-1">
                     <GlossaryTooltip term="Nesting Partner" />
                     <GlossaryTooltip term="Polycule" />
@@ -814,7 +834,7 @@ const Onboarding = () => {
               {/* Step 10: Height, Zodiac, Languages, Birth Info */}
               {step === 10 && (
                 <div className="space-y-6">
-                  <StepHeader emoji="📏" title="A bit more about you" subtitle="All optional — share what you like · Optional" />
+                  <StepHeader emoji="📏" title="How tall are you?" subtitle="Optional — skip if you'd rather not say." />
                   <div className="space-y-2 animate-stagger-1">
                     <Label className="text-sm font-medium">Height</Label>
                     <HeightSlider value={formData.heightCm} onChange={(v) => updateField("heightCm", v)} />
@@ -904,7 +924,7 @@ const Onboarding = () => {
               {/* Step 11: Lifestyle */}
               {step === 11 && (
                 <div className="space-y-5">
-                  <StepHeader emoji="🌿" title="Lifestyle" subtitle="These appear as badges on your profile · Optional" />
+                  <StepHeader emoji="🌿" title="A few things about your lifestyle" subtitle="These show up as quick details on your profile." />
                   {LIFESTYLE_CATEGORIES.map((cat, catIdx) => (
                     <div key={cat.key} className="space-y-1.5" style={{ animationDelay: `${catIdx * 0.05}s` }}>
                       <Label className="text-sm font-medium">{cat.label}</Label>
@@ -938,7 +958,7 @@ const Onboarding = () => {
               {/* Step 12: Interests */}
               {step === 12 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="🎨" title="Your interests" subtitle="Select at least 3" />
+                  <StepHeader emoji="🎨" title="What are you into?" subtitle="Pick at least 3. Shared interests help us find better connections for you." />
                   <div className="animate-stagger-2">
                     <ChipSelector
                       options={INTERESTS_OPTIONS.map(i => ({ value: i, label: i }))}
@@ -1035,7 +1055,7 @@ const Onboarding = () => {
                     </>
                   ) : (
                     <Button onClick={handleComplete} className="flex-1" disabled={loading}>
-                      {loading ? "Setting up..." : "Complete Profile ✨"}
+                      {loading ? "Setting up..." : "Complete Profile"}
                     </Button>
                   )}
                 </div>
