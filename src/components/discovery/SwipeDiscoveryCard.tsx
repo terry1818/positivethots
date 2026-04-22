@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, memo, useCallback } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { BlurImage } from "@/components/BlurImage";
-import { Heart, X, Star, Zap, Shield, ChevronDown, RefreshCw, Lock } from "lucide-react";
+import { Heart, X, Star, Zap, Shield, ChevronDown, RefreshCw, Lock, CircleHelp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -349,12 +349,13 @@ export const SwipeDiscoveryCard = memo(({
             <div className="absolute top-3 right-3 z-10" data-walkthrough="compatibility-score" data-tour="compatibility-score">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Badge variant="secondary" className="bg-primary/90 text-primary-foreground text-sm font-bold cursor-help">
-                    {profile.compatibility_score}% Match
+                  <Badge variant="secondary" className="bg-primary/90 text-primary-foreground text-sm font-bold cursor-help inline-flex items-center gap-1">
+                    {profile.compatibility_score}% Compatible
+                    <CircleHelp className="h-3 w-3 opacity-80" />
                   </Badge>
                 </TooltipTrigger>
-                <TooltipContent side="bottom" className="max-w-[220px] text-center">
-                  Based on shared interests, relationship style, goals, education level, and location.
+                <TooltipContent side="bottom" className="max-w-[240px] text-center">
+                  Based on shared interests, relationship style, goals, badges, and location.
                 </TooltipContent>
               </Tooltip>
             </div>
