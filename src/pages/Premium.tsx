@@ -348,6 +348,7 @@ const Premium = () => {
               <Heart className="h-6 w-6 text-muted-foreground" />
             </div>
             <CardTitle className="text-lg">Free</CardTitle>
+            <p className="text-sm text-muted-foreground">Learn the basics</p>
             <div className="mt-2">
               <span className="text-3xl font-bold">$0</span>
               <span className="text-muted-foreground text-sm">/forever</span>
