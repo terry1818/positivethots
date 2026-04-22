@@ -95,8 +95,39 @@ const LearnModule = () => {
     level?: number;
     streak?: number;
     badgeTitle?: string;
+    badgeSlug?: string;
+    badgeTier?: string | null;
+    isFoundationComplete?: boolean;
     tierName?: string;
   }>({ type: null });
+
+  // Helper: after earning this badge, did the user just complete the
+  // 5th Foundation badge (which unlocks Discovery)?
+  const checkFoundationComplete = useCallback(async (justEarnedModuleId: string): Promise<boolean> => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return false;
+      const { data: foundationModules } = await supabase
+        .from("education_modules")
+        .select("id")
+        .eq("tier", "foundation");
+      if (!foundationModules || foundationModules.length === 0) return false;
+      const foundationIds = new Set(foundationModules.map(m => m.id));
+      // Only treat this as a Foundation completion if the badge we just
+      // earned is itself a Foundation badge.
+      if (!foundationIds.has(justEarnedModuleId)) return false;
+      const { data: earnedBadges } = await supabase
+        .from("user_badges")
+        .select("module_id")
+        .eq("user_id", session.user.id);
+      if (!earnedBadges) return false;
+      const earnedFoundationCount = earnedBadges.filter(b => foundationIds.has(b.module_id)).length;
+      return earnedFoundationCount >= foundationModules.length;
+    } catch (e) {
+      console.error("Foundation completion check failed:", e);
+      return false;
+    }
+  }, []);
 
   // Module progress for sections
   const [moduleId, setModuleId] = useState<string>("");
@@ -275,8 +306,15 @@ const LearnModule = () => {
         const xpResult = await awardXP(totalXP, scorePercent === 100 ? "quiz_perfect" : "quiz_pass", module.id);
         setXpPopup({ show: true, amount: xpResult.newXP });
 
+        const isFoundationComplete = await checkFoundationComplete(module.id);
         setTimeout(() => {
-          setCelebration({ type: "badge_earned", badgeTitle: module.title });
+          setCelebration({
+            type: "badge_earned",
+            badgeTitle: module.title,
+            badgeSlug: module.slug,
+            badgeTier: module.tier,
+            isFoundationComplete,
+          });
         }, 1600);
       }
     } catch (error: any) {
@@ -335,6 +373,9 @@ const LearnModule = () => {
         level={celebration.level}
         streak={celebration.streak}
         badgeTitle={celebration.badgeTitle}
+        badgeSlug={celebration.badgeSlug}
+        badgeTier={celebration.badgeTier}
+        isFoundationComplete={celebration.isFoundationComplete}
         tierName={celebration.tierName}
         onClose={() => setCelebration({ type: null })}
       />
