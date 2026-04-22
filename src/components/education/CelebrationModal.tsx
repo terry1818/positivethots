@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,9 @@ interface CelebrationModalProps {
   level?: number;
   streak?: number;
   badgeTitle?: string;
+  badgeSlug?: string;
+  badgeTier?: string | null;
+  isFoundationComplete?: boolean;
   tierName?: string;
   onClose: () => void;
 }
@@ -56,7 +60,26 @@ const BRAND_COLORS = [
 ];
 
 
-export const CelebrationModal = ({ type, level, streak, badgeTitle, tierName, onClose }: CelebrationModalProps) => {
+// Per-badge body copy keyed by slug fragments. Falls back to a generic
+// advanced-badge message if no specific match is found.
+const badgeBodyByKeyword: Array<{ match: RegExp; body: string }> = [
+  { match: /consent/i, body: "You now understand the building blocks of enthusiastic consent. That's a big deal." },
+  { match: /communication/i, body: "Better conversations start here. You've got the tools." },
+  { match: /(sexual[-_ ]?health|sti|safer[-_ ]?sex)/i, body: "Knowledge is power — and safety." },
+  { match: /desire/i, body: "Understanding desire is the first step to expressing it." },
+  { match: /(emotional[-_ ]?intelligence|eq)/i, body: "You've just leveled up the most important relationship skill there is." },
+];
+
+const getBadgeBody = (slug?: string, title?: string): string => {
+  const haystack = `${slug || ""} ${title || ""}`;
+  for (const entry of badgeBodyByKeyword) {
+    if (entry.match.test(haystack)) return entry.body;
+  }
+  return "Another badge earned. You're becoming a relationship expert.";
+};
+
+export const CelebrationModal = ({ type, level, streak, badgeTitle, badgeSlug, badgeTier, isFoundationComplete, tierName, onClose }: CelebrationModalProps) => {
+  const navigate = useNavigate();
   const prefersReducedMotion = useReducedMotion();
   const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; color: string; size: number; shape: string }>>([]);
   const [copied, setCopied] = useState(false);
