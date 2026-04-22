@@ -491,11 +491,18 @@ const EditProfile = () => {
               disabled={saving}
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-              {saving ? "Saving..." : "Save changes"}
+              {saving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </div>
       )}
+
+      {/* Unsaved changes confirm dialog */}
+      <UnsavedChangesPrompt
+        hasChanges={hasChanges}
+        saving={saving}
+        onSave={handleSave}
+      />
     </div>
   );
 };
