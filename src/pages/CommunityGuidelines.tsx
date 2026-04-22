@@ -26,7 +26,7 @@ const CommunityGuidelines = () => (
   <LegalPageShell title="Community Guidelines" toc={TOC}>
     <div className="bg-primary/5 border border-primary/20 rounded-xl p-5 mb-6">
       <p className="text-muted-foreground leading-relaxed m-0">
-        Positive Thots is built on <strong className="text-foreground">consent, education, and respect</strong>. These guidelines keep our community safe and welcoming for everyone practicing ethical non-monogamy.
+        Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> is built on <strong className="text-foreground">consent, education, and respect</strong>. These guidelines keep our community safe and welcoming for everyone practicing ethical non-monogamy.
       </p>
     </div>
 

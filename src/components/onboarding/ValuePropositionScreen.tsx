@@ -48,7 +48,7 @@ export const ValuePropositionScreen = ({ onBegin }: ValuePropositionScreenProps)
           </h1>
           <BrandTagline variant="secondary" className="mt-2" />
           <p className="text-muted-foreground leading-relaxed">
-            Before you meet anyone, you'll learn what most people never do — consent, communication, and emotional intelligence. Built on the same frameworks therapists use with their clients. This is what makes every match on Positive Thots different.
+            Before you meet anyone, you'll learn what most people never do — consent, communication, and emotional intelligence. Built on the same frameworks therapists use with their clients. This is what makes every match on Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> different.
           </p>
         </div>
 
@@ -102,7 +102,7 @@ export const ValuePropositionScreen = ({ onBegin }: ValuePropositionScreenProps)
                 </Button>
               </div>
               <p className="text-sm text-muted-foreground">
-                Every module in Positive Thots is built on peer-reviewed research and professional frameworks:
+                Every module in Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> is built on peer-reviewed research and professional frameworks:
               </p>
               <div className="space-y-3">
                 {FRAMEWORK_INFO.map((fw) => (

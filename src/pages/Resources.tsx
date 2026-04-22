@@ -309,7 +309,7 @@ const Resources = () => {
             <span className="text-sm font-medium text-foreground">Affiliate Disclosure</span>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Positive Thots is a participant in the Amazon Services LLC Associates Program, an affiliate
+            Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> is a participant in the Amazon Services LLC Associates Program, an affiliate
             advertising program designed to provide a means for us to earn fees by linking to Amazon.com
             and affiliated sites. We only recommend products we believe in and that align with our mission
             of education-first, consent-forward relationships. Purchasing through our links supports the

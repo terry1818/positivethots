@@ -26,7 +26,7 @@ const TermsOfService = () => (
 
     <h2 id="acceptance" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">1. Acceptance of Terms</h2>
     <p className="mb-4 leading-relaxed text-muted-foreground">
-      By accessing or using Positive Thots ("the App"), you agree to be bound by these Terms of Service. If you do not agree, do not use the App.
+      By accessing or using Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> ("the App"), you agree to be bound by these Terms of Service. If you do not agree, do not use the App.
     </p>
 
     <h2 id="eligibility" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">2. Eligibility</h2>

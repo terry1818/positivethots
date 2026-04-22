@@ -382,7 +382,7 @@ const Auth = () => {
               className={cn("text-sm text-muted-foreground italic", !prefersReducedMotion && "animate-fade-in")}
             >
               "{TESTIMONIALS[prefersReducedMotion ? 0 : testimonialIdx]}"
-              <span className="block text-muted-foreground/60 mt-0.5 not-italic">— Positive Thots member</span>
+              <span className="block text-muted-foreground/60 mt-0.5 not-italic">— Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> member</span>
             </p>
           </div>
         </CardContent>

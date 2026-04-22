@@ -79,7 +79,7 @@ const Unsubscribe = () => {
               <MailX className="h-10 w-10 text-muted-foreground mx-auto" />
               <h2 className="text-xl font-bold">Unsubscribe from emails?</h2>
               <p className="text-sm text-muted-foreground">
-                You'll stop receiving app notification emails from Positive Thots.
+                You'll stop receiving app notification emails from Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup>.
               </p>
               <Button onClick={handleUnsubscribe} disabled={processing} className="w-full">
                 {processing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
