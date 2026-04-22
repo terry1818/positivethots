@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { CookieConsent } from "@/components/CookieConsent";
+import { AgeGate } from "@/components/AgeGate";
 import { PageLoader } from "@/components/PageLoader";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { OfflineBanner } from "@/components/OfflineBanner";
@@ -130,6 +131,7 @@ const App = () => (
             <BrowserRouter>
               <AppContent />
             </BrowserRouter>
+            <AgeGate />
             <CookieConsent />
           </TooltipProvider>
         </AuthProvider>
