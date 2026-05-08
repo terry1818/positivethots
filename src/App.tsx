@@ -51,6 +51,10 @@ const TestingLocator = lazy(() => import("./pages/TestingLocator"));
 const HealthTesting = lazy(() => import("./pages/HealthTesting"));
 const ContentCompliance = lazy(() => import("./pages/ContentCompliance"));
 const Admin = lazy(() => import("./pages/Admin"));
+const Complaints = lazy(() => import("./pages/Complaints"));
+const Appeals = lazy(() => import("./pages/Appeals"));
+const Cancellation = lazy(() => import("./pages/Cancellation"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -113,6 +117,10 @@ const AppContent = () => {
         <Route path="/celebration-demo" element={<Suspense fallback={<PageLoader />}><CelebrationDemo /></Suspense>} />
         <Route path="/2257" element={<Suspense fallback={<PageLoader />}><ContentCompliance /></Suspense>} />
         <Route path="/admin" element={<Suspense fallback={<PageLoader />}><Admin /></Suspense>} />
+        <Route path="/complaints" element={<Suspense fallback={<PageLoader />}><Complaints /></Suspense>} />
+        <Route path="/appeals" element={<Suspense fallback={<PageLoader />}><Appeals /></Suspense>} />
+        <Route path="/cancellation" element={<Suspense fallback={<PageLoader />}><Cancellation /></Suspense>} />
+        <Route path="/contact" element={<Suspense fallback={<PageLoader />}><Contact /></Suspense>} />
         <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
       </Routes>
       <AppFooter />
