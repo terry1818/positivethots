@@ -85,6 +85,7 @@ const Cancellation = () => (
 
     <p className="text-muted-foreground text-sm mt-8">Last updated: May 9, 2026</p>
   </LegalPageShell>
+  </>
 );
 
 export default Cancellation;
