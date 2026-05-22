@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://positivethots.app/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://positivethots.app/auth</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://positivethots.app/premium</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://positivethots.app/resources</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://positivethots.app/events</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://positivethots.app/health-testing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/testing-locations</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/community-guidelines</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://positivethots.app/privacy</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://positivethots.app/terms</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://positivethots.app/2257</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://positivethots.app/complaints</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://positivethots.app/appeals</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://positivethots.app/cancellation</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://positivethots.app/contact</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+</urlset>

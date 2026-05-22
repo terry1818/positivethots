@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
 import { reportError } from "./lib/errorReporting";
@@ -20,7 +21,11 @@ window.addEventListener("unhandledrejection", (event) => {
   reportError(error);
 });
 
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById("root")!).render(
+  <HelmetProvider>
+    <App />
+  </HelmetProvider>
+);
 
 // Initialize native plugins after first render
 initCapacitor();

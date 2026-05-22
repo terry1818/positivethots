@@ -1,0 +1,26 @@
+# Positive Thots
+
+> Education-first relationship wellness app for ethical non-monogamy, polyamory, and LGBTQ+ communities. Users complete badge courses before unlocking matchmaking.
+
+Positive Thots ("Think Positive Thots.™") is built around the principle "Learn first. Connect better." The platform combines a structured relationship-education curriculum with a consent-forward matching experience.
+
+## Pages
+
+- [Home](/): Overview of the app and education-gated matching.
+- [Learn](/learn): Badge-based curriculum covering consent, communication, and relationship structures.
+- [Premium](/premium): Subscription plans and Thot Pack credit bundles.
+- [Resources](/resources): Curated books, tools, and community resources.
+- [Events](/events): Community events and ticketing.
+- [Health & Testing](/health-testing): STI testing information and resources.
+- [Testing Locator](/testing-locations): Find nearby STI testing locations.
+- [Community Guidelines](/community-guidelines): Conduct rules and enforcement tiers.
+- [Contact](/contact): How to reach support, billing, safety, and legal.
+
+## Optional
+
+- [Privacy Policy](/privacy)
+- [Terms of Service](/terms)
+- [Complaints Policy](/complaints)
+- [Appeals Policy](/appeals)
+- [Cancellation & Refund Policy](/cancellation)
+- [18 U.S.C. § 2257 Compliance](/2257)
