@@ -1,6 +1,13 @@
 import { LegalPageShell } from "@/components/LegalPageShell";
+import { SEO } from "@/components/SEO";
 
 const Cancellation = () => (
+  <>
+    <SEO
+      title="Cancellation & Refund Policy — Positive Thots"
+      description="How to cancel your Positive Thots subscription and how refunds are handled. Cancel anytime in account settings or through your payment processor."
+      path="/cancellation"
+    />
   <LegalPageShell title="Cancellation Policy" toc={[]}>
     <div className="border-b border-border pb-4 mb-6" />
 
