@@ -188,6 +188,7 @@ const PrivacyPolicy = () => (
       If you have questions about this Privacy Policy or wish to exercise your data rights, please contact us at privacy@positivethots.com.
     </p>
   </LegalPageShell>
+  </>
 );
 
 export default PrivacyPolicy;
