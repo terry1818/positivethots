@@ -1,6 +1,13 @@
 import { LegalPageShell } from "@/components/LegalPageShell";
+import { SEO } from "@/components/SEO";
 
 const Appeals = () => (
+  <>
+    <SEO
+      title="Appeals Policy — Positive Thots"
+      description="How to appeal a moderation decision or request removal of content depicting you on Positive Thots."
+      path="/appeals"
+    />
   <LegalPageShell title="Appeals Policy" toc={[]}>
     <div className="border-b border-border pb-4 mb-6" />
 
@@ -54,6 +61,7 @@ const Appeals = () => (
 
     <p className="text-muted-foreground text-sm mt-8">Last updated: May 9, 2026</p>
   </LegalPageShell>
+  </>
 );
 
 export default Appeals;

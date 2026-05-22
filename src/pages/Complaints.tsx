@@ -1,6 +1,13 @@
 import { LegalPageShell } from "@/components/LegalPageShell";
+import { SEO } from "@/components/SEO";
 
 const Complaints = () => (
+  <>
+    <SEO
+      title="Complaints Policy — Positive Thots"
+      description="How to report content or conduct on Positive Thots, including illegal content, CSAM, and non-consensual imagery."
+      path="/complaints"
+    />
   <LegalPageShell title="Complaints Policy" toc={[]}>
     <div className="border-b border-border pb-4 mb-6" />
 
@@ -52,6 +59,7 @@ const Complaints = () => (
 
     <p className="text-muted-foreground text-sm mt-8">Last updated: May 9, 2026</p>
   </LegalPageShell>
+  </>
 );
 
 export default Complaints;

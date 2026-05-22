@@ -38,6 +38,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";
+import { SEO } from "@/components/SEO";
 import type { Database } from "@/integrations/supabase/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { IncognitoIndicator } from "@/components/layout/IncognitoIndicator";
@@ -681,7 +682,22 @@ const Index = () => {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
+      <SEO
+        title="Positive Thots — Learn first. Connect better."
+        description="Education-first relationship wellness app for ethical non-monogamy, polyamory, and LGBTQ+ communities. Earn badges, then match."
+        path="/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "MobileApplication",
+          name: "Positive Thots",
+          applicationCategory: "SocialNetworkingApplication",
+          operatingSystem: "iOS, Android, Web",
+          description: "Education-gated dating app for ethical non-monogamy and LGBTQ+ communities.",
+          url: "https://positivethots.app",
+        }}
+      />
       <MicroCelebration trigger={celebrationTrigger} emojis={["💕", "✨", "💜", "🔥"]} />
+
 
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-card">

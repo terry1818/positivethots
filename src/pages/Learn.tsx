@@ -27,6 +27,7 @@ import { BadgePathMap } from "@/components/education/TierRoadmap";
 import { BookOpen, CheckCircle, Award, Users, Star, BookMarked, NotebookPen, MapPin, HeartPulse, Megaphone, Search, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
+import { SEO } from "@/components/SEO";
 import { cn } from "@/lib/utils";
 import { SearchInput } from "@/components/SearchInput";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
@@ -297,6 +298,22 @@ const Learn = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20">
+      <SEO
+        title="Learn — Relationship Education Modules | Positive Thots"
+        description="Badge-based curriculum on consent, communication, and relationship structures. Complete modules to unlock matchmaking."
+        path="/learn"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Course",
+          name: "Positive Thots Relationship Education",
+          description: "Structured curriculum covering consent, communication, and ethical non-monogamy.",
+          provider: {
+            "@type": "Organization",
+            name: "Positive Thots",
+            sameAs: "https://positivethots.app",
+          },
+        }}
+      />
       <header className="border-b border-border bg-card">
         <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2.5">
           {/* Row 1: Logo + quick stats */}

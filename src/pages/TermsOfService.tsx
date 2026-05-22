@@ -1,4 +1,5 @@
 import { LegalPageShell } from "@/components/LegalPageShell";
+import { SEO } from "@/components/SEO";
 
 const TOC = [
   { id: "acceptance", title: "Acceptance" },
@@ -21,6 +22,12 @@ const TOC = [
 ];
 
 const TermsOfService = () => (
+  <>
+    <SEO
+      title="Terms of Service — Positive Thots"
+      description="The rules that govern your use of Positive Thots, including eligibility, conduct, subscriptions, and termination."
+      path="/terms"
+    />
   <LegalPageShell title="Terms of Service" toc={TOC}>
     <p className="text-muted-foreground text-sm mb-6">Last updated: April 5, 2026</p>
 
@@ -168,6 +175,7 @@ const TermsOfService = () => (
       Questions about these Terms? Contact us at legal@positivethots.com.
     </p>
   </LegalPageShell>
+  </>
 );
 
 export default TermsOfService;

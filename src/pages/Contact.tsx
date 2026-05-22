@@ -1,4 +1,5 @@
 import { LegalPageShell } from "@/components/LegalPageShell";
+import { SEO } from "@/components/SEO";
 
 const ExternalLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
   <a
@@ -18,6 +19,12 @@ const MailLink = ({ email }: { email: string }) => (
 );
 
 const Contact = () => (
+  <>
+    <SEO
+      title="Contact Us — Positive Thots"
+      description="Reach the Positive Thots team: support, billing, safety, appeals, and legal contact information."
+      path="/contact"
+    />
   <LegalPageShell title="Contact Us" toc={[]}>
     <div className="border-b border-border pb-4 mb-6" />
 
@@ -54,6 +61,7 @@ const Contact = () => (
       <li>Live chat: <ExternalLink href="https://ccbill.com/contact">https://ccbill.com/contact</ExternalLink></li>
     </ul>
   </LegalPageShell>
+  </>
 );
 
 export default Contact;
