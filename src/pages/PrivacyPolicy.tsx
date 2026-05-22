@@ -17,6 +17,12 @@ const TOC = [
 ];
 
 const PrivacyPolicy = () => (
+  <>
+    <SEO
+      title="Privacy Policy — Positive Thots"
+      description="How Positive Thots collects, uses, stores, and protects your data, including sensitive information and verification selfies."
+      path="/privacy"
+    />
   <LegalPageShell title="Privacy Policy" toc={TOC}>
     <p className="text-muted-foreground text-sm mb-6">Last updated: April 5, 2026</p>
 
