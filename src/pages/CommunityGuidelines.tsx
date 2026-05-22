@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Heart, BookOpen, Shield, Users, Camera, MessageCircle, Scale, Award } from "lucide-react";
 import { LegalPageShell } from "@/components/LegalPageShell";
+import { SEO } from "@/components/SEO";
 
 const Section = ({ id, icon: Icon, title, children }: { id: string; icon: React.ElementType; title: string; children: React.ReactNode }) => (
   <section id={id} className="scroll-mt-24">
@@ -23,6 +24,12 @@ const TOC = [
 ];
 
 const CommunityGuidelines = () => (
+  <>
+    <SEO
+      title="Community Guidelines — Positive Thots"
+      description="Consent, education, and respect: the rules and four-tier enforcement system that keep the Positive Thots community safe."
+      path="/community-guidelines"
+    />
   <LegalPageShell title="Community Guidelines" toc={TOC}>
     <div className="bg-primary/5 border border-primary/20 rounded-xl p-5 mb-6">
       <p className="text-muted-foreground leading-relaxed m-0">

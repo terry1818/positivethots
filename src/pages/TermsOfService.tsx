@@ -175,6 +175,7 @@ const TermsOfService = () => (
       Questions about these Terms? Contact us at legal@positivethots.com.
     </p>
   </LegalPageShell>
+  </>
 );
 
 export default TermsOfService;
