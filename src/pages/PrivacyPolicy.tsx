@@ -1,4 +1,5 @@
 import { LegalPageShell } from "@/components/LegalPageShell";
+import { SEO } from "@/components/SEO";
 
 const TOC = [
   { id: "intro", title: "Introduction" },

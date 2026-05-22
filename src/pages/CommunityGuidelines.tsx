@@ -163,6 +163,7 @@ const CommunityGuidelines = () => (
       </p>
     </div>
   </LegalPageShell>
+  </>
 );
 
 export default CommunityGuidelines;
