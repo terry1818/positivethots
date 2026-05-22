@@ -27,7 +27,7 @@ const Contact = () => (
     <ul className="space-y-1 mb-6 text-muted-foreground">
       <li><strong>Company name:</strong> Rhea &amp; Associates LLC</li>
       <li><strong>Doing business as (DBA):</strong> Positive Thots</li>
-      <li><strong>City:</strong> PLACEHOLDER_CITY</li>
+      <li><strong>City:</strong> Columbus, Ohio, US</li>
       <li><strong>State / Province:</strong> Ohio</li>
       <li><strong>Country:</strong> United States</li>
     </ul>
