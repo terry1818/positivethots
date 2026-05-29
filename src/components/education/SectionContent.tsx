@@ -353,7 +353,14 @@ export const SectionContent = ({
       {/* Infographic */}
       {section.content_type === 'infographic' && section.content_url && (
         <div className="rounded-lg overflow-hidden bg-muted">
-          <img src={section.content_url} alt={section.title} className="w-full" />
+          <img
+            src={section.content_url}
+            alt={section.title}
+            width={1200}
+            height={800}
+            className="w-full h-auto"
+            loading="lazy"
+          />
         </div>
       )}
 
