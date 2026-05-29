@@ -2,9 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://positivethots.app/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://positivethots.app/auth</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/reset-password</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://positivethots.app/onboarding</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
   <url><loc>https://positivethots.app/learn</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://positivethots.app/likes</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://positivethots.app/wallet</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
   <url><loc>https://positivethots.app/premium</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://positivethots.app/resources</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://positivethots.app/shop</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://positivethots.app/events</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://positivethots.app/health-testing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://positivethots.app/testing-locations</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -16,4 +21,39 @@
   <url><loc>https://positivethots.app/appeals</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
   <url><loc>https://positivethots.app/cancellation</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
   <url><loc>https://positivethots.app/contact</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://positivethots.app/learn/addiction-compulsivity</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/advanced-enm-practices</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/boundaries-communication</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/common-sexual-concerns</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/consent-fundamentals</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/decolonizing-relationships</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/digital-consent-boundaries</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/divine-matrix-science-of-intention</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/embodied-leadership-be-the-change</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/emotional-responsibility</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/enm-principles</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/financial-intimacy</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/gender-identity-expression</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/grief-relationship-transitions</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/inner-practice-toolkit</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/intersectionality-intimacy</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/jealousy-insecurity</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/kink-bdsm-basics</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/maintaining-intimacy</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/mental-health-first-aid</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/navigating-conflict</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/neurodivergence-intimacy</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/new-monogamy-redesigning-relationships</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/pleasure-satisfaction</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/relationship-orientations</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/relationship-skills-foundation</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/relationship-vision</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/reproductive-autonomy</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/rewiring-your-habits</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/safer-sex</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/self-image-inner-blueprint</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/sexual-orientation-spectrum</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/sexual-wellness-basics</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/trauma-informed-relating</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://positivethots.app/learn/understanding-desire</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>

@@ -12,6 +12,7 @@ import { ShoppingBag, Plus, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
+import { SEO } from "@/components/SEO";
 
 interface ShopifyCollection {
   node: { id: string; title: string; handle: string };
@@ -82,6 +83,12 @@ const Shop = () => {
   };
 
   return (
+    <>
+    <SEO
+      title="Shop — Positive Thots"
+      description="Curated products, books, games, and wellness tools to support your ethical non-monogamy and relationship journey."
+      path="/shop"
+    />
     <div className="min-h-screen bg-background flex flex-col">
       <header className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border">
         <div className="container max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
