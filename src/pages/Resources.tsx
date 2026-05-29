@@ -336,6 +336,7 @@ const Resources = () => {
 
       <BottomNav />
     </div>
+    </>
   );
 };
 
