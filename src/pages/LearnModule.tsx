@@ -24,6 +24,7 @@ import { ChevronLeft, CheckCircle, CheckCircle2, XCircle, Award, BookOpen, Lock,
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PageSkeleton } from "@/components/PageSkeleton";
+import { SEO } from "@/components/SEO";
 import DOMPurify from 'dompurify';
 
 interface Module {
@@ -362,6 +363,25 @@ const LearnModule = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {module && (
+        <SEO
+          title={`${module.title} — Positive Thots Learn`}
+          description={(module.description || `Learn about ${module.title} on Positive Thots.`).slice(0, 160)}
+          path={`/learn/${module.slug}`}
+          type="article"
+          jsonLd={{
+            "@context": "https://schema.org",
+            "@type": "Course",
+            name: module.title,
+            description: module.description,
+            provider: {
+              "@type": "Organization",
+              name: "Positive Thots",
+              sameAs: "https://positivethots.app",
+            },
+          }}
+        />
+      )}
       {/* Reading progress bar */}
       {!showQuiz && <ReadingProgress />}
 

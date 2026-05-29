@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Loader2, ShoppingBag, Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SEO } from "@/components/SEO";
 
 const ProductDetail = () => {
   const { handle } = useParams<{ handle: string }>();
@@ -83,7 +84,33 @@ const ProductDetail = () => {
 
   const images = product.images.edges;
 
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    description: product.description || product.title,
+    image: images[0]?.node?.url,
+    offers: selectedVariant
+      ? {
+          "@type": "Offer",
+          price: parseFloat(selectedVariant.price.amount || "0").toFixed(2),
+          priceCurrency: selectedVariant.price.currencyCode,
+          availability: selectedVariant.availableForSale
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
+        }
+      : undefined,
+  };
+
   return (
+    <>
+    <SEO
+      title={`${product.title} — Positive Thots Shop`}
+      description={(product.description || product.title).slice(0, 160)}
+      path={`/shop/${handle}`}
+      image={images[0]?.node?.url}
+      jsonLd={productJsonLd}
+    />
     <div className="min-h-screen bg-background pb-8">
       <header className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border">
         <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -193,6 +220,7 @@ const ProductDetail = () => {
         </Button>
       </div>
     </div>
+    </>
   );
 };
 
