@@ -111,7 +111,7 @@ export const ResourceCard = ({ resource, featured = false }: { resource: Resourc
         )}
 
         {resource.description && (
-          <p className="text-sm text-gray-400 line-clamp-2 mt-1">{resource.description}</p>
+          <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{resource.description}</p>
         )}
 
         <div className="flex-1" />
