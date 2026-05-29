@@ -217,6 +217,7 @@ const Shop = () => {
 
       <BottomNav />
     </div>
+    </>
   );
 };
 

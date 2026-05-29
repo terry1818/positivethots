@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FeaturedSpotlight } from "@/components/resources/FeaturedSpotlight";
 import { CategorySection } from "@/components/resources/CategorySection";
 import type { Resource } from "@/components/resources/ResourceCard";
+import { SEO } from "@/components/SEO";
 
 /* ── helpers ── */
 
@@ -230,7 +231,22 @@ const Resources = () => {
     return groups;
   }, [sorted]);
 
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Recommended Resources",
+    description: "Curated books, games, and wellness tools for ENM, polyamory, and LGBTQ+ relationships.",
+    url: "https://positivethots.app/resources",
+  };
+
   return (
+    <>
+    <SEO
+      title="Resources — Curated Tools for Your ENM Journey"
+      description="Hand-picked books, games, and wellness tools to strengthen ethical non-monogamy, polyamory, and LGBTQ+ relationships."
+      path="/resources"
+      jsonLd={collectionJsonLd}
+    />
     <div className="min-h-screen bg-background flex flex-col">
       {/* Hero */}
       <div className="text-center pb-4 px-4" style={{ paddingTop: 'max(env(safe-area-inset-top, 0px) + 1rem, 2rem)' }}>
