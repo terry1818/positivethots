@@ -314,6 +314,7 @@ const Learn = () => {
           },
         }}
       />
+      <h1 className="sr-only">Relationship Education</h1>
       <header className="border-b border-border bg-card">
         <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2.5">
           {/* Row 1: Logo + quick stats */}
