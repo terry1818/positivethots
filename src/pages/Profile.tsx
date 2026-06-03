@@ -259,6 +259,11 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO
+        title="Your Profile — Positive Thots"
+        description="Your Positive Thots profile, badges, prompts, and education progress."
+        path="/profile"
+      />
       <header className="border-b border-border bg-card">
         <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Logo size="md" showText={false} />
