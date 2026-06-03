@@ -15,6 +15,7 @@ import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { SearchInput } from "@/components/SearchInput";
+import { SEO } from "@/components/SEO";
 
 interface Match {
   id: string;
@@ -193,6 +194,11 @@ const Messages = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col pb-20">
+      <SEO
+        title="Messages — Positive Thots"
+        description="Your conversations with matches on Positive Thots. Chat with intention and connect with care."
+        path="/messages"
+      />
       <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Logo size="md" showText={false} />

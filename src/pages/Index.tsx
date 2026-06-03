@@ -697,6 +697,7 @@ const Index = () => {
         }}
       />
       <MicroCelebration trigger={celebrationTrigger} emojis={["💕", "✨", "💜", "🔥"]} />
+      <h1 className="sr-only">Positive Thots — Learn first. Connect better.</h1>
 
 
       {/* Header */}
