@@ -9,7 +9,10 @@
   <url><loc>https://positivethots.app/wallet</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
   <url><loc>https://positivethots.app/premium</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://positivethots.app/resources</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://positivethots.app/shop</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://positivethots.app/messages</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://positivethots.app/profile</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://positivethots.app/profile/edit</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://positivethots.app/settings</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
   <url><loc>https://positivethots.app/events</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
   <url><loc>https://positivethots.app/health-testing</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://positivethots.app/testing-locations</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
