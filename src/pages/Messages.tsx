@@ -15,6 +15,7 @@ import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { SearchInput } from "@/components/SearchInput";
+import { SEO } from "@/components/SEO";
 
 interface Match {
   id: string;
