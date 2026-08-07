@@ -123,6 +123,8 @@ const AppContent = () => {
         <Route path="/appeals" element={<Suspense fallback={<PageLoader />}><Appeals /></Suspense>} />
         <Route path="/cancellation" element={<Suspense fallback={<PageLoader />}><Cancellation /></Suspense>} />
         <Route path="/contact" element={<Suspense fallback={<PageLoader />}><Contact /></Suspense>} />
+        <Route path="/.lovable/oauth/consent" element={<Suspense fallback={<PageLoader />}><OAuthConsent /></Suspense>} />
+
         <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
       </Routes>
       <AppFooter />
