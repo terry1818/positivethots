@@ -143,7 +143,7 @@ const Auth = () => {
         const { data: authData, error: signUpError } = await supabase.auth.signUp({
           email: email.trim(), password,
           options: {
-            emailRedirectTo: buildAuthRedirectUrl("/"),
+            emailRedirectTo: buildAuthRedirectUrl(nextPath ?? "/"),
             data: { name: name.trim(), age: computedAge, date_of_birth: dateOfBirth },
           },
         });
@@ -162,7 +162,7 @@ const Auth = () => {
           } as any);
           if (profileError) console.error("Profile creation error:", profileError);
           toast.success("Account created successfully!");
-          navigate("/onboarding");
+          navigate(nextPath ?? "/onboarding");
         }
       } else {
         const result = signInSchema.safeParse({ email: email.trim(), password });
@@ -193,12 +193,12 @@ const Auth = () => {
               profile_image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${signInData.user.id}`,
             });
             toast.success("Signed in successfully!");
-            navigate("/onboarding");
+            navigate(nextPath ?? "/onboarding");
             return;
           }
         }
         toast.success("Signed in successfully!");
-        navigate("/");
+        navigate(nextPath ?? "/");
       }
     } catch (error: any) {
       console.error("Auth error:", error);
