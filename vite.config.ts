@@ -4,6 +4,7 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { compression } from "vite-plugin-compression2";
 import { visualizer } from "rollup-plugin-visualizer";
+import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -16,6 +17,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     compression({ include: /\.(js|css|html|svg|json)$/i, threshold: 1024, algorithms: ['gzip', 'brotliCompress'] }),
     visualizer({ open: false, filename: "dist/stats.html" }),
+    mcpPlugin(),
   ].filter(Boolean),
   resolve: {
     alias: {
