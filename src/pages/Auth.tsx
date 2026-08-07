@@ -60,6 +60,12 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement>(null);
 
+  // Same-origin relative redirect target (used by the OAuth consent flow).
+  const rawNext = searchParams.get("next");
+  const nextPath =
+    rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : null;
+
+
   // Rotate testimonials
   useEffect(() => {
     if (prefersReducedMotion) return;
