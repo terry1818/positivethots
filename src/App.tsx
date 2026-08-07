@@ -55,6 +55,8 @@ const Complaints = lazy(() => import("./pages/Complaints"));
 const Appeals = lazy(() => import("./pages/Appeals"));
 const Cancellation = lazy(() => import("./pages/Cancellation"));
 const Contact = lazy(() => import("./pages/Contact"));
+const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
+
 
 export const queryClient = new QueryClient({
   defaultOptions: {
