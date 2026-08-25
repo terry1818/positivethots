@@ -29,11 +29,18 @@ export const LinkedAccountsCard = () => {
     try {
       const { data } = await supabase
         .from("external_platform_links" as any)
-        .select("*")
+        .select("id, user_id, platform, platform_username, status, linked_at, verified_at")
         .eq("user_id", user.id)
         .eq("platform", "fetlife")
         .maybeSingle();
       setFetlifeLink(data);
+      if (data) {
+        // verification_code is owner-only and fetched through a secured lookup
+        const { data: code } = await supabase.rpc("get_my_verification_code" as any, {
+          _platform: "fetlife",
+        });
+        if (code) setVerificationCode(code as unknown as string);
+      }
     } catch (err) {
       console.error("Failed to load external link:", err);
     } finally {
