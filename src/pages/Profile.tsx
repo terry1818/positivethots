@@ -112,7 +112,7 @@ const Profile = () => {
       if (!profile?.id) return null;
       const { data } = await supabase
         .from("external_platform_links" as any)
-        .select("*")
+        .select("id, user_id, platform, platform_username, status, linked_at, verified_at")
         .eq("user_id", profile.id)
         .eq("platform", "fetlife")
         .in("status", ["self_reported", "verified"])
