@@ -36,7 +36,7 @@ export const useSpotify = () => {
       if (!user?.id) return null;
       const { data, error } = await supabase
         .from("spotify_connections")
-        .select("*")
+        .select("id, spotify_user_id, top_artists, top_tracks, anthem_track, show_on_profile, last_synced_at")
         .eq("user_id", user.id)
         .maybeSingle();
       if (error) throw error;

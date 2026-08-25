@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -3038,6 +3038,7 @@ export type Database = {
           profile_image: string
         }[]
       }
+      get_my_verification_code: { Args: { _platform: string }; Returns: string }
       get_public_profile: {
         Args: { _user_id: string }
         Returns: {
@@ -3100,6 +3101,10 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_video_date_participant: {
+        Args: { _event_id: string; _user_id: string }
+        Returns: boolean
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -3140,10 +3145,6 @@ export type Database = {
       track_photo_engagement: {
         Args: { _action: string; _photo_id: string; _photo_owner_id: string }
         Returns: undefined
-      }
-      validate_quiz_answer: {
-        Args: { _question_id: string; _selected_answer: number }
-        Returns: boolean
       }
     }
     Enums: {

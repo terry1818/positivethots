@@ -29,11 +29,18 @@ export const LinkedAccountsCard = () => {
     try {
       const { data } = await supabase
         .from("external_platform_links" as any)
-        .select("*")
+        .select("id, user_id, platform, platform_username, status, linked_at, verified_at")
         .eq("user_id", user.id)
         .eq("platform", "fetlife")
         .maybeSingle();
       setFetlifeLink(data);
+      if (data) {
+        // verification_code is owner-only and fetched through a secured lookup
+        const { data: code } = await supabase.rpc("get_my_verification_code" as any, {
+          _platform: "fetlife",
+        });
+        if (code) setVerificationCode(code as unknown as string);
+      }
     } catch (err) {
       console.error("Failed to load external link:", err);
     } finally {
@@ -71,7 +78,7 @@ export const LinkedAccountsCard = () => {
   const handleVerify = async () => {
     setVerifying(true);
     try {
-      const code = verificationCode || fetlifeLink?.verification_code;
+      const code = verificationCode;
       const { data, error } = await supabase.functions.invoke("verify-external-profile", {
         body: {
           action: "verify",
@@ -112,7 +119,7 @@ export const LinkedAccountsCard = () => {
   };
 
   const copyCode = () => {
-    const code = verificationCode || fetlifeLink?.verification_code;
+    const code = verificationCode;
     if (code) {
       navigator.clipboard.writeText(code);
       setCodeCopied(true);
@@ -189,7 +196,7 @@ export const LinkedAccountsCard = () => {
                 <p className="text-sm font-medium mb-1">Verification Code</p>
                 <div className="flex items-center gap-2">
                   <code className="text-base font-mono font-bold text-primary flex-1">
-                    {verificationCode || fetlifeLink.verification_code}
+                    {verificationCode}
                   </code>
                   <Button variant="ghost" size="icon" className="h-9 w-9" onClick={copyCode}>
                     {codeCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
