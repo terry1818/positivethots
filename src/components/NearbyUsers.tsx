@@ -22,9 +22,8 @@ interface NearbyProfile {
 }
 
 function formatDistance(meters: number): string {
-  if (meters < 100) return "< 100m away";
-  if (meters < 1000) return `${Math.round(meters)}m away`;
-  return `${(meters / 1000).toFixed(1)}km away`;
+  if (meters < 2000) return "Nearby";
+  return `${Math.round(meters / 1000)} km away`;
 }
 
 function timeAgo(dateStr: string): string {

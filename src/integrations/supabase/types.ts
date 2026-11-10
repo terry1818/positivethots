@@ -2660,7 +2660,7 @@ export type Database = {
           id: string
           reason: string | null
           reviewed_at: string | null
-          selfie_path: string
+          selfie_path: string | null
           status: string
           user_id: string
         }
@@ -2669,7 +2669,7 @@ export type Database = {
           id?: string
           reason?: string | null
           reviewed_at?: string | null
-          selfie_path: string
+          selfie_path?: string | null
           status?: string
           user_id: string
         }
@@ -2678,7 +2678,7 @@ export type Database = {
           id?: string
           reason?: string | null
           reviewed_at?: string | null
-          selfie_path?: string
+          selfie_path?: string | null
           status?: string
           user_id?: string
         }
@@ -3117,6 +3117,7 @@ export type Database = {
         }
         Returns: number
       }
+      purge_old_verification_selfies: { Args: never; Returns: number }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {

@@ -8,6 +8,13 @@
       "when": 1794346122206,
       "tag": "0000_add_photo_consent",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794347411069,
+      "tag": "0001_privacy_selfie_location",
+      "breakpoints": true
     }
   ]
 }

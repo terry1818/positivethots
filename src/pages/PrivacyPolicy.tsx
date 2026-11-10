@@ -36,6 +36,7 @@ const PrivacyPolicy = () => (
     <ul className="list-disc list-inside space-y-1 mb-4 text-muted-foreground">
       <li><strong>Account Information:</strong> Name, email address, date of birth, password</li>
       <li><strong>Profile Information:</strong> Gender, pronouns, sexuality, relationship status, relationship style, interests, desires, bio, location, height, zodiac sign, languages, experience level, photos</li>
+      <li><strong>Location (optional):</strong> We store only an approximate location (rounded to about 1 km), only while you choose to share it, and delete it when you stop sharing.</li>
       <li><strong>Birth Information:</strong> Date of birth, time of birth (optional), and place of birth (optional) — used solely for astrology compatibility features</li>
       <li><strong>Health Information:</strong> STI testing status and date (voluntarily provided)</li>
       <li><strong>Communication Data:</strong> Messages sent to other users</li>
@@ -64,7 +65,7 @@ const PrivacyPolicy = () => (
     </ul>
     <h3 className="text-base font-semibold mt-4 mb-2">3.3 Retention & Deletion</h3>
     <p className="mb-4 leading-relaxed text-muted-foreground">
-      <strong>Verification selfies are deleted immediately after the AI moderation process is complete</strong> — typically within minutes of submission. We do not retain selfie images, facial scans, biometric identifiers, or facial geometry data after the verification decision has been made. The only data retained is the verification result (approved/rejected) and a timestamp.
+      <strong>Deleted as soon as verification is complete, and never kept longer than 24 hours.</strong> We do not retain selfie images, facial scans, biometric identifiers, or facial geometry data after the verification decision has been made. The only data retained is the verification result (approved/rejected) and a timestamp.
     </p>
     <h3 className="text-base font-semibold mt-4 mb-2">3.4 Illinois BIPA & Similar State Laws</h3>
     <p className="mb-4 leading-relaxed text-muted-foreground">
@@ -154,7 +155,7 @@ const PrivacyPolicy = () => (
           </tr>
           <tr className="border-b border-border/50">
             <td className="p-3">Verification selfies</td>
-            <td className="p-3">Deleted immediately after AI verification (within minutes)</td>
+            <td className="p-3">Deleted as soon as verification is complete, and never kept longer than 24 hours.</td>
           </tr>
           <tr className="border-b border-border/50">
             <td className="p-3">Biometric data / faceprints</td>

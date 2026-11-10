@@ -138,7 +138,7 @@ export const VerificationCard = ({
           <p className="flex items-start gap-2">
             <ShieldCheck className="h-3.5 w-3.5 mt-0.5 shrink-0 text-muted-foreground" />
             <span>
-              Your verification selfie is stored securely and deleted within 7 days. It's only used to confirm your identity — never shared or shown on your profile.
+              Your verification selfie is deleted as soon as the check is complete, and never kept longer than 24 hours. It's only used to confirm your identity — never shared or shown on your profile.
             </span>
           </p>
         </div>

@@ -112,14 +112,43 @@ Deno.serve(async (req) => {
 async function handleVerification(
   supabaseAdmin: any, user: any, photo_id: string, apiKey: string, corsHeaders: Record<string, string>
 ) {
-  const { data: verReq } = await supabaseAdmin
+  // Supports both verification_requests (selfie_path) and face_verifications (selfie_url)
+  let table = "verification_requests";
+  let pathCol = "selfie_path";
+  let { data: verReq } = await supabaseAdmin
     .from("verification_requests")
-    .select("*")
+    .select("id, selfie_path")
     .eq("id", photo_id)
     .eq("user_id", user.id)
-    .single();
-
+    .maybeSingle();
   if (!verReq) {
+    const { data: fv } = await supabaseAdmin
+      .from("face_verifications")
+      .select("id, selfie_url")
+      .eq("id", photo_id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (fv) {
+      table = "face_verifications";
+      pathCol = "selfie_url";
+      verReq = { id: fv.id, selfie_path: fv.selfie_url };
+    }
+  }
+
+  const selfiePath: string | null = verReq?.selfie_path ?? null;
+  const cleanup = async () => {
+    if (selfiePath) {
+      const { error: rmErr } = await supabaseAdmin.storage.from("verification-selfies").remove([selfiePath]);
+      if (rmErr) console.error("Failed to delete verification selfie:", rmErr.message);
+    }
+    await supabaseAdmin.from(table).update({ [pathCol]: null }).eq("id", photo_id);
+  };
+  const markFailed = (reason: string) =>
+    table === "verification_requests"
+      ? supabaseAdmin.from(table).update({ status: "rejected", reason, reviewed_at: new Date().toISOString() }).eq("id", photo_id)
+      : supabaseAdmin.from(table).update({ status: "failed" }).eq("id", photo_id);
+
+  if (!verReq || !selfiePath) {
     return new Response(JSON.stringify({ error: "Verification request not found" }), {
       status: 404,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -129,10 +158,19 @@ async function handleVerification(
   // Generate a signed URL for the private verification selfie
   const { data: signedUrlData, error: signedUrlErr } = await supabaseAdmin.storage
     .from("verification-selfies")
-    .createSignedUrl(verReq.selfie_path, 300);
+    .createSignedUrl(selfiePath, 300);
+
+  await supabaseAdmin.from("audit_log").insert({
+    admin_user_id: user.id,
+    action: "verification_selfie_accessed",
+    target_user_id: user.id,
+    details: { request_id: photo_id, source: table },
+  });
 
   if (signedUrlErr || !signedUrlData?.signedUrl) {
-    console.error("Failed to create signed URL for selfie:", signedUrlErr);
+    console.error("Failed to create signed URL for selfie:", signedUrlErr?.message);
+    await markFailed("Could not access verification selfie");
+    await cleanup();
     return new Response(
       JSON.stringify({ verified: false, reason: "Could not access verification selfie. Please try again." }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -152,10 +190,8 @@ async function handleVerification(
 
   if (photoUrls.length === 0) {
     const reason = "No approved profile photos found. Please wait for your photos to be approved first, then try again.";
-    await supabaseAdmin
-      .from("verification_requests")
-      .update({ status: "rejected", reason, reviewed_at: new Date().toISOString() })
-      .eq("id", photo_id);
+    await markFailed(reason);
+    await cleanup();
     return new Response(
       JSON.stringify({ verified: false, reason }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -213,14 +249,22 @@ Respond with JSON only, no other text: {"verified": true/false, "reason": "brief
     reason = "Verification service temporarily unavailable";
   }
 
-  await supabaseAdmin
-    .from("verification_requests")
-    .update({
-      status: verified ? "verified" : "rejected",
-      reason,
-      reviewed_at: new Date().toISOString(),
-    })
-    .eq("id", photo_id);
+  if (table === "verification_requests") {
+    await supabaseAdmin
+      .from("verification_requests")
+      .update({
+        status: verified ? "verified" : "rejected",
+        reason,
+        reviewed_at: new Date().toISOString(),
+      })
+      .eq("id", photo_id);
+  } else {
+    await supabaseAdmin
+      .from("face_verifications")
+      .update(verified ? { status: "verified", verified_at: new Date().toISOString() } : { status: "failed" })
+      .eq("id", photo_id);
+  }
+  await cleanup();
 
   if (verified) {
     await supabaseAdmin.from("profiles").update({ is_verified: true }).eq("id", user.id);

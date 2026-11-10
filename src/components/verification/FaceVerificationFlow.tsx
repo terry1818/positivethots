@@ -72,7 +72,12 @@ export const FaceVerificationFlow = ({ open, onOpenChange }: FaceVerificationFlo
         body: { photo_id: verification.id, mode: "verification" },
       });
 
-      if (fnErr) throw fnErr;
+      if (fnErr) {
+        // Make sure the selfie never lingers if the check couldn't run
+        await supabase.storage.from("verification-selfies").remove([path]);
+        await supabase.from("face_verifications").update({ status: "failed", selfie_url: null }).eq("id", verification.id);
+        throw fnErr;
+      }
 
       if (result?.verified) {
         // Update profile

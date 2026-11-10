@@ -116,8 +116,8 @@ export const useLocationSharing = () => {
       .from("user_locations")
       .upsert({
         user_id: userIdRef.current,
-        latitude: lat,
-        longitude: lng,
+        latitude: Math.round(lat * 100) / 100,
+        longitude: Math.round(lng * 100) / 100,
         is_sharing: sharing,
         updated_at: new Date().toISOString(),
         expires_at: expiresAt,
@@ -177,7 +177,7 @@ export const useLocationSharing = () => {
     if (userIdRef.current) {
       await (supabase as any)
         .from("user_locations")
-        .update({ is_sharing: false })
+        .delete()
         .eq("user_id", userIdRef.current);
     }
   }, []);
