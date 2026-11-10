@@ -107,7 +107,7 @@ export const ModuleEditor = ({ module, onUpdate }: ModuleEditorProps) => {
           section_number: newNumber,
           title: `Section ${newNumber}`,
           content_type: "article",
-          content_text: "## Content Coming Soon\n\nThis section will be populated with educational content.",
+          content_text: "## New Section\n\nAdd this section's content before publishing.",
           estimated_minutes: 5,
         })
         .select()

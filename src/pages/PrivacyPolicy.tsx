@@ -101,7 +101,14 @@ const PrivacyPolicy = () => (
     </p>
     <ul className="list-disc list-inside space-y-1 mb-4 text-muted-foreground">
       <li><strong>Other Users:</strong> Your profile information (as configured by your privacy settings) is visible to other authenticated users for matching purposes</li>
-      <li><strong>Service Providers:</strong> Payment processing (Stripe), cloud infrastructure, AI content moderation</li>
+      <li><strong>Service Providers:</strong> Each one receives only what it needs:
+        <ul className="list-disc list-inside ml-5 mt-1 space-y-1">
+          <li>Lovable Cloud / Supabase (database, authentication, and file storage)</li>
+          <li>Google Gemini (automated review of photos and messages for safety; content is sent for classification only)</li>
+          <li>Our third-party payment processor (the information needed to process your payment; we never see or store your card number)</li>
+          <li>Shopify (merch orders only: name, shipping address, and order details)</li>
+        </ul>
+      </li>
       <li><strong>Legal Requirements:</strong> When required by law, court order, or government request</li>
     </ul>
 
@@ -120,6 +127,9 @@ const PrivacyPolicy = () => (
       <li><strong>Restriction:</strong> Limit how we process your data</li>
       <li><strong>Objection:</strong> Object to certain processing of your data</li>
     </ul>
+    <p id="do-not-sell" className="mb-4 leading-relaxed text-muted-foreground scroll-mt-24">
+      <strong>Do Not Sell or Share My Personal Information:</strong> Positive Thots does not sell your personal information and does not share it for advertising. To record an opt-out or make any privacy request, email privacy@positivethots.app.
+    </p>
 
     <h2 id="data-retention" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">9. Data Retention</h2>
     <p className="mb-2 leading-relaxed text-muted-foreground">
@@ -156,7 +166,7 @@ const PrivacyPolicy = () => (
           </tr>
           <tr className="border-b border-border/50">
             <td className="p-3">Payment records</td>
-            <td className="p-3">Retained for 7 years as required by tax law; payment data held by Stripe</td>
+            <td className="p-3">Retained for 7 years as required by tax law; payment data held by our payment processor</td>
           </tr>
           <tr className="border-b border-border/50">
             <td className="p-3">Analytics & usage logs</td>

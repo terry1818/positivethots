@@ -1557,6 +1557,7 @@ export type Database = {
           name: string
           onboarding_completed: boolean | null
           onboarding_started_at: string | null
+          photo_consent_accepted_at: string | null
           photos: string[] | null
           profile_image: string | null
           pronouns: string | null
@@ -1621,6 +1622,7 @@ export type Database = {
           name: string
           onboarding_completed?: boolean | null
           onboarding_started_at?: string | null
+          photo_consent_accepted_at?: string | null
           photos?: string[] | null
           profile_image?: string | null
           pronouns?: string | null
@@ -1685,6 +1687,7 @@ export type Database = {
           name?: string
           onboarding_completed?: boolean | null
           onboarding_started_at?: string | null
+          photo_consent_accepted_at?: string | null
           photos?: string[] | null
           profile_image?: string | null
           pronouns?: string | null

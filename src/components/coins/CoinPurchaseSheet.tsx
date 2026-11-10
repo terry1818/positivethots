@@ -20,7 +20,7 @@ export const CoinPurchaseSheet = ({ open, onOpenChange }: CoinPurchaseSheetProps
 
   const handlePurchase = async (pkg: typeof packages[0]) => {
     if (!pkg.stripe_price_id) {
-      toast.info("Coin purchases coming soon!");
+      toast.info("Coin purchases aren't available right now.");
       return;
     }
     setLoading(pkg.id);

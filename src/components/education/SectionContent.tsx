@@ -405,7 +405,7 @@ export const SectionContent = ({
         <Card className="bg-muted/50 border-dashed">
           <CardContent className="py-12 text-center">
             <Sparkles className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-            <p className="text-muted-foreground">Interactive content coming soon</p>
+            <p className="text-muted-foreground">Nothing to do here. Continue to the next section.</p>
           </CardContent>
         </Card>
       )}

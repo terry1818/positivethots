@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
@@ -598,6 +599,7 @@ const Settings = () => {
                   <ExternalLink className="h-4 w-4" />
                   {managingPortal ? "Opening…" : "Manage Subscription"}
                 </Button>
+                <Link to="/cancellation" className="inline-flex items-center min-h-[44px] text-sm text-primary hover:underline">Cancellation Policy</Link>
               </>
             ) : (
               <>

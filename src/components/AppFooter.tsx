@@ -13,13 +13,14 @@ export const AppFooter = () => (
       <Link to="/cancellation" className={policyLinkClass}>Cancellation Policy</Link>
       <span aria-hidden className="text-muted-foreground/40">|</span>
       <Link to="/contact" className={policyLinkClass}>Contact Us</Link>
+      <span aria-hidden className="text-muted-foreground/40">|</span>
+      <Link to="/privacy#do-not-sell" className={policyLinkClass}>Do Not Sell or Share My Personal Information</Link>
     </div>
     <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground/60">
       <span>© 2026 Rhea &amp; Associates LLC</span>
       <Link to="/terms" className="hover:text-muted-foreground transition-colors">Terms</Link>
       <Link to="/privacy" className="hover:text-muted-foreground transition-colors">Privacy</Link>
       <Link to="/community-guidelines" className="hover:text-muted-foreground transition-colors">Guidelines</Link>
-      <Link to="/2257" className="hover:text-muted-foreground transition-colors">2257 Statement</Link>
     </div>
   </footer>
 );

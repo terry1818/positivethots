@@ -54,7 +54,6 @@ const Complaints = () => (
           safety@positivethots.app
         </a>
       </li>
-      <li>Mailing address: PLACEHOLDER_BUSINESS_ADDRESS</li>
     </ul>
 
     <p className="text-muted-foreground text-sm mt-8">Last updated: May 9, 2026</p>

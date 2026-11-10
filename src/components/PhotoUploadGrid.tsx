@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Camera, Plus, Trash2, Clock, CheckCircle, XCircle, Loader2, Users, Star, Sparkles, Crosshair } from "lucide-react";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
 import { isNative, pickNativePhoto } from "@/lib/capacitor";
 
 interface UserPhoto {
@@ -206,6 +207,25 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
   const [photoStats, setPhotoStats] = useState<Record<string, { score: number; impressions: number }>>({});
   const [focalPhoto, setFocalPhoto] = useState<UserPhoto | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [consentAccepted, setConsentAccepted] = useState<boolean | null>(null);
+  const [consentError, setConsentError] = useState(false);
+
+  useEffect(() => {
+    supabase.from("profiles").select("photo_consent_accepted_at").eq("id", userId).maybeSingle()
+      .then(({ data }) => setConsentAccepted(!!data?.photo_consent_accepted_at));
+  }, [userId]);
+
+  const handleConsentChange = async (checked: boolean) => {
+    if (!checked) return;
+    setConsentAccepted(true);
+    setConsentError(false);
+    const { error } = await supabase.from("profiles")
+      .update({ photo_consent_accepted_at: new Date().toISOString() }).eq("id", userId);
+    if (error) {
+      setConsentAccepted(false);
+      toast.error("Couldn't save your agreement. Please try again.");
+    }
+  };
 
   const handleSaveFocalPoint = async (photoId: string, focalY: number) => {
     try {
@@ -254,6 +274,10 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
   }, null);
 
   const handleUpload = async (e?: React.ChangeEvent<HTMLInputElement>) => {
+    if (!consentAccepted) {
+      setConsentError(true);
+      return;
+    }
     if (currentPhotos.length >= MAX_PHOTOS) {
       toast.error(`Maximum ${MAX_PHOTOS} ${activeTab} photos allowed`);
       return;
@@ -335,6 +359,10 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
   };
 
   const handleAddPhoto = () => {
+    if (!consentAccepted) {
+      setConsentError(true);
+      return;
+    }
     if (isNative()) {
       handleUpload();
     } else {
@@ -549,7 +577,8 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
               <button
                 onClick={handleAddPhoto}
                 disabled={uploading}
-                className="w-full h-full flex flex-col items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                aria-disabled={!consentAccepted}
+                className={`w-full h-full flex flex-col items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors ${!consentAccepted ? "opacity-50" : ""}`}
               >
                 {uploading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -578,6 +607,30 @@ export const PhotoUploadGrid = ({ userId, photos, onPhotosChange }: PhotoUploadG
         </div>
       </CardHeader>
       <CardContent>
+        {consentAccepted === false && (
+          <div className="mb-3 rounded-lg border border-border bg-muted/30 p-2">
+            <div className="flex items-start gap-2">
+              <label htmlFor="photo-consent" className="flex h-11 w-11 shrink-0 items-center justify-center cursor-pointer">
+                <Checkbox
+                  id="photo-consent"
+                  checked={false}
+                  onCheckedChange={(c) => handleConsentChange(c === true)}
+                  aria-describedby={consentError ? "photo-consent-error" : undefined}
+                  className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                />
+              </label>
+              <label htmlFor="photo-consent" className="py-2 text-sm leading-relaxed text-foreground cursor-pointer">
+                I confirm everyone in my photos is 18 or older and has agreed to appear, and I accept the content rules in the{" "}
+                <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary underline">Terms</a>.
+              </label>
+            </div>
+            {consentError && (
+              <p id="photo-consent-error" role="alert" className="mt-1 px-2 text-sm text-destructive">
+                Please confirm the photo agreement first.
+              </p>
+            )}
+          </div>
+        )}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full mb-3">
             <TabsTrigger value="public" className="flex-1">Public</TabsTrigger>

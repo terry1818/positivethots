@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -529,8 +530,11 @@ const Premium = () => {
         <GroupPricingCard partnerCount={1} />
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Cancel anytime · {billingPeriod === "annual" ? "Billed annually" : "Billed monthly"} · Secure checkout via Stripe
+          Cancel anytime · {billingPeriod === "annual" ? "Billed annually" : "Billed monthly"} · Secure checkout
         </p>
+        <div className="text-center">
+          <Link to="/cancellation" className="inline-flex items-center min-h-[44px] text-sm text-primary hover:underline">Cancellation Policy</Link>
+        </div>
 
         <p className="text-xs text-muted-foreground text-center mt-4 max-w-2xl mx-auto leading-relaxed">
           Subscriptions auto-renew at the end of each billing period unless canceled at least 24 hours before the renewal date. You can manage or cancel your subscription in your account settings. See our{" "}

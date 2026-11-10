@@ -48,8 +48,6 @@ const Contact = () => (
       <li>Legal: <MailLink email="legal@positivethots.app" /></li>
     </ul>
 
-    <h2 className="text-lg font-bold mt-6 mb-3">Mailing address</h2>
-    <p className="mb-6 leading-relaxed text-muted-foreground">PLACEHOLDER_BUSINESS_ADDRESS</p>
 
     <h2 className="text-lg font-bold mt-6 mb-3">Payment processor support</h2>
     <p className="mb-2 leading-relaxed text-muted-foreground">

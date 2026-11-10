@@ -49,7 +49,6 @@ const CommunityGuidelines = lazy(() => import("./pages/CommunityGuidelines"));
 const CelebrationDemo = lazy(() => import("./pages/CelebrationDemo"));
 const TestingLocator = lazy(() => import("./pages/TestingLocator"));
 const HealthTesting = lazy(() => import("./pages/HealthTesting"));
-const ContentCompliance = lazy(() => import("./pages/ContentCompliance"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Complaints = lazy(() => import("./pages/Complaints"));
 const Appeals = lazy(() => import("./pages/Appeals"));
@@ -117,7 +116,6 @@ const AppContent = () => {
         <Route path="/testing-locations" element={<Suspense fallback={<PageLoader />}><TestingLocator /></Suspense>} />
         <Route path="/health-testing" element={<Suspense fallback={<PageLoader />}><HealthTesting /></Suspense>} />
         <Route path="/celebration-demo" element={<Suspense fallback={<PageLoader />}><CelebrationDemo /></Suspense>} />
-        <Route path="/2257" element={<Suspense fallback={<PageLoader />}><ContentCompliance /></Suspense>} />
         <Route path="/admin" element={<Suspense fallback={<PageLoader />}><Admin /></Suspense>} />
         <Route path="/complaints" element={<Suspense fallback={<PageLoader />}><Complaints /></Suspense>} />
         <Route path="/appeals" element={<Suspense fallback={<PageLoader />}><Appeals /></Suspense>} />
