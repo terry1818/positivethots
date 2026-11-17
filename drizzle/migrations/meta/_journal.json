@@ -15,6 +15,13 @@
       "when": 1794347411069,
       "tag": "0001_privacy_selfie_location",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794899617590,
+      "tag": "0002_restrict_video_event_reads_to_signed_in_users",
+      "breakpoints": true
     }
   ]
 }

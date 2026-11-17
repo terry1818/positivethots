@@ -1,0 +1,2 @@
+# Access-control rules
+- Video-event listings are restricted by RLS to authenticated users with a non-null auth.uid(); preserve the separate administrator management policy so event browsing stays available to members without exposing the listing anonymously.
