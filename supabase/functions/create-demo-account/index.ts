@@ -106,7 +106,7 @@ Deno.serve(async (req) => {
     const {
       email = "demo@positivethots.app",
       password,
-      displayName = "Demo User",
+      displayName = "Positive Thots Team",
     } = body;
 
     if (!email || !password) {
@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
         sexuality: "pansexual",
         relationship_style: "polyamorous",
         relationship_status: "partnered",
-        bio: "Demo account for compliance review. This is a test profile showcasing the full Positive Thots experience — education-gated dating for the ENM community.",
+        bio: "Hi, we're the team behind Positive Thots. This is our official house profile. Connect with us to see how profiles, badges, and chat work, or to ask a question about courses, safety, or your account. Learn first. Connect better.",
         interests: ["communication", "consent", "education", "community"],
         age: 30,
         location: "Columbus, OH",

@@ -28,7 +28,7 @@ export const DemoAccountButton = ({ onRefresh }: { onRefresh?: () => void }) => 
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("demo@positivethots.app");
   const [password, setPassword] = useState(() => generatePassword());
-  const [displayName, setDisplayName] = useState("Demo User");
+  const [displayName, setDisplayName] = useState("Positive Thots Team");
   const [loading, setLoading] = useState(false);
   const [created, setCreated] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -36,7 +36,7 @@ export const DemoAccountButton = ({ onRefresh }: { onRefresh?: () => void }) => 
   const handleOpen = () => {
     setEmail("demo@positivethots.app");
     setPassword(generatePassword());
-    setDisplayName("Demo User");
+    setDisplayName("Positive Thots Team");
     setCreated(false);
     setOpen(true);
   };
