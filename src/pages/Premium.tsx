@@ -263,7 +263,7 @@ const Premium = () => {
                   Try Another Payment Method
                 </Button>
                 <Button size="sm" variant="link" asChild>
-                  <a href="mailto:billing@positivethots.com">Contact Support</a>
+                  <a href="mailto:billing@positivethots.app">Contact Support</a>
                 </Button>
               </div>
             </CardContent>

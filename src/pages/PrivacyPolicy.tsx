@@ -24,7 +24,7 @@ const PrivacyPolicy = () => (
       path="/privacy"
     />
   <LegalPageShell title="Privacy Policy" toc={TOC}>
-    <p className="text-muted-foreground text-sm mb-6">Last updated: April 5, 2026</p>
+    <p className="text-muted-foreground text-sm mb-6">Last updated: November 17, 2026</p>
 
     <h2 id="intro" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">1. Introduction</h2>
     <p className="mb-4 leading-relaxed text-muted-foreground">
@@ -49,6 +49,7 @@ const PrivacyPolicy = () => (
       <li>Device information and browser type</li>
       <li>Usage patterns and interaction data</li>
       <li>Authentication session data</li>
+      <li>Cookies and local storage: we use only essential cookies and browser storage to keep you signed in and remember choices such as your age confirmation and cookie notice. We do not use advertising or cross-site tracking cookies.</li>
     </ul>
 
     <h2 id="biometric" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">3. Biometric & Selfie Data</h2>
@@ -106,7 +107,7 @@ const PrivacyPolicy = () => (
         <ul className="list-disc list-inside ml-5 mt-1 space-y-1">
           <li>Lovable Cloud / Supabase (database, authentication, and file storage)</li>
           <li>Google Gemini (automated review of photos and messages for safety; content is sent for classification only)</li>
-          <li>Our third-party payment processor (the information needed to process your payment; we never see or store your card number)</li>
+          <li>CCBill, our third-party payment processor (the information needed to process your payment, such as your email and the plan you chose; card details are entered on CCBill's secure payment form and we never see or store your card number)</li>
           <li>Shopify (merch orders only: name, shipping address, and order details)</li>
         </ul>
       </li>
@@ -116,6 +117,9 @@ const PrivacyPolicy = () => (
     <h2 id="data-security" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">7. Data Security</h2>
     <p className="mb-4 leading-relaxed text-muted-foreground">
       We implement industry-standard security measures including encrypted data transmission (TLS), row-level security policies, secure authentication with leaked password protection, and server-side validation of sensitive operations.
+    </p>
+    <p className="mb-4 leading-relaxed text-muted-foreground">
+      Your data is stored on Lovable Cloud (Supabase) managed infrastructure. Access to production data is limited to authorized Positive Thots administrators, and automated moderation receives content for classification only.
     </p>
 
     <h2 id="your-rights" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">8. Your Rights (GDPR & CCPA)</h2>
@@ -196,7 +200,7 @@ const PrivacyPolicy = () => (
 
     <h2 id="contact" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">12. Contact Us</h2>
     <p className="mb-4 leading-relaxed text-muted-foreground">
-      If you have questions about this Privacy Policy or wish to exercise your data rights, please contact us at privacy@positivethots.com.
+      If you have questions about this Privacy Policy or wish to exercise your data rights, please contact us at privacy@positivethots.app.
     </p>
   </LegalPageShell>
   </>

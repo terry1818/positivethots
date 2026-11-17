@@ -130,7 +130,7 @@ const CommunityGuidelines = () => (
       <div className="bg-muted/40 rounded-lg p-4 space-y-2">
         <p className="text-sm text-muted-foreground m-0">Users can appeal moderation decisions within <strong className="text-foreground">30 days</strong>.</p>
         <p className="text-sm m-0">
-          Email: <a href="mailto:appeals@positivethots.com" className="text-primary hover:underline font-medium">appeals@positivethots.com</a>
+          Email: <a href="mailto:appeals@positivethots.app" className="text-primary hover:underline font-medium">appeals@positivethots.app</a>
         </p>
         <p className="text-sm text-muted-foreground m-0">Appeals are reviewed within <strong className="text-foreground">5 business days</strong>. The decision is final after appeal review.</p>
       </div>
@@ -159,7 +159,7 @@ const CommunityGuidelines = () => (
       </p>
       <p className="text-sm text-muted-foreground mt-1">
         Questions? Contact us at{" "}
-        <a href="mailto:legal@positivethots.com" className="text-primary hover:underline">legal@positivethots.com</a>
+        <a href="mailto:legal@positivethots.app" className="text-primary hover:underline">legal@positivethots.app</a>
       </p>
     </div>
   </LegalPageShell>

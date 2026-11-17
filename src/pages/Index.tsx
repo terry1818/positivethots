@@ -692,7 +692,7 @@ const Index = () => {
           name: "Positive Thots",
           applicationCategory: "SocialNetworkingApplication",
           operatingSystem: "iOS, Android, Web",
-          description: "Education-gated dating app for ethical non-monogamy and LGBTQ+ communities.",
+          description: "Education-first relationship wellness platform for every relationship style.",
           url: "https://positivethots.app",
         }}
       />

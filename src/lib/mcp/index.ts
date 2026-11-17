@@ -13,7 +13,7 @@ export default defineMcp({
   title: "PositiveThots.app",
   version: "0.1.0",
   instructions:
-    "Tools for Positive Thots, an education-gated dating app for ENM, polyamory, and LGBTQ+ communities. " +
+    "Tools for Positive Thots, an education-first relationship wellness and education platform for every relationship style. " +
     "Use `list_courses` and `get_course` to explore the badge curriculum. Use `my_learning_progress` and " +
     "`my_connections` for the signed-in user's own data, and `update_my_bio` to edit their About Me text. " +
     "Branded language matters: say 'Connect' (not like/swipe right), 'Pass' (not reject), " +

@@ -262,7 +262,7 @@ const Messages = () => {
                   onClick={() => {
                     navigator.share?.({
                       title: "Join Positive Thots",
-                      text: "Check out Positive Thots — a dating app that educates!",
+                      text: "Check out Positive Thots — the relationship wellness app where you learn first and connect better!",
                       url: "https://positivethots.app",
                     }).catch(() => {
                       navigator.clipboard.writeText("https://positivethots.app");

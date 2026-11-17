@@ -83,7 +83,7 @@ const Cancellation = () => (
       </li>
     </ul>
 
-    <p className="text-muted-foreground text-sm mt-8">Last updated: May 9, 2026</p>
+    <p className="text-muted-foreground text-sm mt-8">Last updated: November 17, 2026</p>
   </LegalPageShell>
   </>
 );

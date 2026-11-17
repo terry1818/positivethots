@@ -17,7 +17,7 @@ export interface AchievementData {
   badgeCount?: number;
 }
 
-const APP_URL = "https://positivethots.com";
+const APP_URL = "https://positivethots.app";
 const SHARE_URL = `${APP_URL}?utm_source=achievement_share`;
 const HANDLE = "@positivethots";
 const HOOK_LINES: Record<AchievementType, string> = {
@@ -346,7 +346,7 @@ export function generateAchievementCard(
     ctx.font = "bold 38px system-ui, -apple-system, sans-serif";
     ctx.textAlign = "center";
     ctx.fillStyle = "white";
-    ctx.fillText("positivethots.com", w / 2, botY - 50);
+    ctx.fillText("positivethots.app", w / 2, botY - 50);
     ctx.restore();
 
     // CTA
@@ -453,7 +453,7 @@ export function generateAchievementCard(
 
     ctx.font = "bold 30px system-ui, -apple-system, sans-serif";
     ctx.fillStyle = "rgba(255,255,255,0.85)";
-    ctx.fillText("Join the journey → positivethots.com", w / 2, h - 80);
+    ctx.fillText("Join the journey → positivethots.app", w / 2, h - 80);
 
     ctx.font = "24px system-ui, -apple-system, sans-serif";
     ctx.fillStyle = "rgba(255,255,255,0.5)";

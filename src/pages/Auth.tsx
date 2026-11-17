@@ -5,7 +5,7 @@ import { useSessionStore } from "@/stores/sessionStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShimmerButton } from "@/components/ShimmerButton";
 import { Logo } from "@/components/Logo";
 import { ForgotPasswordModal } from "@/components/ForgotPasswordModal";
@@ -13,9 +13,8 @@ import { buildAuthRedirectUrl } from "@/lib/authRedirect";
 import { toast } from "sonner";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
-import { AlertCircle, Check, Circle, GraduationCap, ShieldCheck, Heart } from "lucide-react";
+import { Check, Circle, GraduationCap, ShieldCheck, Heart } from "lucide-react";
 import { BrandTagline } from "@/components/BrandTagline";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 const signUpSchema = z.object({
   email: z.string().trim().email("Please enter a valid email address").max(255, "Email too long"),
@@ -39,14 +38,7 @@ const signInSchema = z.object({
 
 import { FieldError } from "@/components/FieldError";
 
-const TESTIMONIALS = [
-  "Finally, a dating app that expects you to learn first.",
-  "The education modules changed how I communicate.",
-  "I feel safer here than any other dating app.",
-];
-
 const Auth = () => {
-  const prefersReducedMotion = useReducedMotion();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,7 +47,6 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [testimonialIdx, setTestimonialIdx] = useState(0);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLFormElement>(null);
@@ -65,13 +56,6 @@ const Auth = () => {
   const nextPath =
     rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : null;
 
-
-  // Rotate testimonials
-  useEffect(() => {
-    if (prefersReducedMotion) return;
-    const interval = setInterval(() => setTestimonialIdx(i => (i + 1) % TESTIMONIALS.length), 5000);
-    return () => clearInterval(interval);
-  }, [prefersReducedMotion]);
 
   // Capture referral code from URL
   useEffect(() => {
@@ -250,10 +234,9 @@ const Auth = () => {
                   <ShieldCheck className="h-4 w-4 text-primary shrink-0" />Education-verified community
                 </span>
                 <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Heart className="h-4 w-4 text-primary shrink-0" />Built for ethical non-monogamy
+                  <Heart className="h-4 w-4 text-primary shrink-0" />Welcoming every relationship style
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground/70 text-center">Join 500+ members learning together</p>
             </div>
           )}
         </CardHeader>
@@ -307,9 +290,9 @@ const Auth = () => {
                   />
                   <Label htmlFor="agreedToTerms" className="text-sm text-muted-foreground leading-snug cursor-pointer">
                     I am at least 18 years old and agree to the{" "}
-                    <a href="/terms" target="_blank" className="text-primary hover:underline">Terms of Service</a>{" "}
+                    <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Terms of Service</a>{" "}
                     and{" "}
-                    <a href="/privacy" target="_blank" className="text-primary hover:underline">Privacy Policy</a>
+                    <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Privacy Policy</a>
                   </Label>
                 </div>
                 <FieldError message={fieldErrors.agreedToTerms} id="terms-error" />
@@ -382,16 +365,6 @@ const Auth = () => {
             </Button>
           </form>
 
-          {/* Rotating testimonial */}
-          <div className="mt-4 text-center min-h-[40px] flex items-center justify-center">
-            <p
-              key={prefersReducedMotion ? 0 : testimonialIdx}
-              className={cn("text-sm text-muted-foreground italic", !prefersReducedMotion && "animate-fade-in")}
-            >
-              "{TESTIMONIALS[prefersReducedMotion ? 0 : testimonialIdx]}"
-              <span className="block text-muted-foreground/60 mt-0.5 not-italic">— Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> member</span>
-            </p>
-          </div>
         </CardContent>
       </Card>
     </div>

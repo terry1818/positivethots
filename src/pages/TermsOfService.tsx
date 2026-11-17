@@ -33,7 +33,7 @@ const TermsOfService = () => (
       path="/terms"
     />
   <LegalPageShell title="Terms of Service" toc={TOC}>
-    <p className="text-muted-foreground text-sm mb-6">Last updated: April 5, 2026</p>
+    <p className="text-muted-foreground text-sm mb-6">Last updated: November 17, 2026</p>
 
     <h2 id="acceptance" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">1. Acceptance of Terms</h2>
     <p className="mb-4 leading-relaxed text-muted-foreground">
@@ -140,9 +140,9 @@ const TermsOfService = () => (
       In compliance with the FTC's Click-to-Cancel Rule, cancelling your subscription is designed to be as simple as signing up. You may cancel your subscription at any time through any of the following methods:
     </p>
     <ul className="list-disc list-inside space-y-1 mb-4 text-muted-foreground">
-      <li><strong>In-App:</strong> Navigate to Settings → Subscription → Cancel Subscription. Cancellation takes effect at the end of the current billing period.</li>
-      <li><strong>Customer Portal:</strong> Access the customer portal from Settings → Subscription → Manage Subscription to cancel directly.</li>
-      <li><strong>Email:</strong> Send a cancellation request to support@positivethots.com. We will process your request within 24 hours and send confirmation.</li>
+      <li><strong>In-App:</strong> Go to Settings → Subscription → Cancel Subscription.</li>
+      <li><strong>Through our payment processor:</strong> Contact our payment processor's Consumer Support at <a href="https://support.ccbill.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">https://support.ccbill.com</a> or 888-596-9279. They can cancel any subscription on your behalf.</li>
+      <li><strong>Email:</strong> Send a cancellation request to billing@positivethots.app. We will process your request within 24 hours and send confirmation.</li>
     </ul>
     <p className="mb-4 leading-relaxed text-muted-foreground">
       Refund requests are reviewed individually. Contact billing@positivethots.app. Upon cancellation, you retain access to premium features through the end of your current billing period. You will not be charged again after cancellation unless you resubscribe.
@@ -199,7 +199,7 @@ const TermsOfService = () => (
     <div className="bg-muted/30 rounded-xl p-4 mb-4 text-muted-foreground">
       <p className="font-medium">Rhea &amp; Associates LLC</p>
       <p>Attn: DMCA Agent</p>
-      <p>Email: legal@positivethots.com</p>
+      <p>Email: legal@positivethots.app</p>
     </div>
     <p className="mb-4 leading-relaxed text-muted-foreground">
       We will respond to valid notices promptly and may remove or disable access to infringing content. Repeat infringers may have their accounts terminated.
@@ -222,7 +222,7 @@ const TermsOfService = () => (
 
     <h2 id="contact" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">20. Contact</h2>
     <p className="mb-4 leading-relaxed text-muted-foreground">
-      Questions about these Terms? Contact us at legal@positivethots.com.
+      Questions about these Terms? Contact us at legal@positivethots.app.
     </p>
   </LegalPageShell>
   </>

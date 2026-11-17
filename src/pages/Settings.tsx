@@ -599,6 +599,13 @@ const Settings = () => {
                   <ExternalLink className="h-4 w-4" />
                   {managingPortal ? "Opening…" : "Manage Subscription"}
                 </Button>
+                <Button
+                  variant="outline"
+                  className="w-full min-h-[44px]"
+                  onClick={() => navigate("/cancellation")}
+                >
+                  Cancel Subscription
+                </Button>
                 <Link to="/cancellation" className="inline-flex items-center min-h-[44px] text-sm text-primary hover:underline">Cancellation Policy</Link>
               </>
             ) : (
