@@ -22,6 +22,13 @@
       "when": 1794899617590,
       "tag": "0002_restrict_video_event_reads_to_signed_in_users",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794899728143,
+      "tag": "0003_restrict_sprint_participant_reads_to_members",
+      "breakpoints": true
     }
   ]
 }

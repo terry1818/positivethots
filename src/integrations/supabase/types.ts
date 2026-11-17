@@ -3104,6 +3104,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_sprint_member: { Args: { _sprint_id: string }; Returns: boolean }
       is_video_date_participant: {
         Args: { _event_id: string; _user_id: string }
         Returns: boolean
