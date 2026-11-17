@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock, Rocket, Crown, Award, ShoppingBag, Calendar, Pencil, Share2, ChevronRight, ExternalLink } from "lucide-react";
+import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock, Rocket, Crown, Award, Calendar, Pencil, Share2, ChevronRight, ExternalLink } from "lucide-react";
 import { FetLifeBadge } from "@/components/FetLifeBadge";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
@@ -602,7 +602,6 @@ const Profile = () => {
             <ProfileNavRow emoji="🎪" label="Events & Workshops" onClick={() => navigate("/events")} />
             <ProfileNavRow emoji="📚" label="Resources & Books" onClick={() => navigate("/resources")} />
             <ProfileNavRow emoji="📓" label="Reflection Journal" onClick={() => navigate("/journal")} />
-            <ProfileNavRow emoji="🛍️" label="Merch Shop" href="https://positivethots.store" external />
           </Card>
         </div>
 

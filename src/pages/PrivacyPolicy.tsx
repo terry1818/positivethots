@@ -108,7 +108,6 @@ const PrivacyPolicy = () => (
           <li>Lovable Cloud / Supabase (database, authentication, and file storage)</li>
           <li>Google Gemini (automated review of photos and messages for safety; content is sent for classification only)</li>
           <li>CCBill, our third-party payment processor (the information needed to process your payment, such as your email and the plan you chose; card details are entered on CCBill's secure payment form and we never see or store your card number)</li>
-          <li>Shopify (merch orders only: name, shipping address, and order details)</li>
         </ul>
       </li>
       <li><strong>Legal Requirements:</strong> When required by law, court order, or government request</li>

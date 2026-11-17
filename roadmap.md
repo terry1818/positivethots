@@ -7,3 +7,7 @@
 - [x] Reproduce the signed-in direct-load error and check history before 1991dff.
 - [x] Fix the router context without changing profile copy, layout, or photo consent.
 - [x] Verify signed-in direct loading, unsaved navigation, and unchanged consent/photo state.
+
+# Remove merchandise storefront
+- [x] Remove storefront links, copy, dead pages, cart code, and deployed proxy without changing other features or database tables.
+- [x] Verify build, signed-in Profile, and zero obsolete integration/domain references; existing profile-edit regression also passed with consent/photos unchanged.

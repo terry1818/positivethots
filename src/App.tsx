@@ -12,7 +12,6 @@ import { AgeGate } from "@/components/AgeGate";
 import { PageLoader } from "@/components/PageLoader";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { OfflineBanner } from "@/components/OfflineBanner";
-import { useCartSync } from "@/hooks/useCartSync";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
 import { useNPSSurvey } from "@/hooks/useNPSSurvey";
@@ -39,7 +38,6 @@ const Premium = lazy(() => import("./pages/Premium"));
 const Wallet = lazy(() => import("./pages/Wallet"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
-// Shop is now an external link — no in-app route needed
 const Resources = lazy(() => import("./pages/Resources"));
 const Events = lazy(() => import("./pages/Events"));
 const LearningJournal = lazy(() => import("./pages/LearningJournal"));
@@ -71,7 +69,6 @@ export const queryClient = new QueryClient({
 });
 
 const AppContent = () => {
-  useCartSync();
   const { previousChurnStatus } = useActivityTracker();
   const { pendingTrigger, dismiss } = useNPSSurvey();
 
@@ -105,7 +102,6 @@ const AppContent = () => {
         <Route path="/profile" element={<Suspense fallback={<PageSkeleton variant="profile" />}><Profile /></Suspense>} />
         <Route path="/profile/edit" element={<Suspense fallback={<PageSkeleton variant="profile" />}><EditProfile /></Suspense>} />
         <Route path="/settings" element={<Suspense fallback={<PageLoader />}><Settings /></Suspense>} />
-        {/* Shop is now an external link to positivethots.store */}
         <Route path="/resources" element={<Suspense fallback={<PageLoader />}><Resources /></Suspense>} />
         <Route path="/events" element={<Suspense fallback={<PageLoader />}><Events /></Suspense>} />
         <Route path="/journal" element={<Suspense fallback={<PageLoader />}><LearningJournal /></Suspense>} />
