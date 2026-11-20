@@ -1,3 +1,7 @@
+# Learn 09b stories for every module
+- [ ] Draft 32 lesson-grounded stories, insert data without changing existing rows, and create the full owner review document.
+- [ ] Verify coverage, scene structure, rotated choices, kind feedback, and two complete story playthroughs.
+
 # Learn 09 mixed nodes
 - [x] Add optional mixed nodes, conversation stories, safe practice RPC, server chest rewards and Foundation listen recap; no new stories or badge/unlock changes. Build and 52 tests passed.
 - [x] Checks 1, 4, 5: live Story counts 2/1/1 across three Foundation modules and zero for others; chest +10 XP persisted, duplicate unchanged, locked claim rejected, direct member insert denied (42501).
