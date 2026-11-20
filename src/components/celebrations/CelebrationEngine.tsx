@@ -1,8 +1,9 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { type ReactNode } from "react";
 import { useEffect, useState, useCallback } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { ConfettiSystem } from "./ConfettiSystem";
-import { MascotReaction } from "@/components/mascot/MascotReaction";
+
 import { haptic } from "@/lib/haptics";
 import { playBadgeUnlockSound, playCelebrationSound, playMatchSound, playStreakMilestoneSound } from "@/lib/soundGenerator";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -113,7 +114,7 @@ export const CelebrationEngine = ({
       <>
         <ConfettiSystem intensity="light" trigger={confettiTrigger} duration={1200} />
         <div className="fixed bottom-24 right-4 z-[55] animate-slide-up" aria-hidden="true">
-          {illustration || <MascotReaction emotion="cheering" size="small" position="bottom-right" message={title} />}
+          {illustration || <GuideArt name="guide-thumbs-up" size={96} />}
         </div>
       </>
     );
@@ -144,7 +145,7 @@ export const CelebrationEngine = ({
             <div className="relative z-10 space-y-4">
               {/* Mascot */}
               <div className={cn(!reducedMotion && "animate-bounce-in")}>
-                {illustration || <MascotReaction emotion={mascotEmotion} size="large" position="inline" animate={!reducedMotion} />}
+                {illustration || <GuideArt name={tier === "medium" ? "guide-high-five" : "guide-celebrate-all"} size={160} animate={!reducedMotion} />}
               </div>
 
               {/* Title */}

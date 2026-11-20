@@ -782,11 +782,14 @@ const Index = () => {
       {/* Curated Matches Grid — flex-1 fills remaining space */}
       <div className="flex-1 min-h-0 overflow-hidden max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 w-full">
         {suggestions.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full px-6 text-center overflow-y-auto">
+          <div className="discovery-empty flex flex-col items-center justify-start h-full px-2 pt-4 pb-24 text-center overflow-y-auto">
           <BrandedEmptyState
               mascot="binoculars"
               headline="You've seen everyone nearby."
               description="Expand your range or check back soon."
+              className="py-4 px-4 shrink-0"
+              ctaLabel="Expand radius"
+              onCtaClick={() => navigate("/settings")}
             />
             <p className="text-xs text-[rgba(255,255,255,0.5)] mt-4" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
               Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup>

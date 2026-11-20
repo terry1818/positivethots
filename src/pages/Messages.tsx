@@ -223,7 +223,7 @@ const Messages = () => {
         ) : matches.length === 0 && !searchQuery ? (
           <div className="space-y-4">
             <BrandedEmptyState
-              mascot="waving"
+              mascot="chat"
               headline="No messages yet! 💬"
               description="When you and someone both Connect, you can start chatting here. Keep earning badges and exploring Discovery!"
               ctaLabel="Go to Discovery"
@@ -289,7 +289,7 @@ const Messages = () => {
           <div className="space-y-3">
             <SearchInput placeholder="Search conversations..." ariaLabel="Search conversations" onSearch={handleSearch} />
             {sortedMatches.length === 0 && searchQuery ? (
-              <p className="text-sm text-muted-foreground text-center py-8">No conversations matching &lsquo;{searchQuery}&rsquo;</p>
+              <BrandedEmptyState mascot="confused" headline="No conversations found" description="Try another name." ctaLabel="Clear search" onCtaClick={() => setSearchQuery("")} />
             ) : null}
             {sortedMatches.map((match, idx) => {
               const lastMsg = lastMessages[match.id];

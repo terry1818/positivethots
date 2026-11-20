@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -199,7 +200,7 @@ export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps
               : { bottom: window.innerHeight - targetRect.top + PADDING + 12 }),
           }}
         >
-          <h3 className="font-semibold text-sm mb-1">{step.title}</h3>
+          <div className="flex items-center gap-3 mb-2"><GuideArt name="guide-waving" size={48} /><h3 className="font-semibold text-sm">{step.title}</h3></div>
           <p className="text-sm text-muted-foreground mb-3">{step.description}</p>
           <div className="flex items-center justify-between">
             <div className="flex gap-1">

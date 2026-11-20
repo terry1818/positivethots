@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useEffect, useState } from "react";
 import { useTutorialState } from "@/hooks/useTutorialState";
 import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
@@ -391,7 +392,8 @@ const Profile = () => {
           )}
 
           {stats && (
-            <div className="flex items-center gap-4 px-4 py-3 bg-muted/50 rounded-lg">
+            <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-muted/50 rounded-lg">
+              <GuideArt name="guide-level-up" size={72} />
               <div className="flex items-center gap-1">
                 <Zap className="h-4 w-4 text-accent" />
                 <span className="text-base font-bold"><AnimatedCounter end={stats.total_xp} suffix=" XP" /></span>
@@ -546,6 +548,8 @@ const Profile = () => {
           </Card>
         )}
 
+        {badges.length === 0 && <div className="flex items-center gap-4 px-4 py-3"><GuideArt name="guide-lesson-reading" size={96} /><div><p className="font-semibold">My Badges</p><Button variant="link" onClick={() => navigate("/learn")}>Start Learning</Button></div></div>}
+        {hasEveryBadge(badges.length, total) && <div className="flex items-center gap-4 px-4 py-3"><GuideArt name="guide-graduate" size={96} /><p className="font-semibold">Every badge earned!</p></div>}
         {/* Premium Upsell — free tier only */}
         {tier === "free" && (
           <Card className="animate-fade-in bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">

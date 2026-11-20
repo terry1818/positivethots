@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -79,8 +80,8 @@ export const WelcomeBackModal = ({ previousChurnStatus }: WelcomeBackModalProps)
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-sm text-center">
         <div className="py-4 space-y-4">
-          <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center animate-bounce-in">
-            <Heart className="h-8 w-8 text-primary fill-primary" />
+          <div className="mx-auto flex items-center justify-center">
+            <GuideArt name="guide-waving" size={96} />
           </div>
 
           <div>

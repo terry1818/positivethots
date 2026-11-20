@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EducationBadge } from "@/components/EducationBadge";
@@ -40,9 +41,7 @@ export const ValuePropositionScreen = ({ onBegin }: ValuePropositionScreenProps)
       <div className="w-full max-w-md space-y-8 py-8">
         {/* Headline */}
         <div className="text-center space-y-4">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mx-auto">
-            <BookOpen className="h-8 w-8 text-primary" />
-          </div>
+          <GuideArt name="guide-tier-foundation" size={150} />
           <h1 className="text-2xl font-bold text-foreground leading-tight">
             You're in!
           </h1>

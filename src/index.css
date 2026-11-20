@@ -746,7 +746,21 @@ button, [role="button"] {
 .practice-flash-front[aria-pressed=true] { visibility: hidden; }
 
 /* Supplied Learn guide art: fixed aspect ratios, no cropping, visible-only floats. */
-.guide-art { display: inline-flex; flex-shrink: 0; vertical-align: middle; justify-content: center; }
+.guide-art { display: inline-flex; flex-shrink: 0; vertical-align: middle; justify-content: center; position: relative; isolation: isolate; }
+.guide-art::before { content: ""; position: absolute; inset: 8% -8%; z-index: -1; pointer-events: none; background: radial-gradient(ellipse, hsl(var(--primary) / .18), transparent 70%); }
+.guide-art:has([data-guide="guide-thumbs-up"])::before { background: radial-gradient(ellipse, hsl(var(--art-correct) / .16), transparent 70%); }
+.guide-art:has([data-guide="guide-meditate"], [data-guide="guide-thinking"], [data-guide="guide-tier-sexual-health"])::before { background: radial-gradient(ellipse, hsl(var(--art-info) / .16), transparent 70%); }
+.guide-art:has([data-guide="guide-chest-open"], [data-guide="guide-trophy"], [data-guide="guide-level-up"], [data-guide="guide-graduate"])::before { background: radial-gradient(ellipse, hsl(var(--art-reward) / .16), transparent 70%); }
+.guide-art:has([data-guide="guide-streak-flame"], [data-guide="guide-sleepy"])::before { background: radial-gradient(ellipse, hsl(var(--art-urgent) / .16), transparent 70%); }
+.auth-guide-layout { width: 100%; max-width: 448px; display: grid; gap: 16px; }
+.auth-guide-welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.discovery-empty > * { flex-shrink: 0; }
+body:has([aria-label$="walkthrough"]) .events-guide-header .guide-art { visibility: hidden; }
+body:has([role="dialog"]) [role="status"] > .inline-flex > .guide-art { visibility: hidden; }
+.discovery-empty .guide-art { height: 150px !important; width: auto !important; }
+.discovery-empty h2 { font-size: 20px; }
+.discovery-empty p { font-size: 16px; line-height: 1.5; }
+@media(min-width:1024px) { .auth-guide-layout { max-width: 960px; grid-template-columns: 1fr 448px; gap: 48px; }.auth-guide-welcome .guide-art { width: 100% !important; height: auto !important; } }
 .guide-art-image { width: 100%; height: 100%; object-fit: contain; }
 .guide-floating { animation: path-float 3.2s infinite ease-in-out; }
 .guide-full-width { width: 100% !important; height: auto !important; }
@@ -763,8 +777,14 @@ button, [role="button"] {
 .path-guide-placement.path-mascot-left { left: -8px; justify-content: flex-start; }
 @media(max-width:359px) { .path-guide-placement.path-mascot-right { right: 0; }.path-guide-placement.path-mascot-left { left: 0; } }
 
-/* Learn-only semantic accents: each pigment has exactly one state meaning. */
+/* App artwork aliases preserve the five Learn accent meanings. */
 :root {
+  --art-correct: 82.711864 77.973568% 55.490196%;
+  --art-urgent: 11.927711 100% 67.450980%;
+  --art-info: 198.4375 93.203883% 59.607843%;
+  --art-reward: 43.255814 96.412556% 56.274510%;
+  --art-highlight: 173.414634 80.392157% 40%;
+  --art-ink: 270 38.461538% 10.196078%;
   --learn-correct: 82.711864 77.973568% 55.490196%;
   --learn-urgent: 11.927711 100% 67.450980%;
   --learn-info: 198.4375 93.203883% 59.607843%;

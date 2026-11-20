@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useEffect, useState } from "react";
 import { useTutorialState } from "@/hooks/useTutorialState";
 import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
@@ -292,7 +293,7 @@ const LikesYou = () => {
               ) : likerCount === 0 ? (
                 <div className="space-y-2">
                   <BrandedEmptyState
-                    mascot="heart"
+                    mascot="waving"
                     headline="Your admirers are on their way! 💜"
                     description="Complete more badges to boost your profile visibility."
                     ctaLabel="Continue Learning"
@@ -326,7 +327,7 @@ const LikesYou = () => {
                     ))}
                   </div>
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl">
-                    <Crown className="h-8 w-8 text-amber-500 mb-2" />
+                    <GuideArt name="guide-chest-open" size={96} />
                     <p className="font-semibold text-base">{likerCount} {likerCount === 1 ? "person" : "people"} liked you</p>
                     <p className="text-sm text-muted-foreground mt-1">Upgrade to see who they are</p>
                     <Button
@@ -390,9 +391,9 @@ const LikesYou = () => {
                 </div>
               ) : sentLikes.length === 0 ? (
                 <div className="text-center py-16 text-muted-foreground">
-                  <Heart className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                  <GuideArt name="guide-waving" size={150} />
                   <p className="text-lg font-medium">No likes sent yet</p>
-                  <p className="text-sm">Profiles you Connect with will appear here.</p>
+                  <p className="text-sm">Profiles you Connect with will appear here.</p><Button className="mt-4" onClick={() => navigate("/")}>Go to Discovery</Button>
                 </div>
               ) : (
               <div className="grid grid-cols-2 gap-3">

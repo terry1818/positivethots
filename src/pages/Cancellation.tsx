@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { LegalPageShell } from "@/components/LegalPageShell";
 import { SEO } from "@/components/SEO";
 
@@ -9,7 +10,7 @@ const Cancellation = () => (
       path="/cancellation"
     />
   <LegalPageShell title="Cancellation Policy" toc={[]}>
-    <div className="border-b border-border pb-4 mb-6" />
+    <div className="flex justify-center mb-4"><GuideArt name="guide-encourage" size={72} animate={false} /></div><div className="border-b border-border pb-4 mb-6" />
 
     <p className="mb-4 leading-relaxed text-muted-foreground">
       You can cancel your Positive Thots subscription at any time. This page explains how.

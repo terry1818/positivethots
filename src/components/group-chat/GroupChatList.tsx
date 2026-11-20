@@ -38,11 +38,7 @@ export const GroupChatList = ({ onSelectGroup }: GroupChatListProps) => {
       </div>
 
       {groups.length === 0 ? (
-        <div className="px-4 py-3">
-          <p className="text-xs text-muted-foreground text-center">
-            No group chats yet. Create one with your matches!
-          </p>
-        </div>
+        <BrandedEmptyState mascot="together" headline="Your group starts here" description="Bring your connections together." ctaLabel="Create group chat" onCtaClick={() => setShowCreate(true)} className="py-6" />
       ) : (
         groups.map(group => (
           <button

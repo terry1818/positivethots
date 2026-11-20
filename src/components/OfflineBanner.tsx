@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useEffect, useState } from "react";
 import { WifiOff } from "lucide-react";
 
@@ -19,7 +20,7 @@ export const OfflineBanner = () => {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] bg-destructive text-destructive-foreground text-sm font-medium flex items-center justify-center gap-2 py-2 px-4 safe-top" role="alert">
-      <WifiOff className="h-4 w-4 shrink-0" />
+      <GuideArt name="guide-sleepy" size={36} animate={false} />
       You're offline — showing cached content
     </div>
   );

@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { Button } from "@/components/ui/button";
 import { Gamepad2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -91,7 +92,7 @@ export const GameMenu = memo(({ matchId, currentUserId, otherUserId }: GameMenuP
           <Gamepad2 className="h-5 w-5 text-primary" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-56">
+      <DropdownMenuContent align="start" className="w-56"><div className="flex justify-center py-2"><GuideArt name="guide-daily-spin" size={72} /></div>
         <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">🎮 Play a Game</div>
         {GAMES.map((g) => (
           <DropdownMenuItem key={g.type} onClick={() => startGame(g.type, g.count)} disabled={starting}>

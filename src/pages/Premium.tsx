@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -190,7 +191,7 @@ const Premium = () => {
         <div className={cn("absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl", !reducedMotion && "animate-blob-float")} aria-hidden="true" />
         <div className={cn("absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl", !reducedMotion && "animate-blob-float [animation-delay:5s]")} aria-hidden="true" />
         <div className={cn("relative z-10 text-center max-w-md", !reducedMotion && "animate-bounce-in")}>
-          <TierIcon className={cn("h-16 w-16 text-primary mb-4 mx-auto", !reducedMotion && "animate-pulse-glow")} />
+          <GuideArt name={justSubscribed ? "guide-high-five" : "guide-level-up"} size={160} />
           {justSubscribed ? (
             <>
               <h1 className="text-2xl font-bold mb-2">Welcome to {currentConfig?.name ?? "Premium"}!</h1>
@@ -243,9 +244,7 @@ const Premium = () => {
         </div>
 
         <div className={cn("text-center mb-8", !reducedMotion && "animate-fade-in")}>
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <Crown className={cn("h-8 w-8 text-primary", !reducedMotion && "animate-wiggle")} />
-          </div>
+<div className="flex justify-center mb-4"><GuideArt name="guide-level-up" size={160} /></div>
           <h1 className="text-3xl font-bold mb-2">Choose Your Plan</h1>
           <p className="text-muted-foreground">Every plan unlocks better connections.</p>
         </div>
@@ -396,9 +395,7 @@ const Premium = () => {
                   </div>
                 )}
                 <CardHeader className="text-center pb-2">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mx-auto mb-2">
-                    <Icon className="h-6 w-6 text-primary" />
-                  </div>
+<div className="flex justify-center mb-2"><GuideArt name={config.tier === "plus" ? "guide-thumbs-up" : config.tier === "premium" ? "guide-trophy" : "guide-celebrate-all"} size={48} /></div>
                   <CardTitle className="text-lg">{config.name}</CardTitle>
                   <p className="text-sm text-muted-foreground">
                     {TIER_DESCRIPTORS[config.tier as keyof typeof TIER_DESCRIPTORS]}

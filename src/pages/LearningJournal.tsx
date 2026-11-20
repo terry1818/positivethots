@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -126,13 +127,13 @@ const LearningJournal = () => {
           <h1 className="text-xl font-bold">My Learning Journal</h1>
         </div>
 
+        <div className="flex justify-center"><GuideArt name="guide-meditate" size={150} /></div>
         {reflections.length === 0 ? (
           <Card className="animate-fade-in">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center space-y-3">
-              <BookOpen className="h-12 w-12 text-muted-foreground" />
               <p className="text-muted-foreground text-sm max-w-xs">
                 Your reflections will appear here. Complete a section with a reflection prompt to start your journal.
-              </p>
+              </p><Button onClick={() => navigate("/learn")}>Go to Learn</Button>
             </CardContent>
           </Card>
         ) : (

@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -590,6 +591,7 @@ const Onboarding = () => {
 
         <Card className="shadow-[var(--shadow-elevated)] overflow-hidden border-border/50 backdrop-blur-sm bg-card/95">
           <CardContent className="p-6 relative">
+            <div className="flex justify-center"><GuideArt key={step} name={step === 1 ? "guide-waving" : step === TOTAL_STEPS ? "guide-celebrate-all" : step === 2 ? "guide-tier-foundation" : [6,7,8,9].includes(step) ? "guide-tier-relationships" : "guide-tier-identity"} size={96} /></div>
             {/* Skip button for optional steps */}
             {isOptionalStep && step > 1 && step < TOTAL_STEPS && (
               <button
@@ -604,7 +606,6 @@ const Onboarding = () => {
               {/* Step 1: Welcome */}
                {step === 1 && (
                 <div className="text-center space-y-6 py-4">
-                  <span className="text-6xl block animate-bounce-in">👋</span>
                   <Logo size="lg" />
                   <BrandTagline variant="secondary" className="mt-3" />
                   <div className="space-y-2 animate-stagger-1">

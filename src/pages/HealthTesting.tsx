@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -62,7 +63,7 @@ const HealthTesting = () => {
 
         {/* Intro */}
         <div className="text-center space-y-1 py-2">
-          <HeartPulse className="h-8 w-8 text-primary mx-auto" />
+          <GuideArt name="guide-tier-sexual-health" size={72} animate={false} />
           <h2 className="text-lg font-bold">Test From Home</h2>
           <p className="text-sm text-muted-foreground">
             Regular testing is self-care. These services make it private, easy, and discreet.

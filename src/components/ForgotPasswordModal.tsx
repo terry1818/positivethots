@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -64,6 +65,7 @@ export const ForgotPasswordModal = () => {
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
+        <div className="flex justify-center"><GuideArt name="guide-encourage" size={72} /></div>
         <DialogHeader>
           <DialogTitle>{sent ? "Check your email" : "Reset your password"}</DialogTitle>
           <DialogDescription>

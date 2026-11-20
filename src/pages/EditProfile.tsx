@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -164,7 +165,7 @@ const EditProfile = () => {
 
       queryClient.invalidateQueries({ queryKey: ["profile-prompts"] });
       queryClient.invalidateQueries({ queryKey: ["profile-prompt-count"] });
-      toast.success("Profile updated!");
+      toast.success("Profile updated!", { icon: <GuideArt name="guide-thumbs-up" size={36} /> });
       setHasChanges(false);
       navigate("/profile");
     } catch (error) {
@@ -239,6 +240,7 @@ const EditProfile = () => {
       </header>
 
       <main className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6 pb-36">
+        <div className="flex items-center gap-4 mb-6"><GuideArt name="guide-tier-identity" size={72} /><p className="font-semibold">Express yourself</p></div>
         <Accordion
           type="single"
           collapsible

@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -585,6 +586,7 @@ const Chat = () => {
 
           {/* Icebreaker suggestions — available for first 3 messages */}
           <div className="space-y-2">
+            {messages.length === 0 && <div className="flex justify-center"><GuideArt name="guide-story-chat" size={96} /></div>}
             <p className="text-sm text-muted-foreground flex items-center gap-1.5">
               <MessageCircle className="h-3 w-3" />
               {messages.length === 0 ? "Start the conversation" : "Conversation starters"}

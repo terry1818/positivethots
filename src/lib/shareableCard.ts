@@ -1,11 +1,14 @@
 import { isNative } from "@/lib/capacitor";
 import { trackEvent } from "@/lib/analytics";
+import { guideUrl } from "@/lib/guideAssets";
+import type { GuideName } from "@/lib/guideRotation";
 
 export type AchievementType =
   | "badge_earned"
   | "streak_milestone"
   | "tier_complete"
   | "mentor_earned"
+  | "level_up"
   | "compatibility_score";
 
 export interface AchievementData {
@@ -15,12 +18,28 @@ export interface AchievementData {
   tierName?: string;
   compatibilityScore?: number;
   badgeCount?: number;
+  level?: number;
+}
+
+export function achievementGuide(data: AchievementData): GuideName {
+  if (data.type === "badge_earned") return "guide-graduate";
+  if (data.type === "streak_milestone") return "guide-streak-flame";
+  if (data.type === "level_up") return "guide-level-up";
+  if (data.type === "compatibility_score") return "guide-high-five";
+  return "guide-celebrate-all";
+}
+export async function loadAchievementGuide(data: AchievementData, userId = ""): Promise<HTMLImageElement> {
+  const image = new Image();
+  image.src = guideUrl(achievementGuide(data), userId);
+  await image.decode();
+  return image;
 }
 
 const APP_URL = "https://positivethots.app";
 const SHARE_URL = `${APP_URL}?utm_source=achievement_share`;
 const HANDLE = "@positivethots";
 const HOOK_LINES: Record<AchievementType, string> = {
+  level_up: "Growing, one lesson at a time",
   badge_earned: "Think you know everything about intimacy? 🤔",
   streak_milestone: "Consistency is the real flex 💪",
   tier_complete: "Education unlocks deeper connections 🔓",
@@ -29,6 +48,7 @@ const HOOK_LINES: Record<AchievementType, string> = {
 };
 
 const BADGE_ICONS: Record<AchievementType, string> = {
+  level_up: "⭐",
   badge_earned: "🎓",
   streak_milestone: "🔥",
   tier_complete: "🛡️",
@@ -37,6 +57,7 @@ const BADGE_ICONS: Record<AchievementType, string> = {
 };
 
 const PILL_LABELS: Record<AchievementType, string> = {
+  level_up: "Level Up",
   badge_earned: "Badge Earned",
   streak_milestone: "Streak Milestone",
   tier_complete: "Tier Complete",
@@ -46,6 +67,7 @@ const PILL_LABELS: Record<AchievementType, string> = {
 
 // Brand gradient stops
 const GRADIENT_THEMES: Record<AchievementType, { from: string; via: string; to: string }> = {
+  level_up: { from: "#7C3AED", via: "#6D28D9", to: "#DB2777" },
   badge_earned:       { from: "#7C3AED", via: "#6D28D9", to: "#DB2777" },
   streak_milestone:   { from: "#D97706", via: "#B45309", to: "#7C3AED" },
   tier_complete:      { from: "#CA8A04", via: "#A16207", to: "#7C3AED" },
@@ -55,6 +77,7 @@ const GRADIENT_THEMES: Record<AchievementType, { from: string; via: string; to: 
 
 function getTitle(data: AchievementData): string {
   switch (data.type) {
+    case "level_up": return `Level ${data.level ?? "Up"}!`;
     case "badge_earned": return data.badgeName || "Badge Earned";
     case "streak_milestone": return `${data.streakDays}-Day Streak!`;
     case "tier_complete": return `${data.tierName || "Tier"} Complete!`;
@@ -65,6 +88,7 @@ function getTitle(data: AchievementData): string {
 
 function getDescription(data: AchievementData): string {
   switch (data.type) {
+    case "level_up": return "Learning more about healthy relationships on Positive Thots!";
     case "badge_earned": return `I completed my ${data.badgeName} badge on Positive Thots!`;
     case "streak_milestone": return `${data.streakDays} consecutive days of learning about healthy relationships!`;
     case "tier_complete": return `All ${data.tierName} badges complete on Positive Thots!`;
@@ -227,7 +251,8 @@ export function generateAchievementCard(
   const canvas = document.createElement("canvas");
   canvas.width = w;
   canvas.height = h;
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Your achievement image could not be created. Please try again.");
   const isStory = format === "story";
   const theme = GRADIENT_THEMES[data.type];
   const emoji = BADGE_ICONS[data.type];
@@ -362,11 +387,10 @@ export function generateAchievementCard(
 
     // Mascot (left of CTA area, if available)
     if (mascotImg && mascotImg.naturalWidth > 0) {
-      const mH = 160;
+      const mH = 200;
       const mW = (mascotImg.width / mascotImg.height) * mH;
       ctx.save();
-      ctx.globalAlpha = 0.85;
-      ctx.drawImage(mascotImg, 60, botY - 160, mW, mH);
+      ctx.drawImage(mascotImg, 24, safeTop - 56, mW, mH);
       ctx.restore();
     }
 
@@ -388,6 +412,11 @@ export function generateAchievementCard(
     ctx.shadowBlur = 6;
     ctx.fillText("Positive Thots", padX, y);
     ctx.restore();
+    if (mascotImg && mascotImg.naturalWidth > 0) {
+      const mH = 160;
+      const mW = mascotImg.naturalWidth / mascotImg.naturalHeight * mH;
+      ctx.drawImage(mascotImg, w - padX - mW, 24, mW, mH);
+    }
     y += 70;
 
     // ── HOOK LINE ──
@@ -471,8 +500,8 @@ export async function shareAchievement(
 ): Promise<void> {
   trackEvent("achievement_share", { type: data.type });
 
-  const blob = await new Promise<Blob>((resolve) =>
-    canvas.toBlob((b) => resolve(b!), "image/png")
+  const blob = await new Promise<Blob>((resolve, reject) =>
+    canvas.toBlob((b) => b ? resolve(b) : reject(new Error("Could not create your image. Please try again.")), "image/png")
   );
 
   if (isNative()) {

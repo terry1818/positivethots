@@ -2,21 +2,15 @@ import { memo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-import mascotBinoculars from "@/assets/mascot-binoculars.png";
-import mascotWaving from "@/assets/mascot-waving.png";
-import mascotHeart from "@/assets/mascot-heart.png";
-import mascotGraduate from "@/assets/mascot-graduate.png";
-import mascotConfused from "@/assets/mascot-confused.png";
-import mascotShrug from "@/assets/mascot-shrug.png";
+import { GuideArt, type GuideName } from "@/components/mascot/GuideArt";
 
 export const MASCOT_IMAGES = {
-  binoculars: mascotBinoculars,
-  waving: mascotWaving,
-  heart: mascotHeart,
-  graduate: mascotGraduate,
-  confused: mascotConfused,
-  shrug: mascotShrug,
-} as const;
+  binoculars: "guide-tier-advanced", waving: "guide-waving", heart: "guide-high-five",
+  graduate: "guide-graduate", confused: "guide-thinking", shrug: "guide-encourage",
+  chat: "guide-story-chat", chest: "guide-chest-open", calm: "guide-meditate",
+  health: "guide-tier-sexual-health", together: "guide-study-together", community: "guide-celebrate-all",
+  express: "guide-tier-identity", sleepy: "guide-sleepy", learning: "guide-tier-foundation",
+} as const satisfies Record<string, GuideName>;
 
 export type MascotType = keyof typeof MASCOT_IMAGES;
 
@@ -54,12 +48,7 @@ export const BrandedEmptyState = memo(({
       {/* Mascot with glow */}
       <div className="relative mb-6">
         <div className="absolute inset-0 rounded-full bg-primary/10 blur-2xl scale-150" />
-        {illustration || <img
-          src={MASCOT_IMAGES[mascot]}
-          alt=""
-          className="relative w-[187px] h-[187px] object-contain drop-shadow-lg animate-float-gentle"
-          loading="lazy"
-        />}
+        {illustration || <GuideArt name={MASCOT_IMAGES[mascot]} size={160} />}
       </div>
 
       {/* Headline */}

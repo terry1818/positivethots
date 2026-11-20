@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -127,7 +128,7 @@ export const SprintLeaderboard = ({
                 >
                   {/* Rank */}
                   <div className="w-8 text-center flex-shrink-0">
-                    {p.rank && RANK_ICONS[p.rank] ? (
+                    {p.rank === 1 ? <GuideArt name="guide-trophy" size={36} /> : p.rank && RANK_ICONS[p.rank] ? (
                       <span className="text-lg">{RANK_ICONS[p.rank]}</span>
                     ) : (
                       <span className="text-sm font-bold text-muted-foreground">#{p.rank}</span>

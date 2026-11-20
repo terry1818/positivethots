@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -101,7 +102,7 @@ const ResetPassword = () => {
         <Card className="w-full max-w-md">
           <CardContent className="pt-6 text-center">
             <Logo size="lg" />
-            <p className="mt-4 text-muted-foreground">Invalid or expired reset link. Please request a new one.</p>
+            <div className="mt-4"><GuideArt name="guide-encourage" size={72} /></div><p className="mt-4 text-muted-foreground">Invalid or expired reset link. Please request a new one.</p>
             <Button className="mt-4" onClick={() => navigate("/auth")}>Back to Sign In</Button>
           </CardContent>
         </Card>
@@ -114,7 +115,7 @@ const ResetPassword = () => {
       <Card className="w-full max-w-md animate-fade-in">
         <CardHeader className="text-center">
           <div className="mb-4 flex justify-center"><Logo size="lg" /></div>
-          <CardTitle className="text-2xl">Set New Password</CardTitle>
+          <div className="flex justify-center"><GuideArt name="guide-encourage" size={72} /></div><CardTitle className="text-2xl">Set New Password</CardTitle>
           <CardDescription>Enter your new password below</CardDescription>
         </CardHeader>
         <CardContent>

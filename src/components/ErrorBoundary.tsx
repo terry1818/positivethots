@@ -1,7 +1,8 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { Component, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { reportError } from "@/lib/errorReporting";
-import mascotConfused from "@/assets/mascot-confused.png";
+
 
 interface Props {
   children: ReactNode;
@@ -36,12 +37,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="flex flex-col items-center justify-center text-center px-8 py-12 animate-fade-in">
             <div className="relative mb-6">
               <div className="absolute inset-0 rounded-full bg-primary/10 blur-2xl scale-150" />
-              <img
-                src={mascotConfused}
-                alt=""
-                className="relative w-[120px] h-[120px] object-contain drop-shadow-lg"
-                loading="lazy"
-              />
+              <GuideArt name="guide-encourage" size={160} />
             </div>
             <h2 className="text-xl font-bold text-foreground mb-2 max-w-xs">
               Oops! Something went wrong 😅

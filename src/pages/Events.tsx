@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState, useEffect, useCallback } from "react";
 import { useTutorialState } from "@/hooks/useTutorialState";
 import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
@@ -110,7 +111,7 @@ const Events = () => {
         status: "confirmed",
       });
       if (error) throw error;
-      toast.success("You're in! 🎉");
+      toast.success("You're in! 🎉", { icon: <GuideArt name="guide-high-five" size={36} /> });
     } catch (err: any) {
       // Rollback
       setRsvps((prev) => prev.filter((id) => id !== eventId));
@@ -194,9 +195,10 @@ const Events = () => {
       return (
         <Card className="text-center py-12">
           <CardContent>
-            <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <GuideArt name={eventSearch ? "guide-thinking" : "guide-study-together"} size={150} />
             <h3 className="font-semibold text-lg mb-1">No upcoming events</h3>
             <p className="text-muted-foreground text-sm">Check back soon for new {tier === "community" ? "community" : tier === "premium" ? "premium" : "adults-only"} events!</p>
+            <Button variant="outline" className="mt-4" onClick={() => eventSearch ? setEventSearch("") : navigate("/learn")}>{eventSearch ? "Clear search" : "Go to Learn"}</Button>
           </CardContent>
         </Card>
       );
@@ -243,6 +245,7 @@ const Events = () => {
           </div>
         </div>
 
+        <div className="events-guide-header flex justify-center mb-4"><GuideArt name="guide-tier-relationships" size={72} /></div>
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EventTier)} className="w-full">
           <TabsList className="w-full grid grid-cols-3 mb-4" data-tour="events-tier-tabs">
             <TabsTrigger value="community" className="text-sm sm:text-sm">

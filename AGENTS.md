@@ -24,3 +24,5 @@
 - Practice hub/modes lazy-load separately from Path; private saved takeaways and safe caller-eligible RPCs keep answer keys off loading, and award_practice_xp serializes daily rewards without badge writes or changes to legacy award_xp.
 
 - Learn artwork uses manifest-sized GuideArt with lazy images and visibility-gated floats; Learn-only mascot adapters preserve non-Learn legacy art.
+
+- App character art uses the merged dimension manifests and a pure user/local-day/meaning selector; viewport/gesture-gated loading limits initial artwork requests, and sharing waits for image decoding and the wordmark font.

@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Heart, Shield } from "lucide-react";
@@ -123,11 +124,7 @@ export const MatchModal = ({
               </span>
             ))}
           </div>
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20" aria-hidden="true">
-            <span className="text-6xl">💜</span>
-          </div>
-        )}
+        ) : null}
 
         <div className="relative p-8 text-center">
           {/* Animated heart background */}
@@ -137,13 +134,9 @@ export const MatchModal = ({
 
           <div className="relative z-10">
             <div className="mb-6">
-              {celebrationType === 'milestone' ? (
-                <div className="text-6xl font-bold text-white mb-4 animate-bounce-in">{matchCount}</div>
-              ) : (
-                <Heart className={cn("h-20 w-20 mx-auto text-white fill-current mb-4", !prefersReducedMotion && "animate-bounce-in")} />
-              )}
+<div className="flex justify-center mb-4"><GuideArt name="guide-high-five" size={150} /></div>
               <h2
-                className={cn("text-4xl font-bold text-white mb-2", !prefersReducedMotion && "animate-fade-in")}
+                className={cn("text-3xl font-bold text-white mb-2", !prefersReducedMotion && "animate-fade-in")}
                 style={!prefersReducedMotion ? { animationDelay: "0.15s", animationFillMode: "both" } : undefined}
               >
                 {headlineText}

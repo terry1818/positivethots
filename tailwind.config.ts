@@ -14,6 +14,11 @@ export default {
     },
     extend: {
       colors: {
+        "art-correct": { DEFAULT: "hsl(var(--art-correct) / <alpha-value>)", foreground: "hsl(var(--art-ink) / <alpha-value>)" },
+        "art-urgent": { DEFAULT: "hsl(var(--art-urgent) / <alpha-value>)", foreground: "hsl(var(--art-ink) / <alpha-value>)" },
+        "art-info": { DEFAULT: "hsl(var(--art-info) / <alpha-value>)", foreground: "hsl(var(--art-ink) / <alpha-value>)" },
+        "art-reward": { DEFAULT: "hsl(var(--art-reward) / <alpha-value>)", foreground: "hsl(var(--art-ink) / <alpha-value>)" },
+        "art-highlight": { DEFAULT: "hsl(var(--art-highlight) / <alpha-value>)", foreground: "hsl(var(--art-ink) / <alpha-value>)" },
         "learn-correct": { DEFAULT: "hsl(var(--learn-correct) / <alpha-value>)", foreground: "hsl(var(--learn-ink) / <alpha-value>)" },
         "learn-urgent": { DEFAULT: "hsl(var(--learn-urgent) / <alpha-value>)", foreground: "hsl(var(--learn-ink) / <alpha-value>)" },
         "learn-info": { DEFAULT: "hsl(var(--learn-info) / <alpha-value>)", foreground: "hsl(var(--learn-ink) / <alpha-value>)" },

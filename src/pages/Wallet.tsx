@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { CoinWallet } from "@/components/coins/CoinWallet";
 import { CoinBalanceWidget } from "@/components/coins/CoinBalanceWidget";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ const Wallet = () => {
           </Button>
           <CoinBalanceWidget />
         </div>
+        <div className="flex justify-center mb-4"><GuideArt name="guide-chest-open" size={160} /></div>
         <h1 className="text-2xl font-bold mb-4">🪙 My Wallet</h1>
         <CoinWallet />
       </div>

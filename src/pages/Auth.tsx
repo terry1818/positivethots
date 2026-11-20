@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -214,7 +215,9 @@ const Auth = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-accent/10 blur-3xl animate-blob-float [animation-delay:10s]" aria-hidden="true" />
       <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-secondary/10 blur-3xl animate-blob-float [animation-delay:15s]" aria-hidden="true" />
 
-      <Card className="w-full max-w-md shadow-[var(--shadow-elevated)] relative z-10 animate-fade-in">
+      <div className="auth-guide-layout relative z-10">
+        <aside className="auth-guide-welcome"><GuideArt name="guide-celebrate-all" size={150} /><p className="hidden lg:block text-xl font-medium text-foreground mt-6">Learn first. Connect better.</p></aside>
+        <Card className="w-full max-w-md shadow-[var(--shadow-elevated)] relative z-10 animate-fade-in">
         <CardHeader className="space-y-1 text-center">
           <div className="mb-4 flex justify-center"><Logo size="lg" /></div>
           <CardTitle className="text-2xl">{isSignUp ? "Create your account" : "Welcome back"}</CardTitle>
@@ -367,6 +370,7 @@ const Auth = () => {
 
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

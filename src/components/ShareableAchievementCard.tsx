@@ -5,12 +5,12 @@ import { Share2, Download, Link2, Check } from "lucide-react";
 import { toast } from "sonner";
 import {
   generateAchievementCard,
+  loadAchievementGuide,
   shareAchievement,
   downloadCanvas,
   type AchievementData,
 } from "@/lib/shareableCard";
-import logoImg from "@/assets/logo.png";
-import mascotImg from "@/assets/mascot-celebration.png";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ShareableAchievementCardProps {
   open: boolean;
@@ -21,49 +21,39 @@ interface ShareableAchievementCardProps {
 
 export const ShareableAchievementCard = memo(
   ({ open, onClose, data, format = "story" }: ShareableAchievementCardProps) => {
+    const { user } = useAuth();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const previewRef = useRef<HTMLDivElement>(null);
     const [copied, setCopied] = useState(false);
     const [sharing, setSharing] = useState(false);
     const [cardFormat, setCardFormat] = useState<"story" | "square">(format);
 
-    const renderCard = useCallback(() => {
-      const logo = new Image();
-      logo.crossOrigin = "anonymous";
-      const mascot = new Image();
-      mascot.crossOrigin = "anonymous";
-
-      let loaded = 0;
-      const onLoad = () => {
-        loaded++;
-        if (loaded < 2) return;
-        const canvas = generateAchievementCard(
-          data,
-          cardFormat,
-          mascot.complete && mascot.naturalWidth > 0 ? mascot : null,
-          logo.complete && logo.naturalWidth > 0 ? logo : null
-        );
+    const renderVersion = useRef(0);
+    const [ready, setReady] = useState(false);
+    const renderCard = useCallback(async () => {
+      const version = ++renderVersion.current;
+      setReady(false);
+      canvasRef.current = null;
+      try {
+        const [mascot] = await Promise.all([loadAchievementGuide(data, user?.id), document.fonts.load("40px Pacifico")]);
+        if (version !== renderVersion.current) return;
+        const canvas = generateAchievementCard(data, cardFormat, mascot);
         canvasRef.current = canvas;
-
         if (previewRef.current) {
-          previewRef.current.innerHTML = "";
+          previewRef.current.replaceChildren(canvas);
           canvas.style.width = "100%";
           canvas.style.height = "auto";
           canvas.style.borderRadius = "12px";
-          previewRef.current.appendChild(canvas);
         }
-      };
-
-      logo.onload = onLoad;
-      logo.onerror = onLoad;
-      mascot.onload = onLoad;
-      mascot.onerror = onLoad;
-      logo.src = logoImg;
-      mascot.src = mascotImg;
-    }, [data, cardFormat]);
+        setReady(true);
+      } catch {
+        toast.error("Your achievement image couldn't load. Please try again.", { action: { label: "Retry", onClick: () => void renderCard() } });
+      }
+    }, [data, cardFormat, user?.id]);
 
     useEffect(() => {
-      if (open) renderCard();
+      if (open) void renderCard();
+      return () => { renderVersion.current++; };
     }, [open, renderCard]);
 
     const handleShare = async () => {
@@ -131,11 +121,11 @@ export const ShareableAchievementCard = memo(
 
           {/* Actions */}
           <div className="p-4 flex gap-2">
-            <Button onClick={handleShare} disabled={sharing} className="flex-1 gap-2">
+            <Button onClick={handleShare} disabled={sharing || !ready} className="flex-1 gap-2">
               <Share2 className="h-4 w-4" />
               Share
             </Button>
-            <Button variant="outline" onClick={handleDownload} className="gap-2">
+            <Button variant="outline" disabled={!ready} onClick={handleDownload} className="gap-2">
               <Download className="h-4 w-4" />
             </Button>
             <Button variant="outline" onClick={handleCopyLink} className="gap-2">

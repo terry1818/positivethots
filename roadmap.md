@@ -85,3 +85,8 @@
 # Remove merchandise storefront
 - [x] Remove storefront links, copy, dead pages, cart code, and deployed proxy without changing other features or database tables.
 - [x] Verify build, signed-in Profile, and zero obsolete integration/domain references; existing profile-edit regression also passed with consent/photos unchanged.
+## App 13 — Character artwork across the app
+- [x] Install unchanged alternates and stable daily rotation.
+- [x] Replace legacy artwork and add only requested contextual placements.
+- [x] Include contextual character art in achievement exports and landing page.
+- [x] Run seven acceptance checks, review mobile screenshots, and record every changed file.

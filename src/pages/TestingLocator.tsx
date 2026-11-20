@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ const TestingLocator = () => {
       </header>
 
       <main className="flex-1 container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6 space-y-4">
+        <div className="flex justify-center"><GuideArt name="guide-tier-sexual-health" size={72} animate={false} /></div>
         {/* Map Section */}
         <Card className="overflow-hidden animate-fade-in">
           <div className="relative w-full" style={{ height: 400 }}>

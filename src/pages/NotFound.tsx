@@ -13,9 +13,9 @@ const NotFound = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <BrandedEmptyState
-        mascot="shrug"
-        headline="This page doesn't exist! 🤷"
-        description="Looks like this Thot got lost."
+        mascot="binoculars"
+        headline="We looked everywhere"
+        description="This page isn't here. Let's get you back on track."
         ctaLabel="Go Home"
         onCtaClick={() => navigate("/")}
       />

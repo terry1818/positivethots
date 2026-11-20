@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useCoins } from "@/hooks/useCoins";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ export const CoinPurchaseSheet = ({ open, onOpenChange }: CoinPurchaseSheetProps
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
+        <div className="flex justify-center mb-4"><GuideArt name="guide-chest-open" size={150} /></div>
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             🪙 Buy Thots Coins

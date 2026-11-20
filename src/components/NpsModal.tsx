@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState, useCallback } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -60,7 +61,7 @@ export const NpsModal = ({ triggerEvent, onClose }: NpsModalProps) => {
 
   return (
     <Dialog open onOpenChange={() => onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md"><div className="flex justify-center"><GuideArt name="guide-thumbs-up" size={96} /></div>
         {phase === "score" && (
           <div className="text-center py-2">
             <Star className="h-8 w-8 mx-auto text-primary mb-3" />

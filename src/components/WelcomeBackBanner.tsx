@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState, useEffect } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
@@ -59,7 +60,7 @@ export const WelcomeBackBanner = () => {
       style={{ fontFamily: "Inter, system-ui, sans-serif", minHeight: 44 }}
       role="status"
     >
-      {renderMsg()}
+      <span className="inline-flex items-center gap-3"><GuideArt name="guide-waving" size={48} secondary /><span>{renderMsg()}</span></span>
     </div>
   );
 };
