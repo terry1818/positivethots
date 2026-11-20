@@ -7,20 +7,32 @@
   "concepts": [
    {
     "heading": "The Habit Loop: Your Blueprint for Change",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l1-0.webp",
+    "alt": "A guide pointing at a circular loop of arrows with three icons: a bell, footprints and a star",
+    "size": [
+     481,
+     457
+    ],
     "plain": "Every habit is a loop: something sets it off, you do it, you get a payoff."
    },
    {
     "heading": "The Science: How Long Does Habit Formation Actually Take?",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l1-1.webp",
+    "alt": "A guide marking days on a long wall calendar",
+    "size": [
+     461,
+     457
+    ],
     "plain": "The 21-day claim is a myth. Building a habit usually takes longer."
    },
    {
     "heading": "Growth Mindset: The Foundation",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l1-2.webp",
+    "alt": "A guide watering a small plant growing out of an open book",
+    "size": [
+     497,
+     480
+    ],
     "plain": "A growth mindset means believing you can get better with effort."
    }
   ],
@@ -60,20 +72,32 @@
   "concepts": [
    {
     "heading": "The 1% Better Every Day Principle",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l2-0.webp",
+    "alt": "A guide climbing a long staircase made of very small steps",
+    "size": [
+     498,
+     506
+    ],
     "plain": "Getting a tiny bit better each day adds up to a lot."
    },
    {
     "heading": "Identity-Based Habits: The Real Leverage",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l2-1.webp",
+    "alt": "A guide looking into a mirror where her reflection wears a small medal",
+    "size": [
+     459,
+     449
+    ],
     "plain": "Habits stick when they come from who you are, not just from a goal."
    },
    {
     "heading": "Mapping Your Personal Habit Landscape",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l2-2.webp",
+    "alt": "A guide drawing a map with a pencil, with a small house, a heart and a briefcase on it",
+    "size": [
+     512,
+     448
+    ],
     "plain": "Before you change anything, look clearly at what you do now."
    },
    {
@@ -118,44 +142,72 @@
   "concepts": [
    {
     "heading": "The Power of Implementation Intentions",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l3-0.webp",
+    "alt": "A guide pinning a note with a clock and a map pin onto a board",
+    "size": [
+     478,
+     493
+    ],
     "plain": "Decide exactly when and where you will do it. That makes you far more likely to follow through."
    },
    {
     "heading": "The Neuroscience: Habits as Automatic Behavior",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l3-1.webp",
+    "alt": "A guide strolling on autopilot along a worn footpath in the grass",
+    "size": [
+     438,
+     512
+    ],
     "plain": "Almost half of what we do each day is automatic habit."
    },
    {
     "heading": "The Four Laws of Behavior Change",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l3-2.webp",
+    "alt": "A guide holding four coloured cards fanned out",
+    "size": [
+     411,
+     471
+    ],
     "plain": "Four rules make any habit easier to build."
    },
    {
     "heading": "1. Make It Obvious: Environmental Design",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l3-3.webp",
+    "alt": "A guide placing running shoes right beside the front door",
+    "size": [
+     493,
+     467
+    ],
     "plain": "Make it obvious: set up your space so the right thing is in plain sight."
    },
    {
     "heading": "2. Make It Attractive: Pair With Joy",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l3-4.webp",
+    "alt": "Two guides dancing together while washing dishes",
+    "size": [
+     503,
+     512
+    ],
     "plain": "Make it attractive: pair it with something you enjoy."
    },
    {
     "heading": "3. Make It Easy: Reduce Friction",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l3-5.webp",
+    "alt": "A guide stepping easily over a very low hurdle",
+    "size": [
+     406,
+     512
+    ],
     "plain": "Make it easy: start with a version that takes two minutes."
    },
    {
     "heading": "4. Make It Satisfying: Celebrate Wins",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l3-6.webp",
+    "alt": "A guide ticking a box on a wall chart and doing a small fist pump",
+    "size": [
+     464,
+     456
+    ],
     "plain": "Make it satisfying: celebrate each small win straight away."
    }
   ],
@@ -195,8 +247,12 @@
   "concepts": [
    {
     "heading": "Breaking Bad Patterns: Replace, Don't Resist",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l4-0.webp",
+    "alt": "A guide swapping a worn gear for a shiny new one in a small machine",
+    "size": [
+     510,
+     470
+    ],
     "plain": "Bad habits once helped you. Swap them for something better instead of fighting them."
    },
    {
@@ -206,14 +262,22 @@
    },
    {
     "heading": "The 2-Minute Identity Ritual",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l4-2.webp",
+    "alt": "Two guides facing each other, holding hands and taking a slow breath together",
+    "size": [
+     478,
+     511
+    ],
     "plain": "Pick one two-minute practice and do it every day."
    },
    {
     "heading": "Habit Stacking Across Life Domains",
-    "art": "",
-    "alt": "",
+    "art": "rewiring-your-habits/l4-3.webp",
+    "alt": "A guide joining two chain links together",
+    "size": [
+     491,
+     508
+    ],
     "plain": "Attach a new habit to something you already do, like right after dinner."
    },
    {
