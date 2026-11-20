@@ -1,3 +1,7 @@
+# App 14 interactive characters and path
+- [ ] Add shared pointer, drag, hover, reaction and celebration presentation without changing learning rules or excluded screens.
+- [ ] Verify all seven acceptance checks with pointer/touch/keyboard recordings and frame measurements; report every changed file.
+
 # Learn 12 supplied guide art
 - [x] Install unchanged 24 WebP files and manifest; apply contextual Learn-only artwork and tier accents.
 - [x] Verify six acceptance checks and critically review mobile/desktop screenshots; legacy outside-Learn art inventory and untriggered live states recorded in docs/learn12-acceptance.md.
