@@ -855,6 +855,10 @@ body:has([role="dialog"]) [role="status"] > .inline-flex > .guide-art { visibili
 .guide-burst i:nth-child(4n+3) { background: hsl(var(--art-correct, 84 81% 55%)); }
 .guide-burst i:nth-child(4n+4) { background: hsl(var(--art-info, 199 92% 60%)); width: 8px; height: 8px; }
 .path-scenery .guide-fx-on { pointer-events: auto; }
+/* Node rows span the full stage width and sit above the scenery: let their empty
+   space pass the pointer through so the characters beside the path can be played with. */
+.path-level-stage .learn-level-node { pointer-events: none; }
+.path-level-stage .learn-level-node > * { pointer-events: auto; }
 @keyframes guide-breathe { 50% { scale: 1.02 .985; } }
 @keyframes guide-jump { 0% { transform: translateY(0) scale(1, 1); } 15% { transform: translateY(4px) scale(1.08, .9); } 45% { transform: translateY(-22px) scale(.95, 1.08); } 70% { transform: translateY(0) scale(1.06, .93); } 100% { transform: translateY(0) scale(1, 1); } }
 @keyframes guide-wiggle { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-6deg); } 45% { transform: rotate(5deg); } 70% { transform: rotate(-3deg); } }
