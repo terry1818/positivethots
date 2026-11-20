@@ -531,3 +531,20 @@ button, [role="button"] {
     transform: none;
   }
 }
+
+/* Learn home: semantic tier colours and single highlighted daily action. */
+.learn-tier { --learn-tier-color: var(--primary); }
+.learn-tier-sexual_health { --learn-tier-color: var(--success); }
+.learn-tier-identity { --learn-tier-color: var(--badge-boundaries); }
+.learn-tier-relationships { --learn-tier-color: var(--badge-safer-sex); }
+.learn-tier-advanced { --learn-tier-color: var(--accent); }
+.learn-tier-color { color: hsl(var(--learn-tier-color)); }
+.learn-node-open { border-color: hsl(var(--learn-tier-color)); }
+.learn-path-node svg.absolute { width: 100%; height: 100%; }
+.learn-path-circle svg.absolute { width: 20px; height: 20px; }
+.learn-node-completed { background: hsl(var(--learn-tier-color) / 0.18); border-color: hsl(var(--learn-tier-color)); color: hsl(var(--foreground)); }
+.learn-today-scroll { scrollbar-width: none; }
+.learn-today-scroll::-webkit-scrollbar { display: none; }
+.learn-today-fade { background: linear-gradient(to right, hsl(var(--background) / 0), hsl(var(--background))); }
+.learn-chip-highlight { border: 2px solid transparent; background: linear-gradient(hsl(var(--muted)), hsl(var(--muted))) padding-box, linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary))) border-box; }
+.learn-continue-button { background: linear-gradient(135deg, hsl(var(--badge-consent)), hsl(var(--badge-boundaries))); color: hsl(var(--primary-foreground)); }

@@ -9,3 +9,4 @@
 - Video-event listings are restricted by RLS to authenticated users with a non-null auth.uid(); preserve the separate administrator management policy so event browsing stays available to members without exposing the listing anonymously.
 - Sprint participation reads are limited to the caller's own records and sprints they have joined; use the caller-bound `is_sprint_member` definer helper to avoid recursive RLS while preserving member leaderboards.
 - Use a browser data router at the app root so profile unsaved-navigation blocking via `useBlocker` has its required context; retain the existing descendant routes and providers.
+- Learn home shares one next-learning target between the path and pinned bar, and lazy-loads existing daily activity panels in sheets; this preserves lesson entry and reward logic without competing cards.

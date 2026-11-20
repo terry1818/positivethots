@@ -60,33 +60,23 @@ const ChatSkeleton = () => (
 );
 
 const LearnSkeleton = () => (
-  <div className="min-h-screen bg-background pb-20" aria-busy="true" aria-label="Loading learn">
-    <SkeletonHeader>
-      <Logo size="md" showText={false} />
-      <Skeleton className="h-6 w-32" />
-    </SkeletonHeader>
-    <div className="container max-w-md mx-auto px-4 py-6 space-y-4">
-      <Skeleton className="h-3 w-full rounded-full" />
-      <div className="flex gap-3">
-        <Skeleton className="h-16 flex-1 rounded-xl" />
-        <Skeleton className="h-16 flex-1 rounded-xl" />
+  <div className="min-h-screen bg-background pb-[calc(176px+env(safe-area-inset-bottom))]" aria-busy="true" aria-label="Loading learn">
+    <header className="sticky top-0 z-30 border-b border-border bg-card">
+      <div className="container max-w-md mx-auto space-y-2 px-4 py-2.5">
+        <div className="flex items-center justify-between"><Logo size="md" showText={false} /><Skeleton className="h-6 w-32" /></div>
+        <Skeleton className="h-8 w-full rounded-full" />
       </div>
-      <Skeleton className="h-24 w-full rounded-xl" />
-      <div className="grid grid-cols-3 gap-3">
-        {[1, 2, 3, 4, 5, 6].map(i => (
-          <Skeleton key={i} className="h-16 w-16 rounded-full mx-auto" />
-        ))}
-      </div>
-      {[1, 2, 3].map(i => (
-        <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-border">
-          <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
-          <div className="flex-1 space-y-2">
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-2 w-full rounded-full" />
-          </div>
-          <Skeleton className="h-6 w-6 rounded-full shrink-0" />
-        </div>
-      ))}
+    </header>
+    <div className="mx-auto max-w-[480px] space-y-2 px-4 py-3">
+      <Skeleton className="h-5 w-12" />
+      <div className="flex gap-2 overflow-hidden">{[1,2,3].map(i => <Skeleton key={i} className="h-[44px] w-32 shrink-0 rounded-full" />)}</div>
+      <Skeleton className="mx-auto h-12 w-56 rounded-full" />
+      <div className="pt-10">{[0,44,72,44,0].map((offset, i) => <div key={i} className="flex h-[152px] flex-col items-center gap-2" style={{ transform: `translateX(${offset}px)` }}>
+        <Skeleton className="h-[80px] w-[80px] rounded-full" /><Skeleton className="h-4 w-32" />
+      </div>)}</div>
+    </div>
+    <div className="fixed inset-x-0 bottom-[calc(88px+env(safe-area-inset-bottom))] flex h-[64px] items-center gap-2 border-t border-border bg-card px-4">
+      <Skeleton className="h-10 w-10 rounded-full" /><Skeleton className="h-8 flex-1" /><Skeleton className="h-[44px] w-24" />
     </div>
     <BottomNav />
   </div>

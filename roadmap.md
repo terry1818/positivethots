@@ -1,3 +1,9 @@
+# Learn 04 path-first home
+- [x] Move daily activity cards into lazy sheets, put the winding path first, and share one target with the pinned continue bar.
+- [x] Run all six acceptance checks: first mobile node, one bubble/same module target, five sheets, removed pills, tour, and reduced-motion passed. 22 tests/build passed; clean local LCP 448ms, CLS 0.018; no horizontal overflow and desktop path 480px.
+- [ ] Next-incomplete section entry: existing lesson code always opens Section 1 and the prompt forbids changing /learn/:slug; bar accurately shows Section 2 but both targets open Section 1. Requires permission to change lesson entry.
+- [ ] Full reward/sprint/community completion: spin available but not claimed on requesting account; no active sprint or community goal exists. Existing panel logic retained; real calendar, completed challenge, spin control, and empty sheets verified. Field INP unavailable.
+
 # Learn 03 motion foundation
 - [x] Add shared motion primitives and mascot artwork without restyling pages; preserve CSS keyframes and sounds.
 - [x] Verify real signed-in Learn/module/back transitions and quiz wrong/right artwork; Settings has no motion wrapper. Graduate celebration, sheet focus/Escape, counter start/end, ring ARIA, and reduced primitives passed; 16 tests and build passed.
