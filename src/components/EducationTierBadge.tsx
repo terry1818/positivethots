@@ -1,5 +1,7 @@
 import { Shield, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTotalBadgeCount } from "@/hooks/useTotalBadgeCount";
+import { hasEveryBadge } from "@/lib/badgeCompletion";
 import {
   Tooltip,
   TooltipContent,
@@ -12,8 +14,9 @@ interface EducationTierBadgeProps {
   size?: "sm" | "md";
 }
 
-const getTierInfo = (count: number) => {
-  if (count >= 20) return { label: "All Tiers", color: "bg-amber-500 text-white", icon: "star" };
+const getTierInfo = (count: number, total: number | undefined) => {
+  if (total === undefined) return { label: `${count} badges`, color: "bg-muted text-muted-foreground", icon: "shield" };
+  if (hasEveryBadge(count, total)) return { label: "All Tiers", color: "bg-amber-500 text-white", icon: "star" };
   if (count >= 16) return { label: "Advanced", color: "bg-accent text-accent-foreground", icon: "shield" };
   if (count >= 12) return { label: "Relationships", color: "bg-[hsl(340_65%_55%)] text-white", icon: "shield" };
   if (count >= 8) return { label: "Identity", color: "bg-[hsl(285_55%_45%)] text-white", icon: "shield" };
@@ -22,7 +25,8 @@ const getTierInfo = (count: number) => {
 };
 
 export const EducationTierBadge = ({ badgeCount, size = "sm" }: EducationTierBadgeProps) => {
-  const tier = getTierInfo(badgeCount);
+  const { total } = useTotalBadgeCount();
+  const tier = getTierInfo(badgeCount, total);
   if (!tier) return null;
 
   const iconSize = size === "sm" ? "h-2.5 w-2.5" : "h-3 w-3";
@@ -32,8 +36,9 @@ export const EducationTierBadge = ({ badgeCount, size = "sm" }: EducationTierBad
       <Tooltip>
         <TooltipTrigger asChild>
           <div
+            aria-label={hasEveryBadge(badgeCount, total) ? "All badges earned" : undefined}
             className={cn(
-              "inline-flex items-center gap-0.5 rounded-full font-semibold border-0",
+              "inline-flex min-w-[112px] justify-center items-center gap-0.5 rounded-full font-semibold border-0",
               tier.color,
               size === "sm" ? "px-1.5 py-0.5 text-sm" : "px-2 py-0.5 text-sm"
             )}
@@ -47,7 +52,7 @@ export const EducationTierBadge = ({ badgeCount, size = "sm" }: EducationTierBad
           </div>
         </TooltipTrigger>
         <TooltipContent side="top" className="text-sm">
-          Completed {badgeCount} of 20 education badges
+          {total === undefined ? `Completed ${badgeCount} education badges` : `Completed ${badgeCount} of ${total} education badges`}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

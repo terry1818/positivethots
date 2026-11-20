@@ -1,6 +1,8 @@
 import { memo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useTotalBadgeCount } from "@/hooks/useTotalBadgeCount";
+import { hasEveryBadge } from "@/lib/badgeCompletion";
 
 interface FlairBadgesProps {
   streak?: number;
@@ -11,8 +13,9 @@ interface FlairBadgesProps {
   className?: string;
 }
 
-function getTierName(badgeCount: number): string | null {
-  if (badgeCount >= 20) return "Master";
+function getTierName(badgeCount: number, total: number | undefined): string | null {
+  if (total === undefined) return `${badgeCount} badges`;
+  if (hasEveryBadge(badgeCount, total)) return "Master";
   if (badgeCount >= 15) return "Expert";
   if (badgeCount >= 10) return "Advanced";
   if (badgeCount >= 5) return "Foundation";
@@ -20,10 +23,11 @@ function getTierName(badgeCount: number): string | null {
 }
 
 export const FlairBadges = memo(({ streak = 0, badgeCount = 0, createdAt, isVip, maxShow = 2, className }: FlairBadgesProps) => {
+  const { total } = useTotalBadgeCount();
   const flairs: { emoji: string; label: string; priority: number }[] = [];
 
   // Mentor (VIP + all badges)
-  if (isVip && badgeCount >= 20) {
+  if (isVip && hasEveryBadge(badgeCount, total)) {
     flairs.push({ emoji: "💜", label: "Mentor", priority: 1 });
   }
 
@@ -33,7 +37,7 @@ export const FlairBadges = memo(({ streak = 0, badgeCount = 0, createdAt, isVip,
   }
 
   // Tier
-  const tier = getTierName(badgeCount);
+  const tier = getTierName(badgeCount, total);
   if (tier) {
     flairs.push({ emoji: "🎓", label: tier, priority: 3 });
   }
@@ -55,8 +59,9 @@ export const FlairBadges = memo(({ streak = 0, badgeCount = 0, createdAt, isVip,
       {sorted.map((f) => (
         <Badge
           key={f.label}
+          aria-label={f.label === "Master" || f.label === "Mentor" ? `${f.label}: All badges earned` : undefined}
           variant="secondary"
-          className="text-sm px-1.5 py-0 font-normal bg-background/60 backdrop-blur-sm border-border/50"
+          className="min-w-[112px] justify-center text-sm px-1.5 py-0 font-normal bg-background/60 backdrop-blur-sm border-border/50"
         >
           {f.emoji} {f.label}
         </Badge>

@@ -1,21 +1,24 @@
-import { useEffect } from "react";
+import type { QueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { FrameId } from "@/components/profile/ProfileFrame";
+import { totalBadgeCountOptions } from "@/hooks/useTotalBadgeCount";
+import { eligibleEarnedFrames, hasEveryBadge } from "@/lib/badgeCompletion";
 
 /**
  * Computes which frames a user has earned and updates the DB if needed.
  * Call once on profile load.
  */
-export async function syncEarnedFrames(userId: string): Promise<string[]> {
+export async function syncEarnedFrames(userId: string, queryClient: QueryClient): Promise<string[]> {
   const earned: FrameId[] = ["newbie"];
 
   // Fetch data in parallel
-  const [badgeResult, statsResult, matchResult, profileResult] = await Promise.all([
+  const [badgeResult, statsResult, matchResult, profileResult, total] = await Promise.all([
     supabase.from("user_badges").select("id", { count: "exact", head: true }).eq("user_id", userId),
     supabase.from("user_learning_stats").select("current_streak, longest_streak").eq("user_id", userId).maybeSingle(),
     supabase.from("matches").select("id", { count: "exact", head: true })
       .or(`user1_id.eq.${userId},user2_id.eq.${userId}`),
     supabase.from("profiles").select("created_at, earned_frames").eq("id", userId).single(),
+    queryClient.fetchQuery(totalBadgeCountOptions).catch(() => undefined),
   ]);
 
   const badgeCount = badgeResult.count || 0;
@@ -35,8 +38,8 @@ export async function syncEarnedFrames(userId: string): Promise<string[]> {
   // Social Butterfly: 50+ matches
   if (matchCount >= 50) earned.push("social_butterfly");
 
-  // Educator: all 20 badges
-  if (badgeCount >= 20) earned.push("educator");
+  // Educator: every badge in the current curriculum
+  if (!badgeResult.error && hasEveryBadge(badgeCount, total)) earned.push("educator");
 
   // OG: among first 100 users (check created_at rank)
   if (profileResult.data?.created_at) {
@@ -49,15 +52,18 @@ export async function syncEarnedFrames(userId: string): Promise<string[]> {
 
   // Update DB if changed
   const currentEarned = (profileResult.data as any)?.earned_frames || ["newbie"];
-  const earnedSet = new Set(earned);
   const currentSet = new Set(currentEarned as string[]);
   const hasNew = earned.some(f => !currentSet.has(f));
+  const eligible = eligibleEarnedFrames(currentEarned as string[], badgeCount, badgeResult.error ? undefined : total);
+  const hasInvalidEducator = total !== undefined && !badgeResult.error && eligible.length !== currentEarned.length;
 
-  if (hasNew) {
-    const merged = [...new Set([...currentEarned as string[], ...earned])];
+  if (hasNew || hasInvalidEducator) {
+    // Preserve stored awards on a failed count request, but never display an unverified Educator.
+    const persisted = total === undefined || badgeResult.error ? currentEarned as string[] : eligible;
+    const merged = [...new Set([...persisted, ...earned])];
     await supabase.from("profiles").update({ earned_frames: merged } as any).eq("id", userId);
-    return merged;
+    return eligibleEarnedFrames(merged, badgeCount, badgeResult.error ? undefined : total);
   }
 
-  return currentEarned as string[];
+  return eligible;
 }

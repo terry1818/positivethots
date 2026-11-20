@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { EducationTierBadge } from "@/components/EducationTierBadge";
 import { BadgeCredibilitySheet } from "@/components/BadgeCredibilitySheet";
+import { useTotalBadgeCount } from "@/hooks/useTotalBadgeCount";
+import { hasEveryBadge } from "@/lib/badgeCompletion";
 
 interface DiscoveryProfile {
   id: string;
@@ -43,6 +45,7 @@ interface DiscoveryCardProps {
 
 export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperLike, canSuperLike, superLikeBalance }: DiscoveryCardProps) => {
   const navigate = useNavigate();
+  const { total } = useTotalBadgeCount();
   const [imageError, setImageError] = useState(false);
   const [badgeSheetOpen, setBadgeSheetOpen] = useState(false);
 
@@ -94,14 +97,9 @@ export const DiscoveryCard = memo(({ profile, index, onConnect, onPass, onSuperL
             <Shield className="h-3 w-3 mr-1" />Verified
           </Badge>
         )}
-        {profile.badge_count && profile.badge_count >= 20 && (
-          <Badge className="bg-amber-500/90 text-white">
+        {hasEveryBadge(profile.badge_count ?? 0, total) && (
+          <Badge aria-label="All badges earned" className="bg-amber-500/90 text-white">
             <Award className="h-3 w-3 mr-1" />Verified Educator
-          </Badge>
-        )}
-        {profile.badge_count && profile.badge_count >= 10 && profile.badge_count < 20 && (
-          <Badge className="bg-secondary text-secondary-foreground">
-            <BookOpen className="h-3 w-3 mr-1" />Educator
           </Badge>
         )}
       </div>

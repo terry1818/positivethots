@@ -30,6 +30,8 @@ import { AstrologyCompatibility } from "@/components/astrology/AstrologyCompatib
 import { SpotifyProfileSection } from "@/components/spotify/SpotifyProfileSection";
 import { SEO } from "@/components/SEO";
 import { CrossAppLinksDisplay } from "@/components/cross-app/CrossAppLinksDisplay";
+import { useTotalBadgeCount } from "@/hooks/useTotalBadgeCount";
+import { hasEveryBadge } from "@/lib/badgeCompletion";
 
 interface UserBadge {
   module_id: string;
@@ -69,6 +71,7 @@ const ProfileNavRow = ({ emoji, label, onClick, href, external }: {
 };
 
 const Profile = () => {
+  const { total } = useTotalBadgeCount();
   const [profile, setProfile] = useState<any>(null);
   const [badges, setBadges] = useState<UserBadge[]>([]);
   const [userPhotos, setUserPhotos] = useState<any[]>([]);
@@ -337,8 +340,8 @@ const Profile = () => {
             )}
 
             <div className="absolute top-3 left-3 flex items-center gap-1 z-20">
-              {badges.length >= 20 && (
-                <Badge className="bg-amber-500/90 text-white">
+              {hasEveryBadge(badges.length, total) && (
+                <Badge aria-label="All badges earned" className="bg-amber-500/90 text-white">
                   <Award className="h-3 w-3 mr-1" />Verified Educator
                 </Badge>
               )}

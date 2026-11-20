@@ -25,7 +25,7 @@ export const FrameSelector = memo(({ earnedFrames, selectedFrame, onSelect, prof
       <CardContent>
         {/* Preview */}
         <div className="flex justify-center mb-4">
-          <ProfileFrame frameId={selectedFrame} size="xl">
+          <ProfileFrame frameId={selectedFrame === "educator" && !earned.has("educator") ? "newbie" : selectedFrame} size="xl">
             {profileImage ? (
               <BlurImage src={profileImage} alt="Profile frame preview" className="h-full w-full" />
             ) : (

@@ -1,4 +1,5 @@
 # Access-control rules
+- All-badge states require a known positive education-module count from the shared one-hour query cache; unknown totals never imply completion, keeping profile trust signals accurate.
 - XP awards are serialized per caller and validated by source, proof, repeat window, and UTC ceiling; clients display only the returned awarded amount.
 - Daily rewards belong only on Learn home; session dismissal prevents automatic reopening and user/date seeding keeps the reward stable.
 - Use the shared badge-aware module completion helper and XP threshold function so lesson, path, and server progress agree.

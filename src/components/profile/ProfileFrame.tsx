@@ -51,7 +51,7 @@ export const FRAME_DEFINITIONS: FrameDefinition[] = [
     id: "educator",
     label: "Educator",
     description: "Rainbow gradient border",
-    unlockRequirement: "Earn all 20 badges",
+    unlockRequirement: "Earn every badge",
     className: "ring-[3px] ring-transparent animate-rainbow-border-spin",
   },
   {

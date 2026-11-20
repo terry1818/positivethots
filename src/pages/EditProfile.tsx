@@ -90,8 +90,8 @@ const EditProfile = () => {
       setRelationshipStatus(data.relationship_status || ""); setExperienceLevel(data.experience_level || "");
       setBdsmTestUrl(data.bdsm_test_url || ""); setBdsmTestScreenshot(data.bdsm_test_screenshot || "");
       setSelectedFrame((data as any).selected_frame || "newbie");
-      setEarnedFrames((data as any).earned_frames || ["newbie"]);
-      syncEarnedFrames(session.user.id).then(frames => setEarnedFrames(frames));
+      setEarnedFrames(((data as any).earned_frames || ["newbie"]).filter((frame: string) => frame !== "educator"));
+      syncEarnedFrames(session.user.id, queryClient).then(frames => setEarnedFrames(frames));
       setPhotos(photosResult.data || []);
       setLatestVerification(verResult.data?.[0] || null);
       setPrompts((promptsResult.data || []).map((p: any) => ({

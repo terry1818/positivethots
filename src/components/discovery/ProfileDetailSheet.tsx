@@ -13,6 +13,8 @@ import {
   DrawerDescription,
 } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
+import { useTotalBadgeCount } from "@/hooks/useTotalBadgeCount";
+import { hasEveryBadge } from "@/lib/badgeCompletion";
 
 interface EnhancedProfile {
   id: string;
@@ -61,6 +63,7 @@ export const ProfileDetailSheet = ({
   canSuperLike,
 }: ProfileDetailSheetProps) => {
   const [photoIndex, setPhotoIndex] = useState(0);
+  const { total } = useTotalBadgeCount();
   const [failedPhotos, setFailedPhotos] = useState<Set<string>>(new Set());
 
   // Fetch approved photos from user_photos table (same source as discovery cards)
@@ -227,8 +230,8 @@ export const ProfileDetailSheet = ({
                 <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">
                   Education Badges ({badgeCount})
                 </p>
-                {badgeCount >= 20 && (
-                  <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/30 mb-2">
+                {hasEveryBadge(badgeCount, total) && (
+                  <Badge aria-label="All badges earned" className="bg-amber-500/10 text-amber-600 border-amber-500/30 mb-2">
                     🏅 Verified Educator
                   </Badge>
                 )}

@@ -467,7 +467,7 @@ const Learn = () => {
         </div>
 
         {/* VIP Upsell for curriculum completion */}
-        {earnedCount >= 20 && subscriptionTier !== "vip" && (
+        {totalBadges > 0 && earnedCount >= totalBadges && subscriptionTier !== "vip" && (
           <Card className="animate-fade-in bg-gradient-to-r from-amber-500/10 to-accent/10 border-amber-500/20">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">

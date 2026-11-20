@@ -68,7 +68,7 @@ function getDescription(data: AchievementData): string {
     case "badge_earned": return `I completed my ${data.badgeName} badge on Positive Thots!`;
     case "streak_milestone": return `${data.streakDays} consecutive days of learning about healthy relationships!`;
     case "tier_complete": return `All ${data.tierName} badges complete on Positive Thots!`;
-    case "mentor_earned": return "All 20 education badges complete — I'm officially a mentor!";
+    case "mentor_earned": return "Every education badge complete — I'm officially a mentor!";
     case "compatibility_score": return "Found an incredible compatibility match on Positive Thots!";
   }
 }

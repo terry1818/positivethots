@@ -1,3 +1,7 @@
+# Learn 02c badge count
+- [x] Replace badge-total assumptions with the shared database count; preserve Foundation and lower-tier rules.
+- [x] Verify 20/35, 35/35, loading/failure and mobile with browser-only component fixtures; real signed-in Learn reads 35. All 13 regression tests and build passed; badge-context searches and public SQL-function/trigger audit found no remaining hardcoded total. No member badge data changed.
+
 # Learn 02b XP integrity
 - [x] Restrict award_xp sources, proof, repeats, concurrency, and UTC daily ceiling; preserve historical awards, grants, coin functions, and acceptance of known legacy bonus/multiplier requests (server awards remain capped).
 - [x] Update award displays and sequential section completion. Nine tests/build passed; real regular-member rejection, first section 10 XP, parallel duplicates, daily 50/25 XP repeats, legacy quiz/spin requests, and readback verified. Coin functions audited without invoking or changing them.
