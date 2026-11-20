@@ -157,19 +157,10 @@ const Premium = () => {
       });
       if (error) throw error;
 
-      await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "gift-code",
-          recipientEmail: giftEmail.trim(),
-          idempotencyKey: `gift-${code}`,
-          templateData: {
-            code,
-            tier: giftTier.charAt(0).toUpperCase() + giftTier.slice(1),
-            days: giftDays,
-            senderName: user?.user_metadata?.name || "A friend",
-          },
-        },
+      const { error: sendError } = await supabase.functions.invoke("send-gift-code", {
+        body: { code, recipientEmail: giftEmail.trim() },
       });
+      if (sendError) throw sendError;
 
       toast.success(`Gift sent to ${giftEmail}!`);
       setGiftEmail("");

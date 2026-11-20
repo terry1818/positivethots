@@ -5,6 +5,7 @@ import {
   getShowPreviewsPref,
   withinDailyLimit,
 } from '../_shared/notification-privacy.ts'
+import { sendLoggedTemplateEmail } from '../_shared/transactional-email-templates/send-logged.ts'
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req)
@@ -114,15 +115,18 @@ Deno.serve(async (req) => {
 
       const firstName = profile.name?.split(' ')[0] || null
 
-      const { error: sendError } = await supabase.functions.invoke('send-transactional-email', {
-        body: {
-          templateName: 'onboarding-incomplete',
-          recipientEmail: userData.user.email,
+      let sent = false
+      try {
+        const result = await sendLoggedTemplateEmail(supabase, 'onboarding-incomplete', userData.user.email, {
           templateData: { firstName },
-        },
-      })
+          idempotencyKey: `onboarding-incomplete-${profile.id}`,
+        })
+        sent = result.sent
+      } catch (err) {
+        console.error('Onboarding email failed', { message: err instanceof Error ? err.message : String(err) })
+      }
 
-      if (!sendError) {
+      if (sent) {
         await supabase.from('analytics_events').insert({
           user_id: profile.id,
           event_name: 'onboarding_incomplete_email_sent',

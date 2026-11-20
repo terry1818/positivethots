@@ -17,8 +17,6 @@ project_id = "zcsnqvncqzpleqoctzfc"
     verify_jwt = false
   [functions.moderate-photo]
     verify_jwt = false
-  [functions.process-email-queue]
-    verify_jwt = true
   [functions.seed-test-users]
     verify_jwt = false
   [functions.stripe-webhook]
@@ -27,13 +25,7 @@ project_id = "zcsnqvncqzpleqoctzfc"
     verify_jwt = false
   [functions.redeem-promo-code]
     verify_jwt = false
-  [functions.send-transactional-email]
-    verify_jwt = true
   [functions.preview-transactional-email]
-    verify_jwt = false
-  [functions.handle-email-unsubscribe]
-    verify_jwt = false
-  [functions.handle-email-suppression]
     verify_jwt = false
   [functions.notify-match]
     verify_jwt = false
@@ -50,4 +42,8 @@ project_id = "zcsnqvncqzpleqoctzfc"
   [functions.resource-image-proxy]
     verify_jwt = false
   [functions.create-demo-account]
+    verify_jwt = false
+  [functions.send-gift-code]
+    verify_jwt = false
+  [functions.handle-email-events]
     verify_jwt = false

@@ -1,22 +1,15 @@
 import * as React from 'npm:react@18.3.1'
 import { renderAsync } from 'npm:@react-email/components@0.0.22'
+import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
-import { getCorsHeaders } from '../_shared/cors.ts'
-import { rateLimit, rateLimitResponse } from '../_shared/rate-limit.ts'
 
 // Renders all registered templates with their previewData.
 // Gated by LOVABLE_API_KEY — only the Go API calls this.
 
 Deno.serve(async (req) => {
-  const corsHeaders = getCorsHeaders(req)
-
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
-
-  // IP rate limit
-  const { limited } = rateLimit(req, 20)
-  if (limited) return rateLimitResponse(corsHeaders)
 
   const apiKey = Deno.env.get('LOVABLE_API_KEY')
   if (!apiKey) {

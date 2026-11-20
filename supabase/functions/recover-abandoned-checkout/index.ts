@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { getCorsHeaders } from '../_shared/cors.ts'
+import { sendLoggedTemplateEmail } from '../_shared/transactional-email-templates/send-logged.ts'
 
 Deno.serve(async (req) => {
   const corsHeaders = getCorsHeaders(req)
@@ -70,16 +71,18 @@ Deno.serve(async (req) => {
 
     const firstName = userData.user.user_metadata?.name?.split(' ')[0] || null
 
-    // Send recovery email via send-transactional-email
-    const { error: sendError } = await supabase.functions.invoke('send-transactional-email', {
-      body: {
-        templateName: 'abandoned-checkout',
-        recipientEmail: userData.user.email,
+    let sent = false
+    try {
+      const result = await sendLoggedTemplateEmail(supabase, 'abandoned-checkout', userData.user.email, {
         templateData: { firstName },
-      },
-    })
+        idempotencyKey: `abandoned-checkout-${event.user_id}-${event.created_at}`,
+      })
+      sent = result.sent
+    } catch (err) {
+      console.error('Recovery email failed', { message: err instanceof Error ? err.message : String(err) })
+    }
 
-    if (!sendError) {
+    if (sent) {
       // Mark as sent
       await supabase.from('analytics_events').insert({
         user_id: event.user_id,
