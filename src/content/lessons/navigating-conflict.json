@@ -1,0 +1,316 @@
+{
+ "35b644bf-cdeb-433a-b4ed-36d3e8b7b691": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Perpetual vs Solvable Problems",
+    "art": "",
+    "alt": "",
+    "plain": "About 7 in 10 relationship problems never fully go away."
+   },
+   {
+    "heading": "What Makes a Problem Perpetual?",
+    "art": "",
+    "alt": "",
+    "plain": "Some problems come from who you each are. They keep coming back."
+   },
+   {
+    "heading": "Solvable Problems",
+    "art": "",
+    "alt": "",
+    "plain": "Other problems are about one situation and can be fixed with a good talk."
+   },
+   {
+    "heading": "The Paradigm Shift",
+    "art": "",
+    "alt": "",
+    "plain": "Good communication will not solve everything. The goal is to live well with differences."
+   },
+   {
+    "heading": "When Perpetual Problems Become Gridlocked",
+    "art": "",
+    "alt": "",
+    "plain": "A problem is gridlocked when you cannot talk about it without getting hurt or angry."
+   },
+   {
+    "heading": "Dreams Within Conflict",
+    "art": "",
+    "alt": "",
+    "plain": "Under a stuck fight there is usually a hope or dream. Ask about it."
+   },
+   {
+    "heading": "ENM-Specific Perpetual Problems",
+    "art": "",
+    "alt": "",
+    "plain": "Having several partners brings its own repeat issues, like how much to share."
+   }
+  ],
+  "checks": [
+   {
+    "id": "35b644bf-1",
+    "after": "Perpetual vs Solvable Problems",
+    "prompt": "What share of relationship problems are perpetual?",
+    "options": [
+     "10%",
+     "100%",
+     "69%"
+    ],
+    "answer": 2,
+    "explanation": "69%. One of Gottman's most groundbreaking findings transformed how we understand relationship conflict."
+   },
+   {
+    "id": "35b644bf-2",
+    "after": "When Perpetual Problems Become Gridlocked",
+    "prompt": "When is a perpetual problem \"gridlocked\"?",
+    "options": [
+     "When both partners agree",
+     "When it gets solved quickly",
+     "When partners can't discuss it without hostility, hurt or shutdown"
+    ],
+    "answer": 2,
+    "explanation": "When partners can't discuss it without hostility, hurt or shutdown. A perpetual problem becomes gridlocked when partners can no longer discuss it without hostility, hurt, or shutdown."
+   }
+  ],
+  "takeaway": "Most relationship problems never fully go away. The skill is talking about them kindly."
+ },
+ "079ab209-42bc-4ab4-bd65-cfb6010b50f3": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Physiological Flooding & Self-Soothing",
+    "art": "",
+    "alt": "",
+    "plain": "Flooding is when a fight overwhelms your body and you cannot think."
+   },
+   {
+    "heading": "What Happens in Your Body",
+    "art": "",
+    "alt": "",
+    "plain": "Your heart races and your body goes into survival mode."
+   },
+   {
+    "heading": "Why You Can't Argue When Flooded",
+    "art": "",
+    "alt": "",
+    "plain": "In that state your brain cannot listen, care or solve problems."
+   },
+   {
+    "heading": "Recognizing the Signs",
+    "art": "",
+    "alt": "",
+    "plain": "Learn your own warning signs, like a tight chest or wanting to run."
+   },
+   {
+    "heading": "The 20-Minute Rule",
+    "art": "",
+    "alt": "",
+    "plain": "Your body needs at least 20 minutes to settle down."
+   },
+   {
+    "heading": "How to Take a Break Without Stonewalling",
+    "art": "",
+    "alt": "",
+    "plain": "Say you need a break and say when you will come back. That is not shutting down."
+   },
+   {
+    "heading": "Self-Soothing Techniques",
+    "art": "",
+    "alt": "",
+    "plain": "Use the break to calm your body: slow breathing, a walk, music."
+   },
+   {
+    "heading": "Flooding in ENM",
+    "art": "",
+    "alt": "",
+    "plain": "Talks about jealousy can be extra overwhelming. Go slower."
+   }
+  ],
+  "checks": [
+   {
+    "id": "079ab209-1",
+    "after": "The 20-Minute Rule",
+    "prompt": "How long does the body need to return to baseline after flooding?",
+    "options": [
+     "At least 20 minutes",
+     "A full week",
+     "About 2 minutes"
+    ],
+    "answer": 0,
+    "explanation": "At least 20 minutes. Gottman's research shows the body needs at least 20 minutes to return to physiological baseline after flooding."
+   },
+   {
+    "id": "079ab209-2",
+    "after": "How to Take a Break Without Stonewalling",
+    "prompt": "What makes a break different from stonewalling?",
+    "options": [
+     "Leaving without a word",
+     "Saying so and committing to return",
+     "Never raising the topic again"
+    ],
+    "answer": 1,
+    "explanation": "Saying so and committing to return. The difference between a healthy break and stonewalling is communication and a commitment to return."
+   }
+  ],
+  "takeaway": "When your heart is racing you cannot argue well. Take 20 minutes, calm down, then come back."
+ },
+ "3ee9b0cb-166b-4569-9f48-738b9dcbf1ff": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Repair Attempts: The Secret Weapon",
+    "art": "",
+    "alt": "",
+    "plain": "Repair attempts are the biggest sign of whether a relationship will last."
+   },
+   {
+    "heading": "What Is a Repair Attempt?",
+    "art": "",
+    "alt": "",
+    "plain": "A repair attempt is anything that lowers the tension, like a joke, a touch or \"sorry\"."
+   },
+   {
+    "heading": "Why Repair Attempts Matter More Than Conflict Style",
+    "art": "",
+    "alt": "",
+    "plain": "How often you fight matters less than whether your repairs work."
+   },
+   {
+    "heading": "Why Repairs Sometimes Fail",
+    "art": "",
+    "alt": "",
+    "plain": "Repairs only land when there is enough goodwill between you."
+   },
+   {
+    "heading": "Making Repairs More Effective",
+    "art": "",
+    "alt": "",
+    "plain": "Try early, mean it, and notice when your partner is trying."
+   },
+   {
+    "heading": "Building a Repair-Friendly Relationship",
+    "art": "",
+    "alt": "",
+    "plain": "Talk in calm times about what helps each of you reconnect."
+   },
+   {
+    "heading": "Repair Attempts in ENM",
+    "art": "",
+    "alt": "",
+    "plain": "With several partners, repair skills matter even more."
+   }
+  ],
+  "checks": [
+   {
+    "id": "3ee9b0cb-1",
+    "after": "What Is a Repair Attempt?",
+    "prompt": "What is a repair attempt?",
+    "options": [
+     "Any effort to reduce tension during conflict",
+     "Winning the argument",
+     "Avoiding your partner"
+    ],
+    "answer": 0,
+    "explanation": "Any effort to reduce tension during conflict. A repair attempt is any effort to reduce tension during conflict."
+   },
+   {
+    "id": "3ee9b0cb-2",
+    "after": "Why Repair Attempts Matter More Than Conflict Style",
+    "prompt": "What predicts relationship success, according to Gottman?",
+    "options": [
+     "The success of repair attempts",
+     "How rarely couples argue",
+     "How loudly couples argue"
+    ],
+    "answer": 0,
+    "explanation": "The success of repair attempts. Gottman found that the success of repair attempts — not conflict frequency or intensity — predicts relationship outcomes."
+   }
+  ],
+  "takeaway": "A small move to ease tension mid-fight, like a joke or \"I'm sorry\", is what saves relationships."
+ },
+ "2ef35e07-6674-474d-8049-a0b32d811819": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Conflict as Growth",
+    "art": "",
+    "alt": "",
+    "plain": "Conflict can bring you closer if you handle it with care."
+   },
+   {
+    "heading": "Softened Startup",
+    "art": "",
+    "alt": "",
+    "plain": "How a talk starts is almost always how it ends. Start softly."
+   },
+   {
+    "heading": "Complaint vs. Criticism",
+    "art": "",
+    "alt": "",
+    "plain": "A complaint is about what happened. Criticism attacks who the person is."
+   },
+   {
+    "heading": "Active Listening During Conflict",
+    "art": "",
+    "alt": "",
+    "plain": "Repeat back what you heard before you answer."
+   },
+   {
+    "heading": "Accepting Influence",
+    "art": "",
+    "alt": "",
+    "plain": "Let your partner change your mind sometimes. Those relationships last."
+   },
+   {
+    "heading": "When Conflict Becomes Harmful",
+    "art": "",
+    "alt": "",
+    "plain": "Disagreement is normal. Fear, threats or control are not. That is harm."
+   },
+   {
+    "heading": "Seeking Professional Support",
+    "art": "",
+    "alt": "",
+    "plain": "Trained couples therapists can help."
+   }
+  ],
+  "checks": [
+   {
+    "id": "2ef35e07-1",
+    "after": "Softened Startup",
+    "prompt": "How a conversation begins predicts how it ends how often?",
+    "options": [
+     "96% of the time",
+     "Almost never",
+     "About half the time"
+    ],
+    "answer": 0,
+    "explanation": "96% of the time. How a conversation begins predicts how it will end 96% of the time (Gottman)."
+   },
+   {
+    "id": "2ef35e07-2",
+    "after": "Complaint vs. Criticism",
+    "prompt": "\"I was upset that you were late to dinner\" is a…",
+    "options": [
+     "Criticism of character",
+     "Complaint about a specific behaviour",
+     "Form of contempt"
+    ],
+    "answer": 1,
+    "explanation": "Complaint about a specific behaviour. A complaint addresses a specific behavior: \"I was upset that you were late to dinner.\""
+   }
+  ],
+  "takeaway": "Start gently, complain about the behaviour and not the person, and let your partner influence you."
+ }
+}

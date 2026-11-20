@@ -1,0 +1,367 @@
+{
+ "37dac62b-c406-43ce-86f3-20f30e4805fa": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Understanding Neurodivergence",
+    "art": "neurodivergence-intimacy/l1-0.webp",
+    "alt": "A guide smiling with colourful gears and stars floating above his head",
+    "size": [
+     416,
+     482
+    ],
+    "plain": "Neurodivergence means natural differences in how brains work, like autism and ADHD."
+   },
+   {
+    "heading": "What Neurodivergence Is (and Isn't)",
+    "art": "neurodivergence-intimacy/l1-1.webp",
+    "alt": "Each holding a differently shaped puzzle piece that fits with the others",
+    "size": [
+     512,
+     435
+    ],
+    "plain": "These differences are part of human variety, not defects to fix."
+   },
+   {
+    "heading": "Neurodivergence in Relationships",
+    "art": "neurodivergence-intimacy/l1-2.webp",
+    "alt": "Two guides building a model together with great concentration",
+    "size": [
+     512,
+     455
+    ],
+    "plain": "Neurodivergent partners often bring loyalty, honesty and deep focus."
+   },
+   {
+    "heading": "Neurodivergence and the ENM/LGBTQ+ Overlap",
+    "art": "",
+    "alt": "",
+    "plain": "Many neurodivergent people are also LGBTQ+ or have more than one partner."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "37dac62b-1",
+    "after": "What Neurodivergence Is (and Isn't)",
+    "prompt": "The neurodiversity paradigm frames neurological differences as…",
+    "options": [
+     "Natural human variation",
+     "Bad habits",
+     "Illnesses to cure"
+    ],
+    "answer": 0,
+    "explanation": "Natural human variation. The neurodiversity paradigm — pioneered by autistic sociologist Judy Singer in the late 1990s — frames neurological differences as natural human variation rather than deficits to be cured."
+   },
+   {
+    "id": "37dac62b-2",
+    "after": "Neurodivergence in Relationships",
+    "prompt": "Which strength do neurodivergent people often bring to relationships?",
+    "options": [
+     "Deep loyalty once trust is established",
+     "Never needing alone time",
+     "Reading minds"
+    ],
+    "answer": 0,
+    "explanation": "Deep loyalty once trust is established. The lesson lists deep loyalty and commitment once trust is established, along with honest, direct communication."
+   }
+  ],
+  "takeaway": "Brains work in different ways. Different is not broken."
+ },
+ "e3ef4ccf-1474-497e-b988-ce5179062dd5": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Sensory Needs & Physical Intimacy",
+    "art": "neurodivergence-intimacy/l2-0.webp",
+    "alt": "Wrapped in a soft blanket wearing big headphones, content",
+    "size": [
+     489,
+     483
+    ],
+    "plain": "How your senses take in touch, sound and light changes how closeness feels."
+   },
+   {
+    "heading": "How Sensory Processing Differs",
+    "art": "neurodivergence-intimacy/l2-1.webp",
+    "alt": "A guide adjusting a big volume dial",
+    "size": [
+     480,
+     480
+    ],
+    "plain": "Some people feel things too strongly. Others need more to feel anything."
+   },
+   {
+    "heading": "Impact on Physical Intimacy",
+    "art": "neurodivergence-intimacy/l2-2.webp",
+    "alt": "Two guides sitting side by side, D offering an open hand and A gently placing hers on it",
+    "size": [
+     512,
+     447
+    ],
+    "plain": "Light touch can bother some people, while firm pressure feels good. Ask."
+   },
+   {
+    "heading": "Communication Tools for Sensory Needs",
+    "art": "neurodivergence-intimacy/l2-3.webp",
+    "alt": "A guide holding up three round cards coloured green, yellow and red",
+    "size": [
+     470,
+     495
+    ],
+    "plain": "Use traffic lights: green means go on, yellow means slow down, red means stop."
+   },
+   {
+    "heading": "For Neurotypical Partners",
+    "art": "neurodivergence-intimacy/l2-4.webp",
+    "alt": "A guide listening patiently with a hand on his heart",
+    "size": [
+     468,
+     498
+    ],
+    "plain": "If your partner is neurodivergent, do not take sensory limits personally."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "e3ef4ccf-1",
+    "after": "How Sensory Processing Differs",
+    "prompt": "Hypersensitivity means…",
+    "options": [
+     "Disliking people",
+     "Feeling nothing at all",
+     "Experiencing sensory input more intensely"
+    ],
+    "answer": 2,
+    "explanation": "Experiencing sensory input more intensely. Hypersensitivity is being over-responsive to touch, sound, light or other input."
+   },
+   {
+    "id": "e3ef4ccf-2",
+    "after": "Communication Tools for Sensory Needs",
+    "prompt": "In the traffic light system, what does yellow mean?",
+    "options": [
+     "I'm approaching my limit, slow down or check in",
+     "Keep going",
+     "Stop everything now"
+    ],
+    "answer": 0,
+    "explanation": "I'm approaching my limit, slow down or check in. Green means this feels great, yellow means slow down or check in, and red means stop."
+   }
+  ],
+  "takeaway": "Sensory needs are real. Ask what feels good, and agree on simple signals."
+ },
+ "6e8cc479-1c8b-46db-9877-f96a6d89358f": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Communication Differences",
+    "art": "neurodivergence-intimacy/l3-0.webp",
+    "alt": "Talking, one with a square speech bubble and one with a round speech bubble",
+    "size": [
+     512,
+     474
+    ],
+    "plain": "Neurodivergent and neurotypical people often talk in different styles."
+   },
+   {
+    "heading": "The Double Empathy Problem",
+    "art": "neurodivergence-intimacy/l3-1.webp",
+    "alt": "Each building half of a small bridge toward the other across a gap",
+    "size": [
+     511,
+     414
+    ],
+    "plain": "Misreading happens in both directions. It is not one side lacking empathy."
+   },
+   {
+    "heading": "Common Communication Differences",
+    "art": "neurodivergence-intimacy/l3-2.webp",
+    "alt": "A guide holding a straight arrow while a curly arrow floats beside him",
+    "size": [
+     476,
+     469
+    ],
+    "plain": "Some people say things directly and mean exactly that. Others hint."
+   },
+   {
+    "heading": "Bridging Strategies",
+    "art": "neurodivergence-intimacy/l3-3.webp",
+    "alt": "Two guides shaking hands over a notepad with a checklist",
+    "size": [
+     512,
+     436
+    ],
+    "plain": "Agree out loud: we say what we mean, and we ask when unsure."
+   },
+   {
+    "heading": "In Polyamorous Contexts",
+    "art": "",
+    "alt": "",
+    "plain": "With more partners there are more styles to learn. Go one person at a time."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "6e8cc479-1",
+    "after": "The Double Empathy Problem",
+    "prompt": "The \"double empathy problem\" challenges which old assumption?",
+    "options": [
+     "That talking is easy",
+     "That everyone communicates the same way",
+     "That autistic people lack empathy"
+    ],
+    "answer": 2,
+    "explanation": "That autistic people lack empathy. Researcher Damian Milton's \"double empathy problem\" challenges the outdated assumption that autistic people lack empathy."
+   },
+   {
+    "id": "6e8cc479-2",
+    "after": "Common Communication Differences",
+    "prompt": "Many neurodivergent people communicate…",
+    "options": [
+     "Directly and literally",
+     "Only through hints",
+     "Mostly in writing"
+    ],
+    "answer": 0,
+    "explanation": "Directly and literally. They often say exactly what they mean, without hints."
+   }
+  ],
+  "takeaway": "Misunderstandings go both ways. Say what you mean and ask instead of guessing."
+ },
+ "c2541d6d-e409-402b-82cc-e681736fd625": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Executive Function & Neurodivergent-Affirming Relationships",
+    "art": "neurodivergence-intimacy/l4-0.webp",
+    "alt": "A guide juggling a calendar, a clock and a to-do list, a little overwhelmed",
+    "size": [
+     498,
+     496
+    ],
+    "plain": "Executive function is the brain's planner. It often works differently in neurodivergent people."
+   },
+   {
+    "heading": "What Executive Function Affects",
+    "art": "neurodivergence-intimacy/l4-1.webp",
+    "alt": "A guide looking at a clock and a pile of unsorted papers",
+    "size": [
+     512,
+     456
+    ],
+    "plain": "It affects starting tasks, keeping time, remembering and switching between things."
+   },
+   {
+    "heading": "The \"Lazy\" Myth",
+    "art": "neurodivergence-intimacy/l4-2.webp",
+    "alt": "A guide straining to push a huge boulder uphill, determined",
+    "size": [
+     508,
+     496
+    ],
+    "plain": "It is not laziness. The brain spends its energy differently."
+   },
+   {
+    "heading": "Practical Strategies for Couples",
+    "art": "neurodivergence-intimacy/l4-3.webp",
+    "alt": "Happily swapping chores, C handing D a broom while holding a calculator",
+    "size": [
+     512,
+     474
+    ],
+    "plain": "Split tasks by who finds them easy, not by a strict half-and-half."
+   },
+   {
+    "heading": "The Parent-Child Dynamic Trap",
+    "art": "",
+    "alt": "",
+    "plain": "If one partner manages everything, it starts to feel like parent and child. Avoid that."
+   },
+   {
+    "heading": "Principles of Neurodivergent-Affirming Love",
+    "art": "neurodivergence-intimacy/l4-5.webp",
+    "alt": "Two guides forming a heart shape together with their hands",
+    "size": [
+     489,
+     485
+    ],
+    "plain": "Accept your partner's brain as it is, and work with it."
+   },
+   {
+    "heading": "Building an Affirming Home",
+    "art": "neurodivergence-intimacy/l4-6.webp",
+    "alt": "A guide arranging a cosy corner with a lamp, cushions and a wall calendar",
+    "size": [
+     492,
+     461
+    ],
+    "plain": "Set up your home to help, with quiet corners, soft light and clear routines."
+   },
+   {
+    "heading": "When Both Partners Are Neurodivergent",
+    "art": "",
+    "alt": "",
+    "plain": "Two neurodivergent partners can understand each other deeply and still need systems."
+   },
+   {
+    "heading": "Resources for Neurodivergent Couples",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "There are books and research made for neurodivergent couples."
+   }
+  ],
+  "checks": [
+   {
+    "id": "c2541d6d-1",
+    "after": "The \"Lazy\" Myth",
+    "prompt": "What does the lesson say about the \"lazy\" label?",
+    "options": [
+     "Neurodivergent people aren't lazy",
+     "Laziness is the main cause",
+     "It is true for most people"
+    ],
+    "answer": 0,
+    "explanation": "Neurodivergent people aren't lazy. Neurodivergent people aren't lazy — they have a brain that allocates resources differently."
+   },
+   {
+    "id": "c2541d6d-2",
+    "after": "The Parent-Child Dynamic Trap",
+    "prompt": "What can happen when one partner takes over all the planning tasks?",
+    "options": [
+     "Both partners relax more",
+     "Everything runs perfectly",
+     "The relationship can slip into a parent-child dynamic"
+    ],
+    "answer": 2,
+    "explanation": "The relationship can slip into a parent-child dynamic. When one partner takes over all executive function tasks, the relationship can slip into a parent-child dynamic."
+   }
+  ],
+  "takeaway": "Trouble with planning is not laziness. Split tasks to fit each brain and build routines that help."
+ }
+}

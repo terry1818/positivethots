@@ -1,0 +1,271 @@
+{
+ "88ca1eaf-69f5-4efe-9264-7f05c918cc51": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Sound Relationship House",
+    "art": "",
+    "alt": "",
+    "plain": "Researchers who studied couples for decades describe a good relationship as a house."
+   },
+   {
+    "heading": "The Seven Levels",
+    "art": "",
+    "alt": "",
+    "plain": "The house has seven floors, starting with knowing each other well."
+   },
+   {
+    "heading": "The Walls: Trust & Commitment",
+    "art": "",
+    "alt": "",
+    "plain": "Two walls hold it up: trusting each other and choosing to stay committed."
+   },
+   {
+    "heading": "Applying the SRH to ENM",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "88ca1eaf-1",
+    "after": "The Seven Levels",
+    "prompt": "How does the lesson picture a strong relationship?",
+    "options": [
+     "As a contract to sign",
+     "As a race to win",
+     "As a house built from the ground up"
+    ],
+    "answer": 2,
+    "explanation": "As a house built from the ground up. Think of a strong relationship as a house built from the ground up. Each level supports the ones above it: 1."
+   },
+   {
+    "id": "88ca1eaf-2",
+    "after": "The Walls: Trust & Commitment",
+    "prompt": "Which two walls hold the house together?",
+    "options": [
+     "Money and time",
+     "Trust and commitment",
+     "Passion and luck"
+    ],
+    "answer": 1,
+    "explanation": "Trust and commitment. Two walls hold the house together."
+   }
+  ],
+  "takeaway": "A strong relationship is built like a house: friendship at the base, trust and commitment as the walls."
+ },
+ "6b45b5ac-0386-4cb9-865e-8ae0a2256f3e": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Love Maps: Knowing Your Partner's World",
+    "art": "",
+    "alt": "",
+    "plain": "A Love Map is what you know about your partner's inner world."
+   },
+   {
+    "heading": "What Is a Love Map?",
+    "art": "",
+    "alt": "",
+    "plain": "It goes beyond facts: their worries, hopes, favourite things and current stresses."
+   },
+   {
+    "heading": "Why Love Maps Matter",
+    "art": "",
+    "alt": "",
+    "plain": "Couples who really know each other cope better with big life changes."
+   },
+   {
+    "heading": "Love Maps in ENM",
+    "art": "",
+    "alt": "",
+    "plain": "With several partners, keeping each map up to date takes real effort."
+   },
+   {
+    "heading": "Love Maps as Care, Not Surveillance",
+    "art": "",
+    "alt": "",
+    "plain": "Ask because you care, not to check up on them."
+   },
+   {
+    "heading": "Practical Exercises",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "6b45b5ac-1",
+    "after": "What Is a Love Map?",
+    "prompt": "What is a Love Map?",
+    "options": [
+     "A list of rules",
+     "Everything you know about your partner beyond surface facts",
+     "A plan for date nights"
+    ],
+    "answer": 1,
+    "explanation": "Everything you know about your partner beyond surface facts. A Love Map is everything you know about your partner beyond surface-level facts."
+   },
+   {
+    "id": "6b45b5ac-2",
+    "after": "Love Maps as Care, Not Surveillance",
+    "prompt": "Love Maps are about curiosity, not…",
+    "options": [
+     "Anxious monitoring",
+     "Asking questions",
+     "Remembering details"
+    ],
+    "answer": 0,
+    "explanation": "Anxious monitoring. It's important to distinguish between genuine curiosity about your partner's world and anxious monitoring."
+   }
+  ],
+  "takeaway": "Keep learning your partner's inner world. Curiosity keeps you close."
+ },
+ "c773e8c8-dceb-457c-a07c-f73ed03b5faa": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Four Horsemen & Their Antidotes",
+    "art": "",
+    "alt": "",
+    "plain": "Four habits predict a breakup with over 90% accuracy. Each one has a cure."
+   },
+   {
+    "heading": "Horseman 1: Criticism",
+    "art": "",
+    "alt": "",
+    "plain": "Criticism attacks the person. Instead, talk about the one thing that happened."
+   },
+   {
+    "heading": "Horseman 2: Contempt",
+    "art": "",
+    "alt": "",
+    "plain": "Contempt is mocking and eye-rolling. It does the most damage."
+   },
+   {
+    "heading": "Horseman 3: Defensiveness",
+    "art": "",
+    "alt": "",
+    "plain": "Defensiveness is making excuses or blaming back. Own your part instead."
+   },
+   {
+    "heading": "Horseman 4: Stonewalling",
+    "art": "",
+    "alt": "",
+    "plain": "Stonewalling is shutting down or walking off. Take a break and come back."
+   },
+   {
+    "heading": "The Four Horsemen in ENM",
+    "art": "",
+    "alt": "",
+    "plain": "With more partners, these habits show up around schedules and comparisons."
+   }
+  ],
+  "checks": [
+   {
+    "id": "c773e8c8-1",
+    "after": "Horseman 2: Contempt",
+    "prompt": "Which of the four looks like mockery, eye-rolling and sarcasm?",
+    "options": [
+     "Stonewalling",
+     "Contempt",
+     "Defensiveness"
+    ],
+    "answer": 1,
+    "explanation": "Contempt. Contempt shows up as superiority, mockery, eye-rolling, sarcasm, name-calling or disgust."
+   },
+   {
+    "id": "c773e8c8-2",
+    "after": "Horseman 4: Stonewalling",
+    "prompt": "Stonewalling looks like…",
+    "options": [
+     "Making excuses",
+     "Attacking someone's character",
+     "Shutting down or going silent during conflict"
+    ],
+    "answer": 2,
+    "explanation": "Shutting down or going silent during conflict. Stonewalling is shutting down, withdrawing, going silent or physically leaving during conflict."
+   }
+  ],
+  "takeaway": "Four habits wreck relationships: criticism, contempt, defensiveness and shutting down. Each has a fix."
+ },
+ "852367fe-c60c-4759-944c-cc94a9386375": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Building a Culture of Appreciation",
+    "art": "",
+    "alt": "",
+    "plain": "Happy couples have at least five good moments for every bad one."
+   },
+   {
+    "heading": "Small Moments, Big Impact",
+    "art": "",
+    "alt": "",
+    "plain": "Small, steady acts of kindness matter more than big romantic gestures."
+   },
+   {
+    "heading": "Turning Toward Bids",
+    "art": "",
+    "alt": "",
+    "plain": "When your partner reaches out in a small way, respond."
+   },
+   {
+    "heading": "The 5:1 Ratio in ENM",
+    "art": "",
+    "alt": "",
+    "plain": "With several partners, keeping that balance in each relationship takes planning."
+   },
+   {
+    "heading": "When Professional Support Helps",
+    "art": "",
+    "alt": "",
+    "plain": "If things have turned mostly negative, a therapist can help rebuild."
+   },
+   {
+    "heading": "The Daily Practice",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "852367fe-1",
+    "after": "Building a Culture of Appreciation",
+    "prompt": "What ratio do successful relationships keep?",
+    "options": [
+     "2 negatives to 1 positive",
+     "1 positive to 1 negative",
+     "At least 5 positive interactions to 1 negative"
+    ],
+    "answer": 2,
+    "explanation": "At least 5 positive interactions to 1 negative. Gottman's research revealed a powerful insight."
+   },
+   {
+    "id": "852367fe-2",
+    "after": "Small Moments, Big Impact",
+    "prompt": "What kind of behaviours have the most impact?",
+    "options": [
+     "Small, consistent acts of connection",
+     "Grand romantic gestures",
+     "Expensive gifts"
+    ],
+    "answer": 0,
+    "explanation": "Small, consistent acts of connection. The most impactful relationship behaviors aren't grand romantic gestures — they're small, consistent acts of connection."
+   }
+  ],
+  "takeaway": "Aim for five good moments for every bad one. Small kindnesses do the work."
+ }
+}

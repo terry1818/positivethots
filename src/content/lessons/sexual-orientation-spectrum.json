@@ -1,0 +1,285 @@
+{
+ "1ff6539f-af94-4a3a-8fb7-10d67b893b14": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Understanding Orientation as a Spectrum",
+    "art": "sexual-orientation-spectrum/l1-0.webp",
+    "alt": "A guide sliding a marker along a long scale with seven notches",
+    "size": [
+     508,
+     504
+    ],
+    "plain": "Attraction is a sliding scale. Most people are not 100% one thing."
+   },
+   {
+    "heading": "The Klein Sexual Orientation Grid",
+    "art": "sexual-orientation-spectrum/l1-1.webp",
+    "alt": "A guide holding a large grid chart of coloured squares",
+    "size": [
+     487,
+     511
+    ],
+    "plain": "Who you are drawn to has many parts, like attraction, feelings and behaviour, and they can differ."
+   },
+   {
+    "heading": "Why This Matters",
+    "art": "guide-high-five",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "1ff6539f-1",
+    "after": "Understanding Orientation as a Spectrum",
+    "prompt": "What did Kinsey's 1948 research challenge?",
+    "options": [
+     "The idea that people are either fully straight or fully gay",
+     "The idea that people fall in love",
+     "The value of research"
+    ],
+    "answer": 0,
+    "explanation": "The idea that people are either fully straight or fully gay. In 1948, Dr. Alfred Kinsey published research that challenged the prevailing assumption that people were simply \"heterosexual\" or \"homosexual.\""
+   },
+   {
+    "id": "1ff6539f-2",
+    "after": "The Klein Sexual Orientation Grid",
+    "prompt": "The Klein Grid shows that orientation is…",
+    "options": [
+     "A single fixed label",
+     "A constellation of experiences, not one label",
+     "A choice made once"
+    ],
+    "answer": 1,
+    "explanation": "A constellation of experiences, not one label. The Klein Grid reveals something important: sexual orientation is not a single label but a constellation of experiences."
+   }
+  ],
+  "takeaway": "Who you are drawn to sits on a wide range, not in two boxes."
+ },
+ "8b4804fc-1690-48ca-83ef-d8d13e86570b": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Beyond Fixed Categories",
+    "art": "sexual-orientation-spectrum/l2-0.webp",
+    "alt": "A guide holding a flowing ribbon that shifts colour along its length",
+    "size": [
+     470,
+     494
+    ],
+    "plain": "For some people, who they are drawn to shifts over the years."
+   },
+   {
+    "heading": "What Fluidity Is — and Isn't",
+    "art": "sexual-orientation-spectrum/l2-1.webp",
+    "alt": "A guide standing by a gently flowing stream, a crossed-out light switch beside him",
+    "size": [
+     512,
+     492
+    ],
+    "plain": "Shifting is not choosing. You cannot force it or switch it off."
+   },
+   {
+    "heading": "Fluidity Across Genders",
+    "art": "sexual-orientation-spectrum/l2-2.webp",
+    "alt": "Four guides standing together inside one flowing wave of colour",
+    "size": [
+     512,
+     472
+    ],
+    "plain": "This happens to people of every gender."
+   },
+   {
+    "heading": "Fluidity and Identity in ENM",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "Meeting more people can show you new sides of your attraction. That is okay."
+   }
+  ],
+  "checks": [
+   {
+    "id": "8b4804fc-1",
+    "after": "What Fluidity Is — and Isn't",
+    "prompt": "Is sexual fluidity the same as choosing your orientation?",
+    "options": [
+     "Yes, it is a decision",
+     "Only for some people",
+     "No, fluidity is not the same as choice"
+    ],
+    "answer": 2,
+    "explanation": "No, fluidity is not the same as choice. Sexual fluidity is not the same as choice. No one chooses to experience a shift in their attractions any more than they chose their original pattern."
+   },
+   {
+    "id": "8b4804fc-2",
+    "after": "Fluidity Across Genders",
+    "prompt": "Later studies found that fluidity exists…",
+    "options": [
+     "Only in men",
+     "Only in women",
+     "Across all genders"
+    ],
+    "answer": 2,
+    "explanation": "Across all genders. While Diamond's initial research focused on women, subsequent studies have found that fluidity exists across all genders, though it may manifest differently."
+   }
+  ],
+  "takeaway": "Attraction can shift over a lifetime. That is natural, and it is not a choice."
+ },
+ "acebe1d4-1969-431b-b269-50907d46f21a": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Understanding Asexuality",
+    "art": "sexual-orientation-spectrum/l3-0.webp",
+    "alt": "A guide relaxing happily with a book and a slice of cake",
+    "size": [
+     512,
+     499
+    ],
+    "plain": "Asexual people feel little or no sexual attraction. It is a real orientation."
+   },
+   {
+    "heading": "The Split Attraction Model",
+    "art": "sexual-orientation-spectrum/l3-1.webp",
+    "alt": "A guide holding two separate dials, one marked with a heart and one with a spark",
+    "size": [
+     493,
+     502
+    ],
+    "plain": "Romantic pull and sexual pull are two separate things."
+   },
+   {
+    "heading": "The Aromantic Spectrum",
+    "art": "sexual-orientation-spectrum/l3-2.webp",
+    "alt": "A guide holding a long colour bar with a small heart at one end that fades out",
+    "size": [
+     506,
+     500
+    ],
+    "plain": "Aromantic people feel little or no romantic attraction."
+   },
+   {
+    "heading": "Ace and Aro People in Relationships and ENM",
+    "art": "sexual-orientation-spectrum/l3-3.webp",
+    "alt": "Two guides sharing a blanket and popcorn on a sofa, laughing as close friends",
+    "size": [
+     512,
+     417
+    ],
+    "plain": "Ace and aro people have close, lasting relationships of many kinds."
+   }
+  ],
+  "checks": [
+   {
+    "id": "acebe1d4-1",
+    "after": "Understanding Asexuality",
+    "prompt": "Asexuality is characterized by…",
+    "options": [
+     "A medical condition",
+     "Little or no sexual attraction to others",
+     "Fear of relationships"
+    ],
+    "answer": 1,
+    "explanation": "Little or no sexual attraction to others. Asexuality is a sexual orientation characterized by a lack of sexual attraction to others, or very low levels of sexual attraction."
+   },
+   {
+    "id": "acebe1d4-2",
+    "after": "The Split Attraction Model",
+    "prompt": "The split attraction model separates which two things?",
+    "options": [
+     "Past and present",
+     "Love and friendship",
+     "Romantic and sexual attraction"
+    ],
+    "answer": 2,
+    "explanation": "Romantic and sexual attraction. One of the most useful frameworks to emerge from ace community discourse is the split attraction model, which separates sexual attraction from romantic attraction."
+   }
+  ],
+  "takeaway": "Some people feel little or no sexual or romantic pull, and they still build full, happy relationships."
+ },
+ "146ec3e3-2de2-41a1-8aeb-9fa6b9a3bda4": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Creating Truly Inclusive Spaces",
+    "art": "sexual-orientation-spectrum/l4-0.webp",
+    "alt": "Four guides standing in an open doorway with arms wide, welcoming",
+    "size": [
+     509,
+     463
+    ],
+    "plain": "Knowing the theory matters less than how you treat people."
+   },
+   {
+    "heading": "Addressing Erasure",
+    "art": "sexual-orientation-spectrum/l4-1.webp",
+    "alt": "A guide waving to be seen while he fades into a faint outline",
+    "size": [
+     475,
+     439
+    ],
+    "plain": "Erasure means acting as if a group, like bi or ace people, is not real."
+   },
+   {
+    "heading": "Orientation and ENM",
+    "art": "guide-celebrate-all",
+    "alt": "",
+    "plain": "Every orientation shows up in every kind of relationship setup."
+   },
+   {
+    "heading": "Being an Ally Without Centering Yourself",
+    "art": "sexual-orientation-spectrum/l4-3.webp",
+    "alt": "She stands just behind him with a supportive hand on his shoulder while he holds the microphone",
+    "size": [
+     512,
+     455
+    ],
+    "plain": "Being an ally means listening and backing people up without making it about you."
+   },
+   {
+    "heading": "When to Seek Support",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "If your orientation causes you distress, a supportive therapist can help."
+   }
+  ],
+  "checks": [
+   {
+    "id": "146ec3e3-1",
+    "after": "Addressing Erasure",
+    "prompt": "Treating bisexual people as \"really\" gay or straight is an example of…",
+    "options": [
+     "Fluidity",
+     "Erasure",
+     "Allyship"
+    ],
+    "answer": 1,
+    "explanation": "Erasure. Several forms of orientation erasure persist even in ostensibly progressive communities."
+   },
+   {
+    "id": "146ec3e3-2",
+    "after": "Being an Ally Without Centering Yourself",
+    "prompt": "A core part of genuine allyship is…",
+    "options": [
+     "Believing how people identify themselves",
+     "Speaking for them",
+     "Asking people to prove it"
+    ],
+    "answer": 0,
+    "explanation": "Believing how people identify themselves. Genuine allyship means."
+   }
+  ],
+  "takeaway": "Believe people about who they are, and treat every orientation as real."
+ }
+}

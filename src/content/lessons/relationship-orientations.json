@@ -1,0 +1,319 @@
+{
+ "b0e9c4d6-18fe-4b84-b957-85883e9debae": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Relationship Orientation as Identity",
+    "art": "relationship-orientations/l1-0.webp",
+    "alt": "A guide holding a compass whose needle is a heart",
+    "size": [
+     477,
+     486
+    ],
+    "plain": "For many people, how they do relationships is part of who they are."
+   },
+   {
+    "heading": "The Full Spectrum",
+    "art": "relationship-orientations/l1-1.webp",
+    "alt": "Spread out along a wide curved path, each standing on a different coloured tile",
+    "size": [
+     512,
+     471
+    ],
+    "plain": "One partner or several: every setup everyone agrees to is a real choice."
+   },
+   {
+    "heading": "Why \"Orientation\" Matters",
+    "art": "guide-high-five",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "b0e9c4d6-1",
+    "after": "Relationship Orientation as Identity",
+    "prompt": "For many people, their approach to relationships is…",
+    "options": [
+     "A passing trend",
+     "A fundamental part of who they are",
+     "A hobby"
+    ],
+    "answer": 1,
+    "explanation": "A fundamental part of who they are. For many people, their approach to relationships is not simply a lifestyle choice but a fundamental aspect of who they are — a relationship orientation."
+   },
+   {
+    "id": "b0e9c4d6-2",
+    "after": "The Full Spectrum",
+    "prompt": "According to the lesson, monogamy is…",
+    "options": [
+     "Also a choice",
+     "The only natural option",
+     "Outdated"
+    ],
+    "answer": 0,
+    "explanation": "Also a choice. Monogamy remains the most culturally normative relationship structure, but Sheff's research reminds us that it too is a choice, not a default."
+   }
+  ],
+  "takeaway": "How many partners you want is part of who you are, and every agreed setup is valid."
+ },
+ "b3108975-1ad5-4e7b-b0ee-f9ad1ec5a8a9": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Structural Approaches to Polyamory",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "Having several partners can be arranged in different ways."
+   },
+   {
+    "heading": "Kitchen Table Polyamory",
+    "art": "relationship-orientations/l2-1.webp",
+    "alt": "Four guides sitting around a kitchen table sharing breakfast",
+    "size": [
+     512,
+     472
+    ],
+    "plain": "\"Kitchen table\" means everyone is comfortable hanging out together."
+   },
+   {
+    "heading": "Parallel Polyamory",
+    "art": "relationship-orientations/l2-2.webp",
+    "alt": "Two guides walking along two separate parallel paths, each looking ahead",
+    "size": [
+     497,
+     459
+    ],
+    "plain": "\"Parallel\" means your partners do not really mix."
+   },
+   {
+    "heading": "Garden Party Polyamory",
+    "art": "relationship-orientations/l2-3.webp",
+    "alt": "Three guides chatting politely at a garden party with drinks",
+    "size": [
+     512,
+     438
+    ],
+    "plain": "\"Garden party\" means partners are friendly at events but not close."
+   },
+   {
+    "heading": "Hierarchical and Non-Hierarchical Approaches",
+    "art": "relationship-orientations/l2-4.webp",
+    "alt": "A guide holding a small ladder in one hand and a flat ring in the other",
+    "size": [
+     457,
+     503
+    ],
+    "plain": "Some people rank their relationships. Others treat them as equal."
+   },
+   {
+    "heading": "Common Pitfalls",
+    "art": "relationship-orientations/l2-5.webp",
+    "alt": "A couple stands on a small raised platform while the third stands lower beside it",
+    "size": [
+     440,
+     505
+    ],
+    "plain": "Watch for one couple's comfort always coming first."
+   }
+  ],
+  "checks": [
+   {
+    "id": "b3108975-1",
+    "after": "Kitchen Table Polyamory",
+    "prompt": "All partners and metamours are comfortable sharing a meal together. Which style is this?",
+    "options": [
+     "Solo polyamory",
+     "Parallel polyamory",
+     "Kitchen table polyamory"
+    ],
+    "answer": 2,
+    "explanation": "Kitchen table polyamory. Kitchen table polyamory describes a style where all partners and metamours (your partner's partners) are comfortable sitting around a kitchen table together."
+   },
+   {
+    "id": "b3108975-2",
+    "after": "Parallel Polyamory",
+    "prompt": "Metamours have little or no direct contact. Which style is this?",
+    "options": [
+     "Parallel polyamory",
+     "Kitchen table polyamory",
+     "Garden party polyamory"
+    ],
+    "answer": 0,
+    "explanation": "Parallel polyamory. Parallel polyamory is a style where metamours have little or no direct interaction."
+   }
+  ],
+  "takeaway": "There are many ways to arrange several relationships. Pick what works for everyone involved."
+ },
+ "4fe1dab9-b79a-4bec-9582-75ad3d642429": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Relationship Anarchy: Rejecting Prescribed Hierarchies",
+    "art": "relationship-orientations/l3-0.webp",
+    "alt": "A guide tossing a rulebook over her shoulder and drawing her own star map",
+    "size": [
+     502,
+     476
+    ],
+    "plain": "Relationship anarchy means no built-in ranking. Each bond is its own thing."
+   },
+   {
+    "heading": "Solo Polyamory: Centering Autonomy",
+    "art": "relationship-orientations/l3-1.webp",
+    "alt": "A guide standing confidently in front of his own small house, keys in hand",
+    "size": [
+     503,
+     480
+    ],
+    "plain": "Solo polyamory means you stay your own home base while loving others."
+   },
+   {
+    "heading": "The Intersection of RA and Solo Poly",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "The two often go together, because both drop the usual script."
+   },
+   {
+    "heading": "Chosen Family and Non-Romantic Life Partnerships",
+    "art": "relationship-orientations/l3-3.webp",
+    "alt": "Three guides hugging in a group, a house icon with a heart above them",
+    "size": [
+     484,
+     503
+    ],
+    "plain": "Friends and chosen family can matter just as much as romantic partners."
+   },
+   {
+    "heading": "Unique Challenges",
+    "art": "relationship-orientations/l3-4.webp",
+    "alt": "A guide pushing against a big rubber stamp shaped like a couple icon",
+    "size": [
+     512,
+     401
+    ],
+    "plain": "Laws and other people's expectations are built for couples, which makes this harder."
+   }
+  ],
+  "checks": [
+   {
+    "id": "4fe1dab9-1",
+    "after": "Solo Polyamory: Centering Autonomy",
+    "prompt": "In solo polyamory, what is a central value?",
+    "options": [
+     "Living with every partner",
+     "Ranking partners",
+     "Individual autonomy"
+    ],
+    "answer": 2,
+    "explanation": "Individual autonomy. Solo polyamory is a relationship approach where maintaining individual autonomy is a central value."
+   },
+   {
+    "id": "4fe1dab9-2",
+    "after": "Chosen Family and Non-Romantic Life Partnerships",
+    "prompt": "Which relationships do these frameworks lift up that mainstream culture often overlooks?",
+    "options": [
+     "Work contacts",
+     "Chosen family and non-romantic partnerships",
+     "Online followers"
+    ],
+    "answer": 1,
+    "explanation": "Chosen family and non-romantic partnerships. Both frameworks elevate relationships that mainstream culture often undervalues, such as chosen family and non-romantic life partnerships."
+   }
+  ],
+  "takeaway": "You can build your relationships your own way and still have deep, lasting bonds."
+ },
+ "d4deda34-2719-43fa-9007-dc46c58777bf": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Mono-Normativity and Its Effects",
+    "art": "relationship-orientations/l4-0.webp",
+    "alt": "A guide standing under a big signpost that points only one way, looking sceptical",
+    "size": [
+     441,
+     438
+    ],
+    "plain": "Many people assume one partner is the only normal way. That hurts everyone else."
+   },
+   {
+    "heading": "Respecting Monogamy",
+    "art": "relationship-orientations/l4-1.webp",
+    "alt": "A happy couple holding hands under one shared umbrella",
+    "size": [
+     423,
+     512
+    ],
+    "plain": "Choosing one partner is just as valid. Do not look down on it."
+   },
+   {
+    "heading": "Navigating Transitions Between Structures",
+    "art": "relationship-orientations/l4-2.webp",
+    "alt": "A guide crossing a small bridge between two differently coloured lands",
+    "size": [
+     512,
+     499
+    ],
+    "plain": "People change. Moving between setups takes time and honest talk."
+   },
+   {
+    "heading": "Discussing Relationship Orientation",
+    "art": "relationship-orientations/l4-3.webp",
+    "alt": "A guide opening a door a little and peeking out with a letter in her hand",
+    "size": [
+     369,
+     469
+    ],
+    "plain": "Telling others how you do relationships is your call, at your pace."
+   },
+   {
+    "heading": "When Conflicts Arise",
+    "art": "relationship-orientations/l4-4.webp",
+    "alt": "Two guides sitting at a table with two different maps, talking calmly",
+    "size": [
+     512,
+     384
+    ],
+    "plain": "If you and a partner want different setups, be honest. Sometimes it cannot be solved."
+   }
+  ],
+  "checks": [
+   {
+    "id": "d4deda34-1",
+    "after": "Mono-Normativity and Its Effects",
+    "prompt": "The assumption that monogamy is the natural, default and superior way to relate is called…",
+    "options": [
+     "Hierarchy",
+     "Compersion",
+     "Mono-normativity"
+    ],
+    "answer": 2,
+    "explanation": "Mono-normativity. Mono-normativity — the cultural assumption that monogamy is the natural, default, and superior way to structure relationships — affects everyone, regardless of their relationship orientation."
+   },
+   {
+    "id": "d4deda34-2",
+    "after": "Respecting Monogamy",
+    "prompt": "Within CNM communities, how should monogamy be treated?",
+    "options": [
+     "With respect, not as inferior",
+     "As a phase",
+     "As outdated"
+    ],
+    "answer": 0,
+    "explanation": "With respect, not as inferior. Within CNM communities, it's important to guard against the opposite form of judgment — treating monogamy as inferior, unenlightened, or evidence of insecurity."
+   }
+  ],
+  "takeaway": "No consensual relationship style is better than another, including monogamy."
+ }
+}

@@ -1,0 +1,313 @@
+{
+ "89bb3c92-9cc6-4a90-b9ff-db7001d55f1c": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Jealousy as Information",
+    "art": "",
+    "alt": "",
+    "plain": "Jealousy is a message worth reading. It is not proof of love and not a flaw."
+   },
+   {
+    "heading": "The Anatomy of Jealousy",
+    "art": "",
+    "alt": "",
+    "plain": "Jealousy is usually several feelings mixed, like fear, sadness and feeling left out."
+   },
+   {
+    "heading": "Why Suppression Doesn't Work",
+    "art": "",
+    "alt": "",
+    "plain": "Pushing jealousy down does not work. It comes back stronger."
+   },
+   {
+    "heading": "Why Impulsive Action Doesn't Work Either",
+    "art": "",
+    "alt": "",
+    "plain": "Acting on it right away, with demands or snooping, also backfires."
+   },
+   {
+    "heading": "The Middle Path",
+    "art": "",
+    "alt": "",
+    "plain": "The middle way: feel it, work out what it is about, then ask for what you need."
+   },
+   {
+    "heading": "Normalizing Jealousy",
+    "art": "",
+    "alt": "",
+    "plain": "Everyone feels jealous sometimes, even people with years of practice."
+   }
+  ],
+  "checks": [
+   {
+    "id": "89bb3c92-1",
+    "after": "Why Impulsive Action Doesn't Work Either",
+    "prompt": "Which is an example of acting on jealousy impulsively?",
+    "options": [
+     "Naming the feeling",
+     "Asking for reassurance",
+     "Demanding a partner end another relationship"
+    ],
+    "answer": 2,
+    "explanation": "Demanding a partner end another relationship. Impulsive reactions include demanding a partner end another relationship, issuing ultimatums and snooping."
+   },
+   {
+    "id": "89bb3c92-2",
+    "after": "Normalizing Jealousy",
+    "prompt": "Do experienced ENM practitioners still feel jealousy?",
+    "options": [
+     "No, it disappears for good",
+     "Yes, even the most experienced do",
+     "Only when something is wrong"
+    ],
+    "answer": 1,
+    "explanation": "Yes, even the most experienced do. Even the most experienced ENM practitioners feel jealousy. Decades of practice don't eliminate it — they develop the skills to process it effectively."
+   }
+  ],
+  "takeaway": "Jealousy is a signal. Notice it, find what is underneath, then say what you need."
+ },
+ "66cd2ad9-8704-41d6-8b79-e74540455f1f": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The HEARTS Framework: Building Security",
+    "art": "",
+    "alt": "",
+    "plain": "HEARTS is six habits that help partners feel safe with each other."
+   },
+   {
+    "heading": "H — Here (Being Present and Attuned)",
+    "art": "",
+    "alt": "",
+    "letter": "H",
+    "plain": "Here: when you are with someone, really be with them."
+   },
+   {
+    "heading": "E — Expressed Delight",
+    "art": "",
+    "alt": "",
+    "letter": "E",
+    "plain": "Expressed delight: show your partner you are glad they exist."
+   },
+   {
+    "heading": "A — Attunement",
+    "art": "",
+    "alt": "",
+    "letter": "A",
+    "plain": "Attunement: notice how they feel, even before they say it."
+   },
+   {
+    "heading": "R — Rituals and Routines",
+    "art": "",
+    "alt": "",
+    "letter": "R",
+    "plain": "Rituals: small things you do regularly that they can count on."
+   },
+   {
+    "heading": "T — Turning Toward",
+    "art": "",
+    "alt": "",
+    "letter": "T",
+    "plain": "Turning toward: answer their small reaches for connection."
+   },
+   {
+    "heading": "S — Security",
+    "art": "",
+    "alt": "",
+    "letter": "S",
+    "plain": "Security: be the safe home base they can return to."
+   },
+   {
+    "heading": "HEARTS Across a Polycule",
+    "art": "",
+    "alt": "",
+    "plain": "With several partners, plan your energy so each person gets these."
+   }
+  ],
+  "checks": [
+   {
+    "id": "66cd2ad9-1",
+    "after": "A — Attunement",
+    "prompt": "What does the A in HEARTS stand for?",
+    "options": [
+     "Agreement",
+     "Attunement",
+     "Autonomy"
+    ],
+    "answer": 1,
+    "explanation": "Attunement. Tuning into your partner's emotional states, even when they haven't explicitly communicated them."
+   },
+   {
+    "id": "66cd2ad9-2",
+    "after": "S — Security",
+    "prompt": "In HEARTS, \"Security\" means being…",
+    "options": [
+     "In charge of the relationship",
+     "Someone who checks their phone",
+     "A reliable, safe base your partner can explore from"
+    ],
+    "answer": 2,
+    "explanation": "A reliable, safe base your partner can explore from. Creating a reliable, safe base from which your partner can explore — including their other relationships."
+   }
+  ],
+  "takeaway": "HEARTS: be here, show delight, tune in, keep rituals, turn toward, and be a safe base.",
+  "mnemonic": {
+   "word": "HEARTS",
+   "caption": "Six habits that help a partner feel safe with you"
+  }
+ },
+ "0f63e2fa-4582-4082-9fe6-0e1729fd974e": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Attachment Patterns in ENM",
+    "art": "",
+    "alt": "",
+    "plain": "How you learned to feel safe as a child shows up in adult relationships."
+   },
+   {
+    "heading": "Anxious Attachment in ENM",
+    "art": "",
+    "alt": "",
+    "plain": "Anxious pattern: lots of worry, checking and needing reassurance."
+   },
+   {
+    "heading": "Avoidant Attachment in ENM",
+    "art": "",
+    "alt": "",
+    "plain": "Avoidant pattern: keeping distance and pulling away when things get close."
+   },
+   {
+    "heading": "Disorganized Attachment in ENM",
+    "art": "",
+    "alt": "",
+    "plain": "Disorganized pattern: wanting closeness and fearing it, often after early hurt."
+   },
+   {
+    "heading": "How ENM Can Trigger — or Heal — Attachment Wounds",
+    "art": "",
+    "alt": "",
+    "plain": "Having more partners can stir up these patterns, and it can also help heal them."
+   },
+   {
+    "heading": "The Path to Earned Security",
+    "art": "",
+    "alt": "",
+    "plain": "You can earn security: know your pattern, say what you need, choose steady people."
+   }
+  ],
+  "checks": [
+   {
+    "id": "0f63e2fa-1",
+    "after": "Anxious Attachment in ENM",
+    "prompt": "Which pattern tends to monitor a partner's other relationships closely?",
+    "options": [
+     "Avoidant attachment",
+     "Secure attachment",
+     "Anxious attachment"
+    ],
+    "answer": 2,
+    "explanation": "Anxious attachment. People with anxious attachment patterns tend to be hypervigilant about their partner's other relationships."
+   },
+   {
+    "id": "0f63e2fa-2",
+    "after": "The Path to Earned Security",
+    "prompt": "Earned security is about…",
+    "options": [
+     "Recognizing your patterns without shame",
+     "Avoiding close relationships",
+     "Eliminating all anxiety"
+    ],
+    "answer": 0,
+    "explanation": "Recognizing your patterns without shame. Earned security isn't about eliminating anxiety or avoidance. It starts with recognizing your patterns without shame."
+   }
+  ],
+  "takeaway": "Old patterns of clinging or pulling away can be understood and changed with practice."
+ },
+ "ee7c8f7f-bbaf-46be-96d3-4ee04adec296": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Cultivating Compersion",
+    "art": "",
+    "alt": "",
+    "plain": "Compersion is feeling happy that your partner is happy with someone else."
+   },
+   {
+    "heading": "What Compersion Is — and Isn't",
+    "art": "",
+    "alt": "",
+    "plain": "It is a real feeling you cannot force, and it can sit alongside jealousy."
+   },
+   {
+    "heading": "The Path to Compersion",
+    "art": "",
+    "alt": "",
+    "plain": "It tends to show up when you feel safe, included and cared for."
+   },
+   {
+    "heading": "Practices That Support Compersion",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "When Compersion Doesn't Come",
+    "art": "",
+    "alt": "",
+    "plain": "Sometimes it never comes. That is okay. You are not doing it wrong."
+   },
+   {
+    "heading": "Managing NRE (New Relationship Energy)",
+    "art": "",
+    "alt": "",
+    "plain": "New love is exciting. Keep showing up for the people you already have."
+   },
+   {
+    "heading": "When to Seek Professional Support",
+    "art": "",
+    "alt": "",
+    "plain": "If jealousy is hurting your life, a therapist who understands ENM can help."
+   }
+  ],
+  "checks": [
+   {
+    "id": "ee7c8f7f-1",
+    "after": "Cultivating Compersion",
+    "prompt": "What is compersion?",
+    "options": [
+     "Feeling joy when your partner experiences joy with another",
+     "Hiding your jealousy",
+     "Ending a relationship"
+    ],
+    "answer": 0,
+    "explanation": "Feeling joy when your partner experiences joy with another. Compersion — sometimes called \"the opposite of jealousy\" — is the experience of feeling joy when your partner experiences joy with another person."
+   },
+   {
+    "id": "ee7c8f7f-2",
+    "after": "When Compersion Doesn't Come",
+    "prompt": "What if compersion never comes?",
+    "options": [
+     "You are doing ENM wrong",
+     "That's completely okay",
+     "You should leave"
+    ],
+    "answer": 1,
+    "explanation": "That's completely okay. And sometimes it just doesn't — and that's completely okay. Not feeling compersion doesn't mean you're doing ENM wrong."
+   }
+  ],
+  "takeaway": "Feeling glad for your partner's joy can grow with time, and it is fine if it does not."
+ }
+}

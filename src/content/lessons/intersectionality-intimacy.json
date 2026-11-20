@@ -1,0 +1,326 @@
+{
+ "166040f6-ffb0-4de4-9658-548fc51c49e3": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "What Is Intersectionality?",
+    "art": "intersectionality-intimacy/l1-0.webp",
+    "alt": "Four guides standing where several coloured roads cross, looking at the crossing together",
+    "size": [
+     480,
+     498
+    ],
+    "plain": "Intersectionality means the parts of who you are overlap and shape your life together."
+   },
+   {
+    "heading": "Intersectionality Applied to Intimacy",
+    "art": "intersectionality-intimacy/l1-1.webp",
+    "alt": "A guide holding overlapping coloured see-through circles that form a heart in the middle",
+    "size": [
+     454,
+     512
+    ],
+    "plain": "Those overlaps also shape desire, safety and who gets good care."
+   },
+   {
+    "heading": "Why One-Size-Fits-All Approaches Fail",
+    "art": "intersectionality-intimacy/l1-2.webp",
+    "alt": "A guide holding up a tiny t-shirt that clearly does not fit him, shrugging with a smile",
+    "size": [
+     469,
+     478
+    ],
+    "plain": "Most sex ed was written for one kind of person, so it leaves many people out."
+   },
+   {
+    "heading": "Intersectionality Is Not Ranking Oppressions",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "This is not a contest over who has it worst. It is a way to understand each person."
+   }
+  ],
+  "checks": [
+   {
+    "id": "166040f6-1",
+    "after": "What Is Intersectionality?",
+    "prompt": "What does intersectionality describe?",
+    "options": [
+     "A type of relationship",
+     "A ranking of who has it worst",
+     "How overlapping parts of who you are shape your experience"
+    ],
+    "answer": 2,
+    "explanation": "How overlapping parts of who you are shape your experience. In 1989, legal scholar Kimberlé Crenshaw coined the term \"intersectionality\" to describe how Black women experience overlapping systems of oppression that cannot be understood by examining race and gender separately."
+   },
+   {
+    "id": "166040f6-2",
+    "after": "Why One-Size-Fits-All Approaches Fail",
+    "prompt": "Who was most mainstream sexuality education designed for?",
+    "options": [
+     "Everyone equally",
+     "One narrow kind of person",
+     "Mostly people outside the mainstream"
+    ],
+    "answer": 1,
+    "explanation": "One narrow kind of person. Most mainstream sexuality education was designed with a specific audience in mind."
+   }
+  ],
+  "takeaway": "Parts of who you are, like race, gender and disability, combine to shape your love life."
+ },
+ "a6724f88-73ad-461c-b7cb-8c2a8f57c878": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "How Race Shapes Intimate Experience",
+    "art": "intersectionality-intimacy/l2-0.webp",
+    "alt": "Two guides talking warmly over cups of tea",
+    "size": [
+     512,
+     359
+    ],
+    "plain": "Race and culture affect how people experience attraction and relationships."
+   },
+   {
+    "heading": "Racial Fetishization",
+    "art": "intersectionality-intimacy/l2-1.webp",
+    "alt": "A guide holding up a hand in a calm stop gesture beside a crossed-out blank sticky label",
+    "size": [
+     509,
+     472
+    ],
+    "plain": "Fetishizing means wanting someone for a racial stereotype instead of who they are."
+   },
+   {
+    "heading": "Racial Preferences in Dating",
+    "art": "intersectionality-intimacy/l2-2.webp",
+    "alt": "A guide looking thoughtfully into a hand mirror",
+    "size": [
+     464,
+     484
+    ],
+    "plain": "\"Just a preference\" is worth a closer look. Tastes are shaped by what we were shown."
+   },
+   {
+    "heading": "Interracial Intimacy",
+    "art": "intersectionality-intimacy/l2-3.webp",
+    "alt": "Two guides holding hands and smiling at each other",
+    "size": [
+     504,
+     487
+    ],
+    "plain": "Couples from different backgrounds share real joys and face real challenges."
+   },
+   {
+    "heading": "The Impact of Colonialism",
+    "art": "",
+    "alt": "",
+    "plain": "A lot of sexual shame around the world was spread by colonial rule."
+   },
+   {
+    "heading": "Race in ENM Spaces",
+    "art": "intersectionality-intimacy/l2-5.webp",
+    "alt": "Four guides sitting in a circle of chairs, warmly offering one empty chair to a newcomer",
+    "size": [
+     506,
+     464
+    ],
+    "plain": "Our own communities need to look honestly at who feels welcome and who does not."
+   }
+  ],
+  "checks": [
+   {
+    "id": "a6724f88-1",
+    "after": "Racial Fetishization",
+    "prompt": "Racial fetishization means attraction based mainly on…",
+    "options": [
+     "Shared hobbies",
+     "Racial stereotypes rather than the actual person",
+     "Someone's personality"
+    ],
+    "answer": 1,
+    "explanation": "Racial stereotypes rather than the actual person. Racial fetishization occurs when attraction to someone is primarily based on racial stereotypes rather than on the actual person."
+   },
+   {
+    "id": "a6724f88-2",
+    "after": "The Impact of Colonialism",
+    "prompt": "Where do many global attitudes of sexual shame have roots?",
+    "options": [
+     "In recent science",
+     "In modern dating apps",
+     "In colonialism"
+    ],
+    "answer": 2,
+    "explanation": "In colonialism. Many global attitudes about sexuality — shame around pleasure, rigid gender roles, persecution of LGBTQ+ people — have roots in colonialism."
+   }
+  ],
+  "takeaway": "Race and culture shape dating and desire. Treat people as people, not as types."
+ },
+ "d36b08a4-5fe0-4a78-8ea6-33e5c5b31277": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Disability and Sexuality: An AASECT Core Competency",
+    "art": "",
+    "alt": "",
+    "plain": "Sex educators are expected to understand disability. It is a core skill."
+   },
+   {
+    "heading": "Challenging Desexualization",
+    "art": "intersectionality-intimacy/l3-1.webp",
+    "alt": "A guide sitting in a wheelchair dressed up for a date, holding a rose and smiling confidently",
+    "size": [
+     382,
+     512
+    ],
+    "plain": "Disabled people are often treated as if they have no sexual side. That is false."
+   },
+   {
+    "heading": "Physical Disability and Sexuality",
+    "art": "intersectionality-intimacy/l3-2.webp",
+    "alt": "A in a wheelchair and B sitting beside her, holding hands and laughing",
+    "size": [
+     512,
+     454
+    ],
+    "plain": "A physical disability can change how sex works. Different does not mean less."
+   },
+   {
+    "heading": "Neurodiversity and Intimacy",
+    "art": "intersectionality-intimacy/l3-3.webp",
+    "alt": "A guide wearing headphones, calm and happy, with soft sparkles around his head",
+    "size": [
+     403,
+     474
+    ],
+    "plain": "Brains that work differently experience touch, talk and closeness differently."
+   },
+   {
+    "heading": "Nothing About Us Without Us",
+    "art": "intersectionality-intimacy/l3-4.webp",
+    "alt": "Around a table planning together, A in a wheelchair leading the discussion",
+    "size": [
+     512,
+     400
+    ],
+    "plain": "Disabled people should lead the decisions that affect them."
+   }
+  ],
+  "checks": [
+   {
+    "id": "d36b08a4-1",
+    "after": "Challenging Desexualization",
+    "prompt": "What is the \"desexualization\" of disabled people?",
+    "options": [
+     "Assuming they have no sexual desires or needs",
+     "Giving them extra support",
+     "Asking about their preferences"
+    ],
+    "answer": 0,
+    "explanation": "Assuming they have no sexual desires or needs. One of the most pervasive forms of ableism in sexuality is the desexualization of disabled people — the assumption that people with disabilities are not sexual beings, do not experience desire, and should not be considered as romantic or…"
+   },
+   {
+    "id": "d36b08a4-2",
+    "after": "Nothing About Us Without Us",
+    "prompt": "\"Nothing about us without us\" means…",
+    "options": [
+     "Disabled people should shape what is made for them",
+     "Experts should decide alone",
+     "Disability is a private topic"
+    ],
+    "answer": 0,
+    "explanation": "Disabled people should shape what is made for them. The disability rights principle \"nothing about us without us\" applies directly to sexuality education and community building."
+   }
+  ],
+  "takeaway": "Disabled and neurodivergent people have full sexual lives and should help shape the spaces meant for them."
+ },
+ "2d2958c6-cb8a-4c78-8242-5732dd96c5fe": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "From Diversity to Genuine Inclusion",
+    "art": "intersectionality-intimacy/l4-0.webp",
+    "alt": "A guide opening a door wide and waving others in",
+    "size": [
+     432,
+     512
+    ],
+    "plain": "Saying \"everyone is welcome\" is easy. Making it true takes work."
+   },
+   {
+    "heading": "How ENM and Kink Spaces Reproduce Exclusion",
+    "art": "intersectionality-intimacy/l4-1.webp",
+    "alt": "A guide looking up at a tall stack of gold coins blocking a doorway",
+    "size": [
+     502,
+     512
+    ],
+    "plain": "Even open-minded spaces shut people out, through cost, access and who is in charge."
+   },
+   {
+    "heading": "Practical Steps for Creating Inclusive Spaces",
+    "art": "intersectionality-intimacy/l4-2.webp",
+    "alt": "Four guides building a wooden ramp together up to a doorway",
+    "size": [
+     512,
+     495
+    ],
+    "plain": "Organizers can lower costs, make venues accessible and share leadership."
+   },
+   {
+    "heading": "When Intersectional Concerns Arise in Relationships",
+    "art": "intersectionality-intimacy/l4-3.webp",
+    "alt": "Two guides sitting facing each other, listening closely, one hand on heart",
+    "size": [
+     512,
+     392
+    ],
+    "plain": "In a relationship, different life experiences can cause friction. Listen and believe."
+   },
+   {
+    "heading": "Professional Support",
+    "art": "",
+    "alt": "",
+    "plain": "Look for helpers who understand race, disability, gender and more together."
+   }
+  ],
+  "checks": [
+   {
+    "id": "2d2958c6-1",
+    "after": "How ENM and Kink Spaces Reproduce Exclusion",
+    "prompt": "Name one way ENM and kink spaces can shut people out.",
+    "options": [
+     "Too much inclusion",
+     "Cost barriers",
+     "Too many free events"
+    ],
+    "answer": 1,
+    "explanation": "Cost barriers. Events and classes cost money, which keeps some people out even in spaces that value openness."
+   },
+   {
+    "id": "2d2958c6-2",
+    "after": "When Intersectional Concerns Arise in Relationships",
+    "prompt": "Can differences in identity create tension inside a relationship?",
+    "options": [
+     "Yes, and it helps to name them",
+     "Only in new relationships",
+     "No, love cancels them out"
+    ],
+    "answer": 0,
+    "explanation": "Yes, and it helps to name them. Partners can experience the world very differently, and that can create tension between them."
+   }
+  ],
+  "takeaway": "Welcoming everyone takes action: lower the barriers and share the lead."
+ }
+}

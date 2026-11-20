@@ -1,0 +1,365 @@
+{
+ "01becfdf-4e05-438a-be92-e53c7deae335": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Historical & Colonial Roots of Relationship Norms",
+    "art": "decolonizing-relationships/l1-0.webp",
+    "alt": "A guide unrolling a long old scroll that turns into a winding road",
+    "size": [
+     512,
+     469
+    ],
+    "plain": "Our ideas about love and marriage come from a particular time and place."
+   },
+   {
+    "heading": "A Brief History of \"Normal\"",
+    "art": "decolonizing-relationships/l1-1.webp",
+    "alt": "Each standing in a differently shaped little house, four houses side by side",
+    "size": [
+     512,
+     356
+    ],
+    "plain": "Before colonial rule, people around the world lived and loved in many different ways."
+   },
+   {
+    "heading": "How \"Love\" Became Mandatory",
+    "art": "decolonizing-relationships/l1-2.webp",
+    "alt": "A guide holding a calendar page and a heart, looking surprised",
+    "size": [
+     478,
+     475
+    ],
+    "plain": "Marrying for love is only about 250 years old."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   },
+   {
+    "heading": "The Colonial Project of \"Proper\" Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "Colonizers forced one model on people: one man, one woman, the man in charge."
+   },
+   {
+    "heading": "The Ongoing Impact",
+    "art": "decolonizing-relationships/l1-5.webp",
+    "alt": "A guide holding a thick old rulebook with a padlock on it",
+    "size": [
+     472,
+     471
+    ],
+    "plain": "Those rules still live on in laws, religion and what people expect."
+   },
+   {
+    "heading": "Intersections with Race",
+    "art": "",
+    "alt": "",
+    "plain": "For Black Americans, slavery tore families apart, and that harm still echoes."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "01becfdf-1",
+    "after": "How \"Love\" Became Mandatory",
+    "prompt": "How old is the idea of marrying mainly for love?",
+    "options": [
+     "About 50 years",
+     "Thousands of years",
+     "About 250 years"
+    ],
+    "answer": 2,
+    "explanation": "About 250 years. Historian Stephanie Coontz documents in Marriage, a History that romantic love as the basis for marriage is only about 250 years old."
+   },
+   {
+    "id": "01becfdf-2",
+    "after": "The Ongoing Impact",
+    "prompt": "Where do colonial relationship norms still show up today?",
+    "options": [
+     "In legal systems",
+     "Nowhere, they ended",
+     "Only in history books"
+    ],
+    "answer": 0,
+    "explanation": "In legal systems. Colonial norms persist through legal systems that only recognize certain kinds of partnership."
+   }
+  ],
+  "takeaway": "Many relationship \"rules\" are recent and local, not natural laws."
+ },
+ "42675418-3f53-4fe2-a0f4-4ff2792c1cdd": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Dismantling Heteronormativity & Amatonormativity",
+    "art": "decolonizing-relationships/l2-0.webp",
+    "alt": "A guide pulling back a stage curtain to reveal turning gears behind it",
+    "size": [
+     493,
+     487
+    ],
+    "plain": "Hidden assumptions shape what we think a relationship should be."
+   },
+   {
+    "heading": "What Is Heteronormativity?",
+    "art": "decolonizing-relationships/l2-1.webp",
+    "alt": "A guide standing at a fork where one path is paved and the others are grassy trails",
+    "size": [
+     505,
+     500
+    ],
+    "plain": "Heteronormativity is the belief that being straight is the normal default."
+   },
+   {
+    "heading": "What Is Amatonormativity?",
+    "art": "decolonizing-relationships/l2-2.webp",
+    "alt": "A in the middle hugging her two best friends, all laughing",
+    "size": [
+     486,
+     475
+    ],
+    "plain": "Amatonormativity is the belief that everyone needs one romantic partner to be complete."
+   },
+   {
+    "heading": "The Intersection with Race, Class, and Disability",
+    "art": "",
+    "alt": "",
+    "plain": "These pressures hit harder depending on your race, money and ability."
+   },
+   {
+    "heading": "Practical Dismantling",
+    "art": "decolonizing-relationships/l2-4.webp",
+    "alt": "A guide crossing items off a long checklist and tossing it over his shoulder",
+    "size": [
+     501,
+     477
+    ],
+    "plain": "Start by noticing your own words and choices, then pick what you actually want."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "42675418-1",
+    "after": "What Is Heteronormativity?",
+    "prompt": "Heteronormativity is the assumption that…",
+    "options": [
+     "Straight relationships are the default and best",
+     "Friendship matters most",
+     "All relationships are equal"
+    ],
+    "answer": 0,
+    "explanation": "Straight relationships are the default and best. Heteronormativity is the assumption that heterosexual relationships are the default, natural, and superior form of human bonding."
+   },
+   {
+    "id": "42675418-2",
+    "after": "What Is Amatonormativity?",
+    "prompt": "Amatonormativity assumes everyone should…",
+    "options": [
+     "Have many friends",
+     "Pursue one central romantic relationship",
+     "Stay single"
+    ],
+    "answer": 1,
+    "explanation": "Pursue one central romantic relationship. Coined by philosopher Elizabeth Brake, amatonormativity is the assumption that everyone should pursue a central, exclusive romantic relationship as their primary source of love and life partnership."
+   }
+  ],
+  "takeaway": "You do not have to follow the default script of one straight, romantic couple."
+ },
+ "897440b3-98e0-4190-9ee1-bb43474c0344": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Cultural Diversity in Love & Family",
+    "art": "decolonizing-relationships/l3-0.webp",
+    "alt": "Four guides standing around a globe, each pointing at a different place",
+    "size": [
+     512,
+     491
+    ],
+    "plain": "Around the world, people have organised love and family in very different ways."
+   },
+   {
+    "heading": "Relationship Structures Across Cultures",
+    "art": "decolonizing-relationships/l3-1.webp",
+    "alt": "A guide holding a world map with little houses of different shapes pinned on it",
+    "size": [
+     491,
+     502
+    ],
+    "plain": "Some cultures have had one wife with several husbands, shared child-raising and more."
+   },
+   {
+    "heading": "What Western Culture Can Learn",
+    "art": "decolonizing-relationships/l3-2.webp",
+    "alt": "A guide having a lightbulb moment while reading a book",
+    "size": [
+     435,
+     512
+    ],
+    "plain": "There is more than one workable way to build a family."
+   },
+   {
+    "heading": "The Danger of Romanticizing",
+    "art": "decolonizing-relationships/l3-3.webp",
+    "alt": "A guide admiring a museum display case from a respectful distance, hands behind her back",
+    "size": [
+     437,
+     496
+    ],
+    "plain": "Learn from other cultures without copying them or making them sound perfect."
+   },
+   {
+    "heading": "Modern Applications",
+    "art": "decolonizing-relationships/l3-4.webp",
+    "alt": "A guide sketching a house plan at a drafting table",
+    "size": [
+     512,
+     451
+    ],
+    "plain": "Use these ideas to think about what you want in your own relationships."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "897440b3-1",
+    "after": "Relationship Structures Across Cultures",
+    "prompt": "Polyandry, practised historically in Tibet and Nepal, means…",
+    "options": [
+     "Marriage without children",
+     "One woman married to several men",
+     "One man married to several women"
+    ],
+    "answer": 1,
+    "explanation": "One woman married to several men. In Tibet and Nepal, women historically married multiple brothers, which kept family land together."
+   },
+   {
+    "id": "897440b3-2",
+    "after": "The Danger of Romanticizing",
+    "prompt": "What should you avoid when learning from other cultures?",
+    "options": [
+     "Asking questions",
+     "Reading history",
+     "Romanticizing or appropriating them"
+    ],
+    "answer": 2,
+    "explanation": "Romanticizing or appropriating them. While learning from diverse cultures is valuable, it's important to avoid romanticizing or appropriating."
+   }
+  ],
+  "takeaway": "People have built love and family in many ways. Learn from them with respect."
+ },
+ "51c04283-5c81-49e6-b053-a76659acacd7": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Building Your Own Relationship Framework",
+    "art": "decolonizing-relationships/l4-0.webp",
+    "alt": "At a drafting table drawing a heart-shaped blueprint",
+    "size": [
+     512,
+     441
+    ],
+    "plain": "Now you can design relationships that actually fit you."
+   },
+   {
+    "heading": "The Relationship Design Process",
+    "art": "decolonizing-relationships/l4-1.webp",
+    "alt": "A guide walking along a circular path of arrows, holding a notebook",
+    "size": [
+     439,
+     486
+    ],
+    "plain": "Building your own approach is ongoing. Try, check, adjust."
+   },
+   {
+    "heading": "Tools for Framework Building",
+    "art": "decolonizing-relationships/l4-2.webp",
+    "alt": "Two guides sharing a large menu card decorated with hearts, choosing together",
+    "size": [
+     507,
+     459
+    ],
+    "plain": "Think of relationships as a menu to choose from, not an escalator with one direction."
+   },
+   {
+    "heading": "Common Pitfalls",
+    "art": "decolonizing-relationships/l4-3.webp",
+    "alt": "A guide stumbling lightly over a pile of rule books",
+    "size": [
+     480,
+     502
+    ],
+    "plain": "Common traps: only rebelling, making too many rules, or copying someone else."
+   },
+   {
+    "heading": "Living Your Framework",
+    "art": "decolonizing-relationships/l4-4.webp",
+    "alt": "A guide watering a small potted plant with heart-shaped leaves",
+    "size": [
+     481,
+     484
+    ],
+    "plain": "Real life will test your plan. Update it as you learn."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "51c04283-1",
+    "after": "Tools for Framework Building",
+    "prompt": "The \"relationship menu\" replaces which image?",
+    "options": [
+     "A family tree",
+     "An escalator with a single path upward",
+     "A ladder of success"
+    ],
+    "answer": 1,
+    "explanation": "An escalator with a single path upward. The Relationship Menu: Rather than an escalator (a single path upward), think of relationships as a menu."
+   },
+   {
+    "id": "51c04283-2",
+    "after": "Common Pitfalls",
+    "prompt": "What is \"reactionary design\"?",
+    "options": [
+     "Planning too slowly",
+     "Asking partners for input",
+     "Building your framework only in opposition to the mainstream"
+    ],
+    "answer": 2,
+    "explanation": "Building your framework only in opposition to the mainstream. It means building your framework purely against mainstream culture rather than toward what you genuinely want."
+   }
+  ],
+  "takeaway": "Design your relationships on purpose, around what you truly want, and keep adjusting."
+ }
+}

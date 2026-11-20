@@ -1,0 +1,312 @@
+{
+ "1bc0af31-f1ac-4f55-a6c4-e6799069e3e4": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Beyond the Binary",
+    "art": "gender-identity-expression/l1-0.webp",
+    "alt": "A guide holding a friendly plush unicorn with small coloured dials floating around it",
+    "size": [
+     453,
+     478
+    ],
+    "plain": "Gender has several parts: who you are inside, how you show it, your body and who you like."
+   },
+   {
+    "heading": "Why the Binary Fails",
+    "art": "gender-identity-expression/l1-1.webp",
+    "alt": "A guide stepping out of one of two boxes onto an open colourful floor",
+    "size": [
+     470,
+     484
+    ],
+    "plain": "Two boxes, man and woman, do not fit everyone."
+   },
+   {
+    "heading": "Intersex Realities",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "Some people are born with bodies that are not clearly male or female."
+   },
+   {
+    "heading": "Gender Identity Is Self-Determined",
+    "art": "gender-identity-expression/l1-3.webp",
+    "alt": "A guide holding a mirror and pointing proudly at herself, a small crown above",
+    "size": [
+     422,
+     508
+    ],
+    "plain": "Only you can say what your gender is."
+   }
+  ],
+  "checks": [
+   {
+    "id": "1bc0af31-1",
+    "after": "Intersex Realities",
+    "prompt": "Is biological sex strictly binary?",
+    "options": [
+     "No, even biological sex isn't binary",
+     "Only in humans",
+     "Yes, always"
+    ],
+    "answer": 0,
+    "explanation": "No, even biological sex isn't binary. Even biological sex isn't binary. Approximately 1.7% of people are born with intersex variations — differences in chromosomes, hormones, or anatomy that don't fit typical male or female categories."
+   },
+   {
+    "id": "1bc0af31-2",
+    "after": "Gender Identity Is Self-Determined",
+    "prompt": "Who is the ultimate authority on a person's gender identity?",
+    "options": [
+     "Their family",
+     "That person",
+     "Their doctor"
+    ],
+    "answer": 1,
+    "explanation": "That person. The most important principle in understanding gender is that each person is the ultimate authority on their own gender identity."
+   }
+  ],
+  "takeaway": "Gender has several parts, and each person is the expert on their own."
+ },
+ "80a036e5-b135-48cc-a960-7935a07cadd0": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Understanding Transgender Experience",
+    "art": "gender-identity-expression/l2-0.webp",
+    "alt": "A guide smiling as he steps forward into a beam of light, an old photo frame behind him",
+    "size": [
+     429,
+     512
+    ],
+    "plain": "Transgender means your gender is different from what was written down at your birth."
+   },
+   {
+    "heading": "Nonbinary Identities",
+    "art": "gender-identity-expression/l2-1.webp",
+    "alt": "A guide standing under a big umbrella with many small coloured shapes beneath it",
+    "size": [
+     367,
+     512
+    ],
+    "plain": "Nonbinary means your gender is not simply man or woman."
+   },
+   {
+    "heading": "The WPATH Standards of Care",
+    "art": "gender-identity-expression/l2-2.webp",
+    "alt": "A guide holding a guidebook marked with a medical cross and a heart",
+    "size": [
+     435,
+     503
+    ],
+    "plain": "Doctors follow shared guidelines for giving trans people good care."
+   },
+   {
+    "heading": "Addressing Common Misconceptions",
+    "art": "gender-identity-expression/l2-3.webp",
+    "alt": "A guide popping a dark thought bubble with a pin",
+    "size": [
+     451,
+     494
+    ],
+    "plain": "Many common beliefs about trans people are wrong, and they do harm."
+   }
+  ],
+  "checks": [
+   {
+    "id": "80a036e5-1",
+    "after": "Nonbinary Identities",
+    "prompt": "\"Nonbinary\" is best described as…",
+    "options": [
+     "An umbrella term for identities outside the man/woman binary",
+     "A third fixed gender",
+     "A sexual orientation"
+    ],
+    "answer": 0,
+    "explanation": "An umbrella term for identities outside the man/woman binary. Nonbinary is an umbrella term for gender identities outside the man/woman binary."
+   },
+   {
+    "id": "80a036e5-2",
+    "after": "Addressing Common Misconceptions",
+    "prompt": "Is being trans a mental illness?",
+    "options": [
+     "Yes",
+     "No, it is not",
+     "Experts are undecided"
+    ],
+    "answer": 1,
+    "explanation": "No, it is not. The lesson names this as a harmful misconception: being trans is not a mental illness."
+   }
+  ],
+  "takeaway": "Trans and nonbinary people know who they are. Respect and good care help them thrive."
+ },
+ "0593fa05-660b-42b7-842c-1554966cf731": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Why Pronouns Matter",
+    "art": "gender-identity-expression/l3-0.webp",
+    "alt": "Two guides greeting each other with a wave, each wearing a small name tag with a heart",
+    "size": [
+     512,
+     440
+    ],
+    "plain": "Using someone's right pronouns shows that you see them."
+   },
+   {
+    "heading": "Common Pronoun Sets",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "Common sets are he, she and they. Some people use others."
+   },
+   {
+    "heading": "How to Ask About Pronouns",
+    "art": "gender-identity-expression/l3-2.webp",
+    "alt": "A guide shaking hands while pointing to her own name tag first",
+    "size": [
+     510,
+     453
+    ],
+    "plain": "Share your own pronouns first, then ask for theirs."
+   },
+   {
+    "heading": "When You Make a Mistake",
+    "art": "gender-identity-expression/l3-3.webp",
+    "alt": "A guide wincing with a hand raised, then smiling, a small plaster on a heart beside him",
+    "size": [
+     506,
+     420
+    ],
+    "plain": "If you get it wrong: say sorry briefly, correct it and move on."
+   },
+   {
+    "heading": "Pronouns and Consent",
+    "art": "guide-high-five",
+    "alt": "",
+    "plain": "Respecting pronouns is a form of consent. People decide how they are spoken about."
+   }
+  ],
+  "checks": [
+   {
+    "id": "0593fa05-1",
+    "after": "Why Pronouns Matter",
+    "prompt": "Why do pronouns matter?",
+    "options": [
+     "They only matter in writing",
+     "They are a grammar rule",
+     "They are a basic part of how we acknowledge each other"
+    ],
+    "answer": 2,
+    "explanation": "They are a basic part of how we acknowledge each other. Pronouns are a fundamental part of how we refer to and acknowledge each other."
+   },
+   {
+    "id": "0593fa05-2",
+    "after": "When You Make a Mistake",
+    "prompt": "You use the wrong pronoun by accident. What does the lesson say first?",
+    "options": [
+     "Everyone makes pronoun mistakes sometimes",
+     "It can never be repaired",
+     "You should avoid that person"
+    ],
+    "answer": 0,
+    "explanation": "Everyone makes pronoun mistakes sometimes. Everyone makes pronoun mistakes sometimes. What matters is how you handle it: 1."
+   }
+  ],
+  "takeaway": "Use the pronouns people ask for. If you slip, fix it quickly and move on."
+ },
+ "e7c39870-32fc-4e07-8ffc-1f540f2dd2dc": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Beyond Tolerance to Genuine Support",
+    "art": "gender-identity-expression/l4-0.webp",
+    "alt": "One climbs a ladder while the other two hold it steady",
+    "size": [
+     503,
+     512
+    ],
+    "plain": "Understanding is a start. Support means doing something."
+   },
+   {
+    "heading": "Being a Genuine Ally",
+    "art": "gender-identity-expression/l4-1.webp",
+    "alt": "A guide rolling up his sleeves and carrying a stack of boxes to help",
+    "size": [
+     477,
+     512
+    ],
+    "plain": "An ally is known by what they keep doing, not by a label."
+   },
+   {
+    "heading": "Supporting Partners Through Gender Exploration",
+    "art": "gender-identity-expression/l4-2.webp",
+    "alt": "Two guides walking side by side, she holds a lantern that lights the path for him",
+    "size": [
+     441,
+     502
+    ],
+    "plain": "If a partner explores their gender, you can feel a lot and still support them."
+   },
+   {
+    "heading": "Gender Diversity in ENM",
+    "art": "guide-celebrate-all",
+    "alt": "",
+    "plain": "Our communities can lead by making space for every gender."
+   },
+   {
+    "heading": "Curiosity vs. Fetishization",
+    "art": "gender-identity-expression/l4-4.webp",
+    "alt": "A guide holding a magnifying glass in one hand and a heart in the other, choosing the heart",
+    "size": [
+     444,
+     489
+    ],
+    "plain": "Be interested in the person. Do not treat them as a category or a turn-on."
+   },
+   {
+    "heading": "When to Seek Support",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "A gender-affirming therapist can help you or your partner."
+   }
+  ],
+  "checks": [
+   {
+    "id": "e7c39870-1",
+    "after": "Being a Genuine Ally",
+    "prompt": "Genuine allyship is about…",
+    "options": [
+     "Identity or labels",
+     "Consistent behaviour",
+     "Good intentions alone"
+    ],
+    "answer": 1,
+    "explanation": "Consistent behaviour. Genuine allyship is not about identity or labels — it's about consistent behavior."
+   },
+   {
+    "id": "e7c39870-2",
+    "after": "Curiosity vs. Fetishization",
+    "prompt": "When dating trans people, the lesson draws a line between genuine curiosity and…",
+    "options": [
+     "Allyship",
+     "Fetishization",
+     "Friendship"
+    ],
+    "answer": 1,
+    "explanation": "Fetishization. When dating or being intimate with trans people, there is an important distinction between genuine curiosity and fetishization."
+   }
+  ],
+  "takeaway": "Real support is steady action, not just good intentions."
+ }
+}
