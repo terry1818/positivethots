@@ -1,3 +1,4 @@
+import { useQuizAnswer } from "@/hooks/useQuizAnswer";
 import { useState } from "react";
 import { CheckCircle, CheckCircle2, XCircle, PlayCircle, FileText, Image, BookOpen, Sparkles, Volume2, Pause, Play, Square, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,9 +13,6 @@ interface CheckpointQuestion {
   id: string;
   question: string;
   options: string[];
-  correct_answer: number;
-  explanation_correct: string;
-  explanation_wrong: string;
   position_in_section: number;
 }
 
@@ -127,12 +125,14 @@ const renderMarkdown = (content: string, checkpoints?: CheckpointQuestion[]) => 
 
 const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
   const [selected, setSelected] = useState<number | null>(null);
+  const [started] = useState(Date.now());
+  const { pending, feedback, error, check, retry } = useQuizAnswer();
   const [dismissed, setDismissed] = useState(false);
 
   if (dismissed) return null;
 
-  const isAnswered = selected !== null;
-  const isCorrect = selected === checkpoint.correct_answer;
+  const isAnswered = feedback !== null;
+  const isCorrect = feedback?.is_correct === true;
 
   return (
     <div className="my-5 rounded-lg border-2 border-purple-400/40 bg-purple-500/5 p-4 space-y-3">
@@ -144,14 +144,19 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
       <div className="flex flex-wrap gap-2">
         {checkpoint.options.map((option, idx) => {
           const isThis = selected === idx;
-          const isCorrectOption = idx === checkpoint.correct_answer;
+          const isCorrectOption = idx === feedback?.correct_answer;
           return (
-            <button
+            <Button
+              variant="outline"
               key={idx}
-              onClick={() => !isAnswered && setSelected(idx)}
-              disabled={isAnswered}
+              onClick={() => {
+                if (isAnswered || pending || error) return;
+                setSelected(idx);
+                void check(checkpoint.id, idx, Date.now() - started);
+              }}
+              disabled={isAnswered || pending || error}
               className={cn(
-                "px-3 py-1.5 rounded-full text-sm font-medium border transition-all",
+                "min-h-[44px] px-3 py-1.5 rounded-full text-sm font-medium border transition-all",
                 !isAnswered && "border-border hover:border-purple-400 hover:bg-purple-500/10 cursor-pointer",
                 isAnswered && isThis && isCorrectOption && "border-green-500 bg-green-500/10 text-green-700 dark:text-green-400",
                 isAnswered && isThis && !isCorrectOption && "border-destructive bg-destructive/10 text-destructive",
@@ -159,16 +164,17 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
                 isAnswered && !isThis && !isCorrectOption && "opacity-40 border-border"
               )}
             >
+              {pending && isThis && <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-label="Checking your answer" />}
               {option}
               {isAnswered && isThis && isCorrectOption && <CheckCircle2 className="inline h-3 w-3 ml-1" />}
               {isAnswered && isThis && !isCorrectOption && <XCircle className="inline h-3 w-3 ml-1" />}
-            </button>
+            </Button>
           );
         })}
       </div>
 
       {isAnswered && (
-        <div className={cn(
+        <div aria-live="polite" className={cn(
           "rounded-md p-3 text-sm",
           isCorrect ? "bg-green-500/10" : "bg-destructive/10"
         )}>
@@ -180,11 +186,12 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
             )}
           </p>
           <p className="text-muted-foreground text-sm mt-1">
-            {isCorrect ? checkpoint.explanation_correct : checkpoint.explanation_wrong}
+            {feedback?.explanation}
           </p>
         </div>
       )}
 
+      {error && <div role="alert"><p>We couldn't check that answer. Try again.</p><Button variant="outline" onClick={retry} disabled={pending}>Retry</Button></div>}
       {isAnswered && (
         <Button
           variant="ghost"

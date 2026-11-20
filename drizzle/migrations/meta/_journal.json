@@ -29,6 +29,13 @@
       "when": 1794899728143,
       "tag": "0003_restrict_sprint_participant_reads_to_members",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795145806578,
+      "tag": "0004_restore_private_server_graded_quizzes",
+      "breakpoints": true
     }
   ]
 }

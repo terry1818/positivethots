@@ -1,4 +1,6 @@
 # Compliance copy fixes
+- [x] Restore member quiz/checkpoint loading and server grading; verify real-answer submission, retries, private keys, pass/fail, persisted badge, and celebration.
+- [ ] Verify an administrator's quiz flow: no administrator session available; requesting account is a regular member and temporary-account approval is unavailable.
 - [x] Apply only the requested domain, auth, description, policy, and cancellation-button edits.
 - [x] Verify prohibited-copy searches, signup, policy pages, and signed-in Settings. Build reported OK.
 - [ ] Verify paid-plan Cancel Subscription click: requesting account is on the free plan; do not change account or payment data.

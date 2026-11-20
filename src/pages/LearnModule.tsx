@@ -9,6 +9,9 @@ import { Progress } from "@/components/ui/progress";
 import { EducationBadge } from "@/components/EducationBadge";
 import { AdminPanel } from "@/components/admin/AdminPanel";
 import { SectionContent } from "@/components/education/SectionContent";
+import { BrandedEmptyState } from "@/components/BrandedEmptyState";
+import { reportError } from "@/lib/errorReporting";
+import { latestQuizAnswers, type QuizAnswer, type QuizResult } from "@/lib/quizAnswers";
 import { ExerciseSession } from "@/components/education/ExerciseSession";
 import { LearningPath } from "@/components/education/LearningPath";
 import { XPPopup } from "@/components/education/XPPopup";
@@ -42,26 +45,10 @@ interface Question {
   question: string;
   options: string[];
   order_index: number;
-  explanation_correct?: string | null;
-  explanation_wrong?: string | null;
   is_checkpoint?: boolean | null;
   position_in_section?: number | null;
   section_id?: string | null;
   exercise_type?: string;
-  match_pairs?: any[];
-  correct_order?: number[];
-  explanation?: string;
-  correct_answer?: number;
-}
-
-export interface CheckpointQuestion {
-  id: string;
-  question: string;
-  options: string[];
-  correct_answer: number;
-  explanation_correct: string;
-  explanation_wrong: string;
-  position_in_section: number;
 }
 
 const LearnModule = () => {
@@ -77,6 +64,11 @@ const LearnModule = () => {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [questionError, setQuestionError] = useState(false);
+  const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
+  const [submissionError, setSubmissionError] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [sessionAnswers, setSessionAnswers] = useState<QuizAnswer[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
 
   // Quiz enhancements
@@ -178,6 +170,8 @@ const LearnModule = () => {
   }, [awardXP]);
 
   const loadModule = async () => {
+    setLoading(true);
+    setQuestionError(false);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/auth"); return; }
@@ -193,22 +187,15 @@ const LearnModule = () => {
       setModule(moduleData);
       setModuleId(moduleData.id);
 
-      // Check if user is admin to fetch full question data (including correct_answer)
-      const { data: roleData } = await supabase
-        .from("user_roles").select("role").eq("user_id", session.user.id).eq("role", "admin").maybeSingle();
-      const isAdminUser = !!roleData;
-
       const [questionsResult, badgeResult] = await Promise.all([
-        isAdminUser
-          ? supabase.from("quiz_questions").select("*").eq("module_id", moduleData.id).order("order_index")
-          : supabase.from("quiz_questions_public").select("*").eq("module_id", moduleData.id).order("order_index"),
+        supabase.rpc("get_quiz_questions", { _module_id: moduleData.id }),
         supabase.from("user_badges").select("id").eq("user_id", session.user.id).eq("module_id", moduleData.id).maybeSingle()
       ]);
       if (questionsResult.error) throw questionsResult.error;
       
       const parsedQuestions = (questionsResult.data || []).map(q => ({
         ...q,
-        options: typeof q.options === 'string' ? JSON.parse(q.options) : q.options
+        options: (typeof q.options === 'string' ? JSON.parse(q.options) : q.options) as string[]
       }));
       // Split into badge quiz questions and checkpoint questions
       const badge = parsedQuestions.filter(q => !q.is_checkpoint);
@@ -218,8 +205,8 @@ const LearnModule = () => {
       setIsAlreadyCompleted(!!badgeResult.data);
     } catch (error: any) {
       console.error("Error loading module:", error);
-      toast.error("Failed to load module");
-      navigate("/learn");
+      setQuestionError(true);
+      void reportError(new Error(error.message || "Error loading quiz"));
     } finally {
       setLoading(false);
     }
@@ -261,66 +248,33 @@ const LearnModule = () => {
     }
   }, [markComplete, awardXP, stats]);
 
-  // Quiz: store answer locally, show feedback instead of auto-advancing
-  const handleAnswerQuestion = (questionId: string, answerIndex: number) => {
-    const question = questions.find(q => q.id === questionId);
-    if (!question || answeredQuestions.has(questionId)) return;
-
-    setAnswers(prev => ({ ...prev, [questionId]: answerIndex }));
-    setAnsweredQuestions(prev => new Set(prev).add(questionId));
-    setShowFeedback(true);
-  };
-
-  const handleNextQuestion = () => {
-    setShowFeedback(false);
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
-  };
-
-  const handleSubmitQuiz = async () => {
-    if (!module || !userId) return;
-
-    // Build answers array from tracked state
-    const answersArray = questions.map(q => ({
-      question_id: q.id,
-      selected_answer: answers[q.id] ?? -1,
-    }));
-
+  const handleSubmitQuiz = async (realAnswers: QuizAnswer[]) => {
+    if (!module || !userId || submitting) return;
+    setSessionAnswers(realAnswers);
+    setSubmissionError(false);
+    setSubmitting(true);
+    let result: QuizResult;
     try {
-      const { data: result, error } = await supabase.rpc("submit_quiz", {
-        _module_id: module.id,
-        _answers: answersArray,
-      });
+      const answersArray = latestQuizAnswers(questions.map(q => q.id), realAnswers);
+      const { data, error } = await supabase.rpc("submit_quiz", { _module_id: module.id, _answers: answersArray });
       if (error) throw error;
-
-      const quizResult = result as { score: number; correct: number; total: number; passed: boolean };
-      const scorePercent = quizResult.score;
-      setScore(scorePercent);
-      setSubmitted(true);
-
-      if (quizResult.passed) {
-        const quizXP = 50;
-        const perfectBonus = scorePercent === 100 ? 25 : 0;
-        const totalXP = quizXP + perfectBonus;
-        
-        const xpResult = await awardXP(totalXP, scorePercent === 100 ? "quiz_perfect" : "quiz_pass", module.id);
-        setXpPopup({ show: true, amount: xpResult.newXP });
-
-        const isFoundationComplete = await checkFoundationComplete(module.id);
-        setTimeout(() => {
-          setCelebration({
-            type: "badge_earned",
-            badgeTitle: module.title,
-            badgeSlug: module.slug,
-            badgeTier: module.tier,
-            isFoundationComplete,
-          });
-        }, 1600);
-      }
-    } catch (error: any) {
-      console.error("Error submitting quiz:", error);
-      toast.error("Failed to save your progress");
+      result = data as unknown as QuizResult;
+      if (!result || typeof result.passed !== "boolean" || typeof result.score !== "number") throw new Error("Invalid quiz result");
+    } catch (error) {
+      setSubmissionError(true);
+      setSubmitting(false);
+      void reportError(error instanceof Error ? error : new Error("Error submitting quiz"));
+      return;
+    }
+    setQuizResult(result);
+    setScore(result.score);
+    setSubmitted(true);
+    setSubmitting(false);
+    if (result.passed) {
+      const isFoundationComplete = await checkFoundationComplete(module.id);
+      setTimeout(() => setCelebration({ type: "badge_earned", badgeTitle: module.title, badgeSlug: module.slug, badgeTier: module.tier, isFoundationComplete }), 1600);
+      const xpResult = await awardXP(50 + (result.score === 100 ? 25 : 0), result.score === 100 ? "quiz_perfect" : "quiz_pass", module.id);
+      setXpPopup({ show: true, amount: xpResult.newXP });
     }
   };
 
@@ -356,6 +310,7 @@ const LearnModule = () => {
   if (loading) {
     return <PageSkeleton variant="learn" />;
   }
+  if (questionError) return <BrandedEmptyState mascot="confused" headline="We couldn't load your quiz." description="" ctaLabel="Try again" onCtaClick={() => void loadModule()} />;
   if (!module) return null;
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -412,7 +367,7 @@ const LearnModule = () => {
           </div>
           <EducationBadge
             moduleSlug={module.slug} title={module.title}
-            isEarned={isAlreadyCompleted || (submitted && score >= 80)}
+            isEarned={isAlreadyCompleted || quizResult?.passed === true}
             tier={module.tier || 'foundation'} size="md"
           />
         </div>
@@ -489,9 +444,6 @@ const LearnModule = () => {
                         id: q.id,
                         question: q.question,
                         options: q.options,
-                        correct_answer: (q as any).correct_answer ?? 0,
-                        explanation_correct: q.explanation_correct || "That's right!",
-                        explanation_wrong: q.explanation_wrong || "Not quite — review the section above for more context.",
                         position_in_section: q.position_in_section ?? 0,
                       }))}
                   />
@@ -569,6 +521,9 @@ const LearnModule = () => {
                   <Button onClick={() => {
                     setShowQuiz(false);
                     setSubmitted(false);
+                    setQuizResult(null);
+                    setSessionAnswers([]);
+                    setSubmissionError(false);
                     setAnswers({});
                     setCurrentQuestionIndex(0);
                     setAnsweredQuestions(new Set());
@@ -579,13 +534,7 @@ const LearnModule = () => {
                 </CardContent>
               </Card>
             ) : questions.length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="py-12 text-center">
-                  <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-                  <p className="text-muted-foreground">No quiz questions yet. Check back soon!</p>
-                  <Button variant="outline" className="mt-4" onClick={() => setShowQuiz(false)}>Back to Content</Button>
-                </CardContent>
-              </Card>
+              <BrandedEmptyState mascot="graduate" headline="This quiz is on its way. Check back soon." description="" ctaLabel="Back to my path" onCtaClick={() => navigate("/learn")} />
             ) : (
               <ExerciseSession
                 moduleId={module.id}
@@ -594,54 +543,21 @@ const LearnModule = () => {
                   id: q.id,
                   question: q.question,
                   options: q.options,
-                  correct_answer: (q as any).correct_answer ?? 0,
                   exercise_type: q.exercise_type || "multiple_choice",
-                  match_pairs: q.match_pairs,
-                  correct_order: q.correct_order,
-                  explanation: q.explanation || q.explanation_correct || undefined,
-                  explanation_correct: q.explanation_correct || undefined,
-                  explanation_wrong: q.explanation_wrong || undefined,
                   order_index: q.order_index,
                 }))}
                 userId={userId || ""}
-                onComplete={async (scorePercent, correct, total, passed) => {
-                  setScore(scorePercent);
-                  setSubmitted(true);
-
-                  if (passed) {
-                    try {
-                      const answersArray = questions.map(q => ({
-                        question_id: q.id,
-                        selected_answer: q.correct_answer ?? 0,
-                      }));
-                      await supabase.rpc("submit_quiz", {
-                        _module_id: module.id,
-                        _answers: answersArray,
-                      });
-                    } catch (e) {
-                      console.error("Badge award error:", e);
-                    }
-
-                    const quizXP = 50;
-                    const perfectBonus = scorePercent === 100 ? 25 : 0;
-                    const xpResult = await awardXP(quizXP + perfectBonus, scorePercent === 100 ? "quiz_perfect" : "quiz_pass", module.id);
-                    setXpPopup({ show: true, amount: xpResult.newXP });
-
-                    const isFoundationComplete = await checkFoundationComplete(module.id);
-                    setTimeout(() => {
-                      setCelebration({
-                        type: "badge_earned",
-                        badgeTitle: module.title,
-                        badgeSlug: module.slug,
-                        badgeTier: module.tier,
-                        isFoundationComplete,
-                      });
-                    }, 1600);
-                  }
-                }}
+                finalResult={quizResult}
+                submitting={submitting}
+                submissionError={submissionError}
+                onRetrySubmit={() => void handleSubmitQuiz(sessionAnswers)}
+                onComplete={(_score, _correct, _total, _passed, realAnswers) => void handleSubmitQuiz(realAnswers)}
                 onBack={() => {
                   setShowQuiz(false);
                   setSubmitted(false);
+                    setQuizResult(null);
+                    setSessionAnswers([]);
+                    setSubmissionError(false);
                   setAnswers({});
                   setCurrentQuestionIndex(0);
                   setAnsweredQuestions(new Set());

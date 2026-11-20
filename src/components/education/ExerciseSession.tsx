@@ -1,32 +1,20 @@
-import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
+import { useQuizAnswer } from "@/hooks/useQuizAnswer";
+import type { QuizAnswer, QuizResult } from "@/lib/quizAnswers";
 import { cn } from "@/lib/utils";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { CelebrationEngine, CelebrationTier } from "@/components/celebrations/CelebrationEngine";
 import { MascotReaction } from "@/components/mascot/MascotReaction";
-import { DragMatchExercise } from "./exercises/DragMatchExercise";
-import { ScenarioExercise } from "./exercises/ScenarioExercise";
-import { RapidFireExercise } from "./exercises/RapidFireExercise";
-import { FillBlankExercise } from "./exercises/FillBlankExercise";
-import { ReorderExercise } from "./exercises/ReorderExercise";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, XCircle, Trophy, Zap } from "lucide-react";
-import { toast } from "sonner";
+import { CheckCircle2, XCircle, Trophy, Zap, Loader2 } from "lucide-react";
 
 interface ExerciseQuestion {
   id: string;
   question: string;
   options: string[];
-  correct_answer: number;
   exercise_type: string;
-  match_pairs?: any[];
-  correct_order?: number[];
-  explanation?: string;
-  explanation_correct?: string;
-  explanation_wrong?: string;
   order_index: number;
 }
 
@@ -35,7 +23,11 @@ interface ExerciseSessionProps {
   moduleTitle: string;
   questions: ExerciseQuestion[];
   userId: string;
-  onComplete: (score: number, correct: number, total: number, passed: boolean) => void;
+  onComplete: (score: number, correct: number, total: number, passed: boolean, answers: QuizAnswer[]) => void;
+  finalResult: QuizResult | null;
+  submitting: boolean;
+  submissionError: boolean;
+  onRetrySubmit: () => void;
   onBack: () => void;
 }
 
@@ -57,156 +49,72 @@ export const ExerciseSession = ({
   userId,
   onComplete,
   onBack,
+  finalResult, submitting, submissionError, onRetrySubmit,
 }: ExerciseSessionProps) => {
   const reducedMotion = useReducedMotion();
 
-  // Group rapid-fire questions together, shuffle the rest
-  const [sessionQuestions] = useState<ExerciseQuestion[]>(() => {
-    const rapidFire = rawQuestions.filter(q => q.exercise_type === "true_false_rapid");
-    const others = rawQuestions.filter(q => q.exercise_type !== "true_false_rapid");
-    const shuffled = shuffle(others);
-    // Insert rapid-fire group at a random position (as one "round")
-    if (rapidFire.length > 0) {
-      const insertAt = Math.floor(Math.random() * (shuffled.length + 1));
-      shuffled.splice(insertAt, 0, ...rapidFire);
-    }
-    return shuffled;
-  });
-
+  // TODO: server-side grading for this exercise type is not built yet.
+  // All exercise types currently use the multiple-choice server contract.
+  const [sessionQuestions] = useState(() => shuffle(rawQuestions));
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [results, setResults] = useState<{ questionId: string; isCorrect: boolean; timeTakenMs: number }[]>([]);
+  const [results, setResults] = useState<{ questionId: string; isCorrect: boolean; timeTakenMs: number; selectedAnswer: number }[]>([]);
   const [showScore, setShowScore] = useState(false);
   const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
   const [consecutiveWrong, setConsecutiveWrong] = useState(0);
 
   // MC state
   const [mcSelected, setMcSelected] = useState<number | null>(null);
-  const [mcAnswered, setMcAnswered] = useState(false);
   const [mcStartTime, setMcStartTime] = useState(Date.now());
 
   // Celebration
   const [celebrationTier, setCelebrationTier] = useState<CelebrationTier>("micro");
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
 
-  // Track if we're inside a rapid-fire round
-  const [rapidFireRound, setRapidFireRound] = useState<ExerciseQuestion[] | null>(null);
-
+  const { pending, feedback, error, check, retry, reset } = useQuizAnswer();
   const current = sessionQuestions[currentIdx];
-  const totalQuestions = sessionQuestions.filter(q => q.exercise_type !== "true_false_rapid").length +
-    (sessionQuestions.some(q => q.exercise_type === "true_false_rapid") ? 1 : 0); // Count rapid-fire as 1
 
-  const progressPercent = showScore ? 100 : Math.round((results.length / sessionQuestions.length) * 100);
+  useEffect(() => {
+    if (!finalResult) return;
+    setCelebrationTier(finalResult.score === 100 ? "medium" : finalResult.passed ? "small" : "micro");
+    if (finalResult.passed || finalResult.score >= 60) setCelebrationTrigger(t => t + 1);
+  }, [finalResult]);
 
-  // Record performance to database
-  const recordPerformance = useCallback(async (questionId: string, isCorrect: boolean, timeTakenMs: number) => {
-    try {
-      await supabase.from("user_quiz_performance").insert({
-        user_id: userId,
-        question_id: questionId,
-        module_id: moduleId,
-        is_correct: isCorrect,
-        time_taken_ms: timeTakenMs,
-      });
-    } catch (e) {
-      console.error("Failed to record performance:", e);
-    }
-  }, [userId, moduleId]);
-
-  const handleExerciseComplete = useCallback((questionId: string, isCorrect: boolean, timeTakenMs: number) => {
-    const newResults = [...results, { questionId, isCorrect, timeTakenMs }];
-    setResults(newResults);
-    recordPerformance(questionId, isCorrect, timeTakenMs);
-
-    if (isCorrect) {
-      setConsecutiveCorrect(c => c + 1);
-      setConsecutiveWrong(0);
-    } else {
-      setConsecutiveWrong(c => c + 1);
-      setConsecutiveCorrect(0);
-    }
-
-    // Advance
-    if (currentIdx < sessionQuestions.length - 1) {
-      setCurrentIdx(currentIdx + 1);
-      setMcSelected(null);
-      setMcAnswered(false);
-      setMcStartTime(Date.now());
-    } else {
-      // Session complete
-      const totalCorrect = newResults.filter(r => r.isCorrect).length;
-      const scorePercent = Math.round((totalCorrect / sessionQuestions.length) * 100);
-      setShowScore(true);
-
-      // Determine celebration
-      if (scorePercent === 100) {
-        setCelebrationTier("medium");
-        setCelebrationTrigger(t => t + 1);
-      } else if (scorePercent >= 80) {
-        setCelebrationTier("small");
-        setCelebrationTrigger(t => t + 1);
-      } else if (scorePercent >= 60) {
-        setCelebrationTier("micro");
-        setCelebrationTrigger(t => t + 1);
-      }
-
-      onComplete(scorePercent, totalCorrect, sessionQuestions.length, scorePercent >= 80);
-    }
-  }, [results, currentIdx, sessionQuestions, recordPerformance, onComplete]);
-
-  // Handle rapid-fire round completion
-  const handleRapidFireComplete = useCallback((roundResults: { questionId: string; isCorrect: boolean; timeTakenMs: number }[]) => {
-    // Record all results
-    roundResults.forEach(r => recordPerformance(r.questionId, r.isCorrect, r.timeTakenMs));
-
-    const newResults = [...results, ...roundResults];
-    setResults(newResults);
-
-    const correctInRound = roundResults.filter(r => r.isCorrect).length;
-    if (correctInRound === roundResults.length) {
-      setConsecutiveCorrect(c => c + roundResults.length);
-      setConsecutiveWrong(0);
-    } else {
-      setConsecutiveWrong(w => w + roundResults.filter(r => !r.isCorrect).length);
-      setConsecutiveCorrect(0);
-    }
-
-    // Advance past all rapid-fire questions
-    const rfCount = sessionQuestions.filter(q => q.exercise_type === "true_false_rapid").length;
-    const nextIdx = currentIdx + rfCount;
-
-    if (nextIdx < sessionQuestions.length) {
-      setCurrentIdx(nextIdx);
-      setMcSelected(null);
-      setMcAnswered(false);
-      setMcStartTime(Date.now());
-    } else {
-      const totalCorrect = newResults.filter(r => r.isCorrect).length;
-      const scorePercent = Math.round((totalCorrect / sessionQuestions.length) * 100);
-      setShowScore(true);
-      if (scorePercent === 100) { setCelebrationTier("medium"); setCelebrationTrigger(t => t + 1); }
-      else if (scorePercent >= 80) { setCelebrationTier("small"); setCelebrationTrigger(t => t + 1); }
-      else if (scorePercent >= 60) { setCelebrationTier("micro"); setCelebrationTrigger(t => t + 1); }
-      onComplete(scorePercent, totalCorrect, sessionQuestions.length, scorePercent >= 80);
-    }
-  }, [results, currentIdx, sessionQuestions, recordPerformance, onComplete]);
-
-  // MC: handle answer
   const handleMcAnswer = () => {
-    if (mcSelected === null || mcAnswered) return;
-    setMcAnswered(true);
+    if (!current || mcSelected === null || feedback || pending) return;
+    void check(current.id, mcSelected, Date.now() - mcStartTime);
   };
 
   const handleMcContinue = () => {
-    const timeTaken = Date.now() - mcStartTime;
-    const isCorrect = mcSelected === current.correct_answer;
-    handleExerciseComplete(current.id, isCorrect, timeTaken);
+    if (!current || !feedback || mcSelected === null) return;
+    const newResults = [...results, { questionId: current.id, selectedAnswer: mcSelected, isCorrect: feedback.is_correct, timeTakenMs: Date.now() - mcStartTime }];
+    setResults(newResults);
+    if (feedback.is_correct) { setConsecutiveCorrect(c => c + 1); setConsecutiveWrong(0); }
+    else { setConsecutiveWrong(c => c + 1); setConsecutiveCorrect(0); }
+    if (currentIdx < sessionQuestions.length - 1) {
+      setCurrentIdx(currentIdx + 1);
+      setMcSelected(null);
+      reset();
+      setMcStartTime(Date.now());
+    } else {
+      setShowScore(true);
+      const correct = newResults.filter(r => r.isCorrect).length;
+      onComplete(Math.round(correct / sessionQuestions.length * 100), correct, sessionQuestions.length, false,
+        newResults.map(r => ({ question_id: r.questionId, selected_answer: r.selectedAnswer })));
+    }
   };
+  const mcAnswered = feedback !== null;
 
   // Score screen
   if (showScore) {
-    const totalCorrect = results.filter(r => r.isCorrect).length;
-    const scorePercent = Math.round((totalCorrect / sessionQuestions.length) * 100);
-    const passed = scorePercent >= 80;
+    if (!finalResult) return (
+      <div className="space-y-4 py-4" aria-live="polite">
+        {submissionError ? <>
+          <p>We couldn't save your quiz. Try again.</p>
+          <Button onClick={onRetrySubmit} disabled={submitting}>Try again</Button>
+        </> : <Loader2 className="h-5 w-5 animate-spin" aria-label="Saving your quiz" />}
+      </div>
+    );
+    const { correct: totalCorrect, score: scorePercent, passed } = finalResult;
 
     return (
       <div className="space-y-6 py-4">
@@ -257,86 +165,19 @@ export const ExerciseSession = ({
 
   // Render based on exercise type
   const renderExercise = () => {
-    switch (current.exercise_type) {
-      case "drag_match":
-        if (!current.match_pairs || !Array.isArray(current.match_pairs)) {
-          return <p className="text-muted-foreground">Exercise data missing</p>;
-        }
-        return (
-          <DragMatchExercise
-            pairs={current.match_pairs}
-            onComplete={(isCorrect, timeTakenMs) => handleExerciseComplete(current.id, isCorrect, timeTakenMs)}
-          />
-        );
-
-      case "scenario_choice":
-        return (
-          <ScenarioExercise
-            scenario={current.question}
-            options={current.options}
-            correctAnswer={current.correct_answer}
-            explanation={current.explanation || current.explanation_correct}
-            onComplete={(isCorrect, timeTakenMs) => handleExerciseComplete(current.id, isCorrect, timeTakenMs)}
-          />
-        );
-
-      case "true_false_rapid": {
-        // Collect all consecutive rapid-fire questions starting from current
-        const rfQuestions: ExerciseQuestion[] = [];
-        for (let i = currentIdx; i < sessionQuestions.length && sessionQuestions[i].exercise_type === "true_false_rapid"; i++) {
-          rfQuestions.push(sessionQuestions[i]);
-        }
-        return (
-          <RapidFireExercise
-            questions={rfQuestions.map(q => ({
-              id: q.id,
-              statement: q.question,
-              correctAnswer: q.correct_answer,
-            }))}
-            onComplete={handleRapidFireComplete}
-          />
-        );
-      }
-
-      case "fill_blank":
-        return (
-          <FillBlankExercise
-            sentence={current.question}
-            options={current.options}
-            correctAnswer={current.correct_answer}
-            explanation={current.explanation || current.explanation_correct}
-            onComplete={(isCorrect, timeTakenMs) => handleExerciseComplete(current.id, isCorrect, timeTakenMs)}
-          />
-        );
-
-      case "reorder":
-        if (!current.correct_order || !Array.isArray(current.correct_order)) {
-          return <p className="text-muted-foreground">Exercise data missing</p>;
-        }
-        return (
-          <ReorderExercise
-            instruction={current.question}
-            items={current.options}
-            correctOrder={current.correct_order}
-            explanation={current.explanation || current.explanation_correct}
-            onComplete={(isCorrect, timeTakenMs) => handleExerciseComplete(current.id, isCorrect, timeTakenMs)}
-          />
-        );
-
-      case "multiple_choice":
-      default: {
-        const isCorrectAnswer = mcSelected === current.correct_answer;
+    {
+        const isCorrectAnswer = feedback?.is_correct === true;
         return (
           <div className="space-y-4">
             <p className="text-lg font-medium leading-relaxed">{current.question}</p>
             <RadioGroup
               key={current.id}
               value={mcSelected !== null ? mcSelected.toString() : ""}
-              onValueChange={(v) => !mcAnswered && setMcSelected(parseInt(v))}
+              onValueChange={(v) => !mcAnswered && !pending && !error && setMcSelected(parseInt(v))}
               className="space-y-2"
             >
               {current.options.map((opt, idx) => {
-                const showCorrect = mcAnswered && idx === current.correct_answer;
+                const showCorrect = mcAnswered && idx === feedback?.correct_answer;
                 const showWrong = mcAnswered && mcSelected === idx && !isCorrectAnswer;
 
                 return (
@@ -350,7 +191,7 @@ export const ExerciseSession = ({
                       showWrong && "border-destructive bg-destructive/10"
                     )}
                   >
-                    <RadioGroupItem value={idx.toString()} id={`q-${current.id}-${idx}`} disabled={mcAnswered} />
+                    <RadioGroupItem value={idx.toString()} id={`q-${current.id}-${idx}`} disabled={mcAnswered || pending || error} />
                     <Label htmlFor={`q-${current.id}-${idx}`} className="flex-1 cursor-pointer text-sm">
                       {opt}
                     </Label>
@@ -363,28 +204,27 @@ export const ExerciseSession = ({
 
             {/* Feedback */}
             {mcAnswered && (
-              <div className={cn(
+              <div aria-live="polite" className={cn(
                 "rounded-xl p-4 border",
                 isCorrectAnswer ? "bg-green-500/5 border-green-500/20" : "bg-destructive/5 border-destructive/20",
                 !reducedMotion && "animate-fade-in"
               )}>
                 <p className="text-sm font-semibold mb-1">
-                  {isCorrectAnswer
-                    ? (current.explanation_correct || "✓ Correct!")
-                    : (current.explanation_wrong || "✗ Not quite.")}
+                  {isCorrectAnswer ? <><CheckCircle2 className="inline h-5 w-5" /> Correct</> : <><XCircle className="inline h-5 w-5" /> Not quite</>}
                 </p>
+                <p className="text-sm">{feedback?.explanation}</p>
               </div>
             )}
 
             {!mcAnswered && mcSelected !== null && (
-              <Button onClick={handleMcAnswer} className="w-full rounded-xl" size="lg">Check</Button>
+              <Button onClick={handleMcAnswer} disabled={pending || error} className="w-full rounded-xl" size="lg">{pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-label="Checking your answer" />}Check</Button>
             )}
+            {error && <div role="alert"><p>We couldn't check that answer. Try again.</p><Button variant="outline" onClick={retry} disabled={pending}>Retry</Button></div>}
             {mcAnswered && (
               <Button onClick={handleMcContinue} className="w-full rounded-xl" size="lg">Continue</Button>
             )}
           </div>
         );
-      }
     }
   };
 
@@ -416,12 +256,7 @@ export const ExerciseSession = ({
       <div className="flex items-center gap-2">
         <Zap className="h-3.5 w-3.5 text-primary" />
         <span className="text-xs font-semibold text-primary uppercase tracking-wider">
-          {current.exercise_type === "multiple_choice" ? "Multiple Choice" :
-           current.exercise_type === "drag_match" ? "Match Pairs" :
-           current.exercise_type === "scenario_choice" ? "Scenario" :
-           current.exercise_type === "true_false_rapid" ? "Rapid Fire" :
-           current.exercise_type === "fill_blank" ? "Fill in the Blank" :
-           current.exercise_type === "reorder" ? "Put in Order" : "Exercise"}
+          Multiple Choice
         </span>
 
         {/* Adaptive difficulty indicator */}

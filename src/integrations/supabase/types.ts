@@ -2504,13 +2504,6 @@ export type Database = {
             referencedRelation: "quiz_questions"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "user_quiz_performance_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "quiz_questions_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       user_reflections: {
@@ -2867,60 +2860,7 @@ export type Database = {
       }
     }
     Views: {
-      quiz_questions_public: {
-        Row: {
-          explanation_correct: string | null
-          explanation_wrong: string | null
-          id: string | null
-          is_checkpoint: boolean | null
-          module_id: string | null
-          options: Json | null
-          order_index: number | null
-          position_in_section: number | null
-          question: string | null
-          section_id: string | null
-        }
-        Insert: {
-          explanation_correct?: string | null
-          explanation_wrong?: string | null
-          id?: string | null
-          is_checkpoint?: boolean | null
-          module_id?: string | null
-          options?: Json | null
-          order_index?: number | null
-          position_in_section?: number | null
-          question?: string | null
-          section_id?: string | null
-        }
-        Update: {
-          explanation_correct?: string | null
-          explanation_wrong?: string | null
-          id?: string | null
-          is_checkpoint?: boolean | null
-          module_id?: string | null
-          options?: Json | null
-          order_index?: number | null
-          position_in_section?: number | null
-          question?: string | null
-          section_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_questions_module_id_fkey"
-            columns: ["module_id"]
-            isOneToOne: false
-            referencedRelation: "education_modules"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "quiz_questions_section_id_fkey"
-            columns: ["section_id"]
-            isOneToOne: false
-            referencedRelation: "module_sections"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       activate_vip_boost: { Args: never; Returns: undefined }
@@ -2945,6 +2885,14 @@ export type Database = {
       check_match: { Args: { user1: string; user2: string }; Returns: string }
       check_message_rate_limit: {
         Args: { _match_id: string; _user_id: string }
+        Returns: Json
+      }
+      check_quiz_answer: {
+        Args: {
+          _question_id: string
+          _selected_answer: number
+          _time_taken_ms?: number
+        }
         Returns: Json
       }
       credit_coins: {
@@ -3067,6 +3015,20 @@ export type Database = {
           zodiac_sign: string
         }[]
       }
+      get_quiz_questions: {
+        Args: { _module_id: string }
+        Returns: {
+          exercise_type: string
+          id: string
+          is_checkpoint: boolean
+          module_id: string
+          options: Json
+          order_index: number
+          position_in_section: number
+          question: string
+          section_id: string
+        }[]
+      }
       get_sent_likes: {
         Args: { _user_id: string }
         Returns: {
@@ -3135,6 +3097,7 @@ export type Database = {
         Args: { _daily_limit?: number; _user_id: string }
         Returns: number
       }
+      require_quiz_user: { Args: never; Returns: string }
       reset_discovery_feed: { Args: never; Returns: Json }
       revoke_role: {
         Args: {
