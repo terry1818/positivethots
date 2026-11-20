@@ -2898,6 +2898,10 @@ export type Database = {
         }
         Returns: Json
       }
+      complete_module_mastery: {
+        Args: { _module_id: string; _session_started_at: string }
+        Returns: Json
+      }
       credit_coins: {
         Args: {
           p_amount: number

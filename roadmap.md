@@ -1,3 +1,8 @@
+# Learn 07 feedback and mastery
+- [x] Add feedback sheets, combo milestones, mastery queue and server completion; preserve legacy submit_quiz and review rewards.
+- [x] Checks 1–6 verified: real green/pink non-dismissible focused sheets; original-index shuffled revisit; 3-label and 5-gold; regular-member 80% and 60% badge scores persisted; 50 XP after mastery (later award 0 at existing UTC daily ceiling); incomplete RPC gives remaining with no badge/XP changes; no anti-cheat/tab-switch effects. Badge-save retry, review no badge/XP writes, three-miss real lesson reread and remaining recovery verified; 42 tests/build passed.
+- [ ] Check 7: actual last-Foundation Discovery unlock unverified. Temporary-user approval unavailable; requesting member has 3/5 Foundation badges and no profile. Existing Index already browses without a Foundation gate; left unchanged per scope, while preserving checkFoundationComplete. Perfect first badge payout unavailable at current daily ceiling; 100% earned-badge review verified without writes.
+
 # Learn 06 card lesson player
 - [x] Split unchanged lesson text into cards, preserve checkpoint grading/completion, add saved position and remembered article view.
 - [x] Ran seven checks: title/no overlay, real checkpoint/server wrong-answer continuation plus retry, saved resume, real 10 XP once with completion readback and no repeat call, persisted article choice, keyboard/focus/live announcement, and 35 passing tests. Shortest/mean-nearest/longest sections have 10/12/13 total cards. Actual sections have at most one checkpoint; two-checkpoint placement passes unit tests only. Offline save recovered; 375/390/414/768/1280 and three text sizes verified; local click event 16ms.

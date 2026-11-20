@@ -553,3 +553,20 @@ button, [role="button"] {
 .learn-level-done { background: hsl(var(--learn-tier-color)); border-color: hsl(var(--learn-tier-color)); color: hsl(var(--primary-foreground)); }
 .learn-level-node { scroll-margin-top: calc(var(--learn-header-height) + 112px); }
 .learn-level-block :focus-visible { scroll-margin-top: calc(var(--learn-header-height) + 112px); }
+
+/* Quiz feedback roles retain readable text in either theme. */
+:root {
+  --quiz-success: 160 80% 25%;
+  --quiz-miss: 320 75% 36%;
+  --quiz-gold-start: 42 94% 40%;
+  --quiz-gold-end: 50 95% 58%;
+}
+.dark {
+  --quiz-success: 160 70% 65%;
+  --quiz-miss: 320 80% 76%;
+}
+.quiz-feedback-success { color: hsl(var(--quiz-success)); }
+.quiz-feedback-miss { color: hsl(var(--quiz-miss)); }
+.quiz-option-success { border-color: hsl(var(--quiz-success)); background: hsl(var(--quiz-success) / 0.08); }
+.quiz-option-miss { border-color: hsl(var(--quiz-miss)); background: hsl(var(--quiz-miss) / 0.08); }
+.quiz-progress-gold { background: linear-gradient(135deg, hsl(var(--quiz-gold-start)), hsl(var(--quiz-gold-end))); }

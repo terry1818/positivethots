@@ -2,16 +2,14 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { EducationBadge } from "@/components/EducationBadge";
 import { AdminPanel } from "@/components/admin/AdminPanel";
 import { SectionContent } from "@/components/education/SectionContent";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { reportError } from "@/lib/errorReporting";
-import { latestQuizAnswers, type QuizAnswer, type QuizResult } from "@/lib/quizAnswers";
+import { type QuizAnswer, type QuizResult } from "@/lib/quizAnswers";
 import { ExerciseSession } from "@/components/education/ExerciseSession";
 import { lessonEntry } from "@/lib/learnLevels";
 import { useSessionStore } from "@/stores/sessionStore";
@@ -22,13 +20,11 @@ import { LessonPlayer, LessonPlayerSkeleton, LessonViewMenu } from "@/components
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { WhatYoullLearn } from "@/components/education/WhatYoullLearn";
 
-import { useAntiCheat } from "@/hooks/useAntiCheat";
+import type { MasteryResult } from "@/lib/quizMastery";
 import { useModuleProgress } from "@/hooks/useModuleProgress";
 import { useLearningStats, LEVEL_REWARDS } from "@/hooks/useLearningStats";
-import { ChevronLeft, CheckCircle, CheckCircle2, XCircle, Award, BookOpen, Lock, Zap, Flame } from "lucide-react";
+import { ChevronLeft, CheckCircle, BookOpen } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { PageSkeleton } from "@/components/PageSkeleton";
 import { SEO } from "@/components/SEO";
 import DOMPurify from 'dompurify';
 
@@ -65,20 +61,22 @@ const LearnModule = () => {
   const [isAlreadyCompleted, setIsAlreadyCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showQuiz, setShowQuiz] = useState(false);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [submitted, setSubmitted] = useState(false);
-  const [score, setScore] = useState(0);
   const [questionError, setQuestionError] = useState(false);
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
   const [submissionError, setSubmissionError] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [sessionAnswers, setSessionAnswers] = useState<QuizAnswer[]>([]);
+  const [sessionStartedAt, setSessionStartedAt] = useState("");
+  const [remaining, setRemaining] = useState<string[] | null>(null);
+  const [reviewSession, setReviewSession] = useState(false);
+  const masteryBusy = useRef(false);
+  const leaveQuiz = useRef<(() => void) | null>(null);
+  const registerLeave = useCallback((request: (() => void) | null) => { leaveQuiz.current = request; }, []);
+  useEffect(() => {
+    if (showQuiz) { setReviewSession(isAlreadyCompleted); setQuizResult(null); setRemaining(null); setSubmissionError(false); }
+  }, [showQuiz]);
   const [userId, setUserId] = useState<string | null>(null);
 
-  // Quiz enhancements
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(new Set());
-  const [showFeedback, setShowFeedback] = useState(false);
 
   const { getPreference, setPreference } = useUserPreferences();
   const [lessonView, setLessonView] = useState<"cards" | "article">("cards");
@@ -155,11 +153,6 @@ const LearnModule = () => {
     hasSections,
     reload: reloadProgress,
   } = useModuleProgress(moduleId);
-
-  const { violations, violationCount, isDisqualified } = useAntiCheat({
-    enabled: showQuiz && !submitted,
-    onViolation: (type) => console.log(`Quiz violation detected: ${type}`),
-  });
 
   useEffect(() => {
     loadModule();
@@ -270,40 +263,34 @@ const LearnModule = () => {
     } catch (error) {
       console.error("Section completion failed:", error);
       void reportError(error instanceof Error ? error : new Error("Section completion failed"));
-      toast.error("Failed to save progress. Please try again.");
+      toast.error("We couldn't save your progress. Please try again.");
       return null;
     }
   }, [markComplete, awardXP, stats]);
 
-  const handleSubmitQuiz = async (realAnswers: QuizAnswer[]) => {
-    if (!module || !userId || submitting) return;
-    setSessionAnswers(realAnswers);
-    setSubmissionError(false);
-    setSubmitting(true);
-    let result: QuizResult;
+  const handleSubmitQuiz = async (realAnswers: QuizAnswer[], startedAt: string, reviewSummary?: QuizResult) => {
+    if (!module || !userId || masteryBusy.current) return;
+    setSessionAnswers(realAnswers); setSessionStartedAt(startedAt); setSubmissionError(false); setRemaining(null);
+    if (reviewSession) { if (reviewSummary) setQuizResult(reviewSummary); return; }
+    masteryBusy.current = true; setSubmitting(true);
     try {
-      const answersArray = latestQuizAnswers(questions.map(q => q.id), realAnswers);
-      const { data, error } = await supabase.rpc("submit_quiz", { _module_id: module.id, _answers: answersArray });
+      const { data, error } = await supabase.rpc("complete_module_mastery", { _module_id: module.id, _session_started_at: startedAt });
       if (error) throw error;
-      result = data as unknown as QuizResult;
-      if (!result || typeof result.passed !== "boolean" || typeof result.score !== "number") throw new Error("Invalid quiz result");
-    } catch (error) {
-      setSubmissionError(true);
-      setSubmitting(false);
-      void reportError(error instanceof Error ? error : new Error("Error submitting quiz"));
-      return;
-    }
-    setQuizResult(result);
-    setScore(result.score);
-    setSubmitted(true);
-    setSubmitting(false);
-    if (result.passed) {
+      const result = data as unknown as MasteryResult;
+      if (!result || typeof result.passed !== "boolean") throw new Error("Invalid mastery result");
+      if (!result.passed) { setRemaining(result.remaining || []); return; }
+      if (typeof result.score !== "number" || typeof result.first_try_correct !== "number" || typeof result.total !== "number") throw new Error("Invalid mastery score");
+      setQuizResult({ score: result.score, correct: result.first_try_correct, total: result.total, passed: true });
+      setIsAlreadyCompleted(true);
       void reloadProgress();
       const isFoundationComplete = await checkFoundationComplete(module.id);
       setTimeout(() => setCelebration({ type: "badge_earned", badgeTitle: module.title, badgeSlug: module.slug, badgeTier: module.tier, isFoundationComplete }), 1600);
-      const xpResult = await awardXP(50 + (result.score === 100 ? 25 : 0), result.score === 100 ? "quiz_perfect" : "quiz_pass", module.id);
+      const xpResult = await awardXP(result.score === 100 ? 75 : 50, result.score === 100 ? "quiz_perfect" : "quiz_pass", module.id);
       setXpPopup({ show: xpResult.newXP > 0, amount: xpResult.newXP });
-    }
+    } catch (error) {
+      setSubmissionError(true);
+      void reportError(error instanceof Error ? error : new Error("Could not save mastery"));
+    } finally { masteryBusy.current = false; setSubmitting(false); }
   };
 
   const handleRefresh = () => { loadModule(); reloadProgress(); };
@@ -338,7 +325,7 @@ const LearnModule = () => {
   if (loading) {
     return <LessonPlayerSkeleton />;
   }
-  if (progressLoading || viewLoading) return <LessonPlayerSkeleton />;
+  if ((progressLoading && !showQuiz) || viewLoading) return <LessonPlayerSkeleton />;
   if (progressError) return <BrandedEmptyState mascot="confused" headline="We couldn't load this lesson." description="" ctaLabel="Try again" onCtaClick={() => void reloadProgress()} />;
   if (questionError) return <BrandedEmptyState mascot="confused" headline="We couldn't load your quiz." description="" ctaLabel="Try again" onCtaClick={() => void loadModule()} />;
   if (!module) return null;
@@ -359,8 +346,6 @@ const LearnModule = () => {
     </>;
   }
 
-  const currentQuestion = questions[currentQuestionIndex];
-  const almostPassing = !submitted && answeredQuestions.size === questions.length - 1 && questions.length > 0;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -404,7 +389,7 @@ const LearnModule = () => {
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={backToPath} aria-label="Go back">
+          <Button variant="ghost" size="icon" onClick={() => showQuiz ? leaveQuiz.current?.() : backToPath()} aria-label={showQuiz ? "Leave badge check" : "Go back"}>
             <ChevronLeft className="h-6 w-6" />
           </Button>
           <div className="flex-1 min-w-0">
@@ -490,7 +475,7 @@ const LearnModule = () => {
                         <>
                           <BookOpen className="h-12 w-12 mx-auto text-primary mb-3" />
                           <h3 className="font-semibold mb-2">All Sections Complete! Ready for the Quiz?</h3>
-                          <p className="text-sm text-muted-foreground mb-4">Answer the questions to earn your badge. You need 80% to pass.</p>
+                          <p className="text-sm text-muted-foreground mb-4">Master each question to earn your badge. Take your time.</p>
                           <Button onClick={() => setShowQuiz(true)}>Take Quiz</Button>
                         </>
                       )}
@@ -524,7 +509,7 @@ const LearnModule = () => {
                       <>
                         <BookOpen className="h-12 w-12 mx-auto text-primary mb-3" />
                         <h3 className="font-semibold mb-2">Ready for the Quiz?</h3>
-                        <p className="text-sm text-muted-foreground mb-4">Answer the questions to earn your badge. You need 80% to pass.</p>
+                        <p className="text-sm text-muted-foreground mb-4">Master each question to earn your badge. Take your time.</p>
                         <Button onClick={() => setShowQuiz(true)}>Take Quiz</Button>
                       </>
                     )}
@@ -536,30 +521,7 @@ const LearnModule = () => {
         ) : (
           <>
             {/* Exercise Session - mixed exercise types */}
-            {isDisqualified && !submitted ? (
-              <Card className="border-destructive">
-                <CardContent className="py-12 text-center">
-                  <XCircle className="h-12 w-12 mx-auto text-destructive mb-3" />
-                  <h3 className="font-semibold mb-2">Quiz Attempt Ended</h3>
-                  <p className="text-muted-foreground mb-4">
-                    This quiz attempt has been ended due to multiple violations.
-                  </p>
-                  <Button onClick={() => {
-                    setShowQuiz(false);
-                    setSubmitted(false);
-                    setQuizResult(null);
-                    setSessionAnswers([]);
-                    setSubmissionError(false);
-                    setAnswers({});
-                    setCurrentQuestionIndex(0);
-                    setAnsweredQuestions(new Set());
-                    setShowFeedback(false);
-                  }} variant="secondary">
-                    Restart Quiz
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : questions.length === 0 ? (
+            {questions.length === 0 ? (
               <BrandedEmptyState mascot="graduate" headline="This quiz is on its way. Check back soon." description="" ctaLabel="Back to my path" onCtaClick={() => navigate("/learn")} />
             ) : (
               <ExerciseSession
@@ -571,30 +533,19 @@ const LearnModule = () => {
                   options: q.options,
                   exercise_type: q.exercise_type || "multiple_choice",
                   order_index: q.order_index,
+                  section_id: q.section_id,
                 }))}
                 userId={userId || ""}
                 finalResult={quizResult}
                 submitting={submitting}
                 submissionError={submissionError}
-                onRetrySubmit={() => void handleSubmitQuiz(sessionAnswers)}
-                onComplete={(_score, _correct, _total, _passed, realAnswers) => void handleSubmitQuiz(realAnswers)}
-                onBack={() => {
-                  setShowQuiz(false);
-                  setSubmitted(false);
-                    setQuizResult(null);
-                    setSessionAnswers([]);
-                    setSubmissionError(false);
-                  setAnswers({});
-                  setCurrentQuestionIndex(0);
-                  setAnsweredQuestions(new Set());
-                  setShowFeedback(false);
-                }}
+                review={reviewSession} remaining={remaining} onLeaveRequestReady={registerLeave}
+                onRetrySubmit={() => void handleSubmitQuiz(sessionAnswers, sessionStartedAt)}
+                onComplete={(score, correct, total, _passed, realAnswers, startedAt) => void handleSubmitQuiz(realAnswers, startedAt, { score, correct, total, passed: true })}
+                onBack={() => { setShowQuiz(false); setQuizResult(null); setSessionAnswers([]); setRemaining(null); setSubmissionError(false); }}
               />
             )}
 
-            {violationCount > 0 && (
-              <p className="text-sm text-destructive text-center mt-2">⚠️ {violationCount} quiz integrity warning(s) recorded</p>
-            )}
           </>
         )}
       </main>

@@ -64,6 +64,20 @@
       "when": 1795150047508,
       "tag": "0008_lesson_card_resume",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1795150640151,
+      "tag": "0009_complete_module_mastery",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1795151116622,
+      "tag": "0010_mastery_execution_authenticated_only",
+      "breakpoints": true
     }
   ]
 }

@@ -64,7 +64,7 @@ export default function TierReview() {
     <h1 className="text-xl font-bold">{tier.replace(/_/g, " ")} Review</h1>
     {awarded !== null && <p aria-live="polite">{awarded > 0 ? `+${awarded} XP` : "Come back tomorrow for more XP."}</p>}
     <ExerciseSession moduleId={tier} moduleTitle="Tier Review" userId={userId} questions={questions}
-      preserveQuestionOrder finalResult={result} submitting={saving} submissionError={saveError}
+      mastery={false} review preserveQuestionOrder finalResult={result} submitting={saving} submissionError={saveError}
       onRetrySubmit={() => { if (finished) void finish(finished); }} onBack={back}
       onComplete={(score, correct, total) => void finish({ score, correct, total, passed: score >= 80 })} />
   </main>;

@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.complete_module_mastery(uuid, timestamptz) FROM service_role;
