@@ -14,10 +14,21 @@ export interface LessonCheckpoint {
   options: string[];
   position_in_section: number;
 }
+/** An ungraded, in-lesson recall question. It awards nothing, so it is checked on the device. */
+export interface LessonCheck {
+  id: string;
+  /** Heading of the content block this question follows. */
+  after: string;
+  prompt: string;
+  options: string[];
+  answer: number;
+  explanation: string;
+}
 export type LessonCard =
   | { type: "title"; title: string; lesson: number; minutes: number | null }
   | { type: "content" | "video"; title: string; body: string; continued: boolean }
   | { type: "checkpoint"; title: string; checkpoint: LessonCheckpoint }
+  | { type: "practice"; title: string; check: LessonCheck }
   | { type: "takeaway"; title: string; body: string }
   | { type: "reflection"; title: string; body: string };
 
@@ -37,7 +48,7 @@ const isVideo = (text: string) => /\[youtube:[^\]]*\]\(https?:\/\/[^)]+\)/i.test
   || /^https?:\/\/(?:www\.)?(?:youtube\.com|youtu\.be)\/\S+\s*$/.test(text.trim());
 
 /** Splitting is presentation-only: no paragraph or list is truncated or rewritten. */
-export function buildLessonCards(section: LessonSection, checkpoints: LessonCheckpoint[] = []): LessonCard[] {
+export function buildLessonCards(section: LessonSection, checkpoints: LessonCheckpoint[] = [], checks: LessonCheck[] = []): LessonCard[] {
   const text = (section.content_text || "").replace(/\r\n/g, "\n");
   const hasHeadings = /^#{2,3} /m.test(text);
   const blocks: { title: string; body: string }[] = [];
@@ -86,6 +97,9 @@ export function buildLessonCards(section: LessonSection, checkpoints: LessonChec
     cards.push(card);
     const checkpoint = slots.get(i + 1);
     if (checkpoint) cards.push({ type: "checkpoint", title: "Quick Check", checkpoint });
+    // A recall question follows the last card of the block it belongs to.
+    const next = content[i + 1];
+    if (card.title && (!next || next.title !== card.title)) for (const check of checks) if (check.after === card.title) cards.push({ type: "practice", title: "Quick check", check });
   });
   cards.push({ type: "takeaway", title: "Key Takeaway", body: extractTakeaway(text) });
   if (section.reflection_prompt) cards.push({ type: "reflection", title: "Your Reflection", body: section.reflection_prompt });

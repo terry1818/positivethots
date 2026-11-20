@@ -97,7 +97,11 @@ const renderParagraph = (paragraph: string, i: number) => {
       return `<a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="text-secondary underline hover:text-secondary/80">${escapeHtml(text)}</a>`;
     }
   );
-  return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(withLinks) }} />;
+  // Authors mark key terms with **bold** and *emphasis*: show them as such, not as raw asterisks.
+  const withEmphasis = withLinks
+    .replace(/\*\*([^*\n]+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*\w])\*([^*\s](?:[^*\n]*?[^*\s])?)\*(?![*\w])/g, '$1<em>$2</em>');
+  return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(withEmphasis) }} />;
 };
 
 export const renderMarkdown = (content: string, checkpoints?: CheckpointQuestion[]) => {

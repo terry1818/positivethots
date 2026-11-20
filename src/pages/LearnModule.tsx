@@ -338,7 +338,7 @@ const LearnModule = () => {
       <LessonPlayer key={currentSection.id} section={currentSection}
         checkpoints={checkpointQuestions.filter(q => q.section_id === currentSection.id).map(q => ({ id: q.id, question: q.question, options: q.options, position_in_section: q.position_in_section ?? 0 }))}
         initialIndex={sectionProgress.find(p => p.section_id === currentSection.id)?.last_card_index ?? 0}
-        isCompleted={sectionProgress.some(p => p.section_id === currentSection.id && p.completed)} userId={userId}
+        isCompleted={sectionProgress.some(p => p.section_id === currentSection.id && p.completed)} userId={userId} tier={module.tier}
         onSavePosition={index => void saveCardPosition(currentSection.id, index)} onExit={backToPath} onArticle={switchLessonView}
         onComplete={() => handleSectionComplete(currentSection.id)} onReflectionSaved={() => handleReflectionSaved(currentSection.id)}
         onNext={() => {}} />

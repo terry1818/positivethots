@@ -1,8 +1,10 @@
 import manifest from "@/assets/guides/manifest.json";
 import alternates from "@/assets/guides/manifest-alternates.json";
+import lessons from "@/assets/guides/manifest-lessons.json";
 
-export type GuideName = keyof typeof manifest extends `${infer Name}.webp` ? Name : never;
-export const guideManifest: Record<string, number[]> = { ...manifest, ...alternates };
+// Lesson illustrations ("guide-<lesson>-<idea>") share the character component; their suffix is a word, never a single letter.
+export type GuideName = keyof typeof manifest | keyof typeof lessons extends `${infer Name}.webp` ? Name : never;
+export const guideManifest: Record<string, number[]> = { ...manifest, ...alternates, ...lessons };
 export function localGuideDate(date = new Date()): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }

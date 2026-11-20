@@ -13,9 +13,12 @@ import { useReadAloud } from "@/hooks/useReadAloud";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useQuizAnswer, type AnswerFeedback } from "@/hooks/useQuizAnswer";
 import { buildLessonCards, resumeCardIndex, type LessonCheckpoint, type LessonSection } from "@/lib/lessonCards";
+import { enhancementFor } from "@/lib/lessonEnhancements";
+import { guideUrl } from "@/lib/guideAssets";
 import { distance, duration, easing } from "@/lib/motionTokens";
 import { cn } from "@/lib/utils";
 import { KeyTakeaway } from "./KeyTakeaway";
+import { LessonMnemonic, LessonRecap, LocalCheck, RichContent, RichTitle } from "./LessonRich";
 import { ReflectionPrompt } from "./ReflectionPrompt";
 import { ReadAloudControls, renderMarkdown } from "./SectionContent";
 
@@ -47,14 +50,22 @@ function Checkpoint({ question, saved, onAnswered }: { question: LessonCheckpoin
   </div>;
 }
 interface Props {
-  section: LessonSection; checkpoints: LessonCheckpoint[]; initialIndex: number; isCompleted: boolean; userId: string;
+  section: LessonSection; checkpoints: LessonCheckpoint[]; initialIndex: number; isCompleted: boolean; userId: string; tier?: string | null;
   onSavePosition: (index: number) => void; onExit: () => void; onArticle: () => void;
   onComplete: () => Promise<number | null>; onNext: () => void; onReflectionSaved: () => Promise<void>;
 }
-export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, userId, onSavePosition, onExit, onArticle, onComplete, onNext, onReflectionSaved }: Props) {
-  const { playCardAdvance } = useSoundEffects();
-  const cards = useMemo(() => buildLessonCards(section, checkpoints), [section, checkpoints]);
+export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, userId, tier, onSavePosition, onExit, onArticle, onComplete, onNext, onReflectionSaved }: Props) {
+  const { playCardAdvance, playLessonStart, playTrailFill } = useSoundEffects();
+  // Lessons with presentation extras get pictures, a memory aid and recall questions; the rest are unchanged.
+  const rich = useMemo(() => enhancementFor(section.id), [section.id]);
+  const cards = useMemo(() => buildLessonCards(section, checkpoints, rich?.checks), [section, checkpoints, rich]);
+  const steps = useMemo(() => (rich?.concepts ?? []).flatMap(concept => {
+    const at = cards.findIndex(c => c.type === "content" && c.title === concept.heading);
+    return concept.letter && at > 0 ? [{ letter: concept.letter, heading: concept.heading, index: at }] : [];
+  }), [rich, cards]);
   const [index, setIndex] = useState(() => resumeCardIndex(initialIndex, cards.length));
+  const [reached, setReached] = useState(index);
+  const [local, setLocal] = useState<Record<string, number>>({});
   const [direction, setDirection] = useState(1);
   const [finishing, setFinishing] = useState(false);
   const [completionError, setCompletionError] = useState(false);
@@ -69,7 +80,15 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
   const saveRef = useRef(onSavePosition); saveRef.current = onSavePosition;
   const reduced = useReducedMotion();
   const card = cards[index];
-  const blocked = card.type === "checkpoint" && !results[card.checkpoint.id];
+  const concept = rich && card.type === "content" ? rich.concepts.find(c => c.heading === card.title) : undefined;
+  const blocked = (card.type === "checkpoint" && !results[card.checkpoint.id]) || (card.type === "practice" && local[card.check.id] === undefined);
+  useEffect(() => { setReached(previous => Math.max(previous, index)); }, [index]);
+  // Fetch the pictures for the cards ahead once the first card has settled, so no card opens on an empty panel.
+  useEffect(() => {
+    if (!rich) return;
+    const timer = window.setTimeout(() => { for (const name of [...rich.concepts.map(c => c.art), "guide-thinking" as const]) { const image = new Image(); image.src = guideUrl(name, userId); } }, 1200);
+    return () => window.clearTimeout(timer);
+  }, [rich, userId]);
   const finish = useCallback(async () => {
     if (busy.current || finished.current) return;
     busy.current = true; setFinishing(true); setCompletionError(false);
@@ -82,20 +101,29 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
     if (busy.current || (delta > 0 && blocked)) return;
     if (index + delta >= cards.length) { void finish(); return; }
     if (index + delta < 0) return;
-    playCardAdvance(); setDirection(delta); setIndex(index + delta);
-  }, [index, blocked, cards.length, finish]);
+    // Sound marks what just happened: the lesson starting, a new idea learned, or a plain page turn.
+    if (rich && delta > 0 && card.type === "title") playLessonStart();
+    else if (delta > 0 && concept?.letter && reached === index && cards[index + 1]?.title !== card.title) playTrailFill();
+    else playCardAdvance();
+    setDirection(delta); setIndex(index + delta);
+  }, [index, blocked, cards, finish, rich, card, concept, reached, playCardAdvance, playLessonStart, playTrailFill]);
+  const jump = useCallback((target: number) => {
+    if (busy.current || target === index || target > reached) return;
+    playCardAdvance(); setDirection(target > index ? 1 : -1); setIndex(target);
+  }, [index, reached, playCardAdvance]);
   const readEndRef = useRef<() => void>(() => {});
   const audio = useReadAloud(() => readEndRef.current());
   const shouldRead = useRef(false);
   readEndRef.current = () => {
-    if (!autoAdvance || card.type === "checkpoint" || card.type === "reflection" || index === cards.length - 1) return;
+    if (!autoAdvance || card.type === "checkpoint" || card.type === "practice" || card.type === "reflection" || index === cards.length - 1) return;
     shouldRead.current = true; move(1);
   };
   const readable = card.type === "checkpoint" ? `${card.title}. ${card.checkpoint.question}. ${card.checkpoint.options.join(". ")}`
-    : `${card.title}. ${"body" in card ? card.body : `Lesson ${card.lesson} of 4. ${card.minutes ?? ""} minutes.`}`;
+    : card.type === "practice" ? `${card.title}. ${card.check.prompt} ${card.check.options.join(". ")}`
+    : card.type === "title" ? `${card.title}. Lesson ${card.lesson} of 4. ${card.minutes ?? ""} minutes.` : `${card.title}. ${card.body}`;
   useEffect(() => {
     audio.stop();
-    if (shouldRead.current) { shouldRead.current = false; if (card.type !== "checkpoint" && card.type !== "reflection") void audio.play(readable); }
+    if (shouldRead.current) { shouldRead.current = false; if (card.type !== "checkpoint" && card.type !== "practice" && card.type !== "reflection") void audio.play(readable); }
     const timer = setTimeout(() => heading.current?.focus(), reduced ? 110 : 420);
     return () => clearTimeout(timer);
   }, [index]);
@@ -123,7 +151,7 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
   }, [card]);
   const exit = () => { onSavePosition(index); audio.stop(); onExit(); };
   if (!section.content_text?.trim()) return <div className="fixed inset-0 z-40 bg-background overflow-auto"><BrandedEmptyState illustration={<GuideArt name="guide-waving" size={160}/>} mascot="graduate" headline="This lesson is being written. Check back soon." description="" ctaLabel="Back to my path" onCtaClick={exit} /></div>;
-  return <div className="fixed inset-0 z-40 bg-background text-foreground flex flex-col pt-[env(safe-area-inset-top)]">
+  return <div className={cn("fixed inset-0 z-40 bg-background text-foreground flex flex-col pt-[env(safe-area-inset-top)]", rich && `lesson-rich learn-tier learn-tier-${tier || "foundation"}`)}>
     <header className="h-[56px] shrink-0 flex items-center gap-1 border-b border-border px-2">
       <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label="Exit lesson" onClick={exit}><X /></Button>
       <div role="progressbar" aria-label="Lesson cards" aria-valuenow={index + 1} aria-valuemin={0} aria-valuemax={cards.length} className="flex flex-1 min-w-0 gap-1">
@@ -133,6 +161,7 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
       <LessonViewMenu article={false} onSwitch={() => { onSavePosition(index); onArticle(); }} />
     </header>
     {listenOpen && <div className="px-5 border-b border-border shrink-0 max-h-[35dvh] overflow-auto"><ReadAloudControls contentText={readable} controls={audio} /><label className="min-h-11 flex items-center gap-2"><Checkbox checked={autoAdvance} onCheckedChange={v => setAutoAdvance(v === true)} />Auto-advance</label></div>}
+    {rich?.mnemonic && steps.length > 0 && card.type !== "title" && <LessonMnemonic word={rich.mnemonic.word} steps={steps} currentHeading={card.title} reached={reached} onJump={jump} />}
     <p className="sr-only" aria-live="polite" aria-atomic="true">Card {index + 1} of {cards.length}</p>
     <div className="flex-1 min-h-0 overflow-hidden">
       <AnimatePresence mode="wait" custom={direction}>
@@ -143,10 +172,13 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
           onPointerCancel={() => { pointer.current = null; }}
           onPointerUp={event => { const start = pointer.current; pointer.current = null; if (start && Math.abs(event.clientX - start.x) > 65 && Math.abs(event.clientY - start.y) < 50) move(event.clientX < start.x ? 1 : -1); }}>
           <div className="max-w-[65ch] mx-auto text-base leading-relaxed break-words">
-            <h2 ref={heading} tabIndex={-1} id={`lesson-card-${index}`} className={cn("font-bold mb-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring", card.type === "title" ? "text-2xl" : "continued" in card && card.continued ? "text-lg" : "text-xl")}>{card.title || section.title}{"continued" in card && card.continued && <span className="font-normal text-muted-foreground"> — continued</span>}</h2>
-            {card.type === "title" && <div className="text-center space-y-6"><GuideArt name={card.lesson === 1 ? "guide-waving" : "guide-lesson-reading"} size={160} /><p>Lesson {card.lesson} of 4{card.minutes ? ` · ${card.minutes} min` : ""}</p></div>}
-            {(card.type === "content" || card.type === "video") && <div>{renderMarkdown(card.body)}</div>}
+            <h2 ref={heading} tabIndex={-1} id={`lesson-card-${index}`} className={cn("font-bold mb-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring", card.type === "title" ? "text-2xl" : "continued" in card && card.continued ? "text-lg" : "text-xl")}>{concept?.letter && card.title.startsWith(concept.letter) ? <><span className="lesson-initial">{concept.letter}</span>{card.title.slice(concept.letter.length)}</> : card.title || section.title}{"continued" in card && card.continued && <span className="font-normal text-muted-foreground"> — continued</span>}</h2>
+            {card.type === "title" && rich && <RichTitle enhancement={rich} lesson={card.lesson} minutes={card.minutes} steps={steps} />}
+            {card.type === "title" && !rich && <div className="text-center space-y-6"><GuideArt name={card.lesson === 1 ? "guide-waving" : "guide-lesson-reading"} size={160} /><p>Lesson {card.lesson} of 4{card.minutes ? ` · ${card.minutes} min` : ""}</p></div>}
+            {(card.type === "content" || card.type === "video") && (concept ? <RichContent body={card.body} concept={concept} continued={card.continued} tone={rich ? rich.concepts.indexOf(concept) : 0} /> : <div>{renderMarkdown(card.body)}</div>)}
+            {card.type === "practice" && <LocalCheck check={card.check} selected={local[card.check.id]} onAnswer={choice => setLocal(previous => ({ ...previous, [card.check.id]: choice }))} />}
             {card.type === "checkpoint" && <Checkpoint question={card.checkpoint} saved={results[card.checkpoint.id]} onAnswered={answered} />}
+            {card.type === "takeaway" && rich?.mnemonic && steps.length > 0 && <LessonRecap word={rich.mnemonic.word} steps={steps} />}
             {card.type === "takeaway" && <KeyTakeaway takeaway={card.body} sectionTitle={section.title} sectionId={section.id} />}
             {card.type === "reflection" && <ReflectionPrompt sectionId={section.id} userId={userId} prompt={card.body} onSkip={() => void finish()} onSaveAndContinue={async () => { await onReflectionSaved(); void finish(); }} />}
           </div>
@@ -157,7 +189,7 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
       {completionError && <p role="alert" className="mb-2 text-destructive">We couldn't save your lesson. Try again.</p>}
       <div className="flex gap-2 max-w-[65ch] mx-auto">
         {index > 0 && <Button variant="ghost" size="icon" className="min-h-[52px] min-w-11" aria-label="Previous card" disabled={finishing} onClick={() => move(-1)}><ChevronLeft /></Button>}
-        <PressScale className="flex-1"><Button className="w-full min-h-[52px]" disabled={blocked || finishing} onClick={() => move(1)}>{finishing && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}{index === cards.length - 1 ? "Finish lesson" : card.type === "title" ? "Let's go" : "Continue"}</Button></PressScale>
+        <PressScale className="flex-1"><Button className={cn("w-full min-h-[52px]", rich && "lesson-cta")} disabled={blocked || finishing} onClick={() => move(1)}>{finishing && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}{index === cards.length - 1 ? "Finish lesson" : card.type === "title" ? "Let's go" : "Continue"}</Button></PressScale>
       </div>
       {card.type === "reflection" && <Button variant="ghost" className="min-h-11 block mx-auto" disabled={finishing} onClick={() => void finish()}>Skip for now</Button>}
     </footer>
