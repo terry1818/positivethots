@@ -826,3 +826,134 @@ body:has([role="dialog"]) [role="status"] > .inline-flex > .guide-art { visibili
 [data-learn-transition] .path-state-done .path-node-face > .path-filled-icon { filter: none; }
 
 .quiz-feedback-success:not(.flex) .text-muted-foreground { color: hsl(var(--learn-ink)); }
+
+
+/* ===========================================================================
+   Interactive motion layer (hand-built). Characters and path nodes answer the
+   pointer. Hooks: src/lib/pointerFx.ts, src/hooks/useGuideInteraction.ts.
+   Everything here is decoration: reduced motion turns it off at the bottom.
+   =========================================================================== */
+/* --- Characters ----------------------------------------------------------- */
+.guide-fx { display: block; position: relative; width: 100%; height: 100%; -webkit-tap-highlight-color: transparent; }
+.guide-fx-on { cursor: grab; touch-action: manipulation; transform: perspective(700px) rotateX(var(--gy, 0deg)) rotateY(var(--gx, 0deg)); translate: var(--dx, 0px) var(--dy, 0px); transition: transform .28s ease-out, translate .55s cubic-bezier(.34, 1.56, .64, 1); will-change: transform; }
+.guide-fx-on.is-dragging { cursor: grabbing; transition: transform .1s linear; }
+.guide-pop { display: block; position: relative; width: 100%; height: 100%; transition: translate .22s cubic-bezier(.34, 1.56, .64, 1), scale .22s cubic-bezier(.34, 1.56, .64, 1); }
+.guide-fx-on .guide-art-image { filter: drop-shadow(0 6px 7px hsl(0 0% 0% / .35)); transition: filter .22s ease-out; user-select: none; -webkit-user-drag: none; }
+.guide-fx-on.is-hover .guide-pop { translate: 0 -6px; scale: 1.05; }
+.guide-fx-on.is-hover .guide-art-image { filter: drop-shadow(0 16px 14px hsl(0 0% 0% / .45)); }
+.guide-breathe { animation: path-float 3.2s infinite ease-in-out, guide-breathe 3.9s infinite ease-in-out; }
+.guide-gloss { position: absolute; inset: 0; pointer-events: none; opacity: var(--gloss, 0); transition: opacity .3s; mix-blend-mode: overlay; background: radial-gradient(circle at var(--sx, 50%) var(--sy, 50%), hsl(0 0% 100% / .75), transparent 42%); -webkit-mask: var(--guide-mask) center / contain no-repeat; mask: var(--guide-mask) center / contain no-repeat; }
+.guide-move-jump .guide-pop { animation: guide-jump .7s cubic-bezier(.3, .7, .3, 1); }
+.guide-move-wiggle .guide-pop { animation: guide-wiggle .6s ease-in-out; }
+.guide-move-sway .guide-pop { animation: guide-sway .9s ease-in-out; }
+.guide-move-spin .guide-pop { animation: guide-spin .8s cubic-bezier(.3, .7, .3, 1); }
+.guide-bubble { position: absolute; left: 50%; bottom: calc(100% + 14px); z-index: 5; translate: calc(-50% + var(--bubble-shift, 0px)) 0; white-space: nowrap; pointer-events: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: 800; line-height: 1.2; color: hsl(266 40% 12%); background: hsl(0 0% 100%); box-shadow: 0 3px 0 hsl(0 0% 100% / .5), 0 8px 16px hsl(0 0% 0% / .3); animation: guide-bubble-in .28s cubic-bezier(.34, 1.56, .64, 1) both; }
+.guide-bubble::after { content: ""; position: absolute; left: calc(50% - 6px - var(--bubble-shift, 0px)); bottom: -6px; border: 6px solid transparent; border-top-color: hsl(0 0% 100%); border-bottom: 0; }
+.guide-burst { position: absolute; left: 50%; top: 45%; width: 0; height: 0; pointer-events: none; z-index: 4; }
+.guide-burst i { position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; border-radius: 50%; background: hsl(var(--art-reward, 43 96% 56%)); animation: guide-burst .8s ease-out both; }
+.guide-burst i:nth-child(4n+2) { background: hsl(var(--primary)); border-radius: 2px; clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); width: 15px; height: 15px; }
+.guide-burst i:nth-child(4n+3) { background: hsl(var(--art-correct, 84 81% 55%)); }
+.guide-burst i:nth-child(4n+4) { background: hsl(var(--art-info, 199 92% 60%)); width: 8px; height: 8px; }
+.path-scenery .guide-fx-on { pointer-events: auto; }
+@keyframes guide-breathe { 50% { scale: 1.02 .985; } }
+@keyframes guide-jump { 0% { transform: translateY(0) scale(1, 1); } 15% { transform: translateY(4px) scale(1.08, .9); } 45% { transform: translateY(-22px) scale(.95, 1.08); } 70% { transform: translateY(0) scale(1.06, .93); } 100% { transform: translateY(0) scale(1, 1); } }
+@keyframes guide-wiggle { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-6deg); } 45% { transform: rotate(5deg); } 70% { transform: rotate(-3deg); } }
+@keyframes guide-sway { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-5deg) translateY(2px); } 75% { transform: rotate(2deg); } }
+@keyframes guide-spin { 0% { transform: perspective(600px) rotateY(0) translateY(0); } 50% { transform: perspective(600px) rotateY(180deg) translateY(-16px); } 100% { transform: perspective(600px) rotateY(360deg) translateY(0); } }
+@keyframes guide-bubble-in { from { opacity: 0; scale: .6; } to { opacity: 1; scale: 1; } }
+@keyframes guide-burst { from { opacity: 1; transform: rotate(var(--a)) translateY(0) scale(1); } to { opacity: 0; transform: rotate(var(--a)) translateY(-78px) scale(.3); } }
+
+/* --- Path nodes ----------------------------------------------------------- */
+.path-node-button { translate: var(--mag-x, 0px) var(--mag-y, 0px); transition: translate .22s ease-out; }
+/* The glow below replaces the flat disc the ghost button painted on hover. */
+.path-object .path-node-button:hover, .path-object .path-node-button:active, .path-object .path-node-button[data-state="open"] { background: transparent; }
+.path-node-button:focus-visible:not(:active) .path-node-face, .path-perform:not(:active) .path-node-face { transform: translateY(-5px); box-shadow: 0 13px 0 hsl(var(--path-lip)), 0 20px 16px hsl(var(--path-shadow) / .35), 0 0 28px hsl(var(--path-top) / .75), inset 0 2px 0 hsl(var(--path-enamel) / .35); }
+.path-node-face { transition: transform 140ms cubic-bezier(.34, 1.56, .64, 1), box-shadow 140ms ease-out; }
+.path-node-button:active .path-node-face { transition-duration: 80ms; transition-timing-function: ease-out; }
+.path-node-face .path-filled-icon * { transform-box: fill-box; transform-origin: center; }
+.path-node-face .pi-page-r { transform-origin: left center; }
+.path-node-face .pi-jiggle { transform-origin: center top; }
+.path-node-face .pi-eq { opacity: 0; fill: hsl(var(--path-enamel)); }
+.path-node-face .pi-eq rect { transform-origin: center bottom; }
+.path-chest-glow { fill: hsl(var(--path-gold-light, 48 96% 70%)); opacity: 0; filter: drop-shadow(0 0 6px hsl(var(--path-gold-light, 48 96% 70%))); }
+.path-chest-lid { transform-box: fill-box; transform-origin: left bottom; }
+.path-node-button:focus-visible .pi-page-r, .path-perform .pi-page-r { animation: pi-flip .5s ease-in-out 2; }
+.path-node-button:focus-visible .pi-bubble-a, .path-perform .pi-bubble-a { animation: pi-pop .5s ease-in-out 2; }
+.path-node-button:focus-visible .pi-bubble-b, .path-perform .pi-bubble-b { animation: pi-pop .5s ease-in-out .25s 2; }
+.path-node-button:focus-visible .pi-lift, .path-perform .pi-lift { animation: pi-lift .55s ease-in-out 2; }
+.path-node-button:focus-visible .pi-phones, .path-perform .pi-phones { animation: pi-pulse .5s ease-in-out 3; }
+.path-node-button:focus-visible .pi-eq, .path-perform .pi-eq { opacity: 1; }
+.path-node-button:focus-visible .pi-eq rect, .path-perform .pi-eq rect { animation: pi-eq .45s ease-in-out infinite; }
+.path-node-button .pi-eq rect:nth-child(2) { animation-delay: .12s !important; }
+.path-node-button .pi-eq rect:nth-child(3) { animation-delay: .24s !important; }
+.path-node-button:focus-visible .pi-spin, .path-perform .pi-spin { animation: pi-spin .8s cubic-bezier(.3, .7, .3, 1); }
+.path-node-button:focus-visible .pi-tilt, .path-perform .pi-tilt { animation: pi-tilt .8s ease-in-out; }
+.path-node-button:focus-visible .pi-jiggle, .path-perform .pi-jiggle { animation: pi-jiggle .5s ease-in-out; }
+.path-node-button:focus-visible .pi-pop, .path-perform .pi-pop { animation: pi-pop .45s ease-in-out; }
+.path-node-button:focus-visible .path-chest-lid, .path-perform .path-chest-lid { animation: pi-rattle .5s ease-in-out 2; }
+.path-node-button:focus-visible .path-chest-glow, .path-perform .path-chest-glow { opacity: 1; }
+@media (hover: hover) {
+  .path-node-button:hover:not(:active) .path-node-face { transform: translateY(-5px); box-shadow: 0 13px 0 hsl(var(--path-lip)), 0 20px 16px hsl(var(--path-shadow) / .35), 0 0 28px hsl(var(--path-top) / .75), inset 0 2px 0 hsl(var(--path-enamel) / .35); }
+  .path-state-current:hover:not(:active) .path-node-face { animation: none; }
+  .path-node-button:hover .pi-page-r { animation: pi-flip .5s ease-in-out 2; }
+  .path-node-button:hover .pi-bubble-a { animation: pi-pop .5s ease-in-out 2; }
+  .path-node-button:hover .pi-bubble-b { animation: pi-pop .5s ease-in-out .25s 2; }
+  .path-node-button:hover .pi-lift { animation: pi-lift .55s ease-in-out 2; }
+  .path-node-button:hover .pi-phones { animation: pi-pulse .5s ease-in-out 3; }
+  .path-node-button:hover .pi-eq { opacity: 1; }
+  .path-node-button:hover .pi-eq rect { animation: pi-eq .45s ease-in-out infinite; }
+  .path-node-button:hover .pi-spin { animation: pi-spin .8s cubic-bezier(.3, .7, .3, 1); }
+  .path-node-button:hover .pi-tilt { animation: pi-tilt .8s ease-in-out; }
+  .path-node-button:hover .pi-jiggle { animation: pi-jiggle .5s ease-in-out; }
+  .path-node-button:hover .pi-pop { animation: pi-pop .45s ease-in-out; }
+  .path-node-button:hover .path-chest-lid { animation: pi-rattle .5s ease-in-out 2; }
+  .path-node-button:hover .path-chest-glow { opacity: 1; }
+  .path-object:has(.path-node-button:hover) .path-hover-tip { opacity: 1; translate: -50% 0; transition-delay: .15s; }
+  .learn-level-node:has(.path-node-button:hover) + .learn-level-node .path-start-bubble { visibility: hidden; }
+}
+.path-object:has(.path-node-button:focus-visible) .path-hover-tip, .path-object:has(.path-peek) .path-hover-tip { opacity: 1; translate: -50% 0; }
+/* The preview label sits where the next node's Start bubble floats: one at a time. */
+.learn-level-node:has(.path-node-button:focus-visible) + .learn-level-node .path-start-bubble, .learn-level-node:has(.path-peek) + .learn-level-node .path-start-bubble { visibility: hidden; }
+.path-hover-tip { position: absolute; left: 50%; top: calc(100% - 6px); z-index: 20; translate: -50% -6px; opacity: 0; pointer-events: none; max-width: 220px; width: max-content; padding: 8px 12px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 700; line-height: 1.25; color: hsl(var(--path-enamel)); background: linear-gradient(hsl(var(--path-top)), hsl(var(--path-bottom))); box-shadow: 0 4px 0 hsl(var(--path-lip)), 0 10px 18px hsl(0 0% 0% / .35); transition: opacity .16s ease-out, translate .2s cubic-bezier(.34, 1.56, .64, 1); }
+.path-hover-tip b { display: block; font-size: 10px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; opacity: .85; }
+.path-ripple { position: absolute; width: 72px; height: 72px; border-radius: 50%; border: 4px solid hsl(var(--path-top)); pointer-events: none; animation: path-ripple .6s ease-out both; }
+:root[data-pt-idle="1"] .path-start-bubble { animation-duration: 1.3s; }
+:root[data-pt-idle="2"] .path-start-bubble, :root[data-pt-idle="3"] .path-start-bubble { animation: path-bubble-big 1s infinite ease-in-out; }
+:root[data-pt-idle="3"] .path-state-current .path-node-face { animation-duration: 1.2s; }
+.path-level-stage::after { content: ""; position: absolute; inset: 0 -12px; pointer-events: none; opacity: 0; transition: opacity .35s; mix-blend-mode: screen; background: radial-gradient(170px circle at var(--spot-x, 50%) var(--spot-y, 50%), hsl(var(--path-top) / .3), transparent 70%); }
+.path-level-stage[data-spot]::after { opacity: 1; }
+.path-decoration { translate: calc(var(--pt-px, 0) * var(--par, 8) * 1px) calc(var(--pt-py, 0) * var(--par, 8) * 1px); transition: translate .5s ease-out; }
+.path-decoration-1, .path-decoration-4 { --par: -14; }
+.path-decoration-2, .path-decoration-5 { --par: 20; }
+.path-guide-placement { translate: calc(var(--pt-px, 0) * -5px) calc(var(--pt-py, 0) * -5px); transition: translate .6s ease-out; }
+/* The chest has no round face: it lifts and glows gold instead of growing a lip. */
+.path-node-chest.path-node-button:hover:not(:active) .path-node-face, .path-node-chest.path-node-button:focus-visible:not(:active) .path-node-face, .path-node-chest.path-perform:not(:active) .path-node-face { box-shadow: none; filter: drop-shadow(0 0 12px hsl(var(--path-gold-light, 48 96% 70%) / .75)); }
+@keyframes pi-flip { 50% { transform: scaleX(.12); } }
+@keyframes pi-pop { 50% { transform: scale(1.22); } }
+@keyframes pi-lift { 50% { transform: translateY(-5px) rotate(-10deg); } }
+@keyframes pi-pulse { 50% { transform: scale(1.1); } }
+@keyframes pi-eq { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+@keyframes pi-spin { to { transform: rotate(360deg) scale(1); } 50% { transform: rotate(180deg) scale(1.25); } }
+@keyframes pi-tilt { 25% { transform: rotate(-12deg); } 60% { transform: rotate(10deg) scale(1.1); } }
+@keyframes pi-jiggle { 20% { transform: rotate(-10deg); } 50% { transform: rotate(9deg); } 80% { transform: rotate(-5deg); } }
+@keyframes pi-rattle { 30% { transform: rotate(-7deg) translateY(-2px); } 60% { transform: rotate(-2deg); } }
+@keyframes path-ripple { from { opacity: .9; transform: scale(1); } to { opacity: 0; transform: scale(2.3); } }
+@keyframes path-bubble-big { 50% { transform: translateY(-10px) scale(1.06); } }
+
+/* --- App-wide touch: the main (filled purple) button pushes down and lifts on hover.
+   Uses translate/scale, not transform, so buttons positioned with Tailwind
+   transforms keep their place. ------------------------------------------------- */
+:is(button, a)[class*="bg-primary text-primary-foreground"]:not(:disabled, .path-chunky-action, .path-guide-button) { transition: translate .12s ease-out, scale .12s ease-out, filter .2s ease-out, box-shadow .2s ease-out, background-color .15s ease-out, color .15s ease-out; }
+:is(button, a)[class*="bg-primary text-primary-foreground"]:not(:disabled, .path-chunky-action, .path-guide-button):active { translate: 0 2px; scale: .98; }
+@media (hover: hover) {
+  :is(button, a)[class*="bg-primary text-primary-foreground"]:not(:disabled, .path-chunky-action, .path-guide-button):hover:not(:active) { translate: 0 -1px; filter: brightness(1.08); box-shadow: 0 8px 22px hsl(var(--primary) / .45); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide-fx-on { transform: none; translate: none; transition: none; cursor: default; }
+  .guide-pop, .guide-fx-on .guide-art-image, .path-node-button, .path-decoration, .path-guide-placement { transition: none; translate: none; }
+  .guide-pop, .guide-breathe, .guide-burst i, .guide-bubble, .path-ripple { animation: none !important; }
+  .guide-gloss, .guide-burst, .path-ripple, .path-level-stage::after { display: none; }
+  .path-node-face, .path-hover-tip { transition: none; }
+  :is(button, a)[class*="bg-primary text-primary-foreground"] { transition: none !important; translate: none !important; scale: none !important; }
+}

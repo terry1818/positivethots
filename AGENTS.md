@@ -26,3 +26,4 @@
 - Learn artwork uses manifest-sized GuideArt with lazy images and visibility-gated floats; Learn-only mascot adapters preserve non-Learn legacy art.
 
 - App character art uses the merged dimension manifests and a pure user/local-day/meaning selector; viewport/gesture-gated loading limits initial artwork requests, and sharing waits for image decoding and the wordmark font.
+- Interactive character and path effects are decoration only: one shared frame-throttled pointer store (`src/lib/pointerFx.ts`), CSS transforms through `translate`/`scale` so Tailwind transforms keep working, gated by visibility, `prefers-reduced-motion`, and no pointer tracking on touch-only or low-power devices; characters react to learning events through the `pt:react` event that the learning sounds emit, and nothing interactive is required to use a screen.

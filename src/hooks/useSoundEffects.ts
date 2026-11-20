@@ -10,6 +10,7 @@ import {
   playButtonTapSound,
 } from "@/lib/soundGenerator";
 import { isNative } from "@/lib/capacitor";
+import { emitReaction } from "@/lib/pointerFx";
 
 // Tiny external store so all consumers stay in sync without context
 let _soundEnabled = true;
@@ -59,9 +60,9 @@ export function useSoundEffects() {
   const soundEnabled = useSyncExternalStore(subscribe, getSoundEnabled, () => true);
   const hapticEnabled = useSyncExternalStore(subscribe, getHapticEnabled, () => true);
 
-  const playMatch = useCallback(() => { if (_soundEnabled) playMatchSound(); haptic("heavy"); }, []);
+  const playMatch = useCallback(() => { emitReaction("win"); if (_soundEnabled) playMatchSound(); haptic("heavy"); }, []);
   const playMessage = useCallback(() => { if (_soundEnabled) playMessageSound(); haptic("light"); }, []);
-  const playBadgeUnlock = useCallback(() => { if (_soundEnabled) playBadgeUnlockSound(); haptic("heavy"); }, []);
+  const playBadgeUnlock = useCallback(() => { emitReaction("win"); if (_soundEnabled) playBadgeUnlockSound(); haptic("heavy"); }, []);
   const playThot = useCallback(() => { if (_soundEnabled) playThotSound(); haptic("medium"); }, []);
   const playStreakMilestone = useCallback(() => { if (_soundEnabled) playStreakMilestoneSound(); haptic("heavy"); }, []);
   const playButtonTap = useCallback(() => { if (_soundEnabled) playButtonTapSound(); haptic("light"); }, []);
@@ -70,13 +71,13 @@ export function useSoundEffects() {
   const playCardOpen = useCallback(() => { if (_soundEnabled) playLearningSound("cardOpen"); }, []);
   const playLessonStart = useCallback(() => { if (_soundEnabled) playLearningSound("lessonStart"); }, []);
   const playCardAdvance = useCallback(() => { if (_soundEnabled) playLearningSound("cardAdvance"); }, []);
-  const playCorrect = useCallback(() => { if (_soundEnabled) playLearningSound("correct"); void haptic("light"); }, []);
-  const playMiss = useCallback(() => { if (_soundEnabled) playLearningSound("miss"); }, []);
-  const playCombo = useCallback((n: number) => { if (_soundEnabled && comboExtraNotes(n)) playLearningSound("combo", n); void haptic("light"); }, []);
-  const playNodeComplete = useCallback(() => { if (_soundEnabled) playLearningSound("nodeComplete"); void haptic("medium"); }, []);
+  const playCorrect = useCallback(() => { emitReaction("correct"); if (_soundEnabled) playLearningSound("correct"); void haptic("light"); }, []);
+  const playMiss = useCallback(() => { emitReaction("miss"); if (_soundEnabled) playLearningSound("miss"); }, []);
+  const playCombo = useCallback((n: number) => { if (n >= 5) emitReaction("combo"); if (_soundEnabled && comboExtraNotes(n)) playLearningSound("combo", n); void haptic("light"); }, []);
+  const playNodeComplete = useCallback(() => { emitReaction("win"); if (_soundEnabled) playLearningSound("nodeComplete"); void haptic("medium"); }, []);
   const playTrailFill = useCallback(() => { if (_soundEnabled) playLearningSound("trailFill"); }, []);
-  const playChestOpen = useCallback(() => { if (_soundEnabled) playLearningSound("chestOpen"); void haptic("medium"); }, []);
-  const playLevelComplete = useCallback(() => { if (_soundEnabled) playLearningSound("levelComplete"); }, []);
+  const playChestOpen = useCallback(() => { emitReaction("chest"); if (_soundEnabled) playLearningSound("chestOpen"); void haptic("medium"); }, []);
+  const playLevelComplete = useCallback(() => { emitReaction("win"); if (_soundEnabled) playLearningSound("levelComplete"); }, []);
   const playLockedTap = useCallback(() => { if (_soundEnabled) playLearningSound("lockedTap"); }, []);
   return {
     playNodeTap, playCardOpen, playLessonStart, playCardAdvance, playCorrect, playMiss, playCombo,
