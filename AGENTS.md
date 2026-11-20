@@ -6,7 +6,7 @@
 - Use the shared badge-aware module completion helper and XP threshold function so lesson, path, and server progress agree.
 - Mount cookie consent inside router context to suppress it on lesson routes, and register visual demo routes only in development.
 - Load learning questions through `get_quiz_questions` and grade individual answers through `check_quiz_answer`; only server mastery completion results determine new badges, final scores, and quiz XP; retain `submit_quiz` for legacy clients, so answer keys never accompany question loading.
-- Video-event listings are restricted by RLS to authenticated users with a non-null auth.uid(); preserve the separate administrator management policy so event browsing stays available to members without exposing the listing anonymously.
+- Video-event reads require authentication and either a future upcoming/active listing or participation; preserve separate administrator management so members can discover events without seeing unrelated event history.
 - Sprint participation reads are limited to the caller's own records and sprints they have joined; use the caller-bound `is_sprint_member` definer helper to avoid recursive RLS while preserving member leaderboards.
 - Use a browser data router at the app root so profile unsaved-navigation blocking via `useBlocker` has its required context; retain the existing descendant routes and providers.
 - Learn home shares one next-learning target between the path and pinned bar, and lazy-loads existing daily activity panels in sheets; this preserves lesson entry and reward logic without competing cards.

@@ -92,6 +92,13 @@
       "when": 1795157252030,
       "tag": "0012_learn_practice_hub",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1795160537603,
+      "tag": "0013_restrict_video_event_listing_to_discoverable_or_joined",
+      "breakpoints": true
     }
   ]
 }
