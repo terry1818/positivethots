@@ -8,6 +8,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { useSessionStore } from "@/stores/sessionStore";
 import { rollDailyReward } from "@/lib/learnSmallFixes";
+import { reportError } from "@/lib/errorReporting";
+import { toast } from "sonner";
+import type { XPAwardResult } from "@/lib/xpAward";
 
 interface DailyRewardResult {
   xp: number;
@@ -21,6 +24,7 @@ export const DailyRewardModal = ({ reopenTrigger, onReadyChange }: { reopenTrigg
   const [reward, setReward] = useState<DailyRewardResult | null>(null);
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
   const [claimed, setClaimed] = useState(false);
+  const [claiming, setClaiming] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -66,34 +70,35 @@ export const DailyRewardModal = ({ reopenTrigger, onReadyChange }: { reopenTrigg
   };
 
   const handleClaim = async () => {
-    if (!user || !reward || claimed) return;
-    setClaimed(true);
-    onReadyChange(false);
+    if (!user || !reward || claimed || claiming) return;
+    setClaiming(true);
 
     const today = new Date().toISOString().split("T")[0];
 
     try {
-      // Update last reward date
-      await supabase
-        .from("profiles")
-        .update({ last_daily_reward_date: today } as any)
-        .eq("id", user.id);
-
       // Award XP if applicable
+      let awarded = reward.xp;
       if (reward.xp > 0) {
-        await supabase.rpc("award_xp", {
+        const { data, error } = await supabase.rpc("award_xp", {
           _user_id: user.id,
           _amount: reward.xp,
           _source: "daily_reward",
         });
+        if (error) throw error;
+        awarded = (data as unknown as XPAwardResult).awarded;
       }
-
-      setCelebrationTrigger((c) => c + 1);
-    } catch {
-      // Silently fail
+      const { error: profileError } = await supabase.from("profiles").update({ last_daily_reward_date: today }).eq("id", user.id);
+      if (profileError) throw profileError;
+      setClaimed(true);
+      onReadyChange(false);
+      if (awarded > 0 || reward.isBoost) setCelebrationTrigger((c) => c + 1);
+      setTimeout(() => setIsOpen(false), 1500);
+    } catch (error) {
+      void reportError(error instanceof Error ? error : new Error("Daily bonus failed"));
+      toast.error("Could not save your XP. Please try again.");
+    } finally {
+      setClaiming(false);
     }
-
-    setTimeout(() => setIsOpen(false), 1500);
   };
 
   if (!reward) return null;
@@ -129,7 +134,7 @@ export const DailyRewardModal = ({ reopenTrigger, onReadyChange }: { reopenTrigg
                 claimed && "opacity-60"
               )}
               onClick={handleClaim}
-              disabled={claimed}
+              disabled={claimed || claiming}
             >
               {claimed ? "Claimed! ✨" : "Claim Reward"}
             </Button>

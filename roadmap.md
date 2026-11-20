@@ -1,3 +1,8 @@
+# Learn 02b XP integrity
+- [x] Restrict award_xp sources, proof, repeats, concurrency, and UTC daily ceiling; preserve historical awards, grants, coin functions, and acceptance of known legacy bonus/multiplier requests (server awards remain capped).
+- [x] Update award displays and sequential section completion. Nine tests/build passed; real regular-member rejection, first section 10 XP, parallel duplicates, daily 50/25 XP repeats, legacy quiz/spin requests, and readback verified. Coin functions audited without invoking or changing them.
+- [ ] Verify fresh quiz award and first spin/bonus through the full UI on an eligible profile: requesting account has no profile and temporary-user approval unavailable. Daily RPC awards and repeated-claim UI verified with browser-only profile fixtures; existing earned quiz repeat verified.
+
 # Learn 02 small fixes
 - [x] Apply all eight scoped reward, takeaway, XP, progress, demo, cookie, mascot, and share-link fixes.
 - [x] Run all eight checks: tests/build passed; signed-in takeaway, earned 100%, lesson cookie suppression, authenticated XP thresholds, browser XP display, mascot modes, share text, and published demo checked.

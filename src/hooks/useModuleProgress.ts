@@ -107,9 +107,9 @@ export const useModuleProgress = (moduleId: string) => {
 
   const markComplete = useCallback(async (sectionId: string) => {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    if (!session) throw new Error("Signed-in session required");
 
-    await supabase
+    const { error } = await supabase
       .from("user_section_progress")
       .upsert({
         user_id: session.user.id,
@@ -118,6 +118,7 @@ export const useModuleProgress = (moduleId: string) => {
         time_spent_seconds: elapsedRef.current,
         last_accessed: new Date().toISOString(),
       }, { onConflict: "user_id,section_id" });
+    if (error) throw error;
 
     setProgress(prev => {
       const existing = prev.find(p => p.section_id === sectionId);

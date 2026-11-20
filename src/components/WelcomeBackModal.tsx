@@ -5,6 +5,8 @@ import { Heart, BookOpen, Gift, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { reportError } from "@/lib/errorReporting";
+import type { XPAwardResult } from "@/lib/xpAward";
 
 interface WelcomeBackModalProps {
   previousChurnStatus: string | null;
@@ -53,15 +55,16 @@ export const WelcomeBackModal = ({ previousChurnStatus }: WelcomeBackModalProps)
 
       if (profile?.last_winback_sent_at) {
         // Grant 50 bonus XP
-        const { data: result } = await supabase.rpc("award_xp", {
+        const { data: result, error } = await supabase.rpc("award_xp", {
           _user_id: user.id,
           _amount: 50,
           _source: "winback_bonus",
           _source_id: "welcome_back",
         });
-        if (result) {
-          setXpGranted(true);
-        }
+        if (error) {
+          void reportError(new Error(error.message));
+          toast({ title: "Could not save your XP. Please try again.", variant: "destructive" });
+        } else if (result) setXpGranted((result as unknown as XPAwardResult).awarded > 0);
       }
 
       setOpen(true);

@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { reportError } from "@/lib/errorReporting";
+import { xpAwardFeedback, type XPAwardResult } from "@/lib/xpAward";
 
 export interface LearningStats {
   user_id: string;
@@ -184,20 +186,21 @@ export const useLearningStats = () => {
       // Use a simpler approach: award 1 XP to trigger the streak, the XP cost is handled separately
       
       // The restore costs 100 XP - we record this as a negative transaction
-      const { error } = await supabase.rpc("award_xp", {
+      const { data, error } = await supabase.rpc("award_xp", {
         _user_id: userId,
         _amount: 1, // minimal to trigger streak
         _source: "streak_restore",
         _source_id: `restore_${brokenStreakCount}`,
       });
       if (error) throw error;
-
+      if ((data as unknown as XPAwardResult).awarded === 0) return false;
       setShowStreakRestore(false);
       toast.success(`🔥 Streak restored! -100 XP`);
       await loadStats();
       return true;
     } catch (err) {
       console.error("Streak restore error:", err);
+      void reportError(err instanceof Error ? err : new Error("Streak restore failed"));
       toast.error("Could not restore streak");
       return false;
     }
@@ -211,27 +214,25 @@ export const useLearningStats = () => {
     if (!stats || !userId) return { newXP: 0, newLevel: 1, leveledUp: false, newStreak: 0, streakMilestone: false, freezeUsed: false };
 
     const today = new Date().toISOString().split("T")[0];
-    const lastDate = stats.last_activity_date;
-
-    // Daily bonus: first XP of the day gets +5
-    let bonusXP = 0;
-    if (lastDate !== today) bonusXP = 5;
-    const totalAmount = amount + bonusXP;
 
     try {
       const { data, error } = await supabase.rpc("award_xp", {
         _user_id: userId,
-        _amount: totalAmount,
+        _amount: amount,
         _source: source,
         _source_id: sourceId || null,
       });
 
       if (error) throw error;
 
-      const result = data as { new_xp: number; new_level: number; new_streak: number; freeze_used: boolean; freezes_remaining: number };
-      const leveledUp = result.new_level > stats.current_level;
+      const result = data as unknown as XPAwardResult;
+      const feedback = xpAwardFeedback(result, stats.current_level);
+      if (result.awarded === 0) {
+        setStats(prev => prev ? { ...prev, total_xp: result.new_xp, current_level: result.new_level, current_streak: result.new_streak, streak_freezes: result.freezes_remaining } : prev);
+        return { ...feedback, streakMilestone: false };
+      }
+      const { leveledUp, freezeUsed } = feedback;
       const streakMilestone = isStreakMilestone(result.new_streak);
-      const freezeUsed = result.freeze_used || false;
 
       // Show freeze toast
       if (freezeUsed) {
@@ -297,7 +298,7 @@ export const useLearningStats = () => {
           .maybeSingle();
 
         if (challenge && !challenge.completed && challenge.challenge_type === challengeType) {
-          const newProgress = challenge.current_progress + (challengeType === "xp" ? totalAmount : 1);
+          const newProgress = challenge.current_progress + (challengeType === "xp" ? result.awarded : 1);
           const completed = newProgress >= challenge.target_value;
           await supabase.from("daily_challenges").update({
             current_progress: newProgress,
@@ -310,9 +311,11 @@ export const useLearningStats = () => {
         setSectionsToday(prev => prev + 1);
       }
 
-      return { newXP: totalAmount, newLevel: result.new_level, leveledUp, newStreak: result.new_streak, streakMilestone, freezeUsed };
+      return { ...feedback, streakMilestone };
     } catch (err) {
       console.error("Error awarding XP:", err);
+      void reportError(err instanceof Error ? err : new Error("Error awarding XP"));
+      toast.error("Could not save your XP. Please try again.");
       return { newXP: 0, newLevel: stats.current_level, leveledUp: false, newStreak: stats.current_streak, streakMilestone: false, freezeUsed: false };
     }
   }, [stats, userId]);

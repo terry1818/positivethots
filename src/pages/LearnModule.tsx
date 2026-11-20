@@ -166,7 +166,7 @@ const LearnModule = () => {
 
   const handleReflectionSaved = useCallback(async (sectionId: string) => {
     const result = await awardXP(5, "reflection", sectionId);
-    setXpPopup({ show: true, amount: result.newXP });
+    setXpPopup({ show: result.newXP > 0, amount: result.newXP });
   }, [awardXP]);
 
   const loadModule = async () => {
@@ -212,14 +212,12 @@ const LearnModule = () => {
     }
   };
 
-  // Award XP on section complete — atomic: both succeed or neither
+  // Persist section completion before asking the server for its XP award.
   const handleSectionComplete = useCallback(async (sectionId: string) => {
     try {
-      const [, result] = await Promise.all([
-        markComplete(sectionId),
-        awardXP(10, "section_complete", sectionId),
-      ]);
-      setXpPopup({ show: true, amount: result.newXP });
+      await markComplete(sectionId);
+      const result = await awardXP(10, "section_complete", sectionId);
+      setXpPopup({ show: result.newXP > 0, amount: result.newXP });
 
       if (result.leveledUp) {
         const newLevel = result.newLevel;
@@ -242,9 +240,12 @@ const LearnModule = () => {
           console.error("Failed to grant streak reward:", e);
         }
       }
+      return result.newXP;
     } catch (error) {
       console.error("Section completion failed:", error);
+      void reportError(error instanceof Error ? error : new Error("Section completion failed"));
       toast.error("Failed to save progress. Please try again.");
+      return null;
     }
   }, [markComplete, awardXP, stats]);
 
@@ -275,7 +276,7 @@ const LearnModule = () => {
       const isFoundationComplete = await checkFoundationComplete(module.id);
       setTimeout(() => setCelebration({ type: "badge_earned", badgeTitle: module.title, badgeSlug: module.slug, badgeTier: module.tier, isFoundationComplete }), 1600);
       const xpResult = await awardXP(50 + (result.score === 100 ? 25 : 0), result.score === 100 ? "quiz_perfect" : "quiz_pass", module.id);
-      setXpPopup({ show: true, amount: xpResult.newXP });
+      setXpPopup({ show: xpResult.newXP > 0, amount: xpResult.newXP });
     }
   };
 

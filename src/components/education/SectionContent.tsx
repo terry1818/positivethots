@@ -28,7 +28,7 @@ interface SectionContentProps {
     estimated_minutes: number | null;
   };
   isCompleted: boolean;
-  onComplete: () => void;
+  onComplete: () => Promise<number | null>;
   onNext: () => void;
   onPrev: () => void;
   isFirst: boolean;
@@ -286,11 +286,14 @@ export const SectionContent = ({
 }: SectionContentProps) => {
   const [showBanner, setShowBanner] = useState(false);
 
-  const handleMarkComplete = () => {
+  const handleMarkComplete = async () => {
     if (!isCompleted) {
-      onComplete();
-      setShowBanner(true);
-      setTimeout(() => setShowBanner(false), 2500);
+      const awarded = await onComplete();
+      if (awarded === null) return;
+      if (awarded > 0) {
+        setShowBanner(true);
+        setTimeout(() => setShowBanner(false), 2500);
+      }
     }
     onNext();
   };

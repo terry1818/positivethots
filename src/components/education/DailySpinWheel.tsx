@@ -59,7 +59,7 @@ const SEGMENT_COLORS = [
 ];
 
 interface DailySpinWheelProps {
-  onReward: (reward: SpinReward) => void;
+  onReward: (reward: SpinReward) => Promise<boolean>;
   hasSpunToday: boolean;
 }
 
@@ -86,10 +86,11 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
 
     const spinDuration = reducedMotion ? 500 : 2500;
     setTimeout(async () => {
-      setResult(reward);
+      const awarded = await onReward(reward);
+      setResult(awarded ? reward : null);
       setSpinning(false);
 
-      if (reward.rarity === "rare" || reward.rarity === "very_rare") {
+      if (awarded && (reward.rarity === "rare" || reward.rarity === "very_rare")) {
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 2000);
       }
@@ -111,7 +112,6 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
         reward_value: reward.value,
       });
 
-      onReward(reward);
     }, spinDuration);
   }, [spinning, hasSpunToday, onReward, reducedMotion]);
 

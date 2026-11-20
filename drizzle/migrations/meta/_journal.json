@@ -43,6 +43,13 @@
       "when": 1795146357419,
       "tag": "0005_align_learning_xp_levels",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1795147397268,
+      "tag": "0006_enforce_xp_award_integrity",
+      "breakpoints": true
     }
   ]
 }

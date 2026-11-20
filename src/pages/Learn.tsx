@@ -20,7 +20,7 @@ import { StreakInterstitial } from "@/components/education/StreakInterstitial";
 
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { useLearningStats, getLevelName, getStreakMultiplier, calculateLevel } from "@/hooks/useLearningStats";
+import { useLearningStats, getLevelName, calculateLevel } from "@/hooks/useLearningStats";
 import { StreakRestoreModal } from "@/components/education/StreakRestoreModal";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -384,13 +384,13 @@ const Learn = () => {
           onReward={async (reward) => {
             setHasSpunToday(true);
             if (reward.type === "xp" && awardXP) {
-              const multiplier = getStreakMultiplier(stats?.current_streak || 0);
-              const xpAmount = Math.round(reward.value * multiplier);
-              await awardXP(xpAmount, "daily_spin");
-              toast.success(`You won ${reward.emoji} +${xpAmount} XP${multiplier > 1 ? ` (${multiplier}× streak bonus!)` : ""}! 🎉`);
+              const result = await awardXP(reward.value, "daily_spin");
+              if (result.newXP === 0) return false;
+              toast.success(`You won ${reward.emoji} +${result.newXP} XP! 🎉`);
             } else {
               toast.success(`You won ${reward.emoji} ${reward.label}! 🎉`);
             }
+            return true;
           }}
         />
 
