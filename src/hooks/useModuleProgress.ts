@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { saveLessonPosition } from "@/lib/lessonProgress";
+import { reportError } from "@/lib/errorReporting";
 import { moduleCompletionPercent } from "@/lib/learnSmallFixes";
 
 interface Section {
@@ -18,12 +20,14 @@ interface SectionProgress {
   section_id: string;
   completed: boolean;
   time_spent_seconds: number;
+  last_card_index: number;
 }
 
 export const useModuleProgress = (moduleId: string) => {
   const [sections, setSections] = useState<Section[]>([]);
   const [progress, setProgress] = useState<SectionProgress[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [badgeEarned, setBadgeEarned] = useState(false);
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -32,32 +36,38 @@ export const useModuleProgress = (moduleId: string) => {
 
   const loadData = useCallback(async () => {
     if (!moduleId) return;
+    setLoading(true);
+    setError(false);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      const { data: sectionsData } = await supabase
+      const { data: sectionsData, error: sectionError } = await supabase
         .from("module_sections")
         .select("*")
         .eq("module_id", moduleId)
         .order("section_number");
 
+      if (sectionError) throw sectionError;
       setSections(sectionsData || []);
       const { data: badge } = await supabase.from("user_badges").select("id").eq("user_id", session.user.id).eq("module_id", moduleId).maybeSingle();
       setBadgeEarned(!!badge);
 
       if (sectionsData && sectionsData.length > 0) {
         const sectionIds = sectionsData.map(s => s.id);
-        const { data: progressData } = await supabase
+        const { data: progressData, error: progressError } = await supabase
           .from("user_section_progress")
-          .select("section_id, completed, time_spent_seconds")
+          .select("section_id, completed, time_spent_seconds, last_card_index")
           .eq("user_id", session.user.id)
           .in("section_id", sectionIds);
 
+        if (progressError) throw progressError;
         setProgress(progressData || []);
       }
     } catch (error) {
+      setError(true);
       console.error("Error loading module progress:", error);
+      void reportError(error instanceof Error ? error : new Error("Error loading lesson"));
     } finally {
       setLoading(false);
     }
@@ -125,10 +135,20 @@ export const useModuleProgress = (moduleId: string) => {
       if (existing) {
         return prev.map(p => p.section_id === sectionId ? { ...p, completed: true } : p);
       }
-      return [...prev, { section_id: sectionId, completed: true, time_spent_seconds: 0 }];
+      return [...prev, { section_id: sectionId, completed: true, time_spent_seconds: 0, last_card_index: 0 }];
     });
 
     elapsedRef.current = 0;
+  }, []);
+
+  const saveCardPosition = useCallback(async (sectionId: string, index: number) => {
+    setProgress(prev => {
+      const existing = prev.find(p => p.section_id === sectionId);
+      return existing ? prev.map(p => p.section_id === sectionId ? { ...p, last_card_index: index } : p)
+        : [...prev, { section_id: sectionId, completed: false, time_spent_seconds: 0, last_card_index: index }];
+    });
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) saveLessonPosition(session.user.id, sectionId, index);
   }, []);
 
   const completedCount = progress.filter(p => p.completed).length;
@@ -138,6 +158,8 @@ export const useModuleProgress = (moduleId: string) => {
   return {
     sections,
     progress,
+    error,
+    saveCardPosition,
     loading,
     currentSectionIndex,
     setCurrentSectionIndex,

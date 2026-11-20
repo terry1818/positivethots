@@ -64,7 +64,10 @@ async function fetchCloudAudio(text: string, voice: VoiceGender, speed: number):
   }
 }
 
-export function useReadAloud() {
+export function useReadAloud(onEnd?: () => void) {
+  const onEndRef = useRef(onEnd);
+  onEndRef.current = onEnd;
+  const requestRef = useRef(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,6 +91,7 @@ export function useReadAloud() {
     const handler = () => refreshVoice();
     window.speechSynthesis.addEventListener("voiceschanged", handler);
     return () => {
+      requestRef.current++;
       window.speechSynthesis.removeEventListener("voiceschanged", handler);
       window.speechSynthesis.cancel();
       if (audioRef.current) {
@@ -110,7 +114,7 @@ export function useReadAloud() {
     const best = pickBestVoice(voices, voiceGender);
     if (best) utterance.voice = best;
     utterance.rate = rate;
-    utterance.onend = () => { setIsPlaying(false); setIsPaused(false); };
+    utterance.onend = () => { setIsPlaying(false); setIsPaused(false); onEndRef.current?.(); };
     utterance.onerror = () => { setIsPlaying(false); setIsPaused(false); };
     utteranceRef.current = utterance;
     usingCloudRef.current = false;
@@ -120,6 +124,7 @@ export function useReadAloud() {
   }, [rate, voiceGender]);
 
   const play = useCallback(async (text: string) => {
+    const request = ++requestRef.current;
     // Stop any existing playback
     if (audioRef.current) {
       audioRef.current.pause();
@@ -135,11 +140,13 @@ export function useReadAloud() {
     // Try cloud TTS first
     const audioUrl = await fetchCloudAudio(clean, voiceGender, rate);
 
+    if (request !== requestRef.current) return;
+
     if (audioUrl) {
       try {
         const audio = new Audio(audioUrl);
         audio.playbackRate = rate;
-        audio.onended = () => { setIsPlaying(false); setIsPaused(false); usingCloudRef.current = false; };
+        audio.onended = () => { setIsPlaying(false); setIsPaused(false); usingCloudRef.current = false; onEndRef.current?.(); };
         audio.onerror = () => {
           usingCloudRef.current = false;
           toast.info("Using device voice", { duration: 2000 });
@@ -192,6 +199,8 @@ export function useReadAloud() {
   }, []);
 
   const stop = useCallback(() => {
+    requestRef.current++;
+    setIsLoading(false);
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -219,7 +228,7 @@ export function useReadAloud() {
       const best = pickBestVoice(voices, voiceGender);
       if (best) utterance.voice = best;
       utterance.rate = r;
-      utterance.onend = () => { setIsPlaying(false); setIsPaused(false); };
+      utterance.onend = () => { setIsPlaying(false); setIsPaused(false); onEndRef.current?.(); };
       utterance.onerror = () => { setIsPlaying(false); setIsPaused(false); };
       utteranceRef.current = utterance;
       window.speechSynthesis.speak(utterance);

@@ -23,6 +23,7 @@ export const ReflectionPrompt = ({
   const [existingId, setExistingId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -49,19 +50,23 @@ export const ReflectionPrompt = ({
 
   const handleSave = async () => {
     setSaving(true);
+    setSaveError(false);
     try {
       if (existingId) {
-        await supabase
+        const { error } = await supabase
           .from("user_reflections")
           .update({ response_text: response })
           .eq("id", existingId);
+        if (error) throw error;
       } else {
-        await supabase
+        const { error } = await supabase
           .from("user_reflections")
           .insert({ user_id: userId, section_id: sectionId, response_text: response });
+        if (error) throw error;
       }
-      onSaveAndContinue();
+      await onSaveAndContinue();
     } catch (e) {
+      setSaveError(true);
       console.error("Failed to save reflection:", e);
     } finally {
       setSaving(false);
@@ -104,23 +109,25 @@ export const ReflectionPrompt = ({
         className="text-sm min-h-[60px] resize-none"
         rows={2}
       />
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <Button
           onClick={handleSave}
           disabled={!canSubmit || saving}
+          className="min-h-11 h-auto whitespace-normal"
           size="sm"
         >
           {saving ? "Saving..." : hasSaved ? "Update & Continue →" : "Save & Continue (+5 XP) →"}
         </Button>
         {!hasSaved && (
-          <button
+          <Button variant="ghost"
             onClick={onSkip}
-            className="text-sm text-muted-foreground hover:text-foreground underline"
+            className="min-h-11 text-sm text-muted-foreground hover:text-foreground underline"
           >
             Skip reflection
-          </button>
+          </Button>
         )}
       </div>
+      {saveError && <p role="alert">We couldn't save your reflection. Try again.</p>}
       <p className="text-sm text-muted-foreground">
         Your reflections are private and saved to your Learning Journal.
       </p>

@@ -1,3 +1,8 @@
+# Learn 06 card lesson player
+- [x] Split unchanged lesson text into cards, preserve checkpoint grading/completion, add saved position and remembered article view.
+- [x] Ran seven checks: title/no overlay, real checkpoint/server wrong-answer continuation plus retry, saved resume, real 10 XP once with completion readback and no repeat call, persisted article choice, keyboard/focus/live announcement, and 35 passing tests. Shortest/mean-nearest/longest sections have 10/12/13 total cards. Actual sections have at most one checkpoint; two-checkpoint placement passes unit tests only. Offline save recovered; 375/390/414/768/1280 and three text sizes verified; local click event 16ms.
+- [ ] Production field INP, actual screen-reader audio and cloud read-aloud audio remain unverified; fallback auto-advance used simulated speech end events. No publishing requested.
+
 # Learn 05 module levels
 - [x] Add level lesson nodes, Guides, safe count/review RPCs and section/quiz deep links; preserve badge/module gates.
 - [x] Run six checks: real regular-member Guide counts, safe RPC fields, locked deep-link fallback and path verified; browser-only progress fixtures verified first level/five nodes, Lesson 1 done/Lesson 2 current, unlocked Section 3 and quiz. Review UI fixture verified 30 then 0 XP requests with daily key and no badge submission. 27 tests passed.

@@ -2617,6 +2617,7 @@ export type Database = {
           completed: boolean | null
           id: string
           last_accessed: string | null
+          last_card_index: number
           section_id: string
           time_spent_seconds: number | null
           user_id: string
@@ -2625,6 +2626,7 @@ export type Database = {
           completed?: boolean | null
           id?: string
           last_accessed?: string | null
+          last_card_index?: number
           section_id: string
           time_spent_seconds?: number | null
           user_id: string
@@ -2633,6 +2635,7 @@ export type Database = {
           completed?: boolean | null
           id?: string
           last_accessed?: string | null
+          last_card_index?: number
           section_id?: string
           time_spent_seconds?: number | null
           user_id?: string

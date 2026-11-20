@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Bookmark, BookmarkCheck, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -23,16 +24,16 @@ export const KeyTakeaway = ({ takeaway, sectionTitle }: KeyTakeawayProps) => {
             <p className="text-sm font-bold text-accent uppercase tracking-wide mb-1">Key Takeaway</p>
             <p className="text-sm leading-relaxed">{takeaway}</p>
           </div>
-          <button
+          <Button variant="ghost" size="icon" aria-label={saved ? "Remove saved takeaway" : "Save takeaway"}
             onClick={() => setSaved(!saved)}
-            className="shrink-0 p-1 rounded-md hover:bg-muted transition-colors"
+            className="shrink-0 min-h-11 min-w-11"
           >
             {saved ? (
               <BookmarkCheck className="h-5 w-5 text-success" />
             ) : (
               <Bookmark className="h-5 w-5 text-muted-foreground" />
             )}
-          </button>
+          </Button>
         </div>
       </CardContent>
     </Card>

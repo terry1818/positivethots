@@ -57,6 +57,13 @@
       "when": 1795149194617,
       "tag": "0007_learn_level_counts_and_tier_review_questions",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1795150047508,
+      "tag": "0008_lesson_card_resume",
+      "breakpoints": true
     }
   ]
 }

@@ -99,7 +99,7 @@ const renderParagraph = (paragraph: string, i: number) => {
   return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(withLinks) }} />;
 };
 
-const renderMarkdown = (content: string, checkpoints?: CheckpointQuestion[]) => {
+export const renderMarkdown = (content: string, checkpoints?: CheckpointQuestion[]) => {
   const paragraphs = content.split('\n\n');
   const elements: React.ReactNode[] = [];
 
@@ -200,8 +200,8 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
 };
 
 // Read-aloud toolbar component
-const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
-  const { isPlaying, isPaused, isLoading, isSupported, play, pause, resume, stop, rate, setRate, RATES, voiceGender, setVoiceGender } = useReadAloud();
+export const ReadAloudControls = ({ contentText, controls }: { contentText: string; controls: ReturnType<typeof useReadAloud> }) => {
+  const { isPlaying, isPaused, isLoading, isSupported, play, pause, resume, stop, rate, setRate, RATES, voiceGender, setVoiceGender } = controls;
 
   if (!isSupported) return null;
 
@@ -209,65 +209,70 @@ const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
     <div role="toolbar" aria-label="Read aloud controls" className="flex items-center gap-2 py-2 flex-wrap">
       {/* Voice gender toggle */}
       <div className="flex items-center border border-border rounded-md overflow-hidden">
-        <button
+        <Button variant="ghost"
           onClick={() => setVoiceGender("female")}
-          className={cn("px-2 py-1 text-sm font-medium transition-colors",
+          className={cn("min-h-11 min-w-11 px-2 py-1 text-sm font-medium transition-colors",
             voiceGender === "female" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
           aria-label="Female voice"
           aria-pressed={voiceGender === "female"}
         >
           ♀
-        </button>
-        <button
+        </Button>
+        <Button variant="ghost"
           onClick={() => setVoiceGender("male")}
-          className={cn("px-2 py-1 text-sm font-medium transition-colors",
+          className={cn("min-h-11 min-w-11 px-2 py-1 text-sm font-medium transition-colors",
             voiceGender === "male" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
           aria-label="Male voice"
           aria-pressed={voiceGender === "male"}
         >
           ♂
-        </button>
+        </Button>
       </div>
 
       {!isPlaying && !isPaused && (
         <Button variant="outline" size="sm" onClick={() => play(contentText)}
-          className="gap-1.5 text-sm" aria-label="Read section aloud" disabled={isLoading}>
+          className="min-h-11 gap-1.5 text-sm" aria-label="Read section aloud" disabled={isLoading}>
           {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Volume2 className="h-3.5 w-3.5" />}
           {isLoading ? "Loading…" : "Listen"}
         </Button>
       )}
       {isPlaying && (
         <Button variant="outline" size="sm" onClick={pause}
-          className="gap-1.5 text-sm" aria-label="Pause reading">
+          className="min-h-11 gap-1.5 text-sm" aria-label="Pause reading">
           <Pause className="h-3.5 w-3.5" /> Pause
         </Button>
       )}
       {isPaused && (
         <Button variant="outline" size="sm" onClick={resume}
-          className="gap-1.5 text-sm" aria-label="Resume reading">
+          className="min-h-11 gap-1.5 text-sm" aria-label="Resume reading">
           <Play className="h-3.5 w-3.5" /> Resume
         </Button>
       )}
       {(isPlaying || isPaused) && (
         <Button variant="ghost" size="sm" onClick={stop}
-          className="gap-1.5 text-sm text-muted-foreground" aria-label="Stop reading">
+          className="min-h-11 gap-1.5 text-sm text-muted-foreground" aria-label="Stop reading">
           <Square className="h-3 w-3" /> Stop
         </Button>
       )}
       {(isPlaying || isPaused) && (
         <div className="flex items-center gap-1 ml-auto">
           {RATES.map(r => (
-            <button key={r} onClick={() => setRate(r)}
-              className={cn("text-sm px-1.5 py-0.5 rounded font-mono",
+            <Button variant="ghost" key={r} onClick={() => setRate(r)}
+              className={cn("min-h-11 min-w-11 text-sm px-1.5 py-0.5 rounded font-mono",
                 rate === r ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}
               aria-label={`Speed ${r}x`} aria-pressed={rate === r}>
               {r}x
-            </button>
+            </Button>
           ))}
         </div>
       )}
     </div>
   );
+};
+
+const ReadAloudToolbar = ({ contentText }: { contentText: string }) => {
+  const controls = useReadAloud();
+  return <ReadAloudControls contentText={contentText} controls={controls} />;
 };
 
 export const SectionContent = ({
@@ -335,7 +340,8 @@ export const SectionContent = ({
 
       {/* Video content */}
       {section.content_type === 'video' && section.content_url && (() => {
-        const videoUrl = section.content_url!
+        if (!section.content_url) return null;
+        const videoUrl = section.content_url
           .replace('youtube.com/embed/', 'youtube-nocookie.com/embed/')
           .replace('www.youtube.com/embed/', 'www.youtube-nocookie.com/embed/');
         const sep = videoUrl.includes('?') ? '&' : '?';

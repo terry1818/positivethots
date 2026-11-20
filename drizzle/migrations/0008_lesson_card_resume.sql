@@ -1,0 +1,1 @@
+ALTER TABLE public.user_section_progress ADD COLUMN last_card_index integer NOT NULL DEFAULT 0;
