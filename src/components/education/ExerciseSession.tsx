@@ -29,6 +29,7 @@ interface ExerciseSessionProps {
   submissionError: boolean;
   onRetrySubmit: () => void;
   onBack: () => void;
+  preserveQuestionOrder?: boolean;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -49,13 +50,13 @@ export const ExerciseSession = ({
   userId,
   onComplete,
   onBack,
-  finalResult, submitting, submissionError, onRetrySubmit,
+  finalResult, submitting, submissionError, onRetrySubmit, preserveQuestionOrder = false,
 }: ExerciseSessionProps) => {
   const reducedMotion = useReducedMotion();
 
   // TODO: server-side grading for this exercise type is not built yet.
   // All exercise types currently use the multiple-choice server contract.
-  const [sessionQuestions] = useState(() => shuffle(rawQuestions));
+  const [sessionQuestions] = useState(() => preserveQuestionOrder ? rawQuestions : shuffle(rawQuestions));
   const [currentIdx, setCurrentIdx] = useState(0);
   const [results, setResults] = useState<{ questionId: string; isCorrect: boolean; timeTakenMs: number; selectedAnswer: number }[]>([]);
   const [showScore, setShowScore] = useState(false);

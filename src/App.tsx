@@ -27,6 +27,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Learn = lazy(() => import("./pages/Learn"));
 const LearnModule = lazy(() => import("./pages/LearnModule"));
+const TierReview = lazy(() => import("./pages/TierReview"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Chat = lazy(() => import("./pages/Chat"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -99,6 +100,7 @@ const AppContent = () => {
         <Route path="/wallet" element={<Suspense fallback={<PageLoader />}><Wallet /></Suspense>} />
         <Route path="/learn" element={<LearnLayout />}>
           <Route index element={<Suspense fallback={<PageSkeleton variant="learn" />}><Learn /></Suspense>} />
+          <Route path="review/:tier" element={<Suspense fallback={<PageSkeleton variant="learn" />}><TierReview /></Suspense>} />
           <Route path=":slug/*" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnModule /></Suspense>} />
         </Route>
         <Route path="/messages" element={<Suspense fallback={<PageSkeleton variant="messages" />}><Messages /></Suspense>} />

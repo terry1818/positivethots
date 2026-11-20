@@ -71,6 +71,7 @@ const LearnSkeleton = () => (
       <Skeleton className="h-5 w-12" />
       <div className="flex gap-2 overflow-hidden">{[1,2,3].map(i => <Skeleton key={i} className="h-[44px] w-32 shrink-0 rounded-full" />)}</div>
       <Skeleton className="mx-auto h-12 w-56 rounded-full" />
+      <Skeleton className="h-[80px] w-full rounded-none" />
       <div className="pt-10">{[0,44,72,44,0].map((offset, i) => <div key={i} className="flex h-[152px] flex-col items-center gap-2" style={{ transform: `translateX(${offset}px)` }}>
         <Skeleton className="h-[80px] w-[80px] rounded-full" /><Skeleton className="h-4 w-32" />
       </div>)}</div>

@@ -2989,6 +2989,15 @@ export type Database = {
           profile_image: string
         }[]
       }
+      get_module_counts: {
+        Args: never
+        Returns: {
+          checkpoint_count: number
+          module_id: string
+          question_count: number
+          section_count: number
+        }[]
+      }
       get_my_verification_code: { Args: { _platform: string }; Returns: string }
       get_public_profile: {
         Args: { _user_id: string }
@@ -3017,6 +3026,20 @@ export type Database = {
       }
       get_quiz_questions: {
         Args: { _module_id: string }
+        Returns: {
+          exercise_type: string
+          id: string
+          is_checkpoint: boolean
+          module_id: string
+          options: Json
+          order_index: number
+          position_in_section: number
+          question: string
+          section_id: string
+        }[]
+      }
+      get_review_questions: {
+        Args: { _limit?: number; _tier: string }
         Returns: {
           exercise_type: string
           id: string

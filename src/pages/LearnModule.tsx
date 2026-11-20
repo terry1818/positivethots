@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,8 @@ import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { reportError } from "@/lib/errorReporting";
 import { latestQuizAnswers, type QuizAnswer, type QuizResult } from "@/lib/quizAnswers";
 import { ExerciseSession } from "@/components/education/ExerciseSession";
-import { LearningPath } from "@/components/education/LearningPath";
+import { lessonEntry } from "@/lib/learnLevels";
+import { useSessionStore } from "@/stores/sessionStore";
 import { XPPopup } from "@/components/education/XPPopup";
 import { CelebrationModal } from "@/components/education/CelebrationModal";
 import { ReadingProgress } from "@/components/education/ReadingProgress";
@@ -54,6 +55,8 @@ interface Question {
 const LearnModule = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const appliedEntry = useRef<string | null>(null);
   
   const [module, setModule] = useState<Module | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -126,6 +129,7 @@ const LearnModule = () => {
   const [moduleId, setModuleId] = useState<string>("");
   const {
     sections,
+    loading: progressLoading,
     progress: sectionProgress,
     currentSectionIndex,
     setCurrentSectionIndex,
@@ -144,6 +148,24 @@ const LearnModule = () => {
   useEffect(() => {
     loadModule();
   }, [slug]);
+
+  useEffect(() => {
+    if (progressLoading || !sections.length || loading || sections.some(section => section.module_id !== moduleId)) return;
+    const key = `${moduleId}:${searchParams.toString()}`;
+    if (appliedEntry.current === key) return;
+    appliedEntry.current = key;
+    if (!searchParams.has("section") && !searchParams.has("quiz")) return;
+    const entry = lessonEntry(sections, new Set(sectionProgress.filter(p => p.completed).map(p => p.section_id)), searchParams.get("section"), searchParams.get("quiz"));
+    setCurrentSectionIndex(entry.index);
+    setShowQuiz(entry.quiz);
+    if (entry.blockedQuiz) toast.info("Finish the lessons first, you're almost there.");
+  }, [progressLoading, sections, sectionProgress, loading, moduleId, searchParams]);
+
+  const backToPath = () => {
+    const node = showQuiz ? `quiz:${moduleId}` : sections[currentSectionIndex]?.id;
+    if (node) useSessionStore.getState().setSessionData("learn-return-node", node);
+    navigate("/learn");
+  };
 
   // Cancel speech synthesis when section changes or component unmounts
   useEffect(() => {
@@ -360,7 +382,7 @@ const LearnModule = () => {
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/learn")} aria-label="Go back">
+          <Button variant="ghost" size="icon" onClick={backToPath} aria-label="Go back">
             <ChevronLeft className="h-6 w-6" />
           </Button>
           <div className="flex-1 min-w-0">
@@ -400,13 +422,7 @@ const LearnModule = () => {
                   <Progress value={completionPercent} className="h-2" />
                 </div>
 
-                {/* Learning Path - horizontal Duolingo-style */}
-                <LearningPath
-                  sections={sections}
-                  progress={sectionProgress}
-                  currentIndex={currentSectionIndex}
-                  onSelect={setCurrentSectionIndex}
-                />
+                <p className="mb-4 text-sm text-muted-foreground">Lesson {currentSectionIndex + 1} of {sections.length}</p>
 
                 {/* Session Intro Overlay */}
                 {showSessionIntro && sections[currentSectionIndex] && module && (

@@ -1,7 +1,12 @@
+# Learn 05 module levels
+- [x] Add level lesson nodes, Guides, safe count/review RPCs and section/quiz deep links; preserve badge/module gates.
+- [x] Run six checks: real regular-member Guide counts, safe RPC fields, locked deep-link fallback and path verified; browser-only progress fixtures verified first level/five nodes, Lesson 1 done/Lesson 2 current, unlocked Section 3 and quiz. Review UI fixture verified 30 then 0 XP requests with daily key and no badge submission. 27 tests passed.
+- [ ] Actual fresh lesson/review award persistence and administrator session: temporary-user approval unavailable, requesting regular member has only one tier badge and no profile. No badges or XP were modified for these checks. Admin/regular structure has no role branch, but administrator end-to-end remains unverified.
+
 # Learn 04 path-first home
 - [x] Move daily activity cards into lazy sheets, put the winding path first, and share one target with the pinned continue bar.
 - [x] Run all six acceptance checks: first mobile node, one bubble/same module target, five sheets, removed pills, tour, and reduced-motion passed. 22 tests/build passed; clean local LCP 448ms, CLS 0.018; no horizontal overflow and desktop path 480px.
-- [ ] Next-incomplete section entry: existing lesson code always opens Section 1 and the prompt forbids changing /learn/:slug; bar accurately shows Section 2 but both targets open Section 1. Requires permission to change lesson entry.
+- [x] Next-incomplete section entry resolved by Learn 05 section/quiz deep links; bare module URLs retain previous behavior.
 - [ ] Full reward/sprint/community completion: spin available but not claimed on requesting account; no active sprint or community goal exists. Existing panel logic retained; real calendar, completed challenge, spin control, and empty sheets verified. Field INP unavailable.
 
 # Learn 03 motion foundation

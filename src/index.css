@@ -548,3 +548,8 @@ button, [role="button"] {
 .learn-today-fade { background: linear-gradient(to right, hsl(var(--background) / 0), hsl(var(--background))); }
 .learn-chip-highlight { border: 2px solid transparent; background: linear-gradient(hsl(var(--muted)), hsl(var(--muted))) padding-box, linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary))) border-box; }
 .learn-continue-button { background: linear-gradient(135deg, hsl(var(--badge-consent)), hsl(var(--badge-boundaries))); color: hsl(var(--primary-foreground)); }
+
+.learn-level-band { background: hsl(var(--learn-tier-color) / 0.18); color: hsl(var(--foreground)); backdrop-filter: blur(16px); }
+.learn-level-done { background: hsl(var(--learn-tier-color)); border-color: hsl(var(--learn-tier-color)); color: hsl(var(--primary-foreground)); }
+.learn-level-node { scroll-margin-top: calc(var(--learn-header-height) + 112px); }
+.learn-level-block :focus-visible { scroll-margin-top: calc(var(--learn-header-height) + 112px); }

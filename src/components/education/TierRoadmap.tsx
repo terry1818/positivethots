@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Lock, CheckCircle, Crown, ChevronDown } from "lucide-react";
+import { Lock, CheckCircle, Crown, ChevronDown, BookOpen, Trophy } from "lucide-react";
 import { m } from "motion/react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { TierUnlock } from "@/hooks/useFeatureUnlocks";
+import { levelNodes, type LessonSection } from "@/lib/learnLevels";
+import { useSessionStore } from "@/stores/sessionStore";
+import { ModuleGuide } from "./ModuleGuide";
 import { moduleCompletionPercent } from "@/lib/learnSmallFixes";
 import { pathOffsets, pathNodeSpacing, windingConnector } from "@/lib/learnHome";
 import { duration, easing } from "@/lib/motionTokens";
@@ -33,6 +36,9 @@ export interface BadgePathMapProps {
   isAdvancedPremiumLocked: (module: Module) => boolean;
   isPremium: boolean;
   moduleProgress: Record<string, { completed: number; total: number }>;
+  sections: LessonSection[];
+  completedSectionIds: Set<string>;
+  startedSectionIds: Set<string>;
   onModuleClick: (slug: string) => void;
   tierFeatures: TierUnlock[];
   currentModuleId?: string;
@@ -59,121 +65,161 @@ const badgeIcons: Record<string, string> = {
 
 const TIER_ORDER = ["foundation", "sexual_health", "identity", "relationships", "advanced"];
 
-type NodeState = "completed" | "current" | "unlocked" | "locked" | "premium-locked";
-
 export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked, isAdvancedPremiumLocked,
   isPremium, moduleProgress, onModuleClick, tierFeatures, currentModuleId, currentStarted = false,
+  sections, completedSectionIds, startedSectionIds,
 }: BadgePathMapProps) => {
   const navigate = useNavigate();
-  const reducedMotion = useReducedMotion();
-  const scrollTargetRef = useRef<HTMLDivElement>(null);
-  const tierData = useMemo(() => TIER_ORDER.map(tier => {
-    const modules = (modulesByTier[tier] || []).map(module => {
-      const earned = earnedModuleIds.has(module.id);
-      const unlocked = isModuleUnlocked(module);
-      const premiumLocked = isAdvancedPremiumLocked(module);
-      const state: NodeState = earned ? "completed" : premiumLocked ? "premium-locked"
-        : !unlocked ? "locked" : module.id === currentModuleId ? "current" : "unlocked";
-      return { module, state, percent: moduleCompletionPercent(moduleProgress[module.id]?.completed || 0,
-        moduleProgress[module.id]?.total || 0, earned) };
-    });
-    const completed = modules.filter(node => node.state === "completed").length;
-    const total = modules.length;
-    return { tier, modules, completed, total, complete: total > 0 && completed === total,
-      current: modules.some(node => node.state === "current"),
-      features: tierFeatures.find(item => item.tier === tier)?.features || [] };
-  }), [modulesByTier, earnedModuleIds, isModuleUnlocked, isAdvancedPremiumLocked, moduleProgress, tierFeatures, currentModuleId]);
-  const currentTier = tierData.find(tier => tier.current)?.tier;
-  const [expandedTiers, setExpandedTiers] = useState<Set<string>>(() => new Set(currentTier ? [currentTier] : []));
+  const reduced = useReducedMotion();
+  const targetRef = useRef<HTMLDivElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(220);
+  const returnNode = useSessionStore.getState().getSessionData<string | null>("learn-return-node", null);
+  const returnModule = sections.find(s => s.id === returnNode)?.module_id || (returnNode?.startsWith("quiz:") ? returnNode.slice(5) : undefined);
+  const currentTier = TIER_ORDER.find(tier => modulesByTier[tier]?.some(m => m.id === (returnModule || currentModuleId)));
+  const [expandedTiers, setExpandedTiers] = useState(() => new Set(currentTier ? [currentTier] : []));
+  const [expandedLevels, setExpandedLevels] = useState(() => new Set([currentModuleId, returnModule].filter((id): id is string => Boolean(id))));
+  const [guideId, setGuideId] = useState<string | null>(null);
+  const allModules = TIER_ORDER.flatMap(tier => modulesByTier[tier] || []);
+  const guide = allModules.find(m => m.id === guideId);
+  useEffect(() => {
+    const header = document.querySelector("header.sticky");
+    if (!header) return;
+    const observer = new ResizeObserver(() => setHeaderHeight(header.getBoundingClientRect().height));
+    observer.observe(header); setHeaderHeight(header.getBoundingClientRect().height);
+    return () => observer.disconnect();
+  }, []);
   useEffect(() => {
     if (currentTier) setExpandedTiers(previous => new Set([...previous, currentTier]));
-  }, [currentTier]);
+    if (currentModuleId) setExpandedLevels(previous => new Set([...previous, currentModuleId]));
+  }, [currentTier, currentModuleId]);
   useEffect(() => {
-    const timer = setTimeout(() => scrollTargetRef.current?.scrollIntoView({
-      behavior: reducedMotion ? "instant" : "smooth", block: "center",
-    }), duration.normal * 1000);
+    const timer = setTimeout(() => {
+      const returned = returnNode ? document.getElementById(`learn-node-${returnNode}`) : null;
+      const target = returned || targetRef.current;
+      if (target) {
+        const navHeight = document.querySelector('[aria-label="Main navigation"]')?.getBoundingClientRect().height || 88;
+        const visibleTop = headerHeight + 104;
+        const visibleBottom = window.innerHeight - navHeight - 64;
+        const nodeTop = visibleTop + Math.max(0, (visibleBottom - visibleTop - 96) / 2);
+        window.scrollTo({ top: Math.max(0, window.scrollY + target.getBoundingClientRect().top - nodeTop), behavior: reduced ? "instant" : "smooth" });
+      }
+    }, duration.normal * 1000);
     return () => clearTimeout(timer);
-  }, [currentModuleId, reducedMotion]);
-  const toggleTier = (tier: string) => setExpandedTiers(previous => {
-    const next = new Set(previous);
-    if (next.has(tier)) next.delete(tier); else next.add(tier);
-    return next;
-  });
-
-  return <div className="relative space-y-2" role="list" aria-label="Learning path">
-    {tierData.map(td => {
-      if (!td.total) return null;
-      const expanded = expandedTiers.has(td.tier);
-      const connector = windingConnector(td.total);
-      const height = 48 + (td.total - 1) * pathNodeSpacing;
-      // A segment is complete only when both endpoints have earned badges.
-      const completePrefix = td.modules.findIndex(node => node.state !== "completed");
-      const completedNodes = completePrefix < 0 ? td.total : completePrefix;
-      return <div key={td.tier} role="listitem" className={`learn-tier learn-tier-${td.tier}`}>
-        <Button variant="ghost" onClick={() => toggleTier(td.tier)} aria-expanded={expanded}
-          data-tour={td.current ? "learn-tier-active" : undefined} data-walkthrough={td.current ? "learn-tier-active" : undefined}
-          aria-controls={`tier-content-${td.tier}`} className="h-auto min-h-[44px] w-full whitespace-normal py-2">
-          <span className="flex flex-wrap items-center justify-center gap-2 rounded-full border border-border bg-card px-3 py-2 text-base font-bold text-foreground">
-            {td.complete && <CheckCircle className="h-4 w-4 text-success" aria-label="Completed" />}
-            {tierLabels[td.tier]} <span className="font-normal text-muted-foreground">{td.completed}/{td.total}</span>
-            {td.tier === "advanced" && !isPremium && <Crown className="h-4 w-4" aria-label="Premium required" />}
-            <ChevronDown className={cn("h-4 w-4", expanded && "rotate-180")} />
-          </span>
+  }, [currentModuleId, reduced, returnNode, headerHeight]);
+  const toggle = (id: string, tier = false) => {
+    const anchor = targetRef.current;
+    const before = anchor?.getBoundingClientRect().top;
+    const setter = tier ? setExpandedTiers : setExpandedLevels;
+    setter(previous => { const next = new Set(previous); if (next.has(id)) next.delete(id); else next.add(id); return next; });
+    if (before !== undefined) requestAnimationFrame(() => {
+      const after = anchor?.getBoundingClientRect().top;
+      if (after !== undefined) window.scrollBy({ top: after - before, behavior: "instant" });
+    });
+  };
+  const moduleSections = (id: string) => sections.filter(s => s.module_id === id).sort((a,b) => a.section_number - b.section_number);
+  const go = (module: Module, section?: number) => onModuleClick(`${module.slug}${section ? `?section=${section}` : "?quiz=1"}`);
+  const reason = (module: Module) => {
+    if (earnedModuleIds.has(module.id)) return undefined;
+    if (isAdvancedPremiumLocked(module)) return "Complete Foundation and get Premium to unlock this level.";
+    if (isModuleUnlocked(module)) return undefined;
+    const tierModules = modulesByTier[module.tier || "foundation"] || [];
+    const previous = tierModules[tierModules.findIndex(m => m.id === module.id) - 1];
+    return `Complete ${previous?.title || "Foundation"} first`;
+  };
+  const startModule = (module: Module) => {
+    const lesson = moduleSections(module.id).find(s => !completedSectionIds.has(s.id));
+    if (earnedModuleIds.has(module.id)) go(module, moduleSections(module.id)[0]?.section_number || 1);
+    else go(module, lesson?.section_number);
+  };
+  return <div role="list" aria-label="Learning path" className="space-y-4" style={{ "--learn-header-height": `${headerHeight}px` } as React.CSSProperties}>
+    {TIER_ORDER.map(tier => {
+      const modules = modulesByTier[tier] || [];
+      if (!modules.length) return null;
+      const earned = modules.filter(m => earnedModuleIds.has(m.id)).length;
+      const features = tierFeatures.find(t => t.tier === tier)?.features || [];
+      const tierOpen = expandedTiers.has(tier);
+      return <div key={tier} role="listitem" className={`learn-tier learn-tier-${tier}`}>
+        <Button variant="ghost" className="min-h-[44px] h-auto w-full whitespace-normal" onClick={() => toggle(tier, true)}
+          aria-expanded={tierOpen} data-tour={tier === currentTier ? "learn-tier-active" : undefined} data-walkthrough={tier === currentTier ? "learn-tier-active" : undefined}>
+          {earned === modules.length && <CheckCircle className="h-4 w-4" />}{tierLabels[tier]} · {earned}/{modules.length}<ChevronDown className={cn("h-4 w-4", tierOpen && "rotate-180")} />
         </Button>
-        {!expanded && !td.complete && <p className="px-4 pb-2 text-center text-sm text-muted-foreground">
-          <Lock className="mr-1 inline h-3 w-3" />{td.tier === "advanced" && !isPremium ? "Complete Foundation and get Premium" : td.tier === "foundation" ? "Complete previous badges first" : "Complete Foundation to unlock"}
-        </p>}
-        <div id={`tier-content-${td.tier}`} className={cn("grid overflow-hidden", !reducedMotion && "transition-[grid-template-rows] duration-300")}
-          style={{ gridTemplateRows: expanded ? "1fr" : "0fr" }} aria-hidden={!expanded}
-          {...(!expanded ? { inert: "" } as Record<string, string> : {})}>
-          <div className="min-h-0 overflow-hidden">
-            <div className="relative mx-auto w-[320px] max-w-full pt-10">
-              <svg viewBox={`0 0 320 ${height}`} preserveAspectRatio="none" className="pointer-events-none absolute inset-x-0 top-10 w-full" style={{ height }} aria-hidden="true">
-                <defs><clipPath id={`completed-${td.tier}`}><rect width="320" height={completedNodes > 1 ? 48 + (completedNodes - 1) * pathNodeSpacing : 0} /></clipPath></defs>
-                <path d={connector} fill="none" stroke="currentColor" strokeWidth="4" className="text-muted" />
-                <path d={connector} fill="none" stroke="currentColor" strokeWidth="4" className="learn-tier-color" clipPath={`url(#completed-${td.tier})`} />
-              </svg>
-              {td.modules.map((node, index) => {
-                const { module, state, percent } = node;
-                const previous = td.modules[index - 1]?.module || modulesByTier.foundation?.find(item => !earnedModuleIds.has(item.id));
-                const label = state === "current" ? `${module.title}, in progress, ${percent} percent`
-                  : state === "locked" ? `${module.title}, locked, complete ${previous?.title || "Foundation"} first`
-                  : state === "premium-locked" ? `${module.title}, Premium required`
-                  : `${module.title}, ${state === "completed" ? "completed, 100 percent" : "available"}`;
-                const circle = <span className={cn("learn-path-circle inline-flex h-[64px] w-[64px] items-center justify-center rounded-full border-2 text-2xl font-bold",
-                  state === "completed" ? "learn-node-completed" : state === "locked" || state === "premium-locked" ? "border-border bg-muted text-foreground" : "learn-node-open bg-card text-foreground")}>
-                  {state === "locked" ? <Lock className="h-6 w-6" /> : state === "premium-locked" ? <Crown className="h-6 w-6" /> : badgeIcons[module.slug] || "★"}
-                  {state === "completed" && <CheckCircle className="absolute bottom-0 right-0 h-5 w-5 rounded-full bg-card text-success" />}
-                </span>;
-                return <div key={module.id} ref={state === "current" ? scrollTargetRef : undefined}
-                  className="relative flex flex-col items-center" style={{ height: pathNodeSpacing, transform: `translateX(${pathOffsets[index % pathOffsets.length]}px)` }}>
-                  {state === "current" && <m.span data-current-bubble className="absolute -top-8 z-10 rounded-lg bg-primary px-3 py-1 text-sm font-bold text-primary-foreground"
-                    animate={{ y: reducedMotion ? 0 : [0, -4, 0] }} transition={{ duration: 2, repeat: reducedMotion ? 0 : Infinity, ease: easing.smooth }}>
-                    {currentStarted ? "Continue" : "Start"}
-                  </m.span>}
-                  <Button variant="ghost" aria-label={label} title={module.title} tabIndex={expanded ? 0 : -1}
-                    className="learn-path-node relative h-[96px] min-h-[72px] w-[96px] rounded-full p-0 hover:bg-transparent"
-                    onClick={() => {
-                      if (state === "premium-locked") navigate("/premium");
-                      else if (state === "locked") toast.info("Complete previous badges first", { duration: 2000 });
-                      else onModuleClick(module.slug);
-                    }}>
-                    {state === "current" ? <ProgressRing size={80} strokeWidth={4} percent={percent}>{circle}</ProgressRing> : circle}
-                  </Button>
-                  <span className="max-w-[160px] text-center text-sm font-medium leading-tight text-foreground">{module.title}</span>
-                  {state === "premium-locked" && <span className="text-xs text-muted-foreground">Premium required</span>}
-                </div>;
-              })}
-            </div>
-            {td.features.length > 0 && <div className="space-y-2 px-4 pb-4 text-sm text-muted-foreground">
-              {td.features.map(feature => <p key={feature.key} className="flex items-center gap-2">
-                {feature.isUnlocked ? <CheckCircle className="h-4 w-4 shrink-0 text-success" /> : <Lock className="h-4 w-4 shrink-0" />}
-                <span>{feature.label}</span>
-              </p>)}
-            </div>}
+        {!tierOpen && earned < modules.length && <p className="text-center text-sm text-muted-foreground">{tier === "advanced" && !isPremium ? "Complete Foundation and get Premium" : "Complete Foundation to unlock"}</p>}
+        {tierOpen && <div className="space-y-4">
+          {modules.map((module, levelIndex) => {
+            const earnedBadge = earnedModuleIds.has(module.id);
+            const unlocked = earnedBadge || isModuleUnlocked(module);
+            const premium = isAdvancedPremiumLocked(module);
+            const expanded = expandedLevels.has(module.id);
+            const lessons = moduleSections(module.id);
+            const nodes = levelNodes(lessons, completedSectionIds, earnedBadge, unlocked);
+            const done = nodes.filter(n => n.done).length;
+            const connector = windingConnector(nodes.length);
+            const height = 48 + (nodes.length - 1) * pathNodeSpacing;
+            const firstIncomplete = nodes.findIndex(n => !n.done);
+            const donePrefix = firstIncomplete < 0 ? nodes.length : firstIncomplete;
+            return <section key={module.id} aria-label={module.title} className="learn-level-block">
+              {expanded ? <header className="learn-level-band sticky z-20 flex items-center gap-2 px-3 py-2" style={{ top: headerHeight }}>
+                <div className="min-w-0 flex-1"><p className="text-xs">{tierLabels[tier]} · Level {levelIndex + 1} of {modules.length}</p><h3 className="text-base font-bold leading-tight">{module.title}</h3></div>
+                <span className="shrink-0 text-sm">{done}/{nodes.length}</span>
+                <Button variant="outline" className="min-h-[44px] bg-card text-foreground" onClick={() => setGuideId(module.id)}>Guide</Button>
+                {module.id !== currentModuleId && <Button variant="ghost" size="icon" aria-label={`Collapse ${module.title}`} onClick={() => toggle(module.id)}><ChevronDown /></Button>}
+              </header> : <div className="flex min-h-[72px] items-center gap-2 border-b border-border py-2">
+                <Button variant="ghost" className="h-auto min-h-[44px] flex-1 justify-start whitespace-normal text-left" onClick={() => setGuideId(module.id)} aria-label={`${module.title}, ${earnedBadge ? "completed" : reason(module) || "available"}`}>
+                  <span className="text-2xl" aria-hidden="true">{badgeIcons[module.slug] || "★"}</span>
+                  {earnedBadge ? <CheckCircle className="h-5 w-5 shrink-0" /> : !unlocked ? <Lock className="h-5 w-5 shrink-0" /> : null}
+                  <div><h3 className="text-base font-semibold">{module.title}</h3>{!unlocked && <p className="text-xs text-muted-foreground">{reason(module)}</p>}</div>
+                </Button>
+                {earnedBadge && <Button variant="outline" className="min-h-[44px]" onClick={() => toggle(module.id)}>Review</Button>}
+              </div>}
+              <div className={cn("grid", !reduced && "transition-[grid-template-rows] duration-300")} style={{ gridTemplateRows: expanded ? "1fr" : "0fr" }}>
+                <div className="min-h-0">
+                  {expanded && <div className="relative mx-auto w-[320px] max-w-full pt-10">
+                    <svg viewBox={`0 0 320 ${height}`} preserveAspectRatio="none" className="pointer-events-none absolute inset-x-0 top-10 w-full" style={{ height }} aria-hidden="true">
+                      <defs><clipPath id={`completed-${module.id}`}><rect width="320" height={donePrefix > 1 ? 48 + (donePrefix - 1) * pathNodeSpacing : 0} /></clipPath></defs>
+                      <path d={connector} fill="none" stroke="currentColor" strokeWidth="4" className="text-muted" />
+                      <path d={connector} fill="none" stroke="currentColor" strokeWidth="4" className="learn-tier-color" clipPath={`url(#completed-${module.id})`} />
+                    </svg>
+                    {nodes.map((node, index) => {
+                      const current = module.id === currentModuleId && node.current && node.unlocked;
+                      const started = node.section ? startedSectionIds.has(node.id) : currentStarted;
+                      const label = node.section ? `Lesson ${node.section}, ${node.title}, ${node.done ? "completed" : current ? "in progress" : node.unlocked ? "available" : "locked"}`
+                        : `Badge check, ${earnedBadge ? "completed" : node.unlocked ? "available" : `locked, finish ${lessons.length} lessons first`}`;
+                      const circle = <span className={cn("learn-path-circle relative inline-flex items-center justify-center rounded-full border-2 text-2xl font-bold",
+                        node.section ? "h-[64px] w-[64px]" : "h-[72px] w-[72px]", node.done ? "learn-level-done" : node.unlocked ? "learn-node-open bg-card text-foreground" : "border-border bg-muted text-foreground")}>
+                        {node.done ? <CheckCircle className="h-6 w-6" /> : premium ? <Crown className="h-6 w-6" /> : !node.unlocked ? <Lock className="h-6 w-6" /> : node.section ? <BookOpen className="h-6 w-6" /> : badgeIcons[module.slug] || "★"}
+                      </span>;
+                      return <m.div key={node.id} id={`learn-node-${node.section ? node.id : `quiz:${module.id}`}`} ref={current ? targetRef : undefined}
+                        initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: duration.fast, delay: reduced ? 0 : index * 0.08 }}
+                        className="learn-level-node relative flex flex-col items-center" style={{ height: pathNodeSpacing, marginLeft: pathOffsets[index % pathOffsets.length] * 2 }}>
+                        {current && <m.span data-current-bubble className="absolute -top-8 z-10 rounded-lg bg-primary px-3 py-1 text-sm font-bold text-primary-foreground"
+                          animate={{ y: reduced ? 0 : [0,-4,0] }} transition={{ duration: 2, repeat: reduced ? 0 : Infinity, ease: easing.smooth }}>{started ? "Continue" : "Start"}</m.span>}
+                        <Button variant="ghost" aria-label={label} title={node.title} className="learn-path-node relative h-[96px] w-[96px] rounded-full p-0 hover:bg-transparent"
+                          onClick={() => { if (premium) navigate("/premium"); else if (!node.unlocked) toast.info(node.section ? "Complete previous badges first" : "Finish the lessons first, you're almost there."); else go(module, node.section || undefined); }}>
+                          {current ? <ProgressRing size={node.section ? 80 : 88} strokeWidth={4} percent={moduleCompletionPercent(done, nodes.length, earnedBadge)}>{circle}</ProgressRing> : circle}
+                        </Button>
+                        <span className="max-w-[160px] text-center text-sm font-medium text-foreground">{node.section ? `Lesson ${node.section}` : "Badge Check"}</span>
+                        <span className="max-w-[160px] text-center text-xs leading-tight text-muted-foreground">{node.section ? node.title : module.title}</span>
+                      </m.div>;
+                    })}
+                  </div>}
+                </div>
+              </div>
+            </section>;
+          })}
+          <div className="flex flex-col items-center gap-2 py-4">
+            <Button variant="outline" className="h-[72px] w-[72px] rounded-full" aria-label={`${tierLabels[tier]} Review, ${earned >= 2 ? "available" : "locked, earn 2 badges in this tier to unlock"}`}
+              onClick={() => { if (earned >= 2) navigate(`/learn/review/${tier}`); else toast.info("Earn 2 badges in this tier to unlock"); }}>
+              {earned >= 2 ? <Trophy className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
+            </Button><span className="text-sm font-semibold">{tierLabels[tier]} Review</span>
+            {earned < 2 && <span className="text-xs text-muted-foreground">Earn 2 badges in this tier to unlock</span>}
           </div>
-        </div>
+        </div>}
       </div>;
     })}
+    {guide && <ModuleGuide module={guide} icon={badgeIcons[guide.slug] || "★"} reason={reason(guide)} premium={isAdvancedPremiumLocked(guide)} earned={earnedModuleIds.has(guide.id)}
+      started={(moduleProgress[guide.id]?.completed || 0) > 0 || guide.id === currentModuleId && currentStarted}
+      features={(modulesByTier[guide.tier || "foundation"] || []).filter(m => !earnedModuleIds.has(m.id)).length === 1 && !earnedModuleIds.has(guide.id)
+        ? (tierFeatures.find(t => t.tier === guide.tier)?.features || []).map(f => f.label) : []}
+      onClose={() => setGuideId(null)} onStart={() => startModule(guide)} onUpgrade={() => navigate("/premium")} />}
   </div>;
 };

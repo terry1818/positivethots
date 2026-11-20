@@ -32,6 +32,8 @@ import { BrandedEmptyState } from "@/components/BrandedEmptyState";
 import { LearnToday } from "@/components/education/LearnToday";
 import { LearnContinueBar } from "@/components/education/LearnContinueBar";
 import { nextLearningTarget } from "@/lib/learnHome";
+import { useTotalBadgeCount } from "@/hooks/useTotalBadgeCount";
+import type { LessonSection } from "@/lib/learnLevels";
 import { reportError } from "@/lib/errorReporting";
 
 interface Module {
@@ -54,6 +56,10 @@ const Learn = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   
+  const [pathSections, setPathSections] = useState<LessonSection[]>([]);
+  const [completedSectionIds, setCompletedSectionIds] = useState<Set<string>>(new Set());
+  const [startedSectionIds, setStartedSectionIds] = useState<Set<string>>(new Set());
+  const { total: cachedTotal } = useTotalBadgeCount();
   const [moduleProgress, setModuleProgress] = useState<Record<string, { completed: number; total: number }>>({});
   const [continueModuleId, setContinueModuleId] = useState<string | undefined>();
   const [continueSectionNumber, setContinueSectionNumber] = useState<number | undefined>();
@@ -101,8 +107,8 @@ const Learn = () => {
       const [modulesResult, badgesResult, sectionsResult, progressResult] = await Promise.all([
         supabase.from("education_modules").select("*").order("order_index"),
         supabase.from("user_badges").select("module_id, earned_at").eq("user_id", session.user.id),
-        supabase.from("module_sections").select("id, module_id, section_number").order("section_number"),
-        supabase.from("user_section_progress").select("section_id, completed").eq("user_id", session.user.id).eq("completed", true),
+        supabase.from("module_sections").select("id, module_id, section_number, title").order("section_number"),
+        supabase.from("user_section_progress").select("section_id, completed").eq("user_id", session.user.id),
       ]);
       if (modulesResult.error) throw modulesResult.error;
       if (badgesResult.error) throw badgesResult.error;
@@ -114,13 +120,16 @@ const Learn = () => {
       const mods = modulesResult.data || [];
       const badges = badgesResult.data || [];
       const sections = sectionsResult.data || [];
-      const completedProgress = progressResult.data || [];
+      const completedProgress = (progressResult.data || []).filter(p => p.completed);
+      setPathSections(sections);
+      setStartedSectionIds(new Set((progressResult.data || []).map(p => p.section_id)));
 
       setModules(mods);
       setUserBadges(badges);
 
       // Build module progress map
       const completedSectionIds = new Set(completedProgress.map(p => p.section_id));
+      setCompletedSectionIds(completedSectionIds);
       const progressMap: Record<string, { completed: number; total: number }> = {};
       for (const section of sections) {
         if (!progressMap[section.module_id]) {
@@ -188,7 +197,7 @@ const Learn = () => {
 
   const earnedModuleIds = useMemo(() => new Set(userBadges.map(b => b.module_id)), [userBadges]);
   const earnedSlugs = useMemo(() => new Set(modules.filter(m => earnedModuleIds.has(m.id)).map(m => m.slug)), [modules, earnedModuleIds]);
-  const totalBadges = modules.length;
+  const totalBadges = cachedTotal;
   const earnedCount = userBadges.length;
   const requiredModules = useMemo(() => modules.filter(m => m.is_required), [modules]);
   const requiredEarned = useMemo(() => requiredModules.filter(m => earnedModuleIds.has(m.id)).length, [requiredModules, earnedModuleIds]);
@@ -244,7 +253,12 @@ const Learn = () => {
   }, [modules, moduleSearchQuery]);
 
   const nextTarget = nextLearningTarget(modules, earnedModuleIds, isModuleUnlocked, moduleProgress, userBadges, continueModuleId, continueSectionNumber);
-  const openNextLesson = () => { if (nextTarget) navigate(`/learn/${nextTarget.module.slug}`); };
+  const openNextLesson = () => {
+    if (!nextTarget) return;
+    const lessons = pathSections.filter(s => s.module_id === nextTarget.module.id);
+    const next = lessons.find(s => !completedSectionIds.has(s.id));
+    navigate(`/learn/${nextTarget.module.slug}${nextTarget.review ? "?section=1" : next ? `?section=${next.section_number}` : "?quiz=1"}`);
+  };
 
   if (loading) {
     return <PageSkeleton variant="learn" />;
@@ -326,7 +340,7 @@ const Learn = () => {
               />
               <div className="flex items-center gap-1 bg-muted/50 rounded-full px-2 py-0.5">
                 <Award className="h-3.5 w-3.5 text-primary" />
-                <span className="text-sm font-medium"><AnimatedCounter end={earnedCount} />/{totalBadges}</span>
+                <span className="text-sm font-medium"><AnimatedCounter end={earnedCount} />/{totalBadges ?? "—"}</span>
               </div>
               <Button variant="ghost" size="icon"
                 onClick={() => setShowSearch(s => !s)}
@@ -376,6 +390,7 @@ const Learn = () => {
             modulesByTier={modulesByTier} earnedModuleIds={earnedModuleIds}
             isModuleUnlocked={isModuleUnlocked} isAdvancedPremiumLocked={isAdvancedPremiumLocked}
             isPremium={isPremium} moduleProgress={moduleProgress}
+            sections={pathSections} completedSectionIds={completedSectionIds} startedSectionIds={startedSectionIds}
             onModuleClick={slug => navigate(`/learn/${slug}`)} tierFeatures={tiers}
             currentModuleId={nextTarget?.review ? undefined : nextTarget?.module.id}
             currentStarted={nextTarget?.started || false}
@@ -389,7 +404,7 @@ const Learn = () => {
           currentXP={stats?.total_xp || 0} onRestore={restoreStreak} onDismiss={() => {}} />
 
         {/* VIP Upsell for curriculum completion */}
-        {totalBadges > 0 && earnedCount >= totalBadges && subscriptionTier !== "vip" && (
+        {totalBadges !== undefined && totalBadges > 0 && earnedCount >= totalBadges && subscriptionTier !== "vip" && (
           <Card className="animate-fade-in bg-gradient-to-r from-amber-500/10 to-accent/10 border-amber-500/20">
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
