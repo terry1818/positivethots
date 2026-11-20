@@ -1,0 +1,238 @@
+{
+ "4055c558-eb0d-429b-b657-18df57b7a0f2": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Divine Matrix: A Field Connecting Everything",
+    "art": "",
+    "alt": "",
+    "plain": "One author, Gregg Braden, suggests that everything is connected by an unseen field."
+   },
+   {
+    "heading": "Mirror Neurons: The Biological Basis of Connection",
+    "art": "",
+    "alt": "",
+    "plain": "Your brain has cells that fire when you watch someone else, as if you were doing it too."
+   },
+   {
+    "heading": "Emotional Contagion: How Feelings Spread",
+    "art": "",
+    "alt": "",
+    "plain": "Feelings spread from person to person, like yawns."
+   },
+   {
+    "heading": "Practical Implications for Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "So the mood you bring into a room affects your relationships."
+   },
+   {
+    "heading": "The Interconnected Field in ENM/Polyamory",
+    "art": "",
+    "alt": "",
+    "plain": "With several partners, your mood travels through the whole network."
+   }
+  ],
+  "checks": [
+   {
+    "id": "4055c558-1",
+    "after": "The Divine Matrix: A Field Connecting Everything",
+    "prompt": "What does Gregg Braden's \"Divine Matrix\" propose?",
+    "options": [
+     "That people are isolated",
+     "That everything in the universe is connected",
+     "That feelings do not matter"
+    ],
+    "answer": 1,
+    "explanation": "That everything in the universe is connected. This is Braden's proposal, that everything is connected by a field. It is his idea, not established physics."
+   },
+   {
+    "id": "4055c558-2",
+    "after": "Emotional Contagion: How Feelings Spread",
+    "prompt": "Emotional contagion means…",
+    "options": [
+     "Catching a cold",
+     "Feelings spreading from person to person",
+     "Hiding your emotions"
+    ],
+    "answer": 1,
+    "explanation": "Feelings spreading from person to person. Elaine Hatfield and colleagues studied emotional contagion: how feelings spread between people."
+   }
+  ],
+  "takeaway": "People affect each other more than we notice. Your mood and attention spread to those around you."
+ },
+ "44e0d1c8-1f03-43e6-985e-62057cf4735f": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Heart Coherence: The Science of the Heart-Brain Connection",
+    "art": "",
+    "alt": "",
+    "plain": "Heart coherence is about your heart and brain working in a steady rhythm together."
+   },
+   {
+    "heading": "Intention Research: The Frontier",
+    "art": "",
+    "alt": "",
+    "plain": "Some researchers study whether intention has effects. The lesson calls this the frontier."
+   },
+   {
+    "heading": "Feeling vs. Thinking: The Critical Distinction",
+    "art": "",
+    "alt": "",
+    "plain": "Thinking a wish is not the same as feeling it. The lesson says feeling is what counts."
+   }
+  ],
+  "checks": [
+   {
+    "id": "44e0d1c8-1",
+    "after": "Heart Coherence: The Science of the Heart-Brain Connection",
+    "prompt": "Heart coherence is about…",
+    "options": [
+     "Blood type",
+     "Running speed",
+     "The heart-brain connection"
+    ],
+    "answer": 2,
+    "explanation": "The heart-brain connection. The HeartMath Institute has researched heart coherence and the heart-brain connection."
+   },
+   {
+    "id": "44e0d1c8-2",
+    "after": "Feeling vs. Thinking: The Critical Distinction",
+    "prompt": "What is the critical distinction in this lesson?",
+    "options": [
+     "Thinking is not the same as feeling",
+     "Wishing is the same as doing",
+     "Feelings do not matter"
+    ],
+    "answer": 0,
+    "explanation": "Thinking is not the same as feeling. You can think a thought without really feeling it, and the lesson says the feeling is what matters."
+   }
+  ],
+  "takeaway": "Calm, steady feelings matter more than repeating thoughts. Feel the intention, do not just think it."
+ },
+ "9bfa2217-7ca7-4f8e-9ef6-cc8bb94d96a6": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Power of Feeling \"As If\"",
+    "art": "",
+    "alt": "",
+    "plain": "Braden's practice: feel as if the good thing has already happened."
+   },
+   {
+    "heading": "The Quantum Connection: Observer Effect and Entanglement",
+    "art": "",
+    "alt": "",
+    "plain": "Braden borrows ideas from quantum physics to explain this. Treat it as a comparison."
+   },
+   {
+    "heading": "The Observer Effect",
+    "art": "",
+    "alt": "",
+    "plain": "In some physics experiments, observing something changes how it behaves."
+   },
+   {
+    "heading": "Entanglement as Relationship",
+    "art": "",
+    "alt": "",
+    "plain": "Braden compares partners to linked particles: what affects one affects the other."
+   },
+   {
+    "heading": "The Difference Between Wanting and Believing",
+    "art": "",
+    "alt": "",
+    "plain": "Wanting says \"I do not have this\". Believing is a different starting point."
+   }
+  ],
+  "checks": [
+   {
+    "id": "9bfa2217-1",
+    "after": "The Power of Feeling \"As If\"",
+    "prompt": "What is Braden's \"as if\" practice?",
+    "options": [
+     "Waiting for proof first",
+     "Feeling as if your desired outcome is already true",
+     "Pretending to be someone else"
+    ],
+    "answer": 1,
+    "explanation": "Feeling as if your desired outcome is already true. One of Braden's most powerful practices is feeling \"as if\" your desired outcome is already true, even before physical evidence appears."
+   },
+   {
+    "id": "9bfa2217-2",
+    "after": "The Difference Between Wanting and Believing",
+    "prompt": "In this lesson, \"wanting\" means…",
+    "options": [
+     "\"I don't care\"",
+     "\"I don't have this, and I wish I did\"",
+     "\"I already have this\""
+    ],
+    "answer": 1,
+    "explanation": "\"I don't have this, and I wish I did\". The lesson separates wanting, which starts from lack, from believing."
+   }
+  ],
+  "takeaway": "Act and feel from \"this is possible for me\", not from \"I am missing something\"."
+ },
+ "372846af-5a71-447b-9ca2-26186e804ca1": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Creating From the Field vs. Chasing Outcomes",
+    "art": "",
+    "alt": "",
+    "plain": "The lesson contrasts chasing results with creating from a calmer place."
+   },
+   {
+    "heading": "Gratitude as a Frequency",
+    "art": "",
+    "alt": "",
+    "plain": "Braden puts gratitude at the top of the list of feelings to start from."
+   },
+   {
+    "heading": "Intention Setting Across Life Domains",
+    "art": "",
+    "alt": "",
+    "plain": "Use a simple step-by-step to set an intention in any area of life."
+   }
+  ],
+  "checks": [
+   {
+    "id": "372846af-1",
+    "after": "Creating From the Field vs. Chasing Outcomes",
+    "prompt": "What two approaches does the lesson contrast?",
+    "options": [
+     "Saving vs. spending",
+     "Talking vs. listening",
+     "Creating from the field vs. chasing outcomes"
+    ],
+    "answer": 2,
+    "explanation": "Creating from the field vs. chasing outcomes. The lesson contrasts creating from the field with chasing outcomes."
+   },
+   {
+    "id": "372846af-2",
+    "after": "Gratitude as a Frequency",
+    "prompt": "Which feeling does Braden emphasize most?",
+    "options": [
+     "Urgency",
+     "Gratitude",
+     "Envy"
+    ],
+    "answer": 1,
+    "explanation": "Gratitude. Braden emphasizes gratitude as one of the highest frequencies you can broadcast."
+   }
+  ],
+  "takeaway": "Start from gratitude for what you have, set a clear intention, then act."
+ }
+}

@@ -1,0 +1,292 @@
+{
+ "3fb85402-a554-4c70-a03c-d57008224d5b": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Your Relationship Philosophy",
+    "art": "",
+    "alt": "",
+    "plain": "After all you have learned, it is time to decide what you believe about relationships."
+   },
+   {
+    "heading": "What Is a Relationship Philosophy?",
+    "art": "",
+    "alt": "",
+    "plain": "It is a guide for your choices, not a list of rules."
+   },
+   {
+    "heading": "Key Questions for Your Philosophy",
+    "art": "",
+    "alt": "",
+    "plain": "Ask what you value most: honesty, freedom, safety, growth, fun?"
+   },
+   {
+    "heading": "A Living Document",
+    "art": "",
+    "alt": "",
+    "plain": "It will change over time, and that is fine."
+   },
+   {
+    "heading": "Shaped by History",
+    "art": "",
+    "alt": "",
+    "plain": "Your early life shaped your views. Check whether they still fit you."
+   }
+  ],
+  "checks": [
+   {
+    "id": "3fb85402-1",
+    "after": "What Is a Relationship Philosophy?",
+    "prompt": "A relationship philosophy is…",
+    "options": [
+     "A set of demands",
+     "Not a list of rules or a rigid manifesto",
+     "A legal contract"
+    ],
+    "answer": 1,
+    "explanation": "Not a list of rules or a rigid manifesto. A relationship philosophy is not a list of rules or a rigid manifesto."
+   },
+   {
+    "id": "3fb85402-2",
+    "after": "A Living Document",
+    "prompt": "Will your relationship philosophy stay the same forever?",
+    "options": [
+     "Yes, once written it is fixed",
+     "Only if you marry",
+     "No, it will change"
+    ],
+    "answer": 2,
+    "explanation": "No, it will change. Your relationship philosophy will change. It is a living document."
+   }
+  ],
+  "takeaway": "Write down what you value in relationships and let it change as you grow."
+ },
+ "2ba78fc0-3133-405a-b3dc-98854a5cf09d": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Continuing Education & SHA Resources",
+    "art": "",
+    "alt": "",
+    "plain": "This course is a starting point, not the finish."
+   },
+   {
+    "heading": "Recommended Books",
+    "art": "",
+    "alt": "",
+    "plain": "A few well-respected books are a good next step."
+   },
+   {
+    "heading": "Podcasts and Online Communities",
+    "art": "",
+    "alt": "",
+    "plain": "Podcasts and online groups keep you learning in an easy way."
+   },
+   {
+    "heading": "The Importance of Diverse Perspectives",
+    "art": "",
+    "alt": "",
+    "plain": "Learn from people whose lives are different from yours."
+   },
+   {
+    "heading": "Workshops and Conferences",
+    "art": "",
+    "alt": "",
+    "plain": "Workshops let you practise, which books cannot do."
+   },
+   {
+    "heading": "Evaluating Quality",
+    "art": "",
+    "alt": "",
+    "plain": "Not all sex ed is good. Check who is teaching it."
+   },
+   {
+    "heading": "Education vs Therapy",
+    "art": "",
+    "alt": "",
+    "plain": "Education gives you knowledge. Therapy gives you personal healing. They are different."
+   }
+  ],
+  "checks": [
+   {
+    "id": "2ba78fc0-1",
+    "after": "Continuing Education & SHA Resources",
+    "prompt": "The curriculum is described as…",
+    "options": [
+     "The last word",
+     "A test",
+     "A foundation, not a finish line"
+    ],
+    "answer": 2,
+    "explanation": "A foundation, not a finish line. This curriculum is a foundation — not a finish line."
+   },
+   {
+    "id": "2ba78fc0-2",
+    "after": "Education vs Therapy",
+    "prompt": "What is the difference between education and therapy?",
+    "options": [
+     "Therapy is only for emergencies",
+     "Education gives knowledge and skills; therapy gives personalized healing",
+     "They are the same"
+    ],
+    "answer": 1,
+    "explanation": "Education gives knowledge and skills; therapy gives personalized healing. An important distinction: education provides knowledge and skills; therapy provides personalized healing and growth."
+   }
+  ],
+  "takeaway": "Keep learning from good books, podcasts and workshops, and know when you need a therapist instead."
+ },
+ "47da48b3-d4e2-4681-b989-e6b373432fcc": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Finding Professional Support",
+    "art": "",
+    "alt": "",
+    "plain": "Getting professional help is a way of looking after yourself and your relationships."
+   },
+   {
+    "heading": "Types of Providers",
+    "art": "",
+    "alt": "",
+    "plain": "Different professionals have different training. Sex therapists have extra training in sexuality."
+   },
+   {
+    "heading": "Finding the Right Provider",
+    "art": "",
+    "alt": "",
+    "plain": "Online directories let you search for certified people near you."
+   },
+   {
+    "heading": "What to Look For",
+    "art": "",
+    "alt": "",
+    "plain": "Look for someone who understands open relationships and kink and will not judge."
+   },
+   {
+    "heading": "Advocating for Yourself",
+    "art": "",
+    "alt": "",
+    "plain": "You are allowed to ask a provider questions before you commit."
+   },
+   {
+    "heading": "Cost and Access",
+    "art": "",
+    "alt": "",
+    "plain": "Help can cost a lot. Ask about lower-cost options."
+   },
+   {
+    "heading": "Normalizing Help-Seeking",
+    "art": "",
+    "alt": "",
+    "plain": "Going to therapy does not mean something is wrong with you."
+   }
+  ],
+  "checks": [
+   {
+    "id": "47da48b3-1",
+    "after": "Types of Providers",
+    "prompt": "What sets AASECT-certified sex therapists apart?",
+    "options": [
+     "Specialized training in human sexuality",
+     "No license needed",
+     "Lower prices"
+    ],
+    "answer": 0,
+    "explanation": "Specialized training in human sexuality. AASECT-certified sex therapists have completed specialized training in human sexuality beyond their general therapy license."
+   },
+   {
+    "id": "47da48b3-2",
+    "after": "Normalizing Help-Seeking",
+    "prompt": "Therapy is…",
+    "options": [
+     "Not a sign that something is wrong with you",
+     "A last resort",
+     "Only for crises"
+    ],
+    "answer": 0,
+    "explanation": "Not a sign that something is wrong with you. Therapy is not a sign that something is wrong with you. It's an investment in your wellbeing and your relationships."
+   }
+  ],
+  "takeaway": "Getting professional help is self-care. Look for someone who respects your relationship style."
+ },
+ "ba522c3f-975e-4e68-afea-5e84176b3d1a": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Your Growth Edge",
+    "art": "",
+    "alt": "",
+    "plain": "Your growth edge is the spot where your skills meet your next challenge."
+   },
+   {
+    "heading": "Identifying Your Growth Edge",
+    "art": "",
+    "alt": "",
+    "plain": "Notice which topics in this course felt most alive for you. Start there."
+   },
+   {
+    "heading": "Setting Intentions, Not Resolutions",
+    "art": "",
+    "alt": "",
+    "plain": "An intention is a direction to move in, not a pass-or-fail goal."
+   },
+   {
+    "heading": "Building Your Support Network",
+    "art": "",
+    "alt": "",
+    "plain": "Nobody grows alone. Build a circle of people who support you."
+   },
+   {
+    "heading": "Self-Compassion Throughout Growth",
+    "art": "",
+    "alt": "",
+    "plain": "Progress goes up and down. Be kind to yourself."
+   },
+   {
+    "heading": "A Closing Affirmation",
+    "art": "guide-celebrate-all",
+    "alt": "",
+    "plain": "You have put real time into understanding yourself. That counts."
+   }
+  ],
+  "checks": [
+   {
+    "id": "ba522c3f-1",
+    "after": "Setting Intentions, Not Resolutions",
+    "prompt": "An intention is…",
+    "options": [
+     "A direction you want to move in",
+     "A strict deadline",
+     "A promise to someone else"
+    ],
+    "answer": 0,
+    "explanation": "A direction you want to move in. An intention is a direction you want to move in. A resolution is a rigid goal with pass/fail outcomes."
+   },
+   {
+    "id": "ba522c3f-2",
+    "after": "Self-Compassion Throughout Growth",
+    "prompt": "Progress is…",
+    "options": [
+     "Guaranteed",
+     "Not linear",
+     "Always steady"
+    ],
+    "answer": 1,
+    "explanation": "Not linear. Progress is not linear. You will have setbacks, moments of confusion, and times when old patterns reassert themselves."
+   }
+  ],
+  "takeaway": "Pick the one area you most want to grow in, set a direction, find support and be kind to yourself."
+ }
+}

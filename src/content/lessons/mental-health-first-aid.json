@@ -1,0 +1,373 @@
+{
+ "0d8d2373-8ab8-43c0-bf31-9b1d870cd827": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Understanding Mental Health Basics",
+    "art": "mental-health-first-aid/l1-0.webp",
+    "alt": "A guide holding a balance scale with a heart on one side and a brain on the other",
+    "size": [
+     512,
+     482
+    ],
+    "plain": "Your mind's health matters as much as your body's."
+   },
+   {
+    "heading": "What Mental Health Actually Means",
+    "art": "mental-health-first-aid/l1-1.webp",
+    "alt": "A guide watering a small plant growing from a head-shaped pot",
+    "size": [
+     505,
+     500
+    ],
+    "plain": "Good mental health is more than not being ill. It is coping, connecting and growing."
+   },
+   {
+    "heading": "Common Conditions You'll Encounter",
+    "art": "mental-health-first-aid/l1-2.webp",
+    "alt": "A guide standing calmly under an umbrella beneath a small personal raincloud",
+    "size": [
+     316,
+     502
+    ],
+    "plain": "Common ones you will meet include anxiety and depression."
+   },
+   {
+    "heading": "Mental Health in LGBTQ+ and ENM Communities",
+    "art": "",
+    "alt": "",
+    "plain": "LGBTQ+ people have higher rates of struggle, and it is not because of who they are."
+   },
+   {
+    "heading": "Destigmatizing Mental Health in Relationships",
+    "art": "mental-health-first-aid/l1-4.webp",
+    "alt": "Two guides chatting openly on a park bench, an empty speech bubble with a heart above them",
+    "size": [
+     512,
+     472
+    ],
+    "plain": "Talk about mental health as openly as you would a physical illness."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "0d8d2373-1",
+    "after": "What Mental Health Actually Means",
+    "prompt": "Mental health is…",
+    "options": [
+     "Not simply the absence of mental illness",
+     "Something only doctors discuss",
+     "Only about being happy"
+    ],
+    "answer": 0,
+    "explanation": "Not simply the absence of mental illness. Mental health is not simply the absence of mental illness."
+   },
+   {
+    "id": "0d8d2373-2",
+    "after": "Mental Health in LGBTQ+ and ENM Communities",
+    "prompt": "Higher rates of mental health challenges among LGBTQ+ people are…",
+    "options": [
+     "Caused by their identity",
+     "Not caused by their identity",
+     "A myth"
+    ],
+    "answer": 1,
+    "explanation": "Not caused by their identity. LGBTQ+ individuals face disproportionately higher rates of mental health challenges, and not because of their identity."
+   }
+  ],
+  "takeaway": "Mental health is part of health. Talk about it as openly as you would a physical illness."
+ },
+ "ab569fc8-1a69-4fa8-b1cc-e109c7d41001": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Recognizing Crisis Signs",
+    "art": "mental-health-first-aid/l2-0.webp",
+    "alt": "A guide holding a first-aid kit marked with a heart",
+    "size": [
+     428,
+     499
+    ],
+    "plain": "Mental health first aid means noticing distress and responding well. You are not the therapist."
+   },
+   {
+    "heading": "Levels of Mental Health Distress",
+    "art": "mental-health-first-aid/l2-1.webp",
+    "alt": "A guide holding a gauge with colour bands from green through yellow to red",
+    "size": [
+     477,
+     497
+    ],
+    "plain": "Distress runs from everyday stress up to crisis. Match your response to the level."
+   },
+   {
+    "heading": "Warning Signs That Require Attention",
+    "art": "mental-health-first-aid/l2-2.webp",
+    "alt": "A guide looking with concern at a small flashing warning light",
+    "size": [
+     412,
+     493
+    ],
+    "plain": "Big changes in sleep, mood or behaviour are warning signs. If someone may be in danger, get help right away."
+   },
+   {
+    "heading": "Special Considerations for ENM/Poly Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "With several partners, each may see only part of the picture. Share concerns with care."
+   },
+   {
+    "heading": "The ALGEE Framework",
+    "art": "mental-health-first-aid/l2-4.webp",
+    "alt": "A guide walking across five coloured stepping stones",
+    "size": [
+     512,
+     500
+    ],
+    "plain": "ALGEE: approach, listen, give support, encourage professional help, encourage self-care."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "ab569fc8-1",
+    "after": "Recognizing Crisis Signs",
+    "prompt": "Mental health first aid means responding…",
+    "options": [
+     "Appropriately, not as a therapist",
+     "By diagnosing the person",
+     "By ignoring the signs"
+    ],
+    "answer": 0,
+    "explanation": "Appropriately, not as a therapist. Mental health first aid means knowing how to recognize when someone is in distress and responding appropriately — not as a therapist, but as a caring partner or friend."
+   },
+   {
+    "id": "ab569fc8-2",
+    "after": "The ALGEE Framework",
+    "prompt": "What does the L in ALGEE stand for?",
+    "options": [
+     "Lecture them",
+     "Listen nonjudgmentally",
+     "Leave them alone"
+    ],
+    "answer": 1,
+    "explanation": "Listen nonjudgmentally. ALGEE starts with Approach and assess for risk, then Listen nonjudgmentally."
+   }
+  ],
+  "takeaway": "Know the warning signs, stay calm and listen, and help the person reach professional help."
+ },
+ "1da665ef-0a50-4501-9348-d07bd79ac36b": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "How to Support Without Fixing",
+    "art": "mental-health-first-aid/l3-0.webp",
+    "alt": "A sitting beside B with a hand on his shoulder, a closed toolbox left on the floor",
+    "size": [
+     512,
+     460
+    ],
+    "plain": "Trying to fix a partner's mental health usually backfires."
+   },
+   {
+    "heading": "Why \"Fixing\" Doesn't Work",
+    "art": "mental-health-first-aid/l3-1.webp",
+    "alt": "A guide holding a wrench and looking unsure at a floating heart",
+    "size": [
+     430,
+     475
+    ],
+    "plain": "The urge to fix comes from love, but it does not work."
+   },
+   {
+    "heading": "What Support Actually Looks Like",
+    "art": "mental-health-first-aid/l3-2.webp",
+    "alt": "Two guides sitting side by side quietly, C holding D's hand",
+    "size": [
+     503,
+     413
+    ],
+    "plain": "Real support is staying with them in the hard moment without trying to change it."
+   },
+   {
+    "heading": "Setting Sustainable Boundaries",
+    "art": "mental-health-first-aid/l3-3.webp",
+    "alt": "A guide filling her own cup from a teapot",
+    "size": [
+     430,
+     430
+    ],
+    "plain": "Helping should not cost you your own mental health. Set limits."
+   },
+   {
+    "heading": "In Polyamorous Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "Several partners can share the support, if they coordinate."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "1da665ef-1",
+    "after": "Why \"Fixing\" Doesn't Work",
+    "prompt": "Where does the urge to \"fix\" come from?",
+    "options": [
+     "Boredom",
+     "A good place: you want their pain to stop",
+     "A wish to control"
+    ],
+    "answer": 1,
+    "explanation": "A good place: you want their pain to stop. The urge to fix comes from a good place — you love this person and you want their pain to stop."
+   },
+   {
+    "id": "1da665ef-2",
+    "after": "What Support Actually Looks Like",
+    "prompt": "What is emotional presence?",
+    "options": [
+     "Solving the problem fast",
+     "Giving advice",
+     "Being with someone in their pain without trying to change it"
+    ],
+    "answer": 2,
+    "explanation": "Being with someone in their pain without trying to change it. Emotional presence: Being with someone in their pain without trying to change it."
+   }
+  ],
+  "takeaway": "Be with your partner in their pain instead of trying to fix it, and protect your own health too."
+ },
+ "006ca5df-dab7-440d-ab85-f4c13d92dc87": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Boundaries, Resources & Professional Help",
+    "art": "mental-health-first-aid/l4-0.webp",
+    "alt": "A guide hugging a heart while standing inside a low garden fence",
+    "size": [
+     446,
+     512
+    ],
+    "plain": "Supporting a partner does not mean giving up yourself."
+   },
+   {
+    "heading": "The Caregiver Burnout Cycle",
+    "art": "mental-health-first-aid/l4-1.webp",
+    "alt": "A guide carrying a stack of boxes too tall to see over, exhausted",
+    "size": [
+     370,
+     512
+    ],
+    "plain": "Caregivers burn out and get depressed at high rates. Take that seriously."
+   },
+   {
+    "heading": "Healthy Boundaries in Mental Health Support",
+    "art": "mental-health-first-aid/l4-2.webp",
+    "alt": "Two guides high-fiving as teammates in matching jerseys",
+    "size": [
+     512,
+     490
+    ],
+    "plain": "You can be a loving teammate. You cannot be their therapist."
+   },
+   {
+    "heading": "How to Set Boundaries Compassionately",
+    "art": "mental-health-first-aid/l4-3.webp",
+    "alt": "A guide speaking gently with one hand on her heart",
+    "size": [
+     399,
+     480
+    ],
+    "plain": "Say it kindly: \"When X happens, I feel Y, and I need Z.\""
+   },
+   {
+    "heading": "Your Own Support System",
+    "art": "mental-health-first-aid/l4-4.webp",
+    "alt": "A, B and C standing around D with supportive hands on his shoulders",
+    "size": [
+     512,
+     476
+    ],
+    "plain": "You need support too: your own therapist, friends or a support group."
+   },
+   {
+    "heading": "Types of Mental Health Professionals",
+    "art": "",
+    "alt": "",
+    "plain": "Different professionals do different jobs. Only some can prescribe medicine."
+   },
+   {
+    "heading": "Finding the Right Fit",
+    "art": "mental-health-first-aid/l4-6.webp",
+    "alt": "A guide searching on a laptop, a magnifying glass and a heart floating above the screen",
+    "size": [
+     497,
+     430
+    ],
+    "plain": "Online directories and low-cost services can help you find someone."
+   },
+   {
+    "heading": "What to Look For",
+    "art": "",
+    "alt": "",
+    "plain": "A good therapist is warm, does not judge and respects who you are."
+   },
+   {
+    "heading": "Insurance & Cost Navigation",
+    "art": "",
+    "alt": "",
+    "plain": "Ask about sliding-scale fees, work programs and community clinics."
+   }
+  ],
+  "checks": [
+   {
+    "id": "006ca5df-1",
+    "after": "The Caregiver Burnout Cycle",
+    "prompt": "What share of caregivers show signs of clinical depression?",
+    "options": [
+     "Under 5%",
+     "Exactly 100%",
+     "40-70%"
+    ],
+    "answer": 2,
+    "explanation": "40-70%. Research from the Family Caregiver Alliance shows 40-70% of caregivers show signs of clinical depression."
+   },
+   {
+    "id": "006ca5df-2",
+    "after": "How to Set Boundaries Compassionately",
+    "prompt": "What is the XYZ format?",
+    "options": [
+     "\"When X happens, I feel Y, and I need Z.\"",
+     "\"Never X, always Y, sometimes Z.\"",
+     "\"X is your fault, and so are Y and Z.\""
+    ],
+    "answer": 0,
+    "explanation": "\"When X happens, I feel Y, and I need Z.\" It is a compassionate way to set a boundary."
+   }
+  ],
+  "takeaway": "You can care deeply and still have limits. Get your own support and help them find a professional."
+ }
+}

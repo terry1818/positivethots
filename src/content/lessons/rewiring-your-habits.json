@@ -1,0 +1,254 @@
+{
+ "caec718d-6e5a-4ab9-b9c3-a8f4f3de535f": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Habit Loop: Your Blueprint for Change",
+    "art": "",
+    "alt": "",
+    "plain": "Every habit is a loop: something sets it off, you do it, you get a payoff."
+   },
+   {
+    "heading": "The Science: How Long Does Habit Formation Actually Take?",
+    "art": "",
+    "alt": "",
+    "plain": "The 21-day claim is a myth. Building a habit usually takes longer."
+   },
+   {
+    "heading": "Growth Mindset: The Foundation",
+    "art": "",
+    "alt": "",
+    "plain": "A growth mindset means believing you can get better with effort."
+   }
+  ],
+  "checks": [
+   {
+    "id": "caec718d-1",
+    "after": "The Habit Loop: Your Blueprint for Change",
+    "prompt": "What are the three parts of the habit loop?",
+    "options": [
+     "Cue, routine, reward",
+     "Plan, do, forget",
+     "Wish, wait, hope"
+    ],
+    "answer": 0,
+    "explanation": "Cue, routine, reward. Every action follows the same habit loop: a cue, a routine and a reward."
+   },
+   {
+    "id": "caec718d-2",
+    "after": "Growth Mindset: The Foundation",
+    "prompt": "A growth mindset is the belief that…",
+    "options": [
+     "Abilities can be developed with effort",
+     "Talent is fixed at birth",
+     "Effort does not matter"
+    ],
+    "answer": 0,
+    "explanation": "Abilities can be developed with effort. Carol Dweck's research at Stanford showed how mindset affects achievement and resilience."
+   }
+  ],
+  "takeaway": "Every habit runs on a loop: a cue, a routine and a reward. Change the loop and you change the habit."
+ },
+ "adf192f6-9ccd-4ab9-93a4-c48be9967a09": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The 1% Better Every Day Principle",
+    "art": "",
+    "alt": "",
+    "plain": "Getting a tiny bit better each day adds up to a lot."
+   },
+   {
+    "heading": "Identity-Based Habits: The Real Leverage",
+    "art": "",
+    "alt": "",
+    "plain": "Habits stick when they come from who you are, not just from a goal."
+   },
+   {
+    "heading": "Mapping Your Personal Habit Landscape",
+    "art": "",
+    "alt": "",
+    "plain": "Before you change anything, look clearly at what you do now."
+   },
+   {
+    "heading": "The Pattern Recognition Journal",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "adf192f6-1",
+    "after": "The 1% Better Every Day Principle",
+    "prompt": "What is the \"1% better every day\" idea?",
+    "options": [
+     "Small improvements build momentum over time",
+     "Change must be dramatic",
+     "Only big goals matter"
+    ],
+    "answer": 0,
+    "explanation": "Small improvements build momentum over time. A growth mindset creates momentum, and small daily gains build on each other."
+   },
+   {
+    "id": "adf192f6-2",
+    "after": "Identity-Based Habits: The Real Leverage",
+    "prompt": "Which habits give the real leverage?",
+    "options": [
+     "Habits copied from others",
+     "Goal-based habits",
+     "Identity-based habits"
+    ],
+    "answer": 2,
+    "explanation": "Identity-based habits. Goal-based habits aim at an outside target. Identity-based habits come from who you believe you are."
+   }
+  ],
+  "takeaway": "Small daily improvements add up, and they stick best when they match who you want to be."
+ },
+ "daea0e4c-0fff-41bf-9727-7bd6bb6c79a0": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Power of Implementation Intentions",
+    "art": "",
+    "alt": "",
+    "plain": "Decide exactly when and where you will do it. That makes you far more likely to follow through."
+   },
+   {
+    "heading": "The Neuroscience: Habits as Automatic Behavior",
+    "art": "",
+    "alt": "",
+    "plain": "Almost half of what we do each day is automatic habit."
+   },
+   {
+    "heading": "The Four Laws of Behavior Change",
+    "art": "",
+    "alt": "",
+    "plain": "Four rules make any habit easier to build."
+   },
+   {
+    "heading": "1. Make It Obvious: Environmental Design",
+    "art": "",
+    "alt": "",
+    "plain": "Make it obvious: set up your space so the right thing is in plain sight."
+   },
+   {
+    "heading": "2. Make It Attractive: Pair With Joy",
+    "art": "",
+    "alt": "",
+    "plain": "Make it attractive: pair it with something you enjoy."
+   },
+   {
+    "heading": "3. Make It Easy: Reduce Friction",
+    "art": "",
+    "alt": "",
+    "plain": "Make it easy: start with a version that takes two minutes."
+   },
+   {
+    "heading": "4. Make It Satisfying: Celebrate Wins",
+    "art": "",
+    "alt": "",
+    "plain": "Make it satisfying: celebrate each small win straight away."
+   }
+  ],
+  "checks": [
+   {
+    "id": "daea0e4c-1",
+    "after": "The Neuroscience: Habits as Automatic Behavior",
+    "prompt": "About how much of our daily behaviour is habit?",
+    "options": [
+     "95%",
+     "5%",
+     "43%"
+    ],
+    "answer": 2,
+    "explanation": "43%. Wendy Wood's research shows that 43% of our daily behaviours are performed out of habit."
+   },
+   {
+    "id": "daea0e4c-2",
+    "after": "3. Make It Easy: Reduce Friction",
+    "prompt": "Which tools make a habit easy?",
+    "options": [
+     "Waiting for motivation",
+     "Habit stacking and the two-minute rule",
+     "Willpower and guilt"
+    ],
+    "answer": 1,
+    "explanation": "Habit stacking and the two-minute rule. Use habit stacking and the two-minute rule to lower the barrier to entry."
+   }
+  ],
+  "takeaway": "Make the habit obvious, attractive, easy and satisfying."
+ },
+ "05c0c270-21ca-428f-8439-92f00472d416": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Breaking Bad Patterns: Replace, Don't Resist",
+    "art": "",
+    "alt": "",
+    "plain": "Bad habits once helped you. Swap them for something better instead of fighting them."
+   },
+   {
+    "heading": "Practical Exercises",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "The 2-Minute Identity Ritual",
+    "art": "",
+    "alt": "",
+    "plain": "Pick one two-minute practice and do it every day."
+   },
+   {
+    "heading": "Habit Stacking Across Life Domains",
+    "art": "",
+    "alt": "",
+    "plain": "Attach a new habit to something you already do, like right after dinner."
+   },
+   {
+    "heading": "Integration Across Life",
+    "art": "",
+    "alt": "",
+    "plain": "The same rules work in love, work, health and money."
+   }
+  ],
+  "checks": [
+   {
+    "id": "05c0c270-1",
+    "after": "Breaking Bad Patterns: Replace, Don't Resist",
+    "prompt": "What is the advice for breaking a bad pattern?",
+    "options": [
+     "Replace it, don't resist it",
+     "Ignore it",
+     "Use more willpower"
+    ],
+    "answer": 0,
+    "explanation": "Replace it, don't resist it. Most unhealthy habits exist because they worked at some point. Your nervous system learned they delivered a reward—safety, control, distraction, pain relief, numbness, attention."
+   },
+   {
+    "id": "05c0c270-2",
+    "after": "Habit Stacking Across Life Domains",
+    "prompt": "What is habit stacking?",
+    "options": [
+     "Linking a new habit to an existing one",
+     "Stacking rewards",
+     "Doing ten habits at once"
+    ],
+    "answer": 0,
+    "explanation": "Linking a new habit to an existing one. Habit stacking links a new habit to one you already do, like sharing an appreciation right after dinner."
+   }
+  ],
+  "takeaway": "Do not fight a bad habit. Replace it, and attach new habits to ones you already have."
+ }
+}

@@ -1,0 +1,325 @@
+{
+ "13397c18-28f7-4710-b1cc-c769c55aac6e": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Why Money Kills Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "Money causes more fights between partners than anything else."
+   },
+   {
+    "heading": "The Emotional Weight of Money",
+    "art": "",
+    "alt": "",
+    "plain": "Money is never just about money. It carries feelings."
+   },
+   {
+    "heading": "Money Scripts",
+    "art": "",
+    "alt": "",
+    "plain": "We all carry hidden beliefs about money. Researchers found four common ones."
+   },
+   {
+    "heading": "Money in ENM & Polyamorous Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "With several partners and different incomes, money gets more complicated."
+   },
+   {
+    "heading": "The Cost of Financial Secrecy",
+    "art": "",
+    "alt": "",
+    "plain": "Many people hide money matters from a partner, and it breaks trust."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "13397c18-1",
+    "after": "Why Money Kills Relationships",
+    "prompt": "What is the number one source of conflict in romantic relationships?",
+    "options": [
+     "In-laws",
+     "Chores",
+     "Money"
+    ],
+    "answer": 2,
+    "explanation": "Money. Money is the number one source of conflict in romantic relationships — more than sex, parenting, or household responsibilities."
+   },
+   {
+    "id": "13397c18-2",
+    "after": "The Cost of Financial Secrecy",
+    "prompt": "In one survey, what share of adults with combined finances admitted to financial deception?",
+    "options": [
+     "43%",
+     "93%",
+     "3%"
+    ],
+    "answer": 0,
+    "explanation": "43%. A National Endowment for Financial Education survey found that 43% of adults with combined finances admitted to financial deception — hiding purchases, accounts, debt, or income."
+   }
+  ],
+  "takeaway": "Money fights are really about safety, freedom and trust. Secrets about money damage relationships."
+ },
+ "f5bdcc87-d20e-41e3-bde8-549e294ee628": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Financial Communication Skills",
+    "art": "",
+    "alt": "",
+    "plain": "Talking about money well is a skill most of us were never taught."
+   },
+   {
+    "heading": "Why Money Conversations Are So Hard",
+    "art": "",
+    "alt": "",
+    "plain": "Shame makes money hard to talk about."
+   },
+   {
+    "heading": "The Money Date Framework",
+    "art": "",
+    "alt": "",
+    "plain": "Plan regular \"money dates\": calm talks about money when nothing is on fire."
+   },
+   {
+    "heading": "Communication Techniques",
+    "art": "",
+    "alt": "",
+    "plain": "Say how you feel instead of accusing."
+   },
+   {
+    "heading": "Navigating Financial Communication with Multiple Partners",
+    "art": "",
+    "alt": "",
+    "plain": "With several partners, there are more layers to talk through."
+   },
+   {
+    "heading": "Building Financial Communication Muscles",
+    "art": "",
+    "alt": "",
+    "plain": "It gets easier the more you practise."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "f5bdcc87-1",
+    "after": "The Money Date Framework",
+    "prompt": "What is a \"money date\"?",
+    "options": [
+     "An expensive dinner",
+     "A bank appointment",
+     "A regular, dedicated conversation about finances in a non-crisis context"
+    ],
+    "answer": 2,
+    "explanation": "A regular, dedicated conversation about finances in a non-crisis context. Schedule regular \"money dates\" — dedicated conversations about finances in a neutral, non-crisis context."
+   },
+   {
+    "id": "f5bdcc87-2",
+    "after": "Communication Techniques",
+    "prompt": "Which communication technique does the lesson recommend?",
+    "options": [
+     "\"I\" statements about feelings",
+     "Accusations about behaviour",
+     "Silence"
+    ],
+    "answer": 0,
+    "explanation": "\"I\" statements about feelings. Use \"I\" statements about feelings, not accusations about behaviour."
+   }
+  ],
+  "takeaway": "Schedule calm \"money dates\" and talk about feelings, not blame."
+ },
+ "88e11642-b3fd-4e77-9e44-409638bd2876": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Shared Resource Models",
+    "art": "",
+    "alt": "",
+    "plain": "There is no single right way to organise money together."
+   },
+   {
+    "heading": "Model 1: Fully Merged Finances",
+    "art": "",
+    "alt": "",
+    "plain": "Fully merged: everything goes into one shared pot."
+   },
+   {
+    "heading": "Model 2: Proportional Contribution",
+    "art": "",
+    "alt": "",
+    "plain": "Proportional: each person pays a share based on what they earn."
+   },
+   {
+    "heading": "Model 3: The Three-Pot System",
+    "art": "",
+    "alt": "",
+    "plain": "Three pots: yours, mine and ours."
+   },
+   {
+    "heading": "Model 4: Complete Financial Independence",
+    "art": "",
+    "alt": "",
+    "plain": "Fully separate: each person keeps their own money."
+   },
+   {
+    "heading": "Model 5: Polycule Financial Structures",
+    "art": "",
+    "alt": "",
+    "plain": "Groups of partners often mix these models."
+   },
+   {
+    "heading": "Choosing Your Model",
+    "art": "",
+    "alt": "",
+    "plain": "Think about things like how long you have been together."
+   },
+   {
+    "heading": "Practical Tools",
+    "art": "",
+    "alt": "",
+    "plain": "Budgeting apps and shared accounts help you see things without merging everything."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "88e11642-1",
+    "after": "Model 2: Proportional Contribution",
+    "prompt": "In the proportional model, partners contribute…",
+    "options": [
+     "Equal amounts no matter what",
+     "Based on income",
+     "Nothing"
+    ],
+    "answer": 1,
+    "explanation": "Based on income. Each partner contributes to shared expenses proportionally based on income."
+   },
+   {
+    "id": "88e11642-2",
+    "after": "Model 3: The Three-Pot System",
+    "prompt": "The three-pot system means…",
+    "options": [
+     "Individual accounts plus a shared account",
+     "No shared expenses",
+     "One account for everything"
+    ],
+    "answer": 0,
+    "explanation": "Individual accounts plus a shared account. Each partner maintains individual accounts plus a shared account for joint expenses."
+   }
+  ],
+  "takeaway": "There are several fair ways to share money. Pick the one that fits your situation."
+ },
+ "b50abbe1-af1f-4d4c-a337-6740f31fb3b0": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Financial Boundaries & Partnership Building",
+    "art": "",
+    "alt": "",
+    "plain": "A healthy money relationship needs teamwork and independence."
+   },
+   {
+    "heading": "Financial Abuse: The Hidden Form of Control",
+    "art": "",
+    "alt": "",
+    "plain": "Controlling someone's money is abuse. It happens in almost all abusive relationships."
+   },
+   {
+    "heading": "Healthy Financial Boundaries",
+    "art": "",
+    "alt": "",
+    "plain": "You have the right to know about all shared money."
+   },
+   {
+    "heading": "Protecting Yourself Financially",
+    "art": "",
+    "alt": "",
+    "plain": "Even in a good relationship, keep your own account and good credit."
+   },
+   {
+    "heading": "Income Inequality & Power",
+    "art": "",
+    "alt": "",
+    "plain": "When one of you earns much more, watch that it does not turn into more say."
+   },
+   {
+    "heading": "Creating a Shared Financial Vision",
+    "art": "",
+    "alt": "",
+    "plain": "Each write down your answers separately, then share them."
+   },
+   {
+    "heading": "Building Your Financial System Together",
+    "art": "",
+    "alt": "",
+    "plain": "Have a money talk every month."
+   },
+   {
+    "heading": "Navigating Financial Life Events",
+    "art": "",
+    "alt": "",
+    "plain": "Plan ahead for big changes, like moving in together or losing a job."
+   },
+   {
+    "heading": "Financial Resources for Couples",
+    "art": "",
+    "alt": "",
+    "plain": "Financial therapists and fee-only planners can help."
+   }
+  ],
+  "checks": [
+   {
+    "id": "b50abbe1-1",
+    "after": "Financial Abuse: The Hidden Form of Control",
+    "prompt": "What share of abusive relationships involve financial abuse?",
+    "options": [
+     "48%",
+     "98%",
+     "8%"
+    ],
+    "answer": 1,
+    "explanation": "98%. 98% of abusive relationships involve financial abuse (National Network to End Domestic Violence)."
+   },
+   {
+    "id": "b50abbe1-2",
+    "after": "Protecting Yourself Financially",
+    "prompt": "Even in a healthy relationship, you should…",
+    "options": [
+     "Maintain your own bank account",
+     "Hide your income",
+     "Give up all your accounts"
+    ],
+    "answer": 0,
+    "explanation": "Maintain your own bank account. Even in healthy relationships, maintain your own bank account and keep your credit in good standing."
+   }
+  ],
+  "takeaway": "You have a right to know about and access shared money. Keep some independence and plan together."
+ }
+}

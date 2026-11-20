@@ -1,0 +1,357 @@
+{
+ "16913ca8-ced1-4fd0-996c-42a640febd22": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Understanding Trauma & Attachment",
+    "art": "trauma-informed-relating/l1-0.webp",
+    "alt": "A guide with a hand on her chest, a small storm cloud inside a heart outline beside her",
+    "size": [
+     475,
+     503
+    ],
+    "plain": "Trauma is what stays inside you after something overwhelming happens."
+   },
+   {
+    "heading": "What Trauma Is",
+    "art": "trauma-informed-relating/l1-1.webp",
+    "alt": "A guide carrying a heavy backpack, tired but determined",
+    "size": [
+     484,
+     508
+    ],
+    "plain": "It happens when something is too much to cope with, and it changes how you see the world."
+   },
+   {
+    "heading": "Trauma and the Nervous System",
+    "art": "trauma-informed-relating/l1-2.webp",
+    "alt": "Beside a smoke alarm that is beeping at a piece of toast",
+    "size": [
+     478,
+     457
+    ],
+    "plain": "Trauma makes your inner alarm go off too easily."
+   },
+   {
+    "heading": "Attachment Styles and Trauma",
+    "art": "trauma-informed-relating/l1-3.webp",
+    "alt": "A guide holding a set of four differently coloured keys",
+    "size": [
+     507,
+     458
+    ],
+    "plain": "How you were cared for as a child shapes how you attach as an adult."
+   },
+   {
+    "heading": "Trauma in LGBTQ+ and ENM Communities",
+    "art": "",
+    "alt": "",
+    "plain": "LGBTQ+ people and people in open relationships often carry extra hurt from rejection."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "16913ca8-1",
+    "after": "Understanding Trauma & Attachment",
+    "prompt": "According to the lesson, trauma is…",
+    "options": [
+     "The event itself",
+     "A sign of weakness",
+     "What happens inside you as a result of what happened"
+    ],
+    "answer": 2,
+    "explanation": "What happens inside you as a result of what happened. Trauma is not what happened to you — it's what happens inside you as a result of what happened to you."
+   },
+   {
+    "id": "16913ca8-2",
+    "after": "Trauma and the Nervous System",
+    "prompt": "What does trauma alter?",
+    "options": [
+     "Your eye colour",
+     "Only your memory of facts",
+     "The nervous system's stress response"
+    ],
+    "answer": 2,
+    "explanation": "The nervous system's stress response. Trauma fundamentally alters the nervous system's stress response."
+   }
+  ],
+  "takeaway": "Trauma lives in the body's alarm system and shapes how safe closeness feels."
+ },
+ "2f8732be-d215-4c76-866e-03ea167f5f8e": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Recognizing Trauma Responses",
+    "art": "trauma-informed-relating/l2-0.webp",
+    "alt": "A guide looking through a magnifying glass at a small heart",
+    "size": [
+     399,
+     447
+    ],
+    "plain": "Spotting trauma reactions in yourself and your partners is a valuable skill."
+   },
+   {
+    "heading": "The Four Fs of Trauma Response",
+    "art": "trauma-informed-relating/l2-1.webp",
+    "alt": "Each showing one reaction: A with fists up, B running, C frozen still, D nervously offering a gift",
+    "size": [
+     512,
+     344
+    ],
+    "plain": "Four reactions: fight, run away, freeze, or please people to stay safe."
+   },
+   {
+    "heading": "Recognizing Triggers",
+    "art": "trauma-informed-relating/l2-2.webp",
+    "alt": "A guide flinching as a tiny spark jumps from a doorbell",
+    "size": [
+     448,
+     469
+    ],
+    "plain": "A trigger is anything that sets off an old alarm, like a tone of voice or a smell."
+   },
+   {
+    "heading": "The Window of Tolerance",
+    "art": "trauma-informed-relating/l2-3.webp",
+    "alt": "A guide standing calmly inside a large open window frame",
+    "size": [
+     468,
+     468
+    ],
+    "plain": "Your \"window\" is the zone where you can feel things without being overwhelmed."
+   },
+   {
+    "heading": "In Polyamorous Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "Several partners can mean more triggers, and also more support."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "2f8732be-1",
+    "after": "The Four Fs of Trauma Response",
+    "prompt": "Besides fight and flight, the four Fs include…",
+    "options": [
+     "Follow and fix",
+     "Forget and forgive",
+     "Freeze and fawn"
+    ],
+    "answer": 2,
+    "explanation": "Freeze and fawn. The four Fs of trauma response are fight, flight, freeze and fawn."
+   },
+   {
+    "id": "2f8732be-2",
+    "after": "The Window of Tolerance",
+    "prompt": "The window of tolerance is the zone where we can…",
+    "options": [
+     "Win arguments",
+     "Experience emotions without becoming dysregulated",
+     "Avoid all feelings"
+    ],
+    "answer": 1,
+    "explanation": "Experience emotions without becoming dysregulated. Dr. Dan Siegel's \"window of tolerance\" concept describes the zone where we can experience emotions without becoming dysregulated."
+   }
+  ],
+  "takeaway": "Fight, flight, freeze and fawn are protection habits. Noticing them is the first step."
+ },
+ "cab9871b-4891-429d-9090-48b2bfa51237": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Creating Safety in Intimate Spaces",
+    "art": "trauma-informed-relating/l3-0.webp",
+    "alt": "Two guides sitting in a blanket fort with fairy lights",
+    "size": [
+     512,
+     481
+    ],
+    "plain": "Feeling safe, deep in your body, is the base of everything."
+   },
+   {
+    "heading": "What Safety Means for Trauma Survivors",
+    "art": "trauma-informed-relating/l3-1.webp",
+    "alt": "A guide relaxing her shoulders with a relieved breath, a small shield with a heart beside her",
+    "size": [
+     497,
+     462
+    ],
+    "plain": "Safety is more than \"nothing bad is happening\". It is being able to relax."
+   },
+   {
+    "heading": "Building Safety Practices",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "Co-Regulation Techniques",
+    "art": "trauma-informed-relating/l3-3.webp",
+    "alt": "Two guides sitting back to back, breathing slowly in rhythm",
+    "size": [
+     503,
+     424
+    ],
+    "plain": "A calm person can help another person's body calm down."
+   },
+   {
+    "heading": "The Limits of Partner-Provided Safety",
+    "art": "trauma-informed-relating/l3-4.webp",
+    "alt": "D gratefully handing a heavy box to A, who holds a clipboard",
+    "size": [
+     492,
+     443
+    ],
+    "plain": "A partner can support you, but cannot be your therapist."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "cab9871b-1",
+    "after": "Co-Regulation Techniques",
+    "prompt": "What is co-regulation?",
+    "options": [
+     "Agreeing on house rules",
+     "One person's regulated nervous system helping regulate another's",
+     "Taking turns talking"
+    ],
+    "answer": 1,
+    "explanation": "One person's regulated nervous system helping regulate another's. Co-regulation is the process of one person's regulated nervous system helping to regulate another's."
+   },
+   {
+    "id": "cab9871b-2",
+    "after": "The Limits of Partner-Provided Safety",
+    "prompt": "What is one limit of partner-provided safety?",
+    "options": [
+     "A partner cannot be your therapist",
+     "Partners should never help",
+     "Partners should fix everything"
+    ],
+    "answer": 0,
+    "explanation": "A partner cannot be your therapist. Partners play a crucial role in healing, but a partner cannot be your therapist."
+   }
+  ],
+  "takeaway": "Safety is felt in the body. Partners can help build it, but they are not your therapist."
+ },
+ "ff08b0ed-0499-4d93-81ea-d85591f205ed": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Navigating Triggers & Healing Together",
+    "art": "trauma-informed-relating/l4-0.webp",
+    "alt": "Two guides walking together through light rain under one umbrella",
+    "size": [
+     427,
+     503
+    ],
+    "plain": "Triggers will happen. What matters is how you handle them together."
+   },
+   {
+    "heading": "The STOP Method for Triggered Moments",
+    "art": "trauma-informed-relating/l4-1.webp",
+    "alt": "A guide holding up a round stop paddle and taking a slow breath",
+    "size": [
+     416,
+     452
+    ],
+    "plain": "STOP: stop, take a breath, observe what is happening, then proceed with care."
+   },
+   {
+    "heading": "Communication During Activation",
+    "art": "",
+    "alt": "",
+    "plain": "How you handle upset together matters more than avoiding it."
+   },
+   {
+    "heading": "Creating a Trigger Action Plan",
+    "art": "trauma-informed-relating/l4-3.webp",
+    "alt": "Two guides filling in a simple two-column chart together at a table",
+    "size": [
+     512,
+     457
+    ],
+    "plain": "Make a plan together, in a calm moment, for what each of you needs when triggered."
+   },
+   {
+    "heading": "The Repair Cycle",
+    "art": "trauma-informed-relating/l4-4.webp",
+    "alt": "Two guides mending a cracked heart-shaped vase together with gold",
+    "size": [
+     508,
+     466
+    ],
+    "plain": "Strong couples still have ruptures. They are good at repairing."
+   },
+   {
+    "heading": "Evidence-Based Approaches",
+    "art": "",
+    "alt": "",
+    "plain": "Several kinds of therapy are proven to help with trauma."
+   },
+   {
+    "heading": "Daily Practices for Trauma-Informed Couples",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "When to Seek Professional Help",
+    "art": "",
+    "alt": "",
+    "plain": "Get help if triggers are getting worse or anyone feels unsafe."
+   }
+  ],
+  "checks": [
+   {
+    "id": "ff08b0ed-1",
+    "after": "The STOP Method for Triggered Moments",
+    "prompt": "What is the first step of the STOP method?",
+    "options": [
+     "Solve the problem",
+     "Stop: pause the interaction",
+     "Speak louder"
+    ],
+    "answer": 1,
+    "explanation": "Stop: pause the interaction. S is for Stop: pause the interaction."
+   },
+   {
+    "id": "ff08b0ed-2",
+    "after": "The Repair Cycle",
+    "prompt": "Successful couples are those who…",
+    "options": [
+     "Avoid hard topics",
+     "Repair effectively after ruptures",
+     "Never have ruptures"
+    ],
+    "answer": 1,
+    "explanation": "Repair effectively after ruptures. Research by John Gottman shows that successful couples aren't those who never rupture — they're those who repair effectively."
+   }
+  ],
+  "takeaway": "When an old alarm goes off, stop, breathe, notice and then choose what to do. Repair afterwards."
+ }
+}

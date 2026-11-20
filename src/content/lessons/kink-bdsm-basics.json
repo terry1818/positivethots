@@ -1,0 +1,291 @@
+{
+ "2bbeb7b9-984f-488e-a367-f29b14496fc4": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Kink-Informed Care: A Strength-Based Approach",
+    "art": "",
+    "alt": "",
+    "plain": "Good care treats kink as a normal part of sexuality, not a problem to fix."
+   },
+   {
+    "heading": "A Brief History: Kink and the DSM",
+    "art": "",
+    "alt": "",
+    "plain": "For decades kink was listed as a mental disorder."
+   },
+   {
+    "heading": "Dr. David Ley's Research",
+    "art": "",
+    "alt": "",
+    "plain": "Research has added a lot to how we understand kink as positive sexuality."
+   },
+   {
+    "heading": "Kink as Identity vs Activity",
+    "art": "",
+    "alt": "",
+    "plain": "For some people kink is part of who they are. For others it is something they do."
+   },
+   {
+    "heading": "Midori's Framework",
+    "art": "",
+    "alt": "",
+    "plain": "Kink is a skill you learn step by step, with consent at the centre."
+   },
+   {
+    "heading": "Non-Shaming Framing",
+    "art": "",
+    "alt": "",
+    "plain": "Being into kink does not mean you are damaged."
+   }
+  ],
+  "checks": [
+   {
+    "id": "2bbeb7b9-1",
+    "after": "A Brief History: Kink and the DSM",
+    "prompt": "How was kink classified for decades?",
+    "options": [
+     "As a sport",
+     "As a mental disorder in the DSM",
+     "As a legal contract"
+    ],
+    "answer": 1,
+    "explanation": "As a mental disorder in the DSM. For decades, kink and BDSM interests were classified as mental disorders in the Diagnostic and Statistical Manual (DSM)."
+   },
+   {
+    "id": "2bbeb7b9-2",
+    "after": "Non-Shaming Framing",
+    "prompt": "Exploring kink is…",
+    "options": [
+     "A sign of trauma",
+     "A healthy expression of sexuality",
+     "A dysfunction"
+    ],
+    "answer": 1,
+    "explanation": "A healthy expression of sexuality. Exploring kink is a healthy expression of sexuality, not a sign of trauma or dysfunction."
+   }
+  ],
+  "takeaway": "Kink between consenting adults is a healthy part of sexuality, not a disorder."
+ },
+ "46e99fcb-18ba-4860-b549-8bf141178f3a": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Consent Frameworks: SSC, RACK, & PRICK",
+    "art": "",
+    "alt": "",
+    "plain": "Kink communities have built some of the most careful consent systems anywhere."
+   },
+   {
+    "heading": "SSC: Safe, Sane, Consensual",
+    "art": "",
+    "alt": "",
+    "plain": "SSC means safe, sane and consensual. It is the oldest of these systems."
+   },
+   {
+    "heading": "RACK: Risk-Aware Consensual Kink",
+    "art": "",
+    "alt": "",
+    "plain": "RACK means risk-aware consensual kink. It came after SSC to cover its gaps."
+   },
+   {
+    "heading": "PRICK: Personal Responsibility, Informed Consensual Kink",
+    "art": "",
+    "alt": "",
+    "plain": "PRICK adds personal responsibility: each person owns their choices."
+   },
+   {
+    "heading": "Comparing the Frameworks",
+    "art": "",
+    "alt": "",
+    "plain": "No one system is right for everyone. Use what fits."
+   },
+   {
+    "heading": "Connection to the FRIES Model",
+    "art": "",
+    "alt": "",
+    "plain": "All of these connect back to FRIES from the first badge."
+   }
+  ],
+  "checks": [
+   {
+    "id": "46e99fcb-1",
+    "after": "SSC: Safe, Sane, Consensual",
+    "prompt": "What does SSC stand for?",
+    "options": [
+     "Slow, Steady, Careful",
+     "Safe, Sane, Consensual",
+     "Simple, Soft, Calm"
+    ],
+    "answer": 1,
+    "explanation": "Safe, Sane, Consensual. SSC stands for Safe, Sane, Consensual. It is the oldest and most widely known kink consent framework."
+   },
+   {
+    "id": "46e99fcb-2",
+    "after": "RACK: Risk-Aware Consensual Kink",
+    "prompt": "What does RACK stand for?",
+    "options": [
+     "Ready And Completely Keen",
+     "Rules And Careful Kindness",
+     "Risk-Aware Consensual Kink"
+    ],
+    "answer": 2,
+    "explanation": "Risk-Aware Consensual Kink. RACK stands for Risk-Aware Consensual Kink. It emerged as a response to SSC's limitations."
+   }
+  ],
+  "takeaway": "Kink communities built careful consent systems. All of them rest on informed, willing agreement."
+ },
+ "c9d7b84f-15d2-4d0e-9fff-21978a4290d4": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Scene Negotiation & Communication",
+    "art": "",
+    "alt": "",
+    "plain": "A scene is a planned activity with a set time, place and limits."
+   },
+   {
+    "heading": "The Negotiation Process",
+    "art": "",
+    "alt": "",
+    "plain": "Talk it all through before you begin."
+   },
+   {
+    "heading": "Key Negotiation Elements",
+    "art": "",
+    "alt": "",
+    "plain": "Start with exactly what is on the table and what is not."
+   },
+   {
+    "heading": "Ongoing Negotiation",
+    "art": "",
+    "alt": "",
+    "plain": "Keep checking in once you have started. Consent does not end at the start."
+   },
+   {
+    "heading": "The Power of \"No\"",
+    "art": "",
+    "alt": "",
+    "plain": "The person receiving has the final say. They can stop anything at any time."
+   },
+   {
+    "heading": "Negotiation in ENM",
+    "art": "",
+    "alt": "",
+    "plain": "With several partners, make sure everyone affected knows what they need to know."
+   }
+  ],
+  "checks": [
+   {
+    "id": "c9d7b84f-1",
+    "after": "The Negotiation Process",
+    "prompt": "When does scene negotiation happen?",
+    "options": [
+     "Afterwards",
+     "Before play begins",
+     "Halfway through"
+    ],
+    "answer": 1,
+    "explanation": "Before play begins. Scene negotiation happens before play begins. It is a structured conversation where all participants discuss desires, limits, logistics, and safety protocols."
+   },
+   {
+    "id": "c9d7b84f-2",
+    "after": "The Power of \"No\"",
+    "prompt": "Who holds the most power in a healthy kink dynamic?",
+    "options": [
+     "Nobody",
+     "The bottom or submissive, who can stop any activity",
+     "Whoever is loudest"
+    ],
+    "answer": 1,
+    "explanation": "The bottom or submissive, who can stop any activity. The bottom or submissive ultimately holds the most power through their ability to stop any activity."
+   }
+  ],
+  "takeaway": "Agree on everything before you start, keep checking in, and \"no\" always wins."
+ },
+ "ed73aa73-4dd8-4d31-95a6-3118a1c4f3e8": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Aftercare & Ongoing Wellbeing",
+    "art": "",
+    "alt": "",
+    "plain": "Aftercare is the time you spend looking after each other afterwards."
+   },
+   {
+    "heading": "Why Aftercare Matters",
+    "art": "guide-high-five",
+    "alt": ""
+   },
+   {
+    "heading": "Physical Aftercare",
+    "art": "",
+    "alt": "",
+    "plain": "Bodies need looking after, starting with water or a warm drink."
+   },
+   {
+    "heading": "Emotional Aftercare",
+    "art": "",
+    "alt": "",
+    "plain": "Hearts need reassurance and kind words."
+   },
+   {
+    "heading": "Aftercare Is Ongoing",
+    "art": "",
+    "alt": "",
+    "plain": "Check in again later. Feelings can keep coming up after it is over."
+   },
+   {
+    "heading": "When Kink Brings Up the Unexpected",
+    "art": "",
+    "alt": "",
+    "plain": "If something unexpected comes up, like an old memory, slow down and get support."
+   },
+   {
+    "heading": "Ongoing Kink Education",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "Keep learning. Good practice is never finished."
+   }
+  ],
+  "checks": [
+   {
+    "id": "ed73aa73-1",
+    "after": "Aftercare & Ongoing Wellbeing",
+    "prompt": "What is aftercare?",
+    "options": [
+     "A warm-up",
+     "The period of care, connection and recovery following a scene",
+     "A type of contract"
+    ],
+    "answer": 1,
+    "explanation": "The period of care, connection and recovery following a scene. Aftercare is the period of care, connection, and recovery following a kink scene."
+   },
+   {
+    "id": "ed73aa73-2",
+    "after": "Aftercare Is Ongoing",
+    "prompt": "Does emotional processing always end right after the scene?",
+    "options": [
+     "Only for beginners",
+     "No, it can continue well beyond",
+     "Yes, always"
+    ],
+    "answer": 1,
+    "explanation": "No, it can continue well beyond. Sometimes emotional processing continues well beyond the immediate post-scene period."
+   }
+  ],
+  "takeaway": "After something intense, look after each other: water, warmth, kind words, and a check-in later."
+ }
+}

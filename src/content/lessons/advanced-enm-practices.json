@@ -1,0 +1,277 @@
+{
+ "a0539781-e2fc-469e-878e-808c32e418a2": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The RADAR Check-in System",
+    "art": "",
+    "alt": "",
+    "plain": "RADAR is a regular relationship check-in with a set order of steps."
+   },
+   {
+    "heading": "What RADAR Stands For",
+    "art": "",
+    "alt": "",
+    "plain": "It starts with a review of what has been happening since the last check-in."
+   },
+   {
+    "heading": "Why Structured Check-ins Matter",
+    "art": "",
+    "alt": "",
+    "plain": "Most of us were never taught to do upkeep talks. A set format makes it easier."
+   },
+   {
+    "heading": "Adapting RADAR for ENM",
+    "art": "",
+    "alt": "",
+    "plain": "With several partners, give each relationship its own check-in."
+   },
+   {
+    "heading": "Making It Feel Natural",
+    "art": "",
+    "alt": "",
+    "plain": "Keep it warm, not like a work meeting."
+   }
+  ],
+  "checks": [
+   {
+    "id": "a0539781-1",
+    "after": "What RADAR Stands For",
+    "prompt": "What does the first R in RADAR stand for?",
+    "options": [
+     "Repeat",
+     "Review",
+     "React"
+    ],
+    "answer": 1,
+    "explanation": "Review. R is for Review: start by reviewing what has been happening since the last check-in."
+   },
+   {
+    "id": "a0539781-2",
+    "after": "Why Structured Check-ins Matter",
+    "prompt": "Why do structured check-ins matter?",
+    "options": [
+     "They replace love",
+     "Many people were never taught how to have maintenance conversations",
+     "They are legally required"
+    ],
+    "answer": 1,
+    "explanation": "Many people were never taught how to have maintenance conversations. Many people were never taught how to have maintenance conversations about relationships."
+   }
+  ],
+  "takeaway": "RADAR is a regular check-in with set steps, so small issues get talked about before they grow."
+ },
+ "f90739a6-3cd9-4829-83b3-ae6d5cbfd1ac": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Agreements vs Rules",
+    "art": "",
+    "alt": "",
+    "plain": "A rule and an agreement are different things, and the difference matters."
+   },
+   {
+    "heading": "The Core Distinction",
+    "art": "",
+    "alt": "",
+    "plain": "A rule is put on your partner. An agreement is something you both choose."
+   },
+   {
+    "heading": "Why This Distinction Matters",
+    "art": "guide-high-five",
+    "alt": ""
+   },
+   {
+    "heading": "Common Rules Worth Reexamining",
+    "art": "",
+    "alt": "",
+    "plain": "Some common rules, like the power to end a partner's other relationship, deserve a second look."
+   },
+   {
+    "heading": "Building Agreements",
+    "art": "",
+    "alt": "",
+    "plain": "Find the need underneath, like feeling secure, then agree on how to meet it."
+   },
+   {
+    "heading": "When Agreements Are Broken",
+    "art": "",
+    "alt": "",
+    "plain": "A broken agreement needs a different response from a broken rule. Talk about what happened."
+   }
+  ],
+  "checks": [
+   {
+    "id": "f90739a6-1",
+    "after": "The Core Distinction",
+    "prompt": "What is the core difference?",
+    "options": [
+     "Rules are imposed on a partner",
+     "Rules are friendlier",
+     "There is no difference"
+    ],
+    "answer": 0,
+    "explanation": "Rules are imposed on a partner. Rules are imposed on a partner. Agreements are created together."
+   },
+   {
+    "id": "f90739a6-2",
+    "after": "Common Rules Worth Reexamining",
+    "prompt": "What is veto power?",
+    "options": [
+     "The right to choose dinner",
+     "A type of check-in",
+     "The ability to end a partner's other relationship"
+    ],
+    "answer": 2,
+    "explanation": "The ability to end a partner's other relationship. Veto power is the ability to end a partner's other relationship. The lesson says it deserves thoughtful reexamination."
+   }
+  ],
+  "takeaway": "Rules are put on a partner. Agreements are made together. Build agreements around the real need."
+ },
+ "121ba57b-2ea8-4643-914a-04d932cf7d14": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Hierarchy, Non-Hierarchy, & Solo Poly",
+    "art": "",
+    "alt": "",
+    "plain": "How you set up your relationships is a big choice."
+   },
+   {
+    "heading": "Prescriptive vs Descriptive Hierarchy",
+    "art": "",
+    "alt": "",
+    "plain": "Some rankings are set in advance and limit what other relationships can become."
+   },
+   {
+    "heading": "Couple Privilege",
+    "art": "",
+    "alt": "",
+    "plain": "An existing couple has built-in advantages over newer partners. Notice them."
+   },
+   {
+    "heading": "Non-Hierarchical Polyamory",
+    "art": "",
+    "alt": "",
+    "plain": "Non-hierarchical means no relationship is capped in advance."
+   },
+   {
+    "heading": "Solo Polyamory",
+    "art": "",
+    "alt": "",
+    "plain": "Solo polyamory puts your own independence at the centre."
+   },
+   {
+    "heading": "Choosing Your Structure",
+    "art": "",
+    "alt": "",
+    "plain": "Research suggests no one structure is best for everyone."
+   }
+  ],
+  "checks": [
+   {
+    "id": "121ba57b-1",
+    "after": "Couple Privilege",
+    "prompt": "Couple privilege refers to…",
+    "options": [
+     "A wedding tradition",
+     "A discount for couples",
+     "The advantages established couples have over newer partners"
+    ],
+    "answer": 2,
+    "explanation": "The advantages established couples have over newer partners. Couple privilege refers to the social, legal, and practical advantages that established couples have over newer or non-primary partners."
+   },
+   {
+    "id": "121ba57b-2",
+    "after": "Choosing Your Structure",
+    "prompt": "What does Sheff's research suggest about structures?",
+    "options": [
+     "Solo poly is always best",
+     "No single structure is universally superior",
+     "Hierarchy is always best"
+    ],
+    "answer": 1,
+    "explanation": "No single structure is universally superior. Dr. Elisabeth Sheff's longitudinal research on CNM families suggests that no single structure is universally superior."
+   }
+  ],
+  "takeaway": "There are several ways to structure multiple relationships. None is best for everyone."
+ },
+ "6eca69b9-4114-46d6-a9f3-76af2e02f43d": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "NRE Management & Sustainable Practice",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "The Neurochemistry of NRE",
+    "art": "",
+    "alt": "",
+    "plain": "That new-love rush is brain chemistry."
+   },
+   {
+    "heading": "How NRE Affects Existing Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "The rush can make your existing relationships seem dull by comparison. They are not."
+   },
+   {
+    "heading": "Managing Your Own NRE",
+    "art": "",
+    "alt": "",
+    "plain": "Keep your plans and promises with existing partners."
+   },
+   {
+    "heading": "Supporting a Partner Through NRE",
+    "art": "",
+    "alt": "",
+    "plain": "When your partner is in the rush with someone new, it can stir up fear. That is normal."
+   },
+   {
+    "heading": "Building Sustainable Practice",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "6eca69b9-1",
+    "after": "The Neurochemistry of NRE",
+    "prompt": "NRE is not just a feeling. It is also…",
+    "options": [
+     "A neurochemical event",
+     "A personality type",
+     "A legal status"
+    ],
+    "answer": 0,
+    "explanation": "A neurochemical event. NRE is not just a feeling — it's a neurochemical event. When you connect with a new person who excites you, your brain floods with dopamine (reward and motivation), norepinephrine (alertness and excitement), and oxytocin (bonding and trust)."
+   },
+   {
+    "id": "6eca69b9-2",
+    "after": "Managing Your Own NRE",
+    "prompt": "What is the first tip for managing your own NRE?",
+    "options": [
+     "Hide the new relationship",
+     "Cancel plans with existing partners",
+     "Maintain your commitments"
+    ],
+    "answer": 2,
+    "explanation": "Maintain your commitments. Maintain your commitments. NRE makes it tempting to cancel plans with existing partners in favor of the new connection."
+   }
+  ],
+  "takeaway": "New-relationship excitement is a chemical rush. Enjoy it, and keep your promises to existing partners."
+ }
+}

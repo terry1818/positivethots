@@ -1,0 +1,277 @@
+{
+ "34cedd78-942a-4244-b210-98085cfb476a": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Three Pillars as One Integrated System",
+    "art": "",
+    "alt": "",
+    "plain": "Kind self-talk, meditation and picturing success work as one system."
+   },
+   {
+    "heading": "Affirmations and the Brain: fMRI Evidence",
+    "art": "",
+    "alt": "",
+    "plain": "Brain scans show that affirmations change brain activity."
+   },
+   {
+    "heading": "Meditation and Brain Structure: Harvard Research",
+    "art": "",
+    "alt": "",
+    "plain": "Research at Harvard found that meditation changes the brain."
+   },
+   {
+    "heading": "Why Inner Practice Matters for Relationships",
+    "art": "guide-high-five",
+    "alt": ""
+   },
+   {
+    "heading": "The Neuroscience Foundation",
+    "art": "",
+    "alt": "",
+    "plain": "Each practice trains a different part of how your brain works."
+   }
+  ],
+  "checks": [
+   {
+    "id": "34cedd78-1",
+    "after": "The Three Pillars as One Integrated System",
+    "prompt": "What are the three pillars of inner practice?",
+    "options": [
+     "Affirmations, meditation and visualization",
+     "Diet, sleep and exercise",
+     "Reading, writing and talking"
+    ],
+    "answer": 0,
+    "explanation": "Affirmations, meditation and visualization. Affirmations, meditation, and visualization are not separate self-help tactics."
+   },
+   {
+    "id": "34cedd78-2",
+    "after": "Meditation and Brain Structure: Harvard Research",
+    "prompt": "Where was the research on meditation and brain structure done?",
+    "options": [
+     "Nobody has studied it",
+     "A fitness app",
+     "Harvard"
+    ],
+    "answer": 2,
+    "explanation": "Harvard. Sara Lazar and colleagues at Harvard studied meditation and brain structure."
+   }
+  ],
+  "takeaway": "Affirmations, meditation and visualization work together to retrain your brain."
+ },
+ "cddfeb62-344d-4776-9eba-e1568ab5865c": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Neuroscience: Loving-Kindness Meditation",
+    "art": "",
+    "alt": "",
+    "plain": "Loving-kindness meditation means wishing yourself and others well."
+   },
+   {
+    "heading": "The Reticular Activating System: Perception as Reality",
+    "art": "",
+    "alt": "",
+    "plain": "Your brain filters out most of what it takes in. What you focus on decides what gets through."
+   },
+   {
+    "heading": "Neuroplasticity and Visualization",
+    "art": "",
+    "alt": "",
+    "plain": "Your brain rewires itself based on what you focus on."
+   },
+   {
+    "heading": "The Default Mode Network and Anxiety",
+    "art": "",
+    "alt": "",
+    "plain": "When your mind idles, it tends to worry. Meditation quiets that."
+   }
+  ],
+  "checks": [
+   {
+    "id": "cddfeb62-1",
+    "after": "The Reticular Activating System: Perception as Reality",
+    "prompt": "What does the reticular activating system do?",
+    "options": [
+     "Controls your heartbeat",
+     "Filters what reaches your conscious attention",
+     "Stores memories"
+    ],
+    "answer": 1,
+    "explanation": "Filters what reaches your conscious attention. Your brain receives 11 million bits of sensory information per second and consciously processes only a tiny part."
+   },
+   {
+    "id": "cddfeb62-2",
+    "after": "The Default Mode Network and Anxiety",
+    "prompt": "The Default Mode Network is your brain…",
+    "options": [
+     "Only while asleep",
+     "During exercise",
+     "On \"idle\", when not focused on a task"
+    ],
+    "answer": 2,
+    "explanation": "On \"idle\", when not focused on a task. The Default Mode Network is your brain on idle. It runs when you are not focused on an outside task."
+   }
+  ],
+  "takeaway": "What you focus on, your brain gets better at noticing. Meditation trains that focus."
+ },
+ "e6b5139c-df20-40d7-9681-2af5d783ea03": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Affirmations: How to Write Ones That Actually Work",
+    "art": "",
+    "alt": "",
+    "plain": "Most affirmations fail because of how they are written."
+   },
+   {
+    "heading": "The Formula for Powerful Affirmations",
+    "art": "",
+    "alt": "",
+    "plain": "Good ones are in the present, positive, about you and specific."
+   },
+   {
+    "heading": "Sample Affirmations Across Life Domains",
+    "art": "",
+    "alt": "",
+    "plain": "For example: \"I am secure in myself and happy when my partners are happy.\""
+   },
+   {
+    "heading": "Meditation Styles: One Practice, Many Doors",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "Mindfulness Meditation",
+    "art": "",
+    "alt": "",
+    "plain": "Mindfulness: sit, notice your breath, and bring your mind back when it wanders."
+   },
+   {
+    "heading": "Loving-Kindness Meditation (Metta)",
+    "art": "",
+    "alt": "",
+    "plain": "Loving-kindness: silently wish yourself and others well."
+   },
+   {
+    "heading": "Body Scan Meditation",
+    "art": "",
+    "alt": "",
+    "plain": "Body scan: move your attention slowly through your body and let tension go."
+   },
+   {
+    "heading": "Visualization: Creative Rehearsal for Any Goal",
+    "art": "",
+    "alt": "",
+    "plain": "Visualization is practising something in your mind before you do it."
+   },
+   {
+    "heading": "How to Visualize Effectively",
+    "art": "",
+    "alt": "",
+    "plain": "Pick the outcome, then picture it in detail."
+   },
+   {
+    "heading": "Visualization Examples",
+    "art": "",
+    "alt": "",
+    "plain": "Before a hard talk, picture yourself calm and clear."
+   }
+  ],
+  "checks": [
+   {
+    "id": "e6b5139c-1",
+    "after": "The Formula for Powerful Affirmations",
+    "prompt": "Which is part of the formula for a powerful affirmation?",
+    "options": [
+     "Present tense: \"I am,\" not \"I will be\"",
+     "Future tense only",
+     "Negative wording"
+    ],
+    "answer": 0,
+    "explanation": "Present tense: \"I am,\" not \"I will be\". The formula is present tense, a positive frame, personal ownership and a specific context."
+   },
+   {
+    "id": "e6b5139c-2",
+    "after": "Visualization: Creative Rehearsal for Any Goal",
+    "prompt": "Visualization is…",
+    "options": [
+     "Mental rehearsal",
+     "A memory test",
+     "Wishful thinking"
+    ],
+    "answer": 0,
+    "explanation": "Mental rehearsal. Visualization is mental rehearsal that programs your nervous system for success."
+   }
+  ],
+  "takeaway": "Write affirmations in the present tense, practise one meditation style, and rehearse success in your mind."
+ },
+ "b7ab469e-018b-416c-9365-e6741a721fc1": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The 15-Minute Daily Ritual: Integration",
+    "art": "",
+    "alt": "",
+    "plain": "Put all three together in one 15-minute morning routine."
+   },
+   {
+    "heading": "The Compounding Effect",
+    "art": "",
+    "alt": "",
+    "plain": "One day does little. Many days in a row change you."
+   },
+   {
+    "heading": "Body-Based Regulation Techniques",
+    "art": "",
+    "alt": "",
+    "plain": "When feelings are too big, use your body to calm down."
+   },
+   {
+    "heading": "Integrating Somatic Practice Into Relationships",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "b7ab469e-1",
+    "after": "The 15-Minute Daily Ritual: Integration",
+    "prompt": "How long is the daily ritual that combines all three practices?",
+    "options": [
+     "2 hours",
+     "30 seconds",
+     "15 minutes"
+    ],
+    "answer": 2,
+    "explanation": "15 minutes. The lesson combines all three into one 15-minute morning practice."
+   },
+   {
+    "id": "b7ab469e-2",
+    "after": "Body-Based Regulation Techniques",
+    "prompt": "When are body-based regulation techniques most useful?",
+    "options": [
+     "When emotions feel overwhelming",
+     "Only when calm",
+     "Only after exercise"
+    ],
+    "answer": 0,
+    "explanation": "When emotions feel overwhelming. When emotions feel overwhelming — during a difficult conversation, after receiving unexpected news, or in moments of jealousy — somatic practices offer immediate relief."
+   }
+  ],
+  "takeaway": "Fifteen minutes each morning adds up, and your body can calm big feelings fast."
+ }
+}

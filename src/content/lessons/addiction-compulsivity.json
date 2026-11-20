@@ -1,0 +1,272 @@
+{
+ "e56bc4e9-0633-405f-b914-dc2f17c5ca55": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Understanding Love Addiction & Codependency",
+    "art": "",
+    "alt": "",
+    "plain": "Sometimes a relationship turns into something you feel driven to do, not something you choose."
+   },
+   {
+    "heading": "What Is Love Addiction?",
+    "art": "",
+    "alt": "",
+    "plain": "Love addiction is being fixated on someone and mistaking intensity for closeness."
+   },
+   {
+    "heading": "Codependency: The Other Side",
+    "art": "",
+    "alt": "",
+    "plain": "Codependency is looking after others so much that you forget your own needs."
+   },
+   {
+    "heading": "The Love Addict/Love Avoidant Dance",
+    "art": "",
+    "alt": "",
+    "plain": "One person chases and the other pulls away, round and round."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "e56bc4e9-1",
+    "after": "What Is Love Addiction?",
+    "prompt": "Love addiction confuses intensity with…",
+    "options": [
+     "Intimacy",
+     "Friendship",
+     "Honesty"
+    ],
+    "answer": 0,
+    "explanation": "Intimacy. Love addiction involves obsessive focus on a romantic interest and confusing intensity with intimacy."
+   },
+   {
+    "id": "e56bc4e9-2",
+    "after": "Codependency: The Other Side",
+    "prompt": "Codependency involves…",
+    "options": [
+     "Too much independence",
+     "Excessive caretaking at the expense of your own needs",
+     "Healthy teamwork"
+    ],
+    "answer": 1,
+    "explanation": "Excessive caretaking at the expense of your own needs. Codependency involves excessive caretaking at the expense of your own needs, along with poor boundaries."
+   }
+  ],
+  "takeaway": "Needing a relationship to feel okay, or losing yourself in caring for someone, are patterns you can change."
+ },
+ "4ee2084f-fa6c-4081-a32c-91fab164ceb5": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Recognizing Compulsive Patterns",
+    "art": "",
+    "alt": "",
+    "plain": "These patterns can feel normal because they are all you have known."
+   },
+   {
+    "heading": "The Neurochemistry of Love Addiction",
+    "art": "",
+    "alt": "",
+    "plain": "Falling in love floods your brain with powerful chemicals."
+   },
+   {
+    "heading": "Red Flags: Compulsive Relationship Patterns",
+    "art": "",
+    "alt": "",
+    "plain": "Warning signs include jumping straight from one relationship into the next."
+   },
+   {
+    "heading": "Distinguishing Healthy Desire from Compulsion",
+    "art": "",
+    "alt": "",
+    "plain": "Not every strong feeling is a problem. The lesson shows how to tell the difference."
+   },
+   {
+    "heading": "Self-Assessment Questions",
+    "art": "",
+    "alt": "",
+    "plain": "Ask yourself honestly: do I only feel complete when I am in a relationship?"
+   }
+  ],
+  "checks": [
+   {
+    "id": "4ee2084f-1",
+    "after": "The Neurochemistry of Love Addiction",
+    "prompt": "Falling in love triggers a neurochemical cocktail similar to…",
+    "options": [
+     "Cocaine",
+     "Sleep",
+     "Herbal tea"
+    ],
+    "answer": 0,
+    "explanation": "Cocaine. Falling in love triggers a neurochemical cocktail similar to cocaine, including dopamine for reward and craving."
+   },
+   {
+    "id": "4ee2084f-2",
+    "after": "Red Flags: Compulsive Relationship Patterns",
+    "prompt": "Which is a red flag for compulsive patterns?",
+    "options": [
+     "Having close friends",
+     "Jumping from relationship to relationship without processing",
+     "Taking time between relationships"
+    ],
+    "answer": 1,
+    "explanation": "Jumping from relationship to relationship without processing. Serial monogamy, jumping from relationship to relationship without processing the previous one, is a red flag."
+   }
+  ],
+  "takeaway": "Strong feelings are not the problem. The warning sign is feeling you cannot be okay alone."
+ },
+ "cda693e9-7f0c-49c1-a193-bc52361970c4": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Love Bombing, Trauma Bonds & Toxic Cycles",
+    "art": "",
+    "alt": "",
+    "plain": "Knowing how manipulation works helps you get free of it."
+   },
+   {
+    "heading": "Love Bombing",
+    "art": "",
+    "alt": "",
+    "plain": "Love bombing is flooding someone with attention and gifts in order to control them."
+   },
+   {
+    "heading": "Trauma Bonds",
+    "art": "",
+    "alt": "",
+    "plain": "A trauma bond forms when someone hurts you, then is loving, over and over."
+   },
+   {
+    "heading": "Breaking the Cycle",
+    "art": "",
+    "alt": "",
+    "plain": "Breaking free takes several steps. You do not have to do it alone."
+   },
+   {
+    "heading": "Recognizing Toxic Patterns in Yourself",
+    "art": "",
+    "alt": "",
+    "plain": "Look honestly at your own behaviour too."
+   }
+  ],
+  "checks": [
+   {
+    "id": "cda693e9-1",
+    "after": "Love Bombing",
+    "prompt": "Love bombing is…",
+    "options": [
+     "A romantic tradition",
+     "Honest affection",
+     "Excessive attention and gifts used to manipulate someone"
+    ],
+    "answer": 2,
+    "explanation": "Excessive attention and gifts used to manipulate someone. Love bombing is the deliberate use of excessive attention, affection, and gifts to manipulate someone into a relationship."
+   },
+   {
+    "id": "cda693e9-2",
+    "after": "Trauma Bonds",
+    "prompt": "Trauma bonds form through…",
+    "options": [
+     "Long friendships",
+     "Shared hobbies",
+     "Intermittent reinforcement: cycles of abuse and affection"
+    ],
+    "answer": 2,
+    "explanation": "Intermittent reinforcement: cycles of abuse and affection. Trauma bonds form through intermittent reinforcement — cycles of abuse and affection that create powerful neurological attachments."
+   }
+  ],
+  "takeaway": "Too much, too fast can be a tactic. Hot-and-cold treatment creates a bond that is hard to leave."
+ },
+ "b0427e1d-46cf-4338-90f8-a2d99573b4ae": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Recovery & Building Healthy Habits",
+    "art": "",
+    "alt": "",
+    "plain": "You can break these patterns. It takes commitment and support."
+   },
+   {
+    "heading": "The Stages of Recovery",
+    "art": "",
+    "alt": "",
+    "plain": "It happens in stages. The first is seeing that the pattern is a problem."
+   },
+   {
+    "heading": "Practical Recovery Tools",
+    "art": "",
+    "alt": "",
+    "plain": "After leaving a toxic relationship, at least 90 days of no contact helps your brain reset."
+   },
+   {
+    "heading": "The Healthy Relationship Checklist",
+    "art": "",
+    "alt": "",
+    "plain": "Healthy means you add to each other's lives without being each other's whole life."
+   },
+   {
+    "heading": "Daily Practices",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "Building Secure Attachment",
+    "art": "",
+    "alt": "",
+    "plain": "Secure attachment can be earned through steady, reliable behaviour."
+   },
+   {
+    "heading": "When You're Ready to Date Again",
+    "art": "",
+    "alt": "",
+    "plain": "When you date again, go slowly."
+   }
+  ],
+  "checks": [
+   {
+    "id": "b0427e1d-1",
+    "after": "Practical Recovery Tools",
+    "prompt": "What is the 90-day no-contact rule for?",
+    "options": [
+     "Saving money",
+     "Letting your neurochemistry reset after a toxic relationship",
+     "Testing your partner"
+    ],
+    "answer": 1,
+    "explanation": "Letting your neurochemistry reset after a toxic relationship. After leaving a toxic relationship, at least 90 days of no contact gives your neurochemistry time to reset."
+   },
+   {
+    "id": "b0427e1d-2",
+    "after": "When You're Ready to Date Again",
+    "prompt": "What is the advice for dating again?",
+    "options": [
+     "Rush in",
+     "Avoid dating forever",
+     "Slow is the new fast"
+    ],
+    "answer": 2,
+    "explanation": "Slow is the new fast. Slow is the new fast."
+   }
+  ],
+  "takeaway": "Recovery is possible. Notice the pattern, take time apart, build your own life, and go slowly."
+ }
+}

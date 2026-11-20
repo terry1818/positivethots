@@ -1,0 +1,368 @@
+{
+ "a7a07cfb-a155-46fd-994f-c28fca1ead8f": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Understanding Relationship Grief",
+    "art": "grief-relationship-transitions/l1-0.webp",
+    "alt": "Gently holding a wilting flower, a single tear on her cheek",
+    "size": [
+     417,
+     468
+    ],
+    "plain": "Grief is not only for death. Breakups and changes bring it too."
+   },
+   {
+    "heading": "Why Relationship Grief Is Unique",
+    "art": "grief-relationship-transitions/l1-1.webp",
+    "alt": "A guide looking at a framed photo while a faint outline of a person walks away in the distance",
+    "size": [
+     510,
+     458
+    ],
+    "plain": "It is harder because the person is still out there."
+   },
+   {
+    "heading": "Types of Relationship Grief",
+    "art": "grief-relationship-transitions/l1-2.webp",
+    "alt": "A guide holding an umbrella while raindrops of different sizes fall",
+    "size": [
+     438,
+     495
+    ],
+    "plain": "There are several kinds, like grieving before the end has even come."
+   },
+   {
+    "heading": "The Grief Process",
+    "art": "grief-relationship-transitions/l1-3.webp",
+    "alt": "A guide walking a winding path past five small blank signposts",
+    "size": [
+     512,
+     494
+    ],
+    "plain": "Grief moves through many feelings, and not in neat steps."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "a7a07cfb-1",
+    "after": "Understanding Relationship Grief",
+    "prompt": "Grief is…",
+    "options": [
+     "Not reserved for death",
+     "A sign of weakness",
+     "Only for death"
+    ],
+    "answer": 0,
+    "explanation": "Not reserved for death. Grief is not reserved for death. The end of a relationship — or even a significant change within one — can trigger a grief process as intense and valid as mourning a loved one who has died."
+   },
+   {
+    "id": "a7a07cfb-2",
+    "after": "Types of Relationship Grief",
+    "prompt": "What is anticipatory grief?",
+    "options": [
+     "Grief that never ends",
+     "Grieving for someone else",
+     "Mourning a relationship before it officially ends"
+    ],
+    "answer": 2,
+    "explanation": "Mourning a relationship before it officially ends. Anticipatory grief: Mourning a relationship before it officially ends."
+   }
+  ],
+  "takeaway": "Losing a relationship is real grief, even when the person is still alive."
+ },
+ "37040837-6f32-4c66-926d-25582dcd0b79": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Art of Conscious Uncoupling",
+    "art": "grief-relationship-transitions/l2-0.webp",
+    "alt": "Calmly untying a ribbon that joined their wrists",
+    "size": [
+     497,
+     441
+    ],
+    "plain": "A breakup does not have to be a war. You can end things with care."
+   },
+   {
+    "heading": "What Conscious Uncoupling Is (and Isn't)",
+    "art": "grief-relationship-transitions/l2-1.webp",
+    "alt": "Two guides shaking hands warmly with a small respectful nod",
+    "size": [
+     502,
+     440
+    ],
+    "plain": "It means ending on purpose and keeping your dignity, for both of you."
+   },
+   {
+    "heading": "The Five Steps",
+    "art": "grief-relationship-transitions/l2-2.webp",
+    "alt": "A guide climbing five steps, each marked with a small heart",
+    "size": [
+     393,
+     512
+    ],
+    "plain": "There are five steps. The first is letting yourself feel it all without lashing out."
+   },
+   {
+    "heading": "Conscious Uncoupling in ENM/Poly Contexts",
+    "art": "",
+    "alt": "",
+    "plain": "One breakup can ripple through a whole network of partners. Tell people with care."
+   },
+   {
+    "heading": "Practical Tools",
+    "art": "grief-relationship-transitions/l2-4.webp",
+    "alt": "A guide writing a letter at a desk beside a candle",
+    "size": [
+     512,
+     443
+    ],
+    "plain": "Try a goodbye letter you never have to send. Start with what you are grateful for."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "37040837-1",
+    "after": "What Conscious Uncoupling Is (and Isn't)",
+    "prompt": "Conscious uncoupling is…",
+    "options": [
+     "Ending things by text",
+     "Pretending nothing is wrong",
+     "A deliberate way of ending a relationship while preserving dignity"
+    ],
+    "answer": 2,
+    "explanation": "A deliberate way of ending a relationship while preserving dignity. It is a deliberate process of ending a romantic relationship while preserving dignity."
+   },
+   {
+    "id": "37040837-2",
+    "after": "The Five Steps",
+    "prompt": "What is the first of the five steps?",
+    "options": [
+     "Find emotional freedom",
+     "Find someone new",
+     "Forget everything"
+    ],
+    "answer": 0,
+    "explanation": "Find emotional freedom. Step one is to find emotional freedom: let yourself fully feel without acting destructively on those feelings."
+   }
+  ],
+  "takeaway": "You can end a relationship with care and respect, honouring what it gave you."
+ },
+ "8df70c07-e719-4677-bad9-aded9262696e": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Grief in Non-Monogamous Structures",
+    "art": "grief-relationship-transitions/l3-0.webp",
+    "alt": "A guide sitting quietly beside a small candle",
+    "size": [
+     391,
+     493
+    ],
+    "plain": "People with several partners grieve in ways most others do not notice."
+   },
+   {
+    "heading": "Forms of Poly-Specific Grief",
+    "art": "grief-relationship-transitions/l3-1.webp",
+    "alt": "A guide looking at one empty chair at a table set for four",
+    "size": [
+     512,
+     434
+    ],
+    "plain": "You can grieve when a partner's other relationship ends, because you lose something too."
+   },
+   {
+    "heading": "Why Poly Grief Is Often Invisible",
+    "art": "grief-relationship-transitions/l3-2.webp",
+    "alt": "A guide holding an outlined see-through heart, looking unseen",
+    "size": [
+     450,
+     512
+    ],
+    "plain": "People say \"but you still have other partners\". That does not cancel the loss."
+   },
+   {
+    "heading": "Processing Grief Across Multiple Relationships",
+    "art": "grief-relationship-transitions/l3-3.webp",
+    "alt": "A guide holding an umbrella with rain on one side and sunshine on the other",
+    "size": [
+     512,
+     501
+    ],
+    "plain": "It is hard to grieve one relationship while showing up for others. Be honest about it."
+   },
+   {
+    "heading": "Supporting a Grieving Partner",
+    "art": "grief-relationship-transitions/l3-4.webp",
+    "alt": "D offering C a cup of tea and simply listening",
+    "size": [
+     512,
+     368
+    ],
+    "plain": "Do not compare or cheer them up. Just be there."
+   },
+   {
+    "heading": "Creating Grief Rituals",
+    "art": "grief-relationship-transitions/l3-5.webp",
+    "alt": "A guide lighting a small candle beside a keepsake box",
+    "size": [
+     464,
+     427
+    ],
+    "plain": "Make your own goodbye rituals, since the usual ones do not fit."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "8df70c07-1",
+    "after": "Why Poly Grief Is Often Invisible",
+    "prompt": "Why is poly grief often invisible?",
+    "options": [
+     "It is rare",
+     "It hurts less",
+     "Others dismiss it because you have other partners"
+    ],
+    "answer": 2,
+    "explanation": "Others dismiss it because you have other partners. External invalidation is one reason: people dismiss the loss because you have other partners."
+   },
+   {
+    "id": "8df70c07-2",
+    "after": "Supporting a Grieving Partner",
+    "prompt": "How should you support a grieving partner?",
+    "options": [
+     "Don't compare their grief to how you would feel",
+     "Point out their other partners",
+     "Tell them to move on"
+    ],
+    "answer": 0,
+    "explanation": "Don't compare their grief to how you would feel. Don't compare their grief to how you'd feel, and don't suggest they should be over it."
+   }
+  ],
+  "takeaway": "Grief in open relationships is real even when other partners remain. Name it and make room for it."
+ },
+ "e09dd82c-ed4b-4b44-a200-96d2e6f84463": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Transitions & Post-Relationship Growth",
+    "art": "grief-relationship-transitions/l4-0.webp",
+    "alt": "Two guides exchanging a friendly fist bump, a single rose resting on a table beside them",
+    "size": [
+     512,
+     405
+    ],
+    "plain": "Some relationships change shape instead of ending."
+   },
+   {
+    "heading": "Relationship Transitions That Aren't Endings",
+    "art": "grief-relationship-transitions/l4-1.webp",
+    "alt": "Each holding one handle of a pram, walking in step as a team",
+    "size": [
+     433,
+     512
+    ],
+    "plain": "Partners can become friends, co-parents or something else that fits better."
+   },
+   {
+    "heading": "The Transition Conversation",
+    "art": "grief-relationship-transitions/l4-2.webp",
+    "alt": "Two guides sitting at a table with two cups, talking honestly and calmly",
+    "size": [
+     494,
+     484
+    ],
+    "plain": "A good transition talk is honest, kind and clear about what changes."
+   },
+   {
+    "heading": "Maintaining Connection Post-Transition",
+    "art": "grief-relationship-transitions/l4-3.webp",
+    "alt": "A guide drawing a friendly dotted chalk line on the ground",
+    "size": [
+     476,
+     490
+    ],
+    "plain": "Clear limits on contact, touch and topics help you stay in each other's lives."
+   },
+   {
+    "heading": "Post-Traumatic Growth in Relationships",
+    "art": "grief-relationship-transitions/l4-4.webp",
+    "alt": "A guide standing tall beside a green sprout growing from a cracked pot",
+    "size": [
+     401,
+     506
+    ],
+    "plain": "People often grow after hard endings."
+   },
+   {
+    "heading": "The Post-Relationship Growth Process",
+    "art": "grief-relationship-transitions/l4-5.webp",
+    "alt": "A guide climbing wide steps toward a sunrise",
+    "size": [
+     496,
+     496
+    ],
+    "plain": "Recovery comes in phases. The first is steadying yourself with sleep, food, movement and friends."
+   },
+   {
+    "heading": "Integration Practices",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "e09dd82c-1",
+    "after": "Relationship Transitions That Aren't Endings",
+    "prompt": "Which is a relationship transition that isn't an ending?",
+    "options": [
+     "Blocking each other",
+     "Romantic to platonic",
+     "Leaving without a word"
+    ],
+    "answer": 1,
+    "explanation": "Romantic to platonic. Romantic to platonic means choosing friendship over romance."
+   },
+   {
+    "id": "e09dd82c-2",
+    "after": "Post-Traumatic Growth in Relationships",
+    "prompt": "Post-traumatic growth means…",
+    "options": [
+     "Avoiding new relationships",
+     "Growing in positive ways after a hard experience",
+     "Forgetting the past"
+    ],
+    "answer": 1,
+    "explanation": "Growing in positive ways after a hard experience. Psychologists Tedeschi and Calhoun identified five domains in which people can grow after hardship."
+   }
+  ],
+  "takeaway": "A relationship can change shape instead of ending, and hard endings can lead to growth."
+ }
+}

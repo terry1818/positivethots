@@ -1,0 +1,356 @@
+{
+ "1c3508e1-2235-4ed4-9507-fe1d70478d81": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Sternberg's Triangular Theory of Love",
+    "art": "maintaining-intimacy/l1-0.webp",
+    "alt": "A guide holding a large triangle with a heart at each corner",
+    "size": [
+     467,
+     501
+    ],
+    "plain": "One well-known idea says love is made of three parts."
+   },
+   {
+    "heading": "The Three Components",
+    "art": "maintaining-intimacy/l1-1.webp",
+    "alt": "Each holding one item: a warm mug, a small flame and a golden key",
+    "size": [
+     512,
+     447
+    ],
+    "plain": "The three parts are closeness, passion and commitment."
+   },
+   {
+    "heading": "Seven Types of Love",
+    "art": "maintaining-intimacy/l1-2.webp",
+    "alt": "A guide holding a fan of seven differently coloured heart cards",
+    "size": [
+     397,
+     474
+    ],
+    "plain": "Mixing the three in different amounts gives seven kinds of love."
+   },
+   {
+    "heading": "The Natural Ebb and Flow",
+    "art": "maintaining-intimacy/l1-3.webp",
+    "alt": "A guide standing calmly at the shore watching waves roll in and out",
+    "size": [
+     490,
+     512
+    ],
+    "plain": "All three go up and down over time. That is normal."
+   },
+   {
+    "heading": "ENM Application",
+    "art": "",
+    "alt": "",
+    "plain": "Different relationships can be strong in different parts, and that is fine."
+   }
+  ],
+  "checks": [
+   {
+    "id": "1c3508e1-1",
+    "after": "The Three Components",
+    "prompt": "What are Sternberg's three components of love?",
+    "options": [
+     "Looks, luck and timing",
+     "Intimacy, passion and commitment",
+     "Trust, money and time"
+    ],
+    "answer": 1,
+    "explanation": "Intimacy, passion and commitment. Intimacy is the feeling of closeness, and it sits alongside passion and commitment."
+   },
+   {
+    "id": "1c3508e1-2",
+    "after": "The Natural Ebb and Flow",
+    "prompt": "What does Sternberg's model say about the three components over time?",
+    "options": [
+     "They stay fixed",
+     "All three fluctuate",
+     "Only passion matters"
+    ],
+    "answer": 1,
+    "explanation": "All three fluctuate. Sternberg's model normalizes what many people experience but don't discuss: all three components fluctuate over time."
+   }
+  ],
+  "takeaway": "Love has three parts: closeness, passion and commitment. Each one rises and falls over time."
+ },
+ "a2ffbf66-34a1-4502-8a17-9cb2fd50774f": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Gottman's 6 Hours a Week",
+    "art": "maintaining-intimacy/l2-0.webp",
+    "alt": "A guide holding a wall clock with a heart in the centre",
+    "size": [
+     474,
+     512
+    ],
+    "plain": "Small daily and weekly habits, about six hours a week in total, keep couples close."
+   },
+   {
+    "heading": "The Daily Rituals",
+    "art": "maintaining-intimacy/l2-1.webp",
+    "alt": "Two guides hugging goodbye at a doorway, D holding a lunch bag",
+    "size": [
+     425,
+     478
+    ],
+    "plain": "Daily: a real goodbye, a real hello, a little thanks and some affection."
+   },
+   {
+    "heading": "The Weekly Rituals",
+    "art": "maintaining-intimacy/l2-2.webp",
+    "alt": "Two guides sharing a candlelit dinner date",
+    "size": [
+     512,
+     414
+    ],
+    "plain": "Weekly: a two-hour date and a check-in on how you two are doing."
+   },
+   {
+    "heading": "Why Small Rituals Matter More Than Grand Gestures",
+    "art": "maintaining-intimacy/l2-3.webp",
+    "alt": "A guide dropping small hearts one at a time into a glass jar",
+    "size": [
+     459,
+     461
+    ],
+    "plain": "Lots of small good moments beat one big gesture."
+   },
+   {
+    "heading": "Adapting for ENM",
+    "art": "maintaining-intimacy/l2-4.webp",
+    "alt": "A guide looking at a big wall calendar with coloured hearts on different days",
+    "size": [
+     503,
+     455
+    ],
+    "plain": "With several partners the hours add up, so plan them honestly."
+   }
+  ],
+  "checks": [
+   {
+    "id": "a2ffbf66-1",
+    "after": "Gottman's 6 Hours a Week",
+    "prompt": "How much time do Gottman's connection rituals total each week?",
+    "options": [
+     "About 6 hours",
+     "About 40 hours",
+     "About 30 minutes"
+    ],
+    "answer": 0,
+    "explanation": "About 6 hours. Gottman's daily and weekly connection rituals add up to about six hours a week."
+   },
+   {
+    "id": "a2ffbf66-2",
+    "after": "Why Small Rituals Matter More Than Grand Gestures",
+    "prompt": "How is relationship satisfaction built?",
+    "options": [
+     "Through avoiding each other",
+     "Through rare grand gestures",
+     "Through frequent, small positive moments"
+    ],
+    "answer": 2,
+    "explanation": "Through frequent, small positive moments. Gottman's research consistently shows that relationship satisfaction is built through frequent, small positive interactions rather than occasional large ones."
+   }
+  ],
+  "takeaway": "About six hours a week of small rituals keeps a relationship strong."
+ },
+ "9b5c119f-06d1-437a-a756-8c85408a5d47": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Intimacy Beyond Sex",
+    "art": "maintaining-intimacy/l3-0.webp",
+    "alt": "Two guides sitting close, sharing a pair of headphones and smiling",
+    "size": [
+     431,
+     402
+    ],
+    "plain": "Intimacy means closeness, and sex is only one kind."
+   },
+   {
+    "heading": "The Multiple Dimensions of Intimacy",
+    "art": "maintaining-intimacy/l3-1.webp",
+    "alt": "A and B sharing a book while C and D stargaze beside them",
+    "size": [
+     512,
+     321
+    ],
+    "plain": "You can be close through feelings, ideas, touch, shared experiences and beliefs."
+   },
+   {
+    "heading": "Why Over-Emphasizing Sexual Intimacy Creates Fragility",
+    "art": "maintaining-intimacy/l3-2.webp",
+    "alt": "A guide balancing carefully on a one-legged stool",
+    "size": [
+     375,
+     511
+    ],
+    "plain": "If sex is your only way to feel close, the relationship is easier to shake."
+   },
+   {
+    "heading": "Intimacy in Everyday Moments",
+    "art": "maintaining-intimacy/l3-3.webp",
+    "alt": "Two guides reading in comfortable silence on the same sofa",
+    "size": [
+     512,
+     421
+    ],
+    "plain": "Quiet everyday moments can be the closest ones."
+   },
+   {
+    "heading": "ENM and Multi-Dimensional Intimacy",
+    "art": "",
+    "alt": "",
+    "plain": "Different partners can meet different needs for closeness."
+   },
+   {
+    "heading": "Self-Intimacy",
+    "art": "maintaining-intimacy/l3-5.webp",
+    "alt": "A guide writing in a journal with a cup of tea, content",
+    "size": [
+     464,
+     483
+    ],
+    "plain": "Being close to yourself counts too."
+   }
+  ],
+  "checks": [
+   {
+    "id": "9b5c119f-1",
+    "after": "Why Over-Emphasizing Sexual Intimacy Creates Fragility",
+    "prompt": "Why is relying mostly on sex for intimacy risky?",
+    "options": [
+     "It is against the rules",
+     "The relationship becomes vulnerable to disruption",
+     "It costs too much"
+    ],
+    "answer": 1,
+    "explanation": "The relationship becomes vulnerable to disruption. Relationships that rely primarily on sexual connection for intimacy are vulnerable to disruption."
+   },
+   {
+    "id": "9b5c119f-2",
+    "after": "Self-Intimacy",
+    "prompt": "Which dimension of intimacy is most overlooked?",
+    "options": [
+     "Intimacy with yourself",
+     "Sexual intimacy",
+     "Intimacy at work"
+    ],
+    "answer": 0,
+    "explanation": "Intimacy with yourself. Perhaps the most overlooked dimension is intimacy with yourself."
+   }
+  ],
+  "takeaway": "Closeness comes in many forms besides sex: feelings, ideas, shared experiences and quiet time."
+ },
+ "d101bdd8-a775-4d78-93c4-5727c76bdce7": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Sustainable Rhythms of Connection",
+    "art": "maintaining-intimacy/l4-0.webp",
+    "alt": "Two guides walking hand in hand along a long winding path",
+    "size": [
+     460,
+     505
+    ],
+    "plain": "Staying close for years is a daily choice, not a finish line."
+   },
+   {
+    "heading": "Creating Sustainable Systems",
+    "art": "maintaining-intimacy/l4-1.webp",
+    "alt": "Happily colour-coding a shared wall calendar",
+    "size": [
+     478,
+     500
+    ],
+    "plain": "Shared calendars and regular check-ins make it workable."
+   },
+   {
+    "heading": "The Challenge of Multiple Partnerships",
+    "art": "maintaining-intimacy/l4-2.webp",
+    "alt": "A guide carrying four different-sized cups on a tray, concentrating",
+    "size": [
+     512,
+     503
+    ],
+    "plain": "More relationships means more demands on your time and energy."
+   },
+   {
+    "heading": "Avoiding Burnout",
+    "art": "maintaining-intimacy/l4-3.webp",
+    "alt": "Slumped beside a phone showing a low battery icon",
+    "size": [
+     449,
+     485
+    ],
+    "plain": "Dreading plans and feeling drained are signs you have taken on too much."
+   },
+   {
+    "heading": "Intimacy During Life Transitions",
+    "art": "",
+    "alt": "",
+    "plain": "Illness, grief, moves and new babies shake every relationship. Adjust and be patient."
+   },
+   {
+    "heading": "Sternberg's Model Applied",
+    "art": "maintaining-intimacy/l4-5.webp",
+    "alt": "A guide watering one corner of a triangle-shaped planter",
+    "size": [
+     512,
+     459
+    ],
+    "plain": "When one part of love fades, give that part some attention."
+   },
+   {
+    "heading": "When Professional Support Helps",
+    "art": "",
+    "alt": "",
+    "plain": "If it stays hard, a couples therapist can help."
+   }
+  ],
+  "checks": [
+   {
+    "id": "d101bdd8-1",
+    "after": "Avoiding Burnout",
+    "prompt": "Which is a sign you may be over-extended?",
+    "options": [
+     "Looking forward to dates",
+     "Feeling rested",
+     "Dreading time with partners"
+    ],
+    "answer": 2,
+    "explanation": "Dreading time with partners. One sign of being over-extended is dreading time with partners rather than looking forward to it."
+   },
+   {
+    "id": "d101bdd8-2",
+    "after": "Sternberg's Model Applied",
+    "prompt": "What can you do when one component of love is waning?",
+    "options": [
+     "Ignore it",
+     "Intentionally nurture it",
+     "End the relationship"
+    ],
+    "answer": 1,
+    "explanation": "Intentionally nurture it. When you notice a component of love waning, you can intentionally nurture it."
+   }
+  ],
+  "takeaway": "Lasting closeness is a habit you keep choosing. Pace yourself and plan for it."
+ }
+}

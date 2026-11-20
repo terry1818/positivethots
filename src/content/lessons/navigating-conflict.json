@@ -7,20 +7,32 @@
   "concepts": [
    {
     "heading": "Perpetual vs Solvable Problems",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l1-0.webp",
+    "alt": "A guide holding a pie chart with one large slice and one small slice",
+    "size": [
+     397,
+     477
+    ],
     "plain": "About 7 in 10 relationship problems never fully go away."
    },
    {
     "heading": "What Makes a Problem Perpetual?",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l1-1.webp",
+    "alt": "Two guides standing back to back, one holding a sun and one holding a moon, both smiling",
+    "size": [
+     512,
+     456
+    ],
     "plain": "Some problems come from who you each are. They keep coming back."
    },
    {
     "heading": "Solvable Problems",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l1-2.webp",
+    "alt": "A guide fitting the last piece into a small jigsaw puzzle",
+    "size": [
+     458,
+     449
+    ],
     "plain": "Other problems are about one situation and can be fixed with a good talk."
    },
    {
@@ -31,14 +43,22 @@
    },
    {
     "heading": "When Perpetual Problems Become Gridlocked",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l1-4.webp",
+    "alt": "On opposite sides of a locked gate, arms crossed",
+    "size": [
+     512,
+     440
+    ],
     "plain": "A problem is gridlocked when you cannot talk about it without getting hurt or angry."
    },
    {
     "heading": "Dreams Within Conflict",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l1-5.webp",
+    "alt": "A guide looking up at a thought bubble that holds a small glowing star",
+    "size": [
+     453,
+     498
+    ],
     "plain": "Under a stuck fight there is usually a hope or dream. Ask about it."
    },
    {
@@ -59,7 +79,7 @@
      "69%"
     ],
     "answer": 2,
-    "explanation": "69%. One of Gottman's most groundbreaking findings transformed how we understand relationship conflict."
+    "explanation": "69%. Gottman found that 69% of relationship problems are perpetual, meaning they never fully go away."
    },
    {
     "id": "35b644bf-2",
@@ -84,14 +104,22 @@
   "concepts": [
    {
     "heading": "Physiological Flooding & Self-Soothing",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l2-0.webp",
+    "alt": "A guide with a pounding heart on his chest and steam rising from his head",
+    "size": [
+     452,
+     496
+    ],
     "plain": "Flooding is when a fight overwhelms your body and you cannot think."
    },
    {
     "heading": "What Happens in Your Body",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l2-1.webp",
+    "alt": "A guide with a hand on her chest, a heartbeat line and a small alarm bell beside her",
+    "size": [
+     469,
+     500
+    ],
     "plain": "Your heart races and your body goes into survival mode."
    },
    {
@@ -102,26 +130,42 @@
    },
    {
     "heading": "Recognizing the Signs",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l2-3.webp",
+    "alt": "A guide noticing her own clenched fist and slowly opening it",
+    "size": [
+     512,
+     464
+    ],
     "plain": "Learn your own warning signs, like a tight chest or wanting to run."
    },
    {
     "heading": "The 20-Minute Rule",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l2-4.webp",
+    "alt": "A guide holding a large kitchen timer",
+    "size": [
+     454,
+     470
+    ],
     "plain": "Your body needs at least 20 minutes to settle down."
    },
    {
     "heading": "How to Take a Break Without Stonewalling",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l2-5.webp",
+    "alt": "A making a time-out sign with her hands while B nods calmly",
+    "size": [
+     512,
+     428
+    ],
     "plain": "Say you need a break and say when you will come back. That is not shutting down."
    },
    {
     "heading": "Self-Soothing Techniques",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l2-6.webp",
+    "alt": "A guide breathing slowly with eyes closed, one hand on her belly",
+    "size": [
+     395,
+     512
+    ],
     "plain": "Use the break to calm your body: slow breathing, a walk, music."
    },
    {
@@ -167,14 +211,22 @@
   "concepts": [
    {
     "heading": "Repair Attempts: The Secret Weapon",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l3-0.webp",
+    "alt": "A guide holding a small toolbox with a heart on it",
+    "size": [
+     478,
+     512
+    ],
     "plain": "Repair attempts are the biggest sign of whether a relationship will last."
    },
    {
     "heading": "What Is a Repair Attempt?",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l3-1.webp",
+    "alt": "Two guides in the middle of an argument, B offering a small white flag with a sheepish smile",
+    "size": [
+     507,
+     453
+    ],
     "plain": "A repair attempt is anything that lowers the tension, like a joke, a touch or \"sorry\"."
    },
    {
@@ -185,8 +237,12 @@
    },
    {
     "heading": "Why Repairs Sometimes Fail",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l3-3.webp",
+    "alt": "A guide holding out an olive branch toward a small raincloud",
+    "size": [
+     501,
+     462
+    ],
     "plain": "Repairs only land when there is enough goodwill between you."
    },
    {
@@ -197,8 +253,12 @@
    },
    {
     "heading": "Building a Repair-Friendly Relationship",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l3-5.webp",
+    "alt": "Relaxed on a sofa, writing a short list together",
+    "size": [
+     508,
+     449
+    ],
     "plain": "Talk in calm times about what helps each of you reconnect."
    },
    {
@@ -244,32 +304,52 @@
   "concepts": [
    {
     "heading": "Conflict as Growth",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l4-0.webp",
+    "alt": "Two guides climbing a small hill together, helping each other up",
+    "size": [
+     502,
+     512
+    ],
     "plain": "Conflict can bring you closer if you handle it with care."
    },
    {
     "heading": "Softened Startup",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l4-1.webp",
+    "alt": "A guide starting a conversation with an open palm and a soft round empty speech bubble",
+    "size": [
+     471,
+     456
+    ],
     "plain": "How a talk starts is almost always how it ends. Start softly."
    },
    {
     "heading": "Complaint vs. Criticism",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l4-2.webp",
+    "alt": "A guide pointing calmly at a wristwatch",
+    "size": [
+     481,
+     471
+    ],
     "plain": "A complaint is about what happened. Criticism attacks who the person is."
    },
    {
     "heading": "Active Listening During Conflict",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l4-3.webp",
+    "alt": "A speaking while B listens closely, hand cupped to his ear",
+    "size": [
+     506,
+     425
+    ],
     "plain": "Repeat back what you heard before you answer."
    },
    {
     "heading": "Accepting Influence",
-    "art": "",
-    "alt": "",
+    "art": "navigating-conflict/l4-4.webp",
+    "alt": "Each holding one side of a steering wheel, steering together",
+    "size": [
+     508,
+     461
+    ],
     "plain": "Let your partner change your mind sometimes. Those relationships last."
    },
    {

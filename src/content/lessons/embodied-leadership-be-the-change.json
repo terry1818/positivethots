@@ -1,0 +1,246 @@
+{
+ "6eb89178-c9c4-4824-a2df-01d37ecfb97c": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Leadership as Embodied Presence",
+    "art": "",
+    "alt": "",
+    "plain": "Leadership here means how you carry yourself, not a job title."
+   },
+   {
+    "heading": "Social Learning Theory: Learning Through Observation",
+    "art": "",
+    "alt": "",
+    "plain": "People learn mostly by watching what others do."
+   },
+   {
+    "heading": "Psychological Safety: The Foundation of High-Performing Groups",
+    "art": "",
+    "alt": "",
+    "plain": "Groups do their best when people feel safe to speak up and make mistakes."
+   }
+  ],
+  "checks": [
+   {
+    "id": "6eb89178-1",
+    "after": "Social Learning Theory: Learning Through Observation",
+    "prompt": "Social Learning Theory showed that people learn…",
+    "options": [
+     "Through observation",
+     "Only by being told",
+     "Only from books"
+    ],
+    "answer": 0,
+    "explanation": "Through observation. Albert Bandura's Social Learning Theory demonstrated that people learn by observing others."
+   },
+   {
+    "id": "6eb89178-2",
+    "after": "Psychological Safety: The Foundation of High-Performing Groups",
+    "prompt": "What is the foundation of high-performing groups?",
+    "options": [
+     "Competition",
+     "Psychological safety",
+     "Strict rules"
+    ],
+    "answer": 1,
+    "explanation": "Psychological safety. Amy Edmondson's research at Harvard Business School points to psychological safety."
+   }
+  ],
+  "takeaway": "You lead by how you show up. People copy what you do, and they open up when they feel safe."
+ },
+ "5439ca64-c711-4ed1-acb0-ad1cbfc17cf2": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Mirror Neurons and Leadership: Your Presence Matters",
+    "art": "guide-high-five",
+    "alt": ""
+   },
+   {
+    "heading": "The Power of Modeling Over Telling",
+    "art": "",
+    "alt": "",
+    "plain": "People follow what you do, not what you say."
+   },
+   {
+    "heading": "The Nervous System as Leadership Instrument",
+    "art": "",
+    "alt": "",
+    "plain": "Your own calm body is your main tool for leading."
+   },
+   {
+    "heading": "Self-Regulation Practices for Leaders",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "Emotional Intelligence in Practice",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "5439ca64-1",
+    "after": "The Power of Modeling Over Telling",
+    "prompt": "What do people follow?",
+    "options": [
+     "What you do, not what you say",
+     "Whoever speaks loudest",
+     "Written rules only"
+    ],
+    "answer": 0,
+    "explanation": "What you do, not what you say. People don't follow what you say. They follow what you model."
+   },
+   {
+    "id": "5439ca64-2",
+    "after": "The Nervous System as Leadership Instrument",
+    "prompt": "What is your primary leadership tool?",
+    "options": [
+     "Your job title",
+     "Your nervous system",
+     "Your phone"
+    ],
+    "answer": 1,
+    "explanation": "Your nervous system. Your nervous system is your primary leadership tool."
+   }
+  ],
+  "takeaway": "Your calm is contagious. Regulate yourself first and show people instead of telling them."
+ },
+ "43d57759-13a2-4b7b-95c0-1a6bfb79dc62": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Creating Psychological Safety in Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "Safety in love means you can say a need without your partner getting defensive."
+   },
+   {
+    "heading": "Creating Psychological Safety in Professional Contexts",
+    "art": "",
+    "alt": "",
+    "plain": "The same is true at work: teams need to feel safe to speak."
+   },
+   {
+    "heading": "Social Contagion: Your Frequency Spreads",
+    "art": "",
+    "alt": "",
+    "plain": "Moods and habits spread through whole groups of people."
+   },
+   {
+    "heading": "Leadership During Conflict",
+    "art": "",
+    "alt": "",
+    "plain": "Conflict is the real test of how you lead."
+   },
+   {
+    "heading": "Creating Containers for Difficult Conversations",
+    "art": "",
+    "alt": "",
+    "plain": "Set up a safe time and place for the hard conversations."
+   },
+   {
+    "heading": "Leading Through Repair",
+    "art": "",
+    "alt": "",
+    "plain": "Breaks in connection always happen. Repairing them is what builds trust."
+   }
+  ],
+  "checks": [
+   {
+    "id": "43d57759-1",
+    "after": "Social Contagion: Your Frequency Spreads",
+    "prompt": "Christakis and Fowler studied the social contagion of…",
+    "options": [
+     "Emotions, behaviors and health outcomes",
+     "Colds only",
+     "Fashion trends"
+    ],
+    "answer": 0,
+    "explanation": "Emotions, behaviors and health outcomes. Christakis & Fowler (2009) studied social contagion of emotions, behaviors, and health outcomes in large networks."
+   },
+   {
+    "id": "43d57759-2",
+    "after": "Leading Through Repair",
+    "prompt": "What builds trust, according to the \"still face\" research?",
+    "options": [
+     "Ignoring problems",
+     "Never disagreeing",
+     "Repair after rupture"
+    ],
+    "answer": 2,
+    "explanation": "Repair after rupture. Dr. Ed Tronick's \"still face experiment\" showed that rupture is inevitable in relationships — but repair is what builds trust."
+   }
+  ],
+  "takeaway": "Make it safe to be honest, stay steady in conflict, and repair after a rupture."
+ },
+ "6e7f49b2-31b6-42bb-9eb9-fd09e1a1c30c": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Paradox of Change: You Don't Change Others",
+    "art": "",
+    "alt": "",
+    "plain": "You cannot change another person by force."
+   },
+   {
+    "heading": "Embodied Leadership Practice: The Daily Frequency",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "The Capstone: Integration Across All Six Modules",
+    "art": "",
+    "alt": "",
+    "plain": "This pulls together everything from the six modules."
+   },
+   {
+    "heading": "Extending Leadership to Your Community",
+    "art": "",
+    "alt": "",
+    "plain": "The way you lead spreads from your relationships into your community."
+   }
+  ],
+  "checks": [
+   {
+    "id": "6e7f49b2-1",
+    "after": "The Paradox of Change: You Don't Change Others",
+    "prompt": "What is the paradox of change?",
+    "options": [
+     "Others must change first",
+     "Change is always easy",
+     "You cannot change another person through willpower, persuasion or force"
+    ],
+    "answer": 2,
+    "explanation": "You cannot change another person through willpower, persuasion or force. Here's the paradox: You cannot change another person through willpower, persuasion, or force."
+   },
+   {
+    "id": "6e7f49b2-2",
+    "after": "Extending Leadership to Your Community",
+    "prompt": "Where does embodied leadership naturally extend?",
+    "options": [
+     "Only to your workplace",
+     "Into your broader community",
+     "Nowhere"
+    ],
+    "answer": 1,
+    "explanation": "Into your broader community. Embodied leadership naturally extends beyond your immediate relationships into your broader community."
+   }
+  ],
+  "takeaway": "You cannot force anyone to change. Change yourself, and others often follow."
+ }
+}

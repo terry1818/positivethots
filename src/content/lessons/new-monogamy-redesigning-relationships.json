@@ -1,0 +1,250 @@
+{
+ "8f065bda-c879-442f-a12c-ecd593103a92": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Relationships as Living Agreements, Not Static Contracts",
+    "art": "",
+    "alt": "",
+    "plain": "A relationship is an agreement you keep updating, not a contract signed once."
+   },
+   {
+    "heading": "The Three Elements of a Healthy Relationship Agreement",
+    "art": "",
+    "alt": "",
+    "plain": "A healthy agreement has three parts: desires, boundaries and truth."
+   },
+   {
+    "heading": "1. The Desire Element",
+    "art": "",
+    "alt": "",
+    "plain": "Everyone has wants beyond the basic commitment. Say them out loud."
+   },
+   {
+    "heading": "2. The Boundary Element",
+    "art": "",
+    "alt": "",
+    "plain": "Boundaries are not walls. They are limits you agree on together."
+   },
+   {
+    "heading": "3. The Truth Element",
+    "art": "",
+    "alt": "",
+    "plain": "Be fully honest about all of it."
+   }
+  ],
+  "checks": [
+   {
+    "id": "8f065bda-1",
+    "after": "2. The Boundary Element",
+    "prompt": "How does the lesson describe boundaries?",
+    "options": [
+     "They are punishments",
+     "They are not walls",
+     "They never change"
+    ],
+    "answer": 1,
+    "explanation": "They are not walls. Boundaries are not walls. Boundaries are agreements about what is and isn't okay with you."
+   },
+   {
+    "id": "8f065bda-2",
+    "after": "3. The Truth Element",
+    "prompt": "What are the three elements of a healthy relationship agreement?",
+    "options": [
+     "Money, time and space",
+     "Desire, boundary and truth",
+     "Rules, roles and rewards"
+    ],
+    "answer": 1,
+    "explanation": "Desire, boundary and truth. Nelson's framework covers desires, boundaries and truth, with radical honesty across all three."
+   }
+  ],
+  "takeaway": "A relationship is a living agreement. Talk about desires, limits and the truth, and keep updating it."
+ },
+ "6568f55f-d1f2-45fb-8065-6ea66e414c76": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Infidelity as Symptom",
+    "art": "",
+    "alt": "",
+    "plain": "Cheating is often a sign of unmet needs, not a random betrayal. It still hurts."
+   },
+   {
+    "heading": "The Erotic Recovery Process",
+    "art": "",
+    "alt": "",
+    "plain": "After a betrayal, trust is rebuilt in steps."
+   },
+   {
+    "heading": "Regular Renegotiation: The Key to Longevity",
+    "art": "",
+    "alt": "",
+    "plain": "Every agreement needs to be revisited on a regular basis."
+   }
+  ],
+  "checks": [
+   {
+    "id": "6568f55f-1",
+    "after": "Infidelity as Symptom",
+    "prompt": "How does Nelson reframe infidelity?",
+    "options": [
+     "As proof love is over",
+     "As a symptom of unmet needs within the agreement",
+     "As random bad luck"
+    ],
+    "answer": 1,
+    "explanation": "As a symptom of unmet needs within the agreement. Nelson reframes infidelity not as random betrayal, but as a symptom of unmet needs within the relationship agreement."
+   },
+   {
+    "id": "6568f55f-2",
+    "after": "Regular Renegotiation: The Key to Longevity",
+    "prompt": "What is the key to longevity?",
+    "options": [
+     "Avoiding hard talks",
+     "Never changing the rules",
+     "Regular renegotiation"
+    ],
+    "answer": 2,
+    "explanation": "Regular renegotiation. Nelson emphasizes that all agreements need regular renegotiation."
+   }
+  ],
+  "takeaway": "An affair usually points to needs the agreement was not meeting. Agreements need regular updates."
+ },
+ "cda27767-a3f4-4833-90e9-1c327995d764": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Sexual Frequency and Satisfaction",
+    "art": "",
+    "alt": "",
+    "plain": "Researchers have studied what keeps couples satisfied over the long run."
+   },
+   {
+    "heading": "The New Monogamy is Not Just About Sex",
+    "art": "",
+    "alt": "",
+    "plain": "These agreements cover the whole relationship, not only sex."
+   },
+   {
+    "heading": "Navigating Jealousy in Redesigned Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "Jealousy shows up in every kind of relationship. It is normal."
+   },
+   {
+    "heading": "Boundary Renegotiation",
+    "art": "",
+    "alt": "",
+    "plain": "As you change, your agreements have to change too."
+   },
+   {
+    "heading": "Managing External Social Pressure",
+    "art": "",
+    "alt": "",
+    "plain": "Friends and family will have opinions. You do not have to take them on."
+   }
+  ],
+  "checks": [
+   {
+    "id": "cda27767-1",
+    "after": "The New Monogamy is Not Just About Sex",
+    "prompt": "The New Monogamy framework applies to…",
+    "options": [
+     "Only married couples",
+     "Only sexual agreements",
+     "All relationship agreements, not just sexual ones"
+    ],
+    "answer": 2,
+    "explanation": "All relationship agreements, not just sexual ones. The framework applies to all relationship agreements, not just sexual agreements."
+   },
+   {
+    "id": "cda27767-2",
+    "after": "Boundary Renegotiation",
+    "prompt": "Why must agreements be renegotiated?",
+    "options": [
+     "Because relationships evolve",
+     "Because rules are bad",
+     "Because partners forget"
+    ],
+    "answer": 0,
+    "explanation": "Because relationships evolve. Relationships evolve, and so must agreements."
+   }
+  ],
+  "takeaway": "Jealousy, changing needs and other people's opinions are normal challenges. Talk and renegotiate."
+ },
+ "60c7c403-4d99-43a7-800e-fef3136b171f": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Designing Your Own Relationship Agreement",
+    "art": "",
+    "alt": "",
+    "plain": "Write your agreement down, starting with what you are committed to."
+   },
+   {
+    "heading": "The Transformation",
+    "art": "",
+    "alt": "",
+    "plain": "Spelling things out instead of assuming changes a relationship for the better."
+   },
+   {
+    "heading": "The Art of Regular Check-Ins",
+    "art": "",
+    "alt": "",
+    "plain": "The couples who do best have regular, planned check-ins."
+   },
+   {
+    "heading": "Evolving Together Over Time",
+    "art": "",
+    "alt": "",
+    "plain": "The average couple waits six years to get help. Do not wait."
+   },
+   {
+    "heading": "Resources for Continued Growth",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "Books and workshops can help you keep growing."
+   }
+  ],
+  "checks": [
+   {
+    "id": "60c7c403-1",
+    "after": "The Art of Regular Check-Ins",
+    "prompt": "What practice do the most successful redesigned relationships share?",
+    "options": [
+     "Avoiding hard topics",
+     "Yearly surprises",
+     "Regular, structured check-ins"
+    ],
+    "answer": 2,
+    "explanation": "Regular, structured check-ins. The most successful redesigned relationships share one practice: regular, structured check-ins."
+   },
+   {
+    "id": "60c7c403-2",
+    "after": "Evolving Together Over Time",
+    "prompt": "How long does the average couple wait before seeking help?",
+    "options": [
+     "6 weeks",
+     "6 years",
+     "6 days"
+    ],
+    "answer": 1,
+    "explanation": "6 years. Dr. John Gottman's research shows that the average couple waits 6 years before seeking help for relationship problems."
+   }
+  ],
+  "takeaway": "Write your agreement down, check in on a schedule, and get help early instead of waiting years."
+ }
+}
