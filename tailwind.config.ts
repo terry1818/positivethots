@@ -14,6 +14,11 @@ export default {
     },
     extend: {
       colors: {
+        "learn-correct": { DEFAULT: "hsl(var(--learn-correct) / <alpha-value>)", foreground: "hsl(var(--learn-ink) / <alpha-value>)" },
+        "learn-urgent": { DEFAULT: "hsl(var(--learn-urgent) / <alpha-value>)", foreground: "hsl(var(--learn-ink) / <alpha-value>)" },
+        "learn-info": { DEFAULT: "hsl(var(--learn-info) / <alpha-value>)", foreground: "hsl(var(--learn-ink) / <alpha-value>)" },
+        "learn-reward": { DEFAULT: "hsl(var(--learn-reward) / <alpha-value>)", foreground: "hsl(var(--learn-ink) / <alpha-value>)" },
+        "learn-highlight": { DEFAULT: "hsl(var(--learn-highlight) / <alpha-value>)", foreground: "hsl(var(--learn-ink) / <alpha-value>)" },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

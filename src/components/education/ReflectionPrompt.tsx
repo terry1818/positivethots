@@ -77,7 +77,7 @@ export const ReflectionPrompt = ({
   // Already saved and not editing — show read-only view
   if (hasSaved && !isEditing) {
     return (
-      <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
+      <div className="learn-reflection rounded-lg border border-border bg-muted/30 p-4 space-y-3">
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold flex items-center gap-1.5">
             <BookOpen className="h-4 w-4 text-primary" /> Your Reflection
@@ -100,7 +100,7 @@ export const ReflectionPrompt = ({
   }
 
   return (
-    <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-4 space-y-3">
+    <div className="learn-reflection rounded-lg border-2 border-primary/20 bg-primary/5 p-4 space-y-3">
       <div className="text-center"><GuideArt name="guide-meditate" size={112}/></div>
       <p className="text-sm font-semibold">Take a moment to reflect 💭</p>
       <p className="text-sm">{prompt}</p>

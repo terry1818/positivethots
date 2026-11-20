@@ -1,50 +1,18 @@
 {
- "guide-lesson-reading.webp": [
-  536,
-  640
- ],
- "guide-listen-headphones.webp": [
-  291,
-  640
- ],
- "guide-practice-dumbbell.webp": [
-  354,
-  640
- ],
- "guide-story-chat.webp": [
-  450,
-  640
+ "guide-celebrate-all.webp": [
+  640,
+  558
  ],
  "guide-chest-open.webp": [
   640,
   639
  ],
- "guide-trophy.webp": [
-  294,
-  640
- ],
- "guide-thinking.webp": [
-  404,
-  640
- ],
- "guide-thumbs-up.webp": [
-  484,
+ "guide-daily-spin.webp": [
+  604,
   640
  ],
  "guide-encourage.webp": [
   625,
-  640
- ],
- "guide-waving.webp": [
-  284,
-  640
- ],
- "guide-streak-flame.webp": [
-  392,
-  640
- ],
- "guide-sleepy.webp": [
-  476,
   640
  ],
  "guide-graduate.webp": [
@@ -55,44 +23,76 @@
   617,
   640
  ],
- "guide-tier-foundation.webp": [
-  621,
+ "guide-lesson-reading.webp": [
+  539,
   640
  ],
- "guide-tier-sexual-health.webp": [
-  307,
+ "guide-level-up.webp": [
+  569,
   640
  ],
- "guide-tier-identity.webp": [
-  495,
+ "guide-listen-headphones.webp": [
+  291,
   640
  ],
- "guide-tier-relationships.webp": [
+ "guide-meditate.webp": [
+  522,
+  640
+ ],
+ "guide-practice-dumbbell.webp": [
+  354,
+  640
+ ],
+ "guide-sleepy.webp": [
+  588,
+  640
+ ],
+ "guide-story-chat.webp": [
+  450,
+  640
+ ],
+ "guide-streak-flame.webp": [
+  392,
+  640
+ ],
+ "guide-study-together.webp": [
   640,
+  630
+ ],
+ "guide-thinking.webp": [
+  421,
+  640
+ ],
+ "guide-thumbs-up.webp": [
+  469,
   640
  ],
  "guide-tier-advanced.webp": [
   495,
   640
  ],
- "guide-daily-spin.webp": [
-  554,
-  640
- ],
- "guide-level-up.webp": [
-  576,
-  640
- ],
- "guide-meditate.webp": [
-  561,
-  640
- ],
- "guide-celebrate-all.webp": [
+ "guide-tier-foundation.webp": [
   640,
-  596
+  640
  ],
- "guide-study-together.webp": [
+ "guide-tier-identity.webp": [
+  537,
+  640
+ ],
+ "guide-tier-relationships.webp": [
   640,
-  630
+  640
+ ],
+ "guide-tier-sexual-health.webp": [
+  307,
+  640
+ ],
+ "guide-trophy.webp": [
+  294,
+  640
+ ],
+ "guide-waving.webp": [
+  290,
+  640
  ]
 }

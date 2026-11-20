@@ -86,7 +86,7 @@ export const ExerciseSession = ({ moduleTitle, questions, onComplete, onBack, fi
     catch (e) { setLessonError(true); void reportError(e instanceof Error ? e : new Error("Could not load lesson")); }
   };
   if (showScore) return <div className="space-y-6 py-4" aria-live="polite">
-    <div className="relative space-y-1"><QuizCombo combo={state.combo} /><p className="text-xs text-muted-foreground">{moduleTitle} · {state.mastered.length}/{ordered.length}</p><div role="progressbar" aria-label="Questions mastered" aria-valuenow={state.mastered.length} aria-valuemax={ordered.length} className="flex gap-0.5 h-1.5">{ordered.map((_, i) => <div key={i} className={cn("flex-1 rounded-full", i < state.mastered.length ? state.combo >= 5 ? "quiz-progress-gold" : "bg-gradient-primary" : "bg-muted")} />)}</div></div>
+    <div className="relative space-y-1"><QuizCombo combo={state.combo} /><p className="text-xs text-muted-foreground">{moduleTitle} · {state.mastered.length}/{ordered.length}</p><div role="progressbar" aria-label="Questions mastered" aria-valuenow={state.mastered.length} aria-valuemax={ordered.length} className="flex gap-0.5 h-1.5">{ordered.map((_, i) => <div key={i} className={cn("flex-1 rounded-full", i < state.mastered.length ? state.combo >= 5 ? "quiz-progress-gold" : "bg-learn-info" : "bg-muted")} />)}</div></div>
     {!finalResult ? submissionError ? <><p>We couldn't save your badge. Try again.</p><Button className="min-h-11" onClick={onRetrySubmit} disabled={submitting}>Try again</Button></> : <Loader2 className="h-5 w-5 animate-spin" aria-label="Saving your badge" />
       : <><div className="text-center space-y-4"><Mascot mood="graduate" size="lg" /><Trophy className="h-10 w-10 text-primary mx-auto" /><h2 className="text-2xl font-bold">{review ? "Review complete" : "Badge earned!"}</h2><p className="text-4xl font-bold text-primary">{finalResult.score}%</p><p>First-try accuracy · {finalResult.correct} of {finalResult.total} correct</p></div><Button className="w-full min-h-[52px]" onClick={onBack}>Continue</Button></>}
   </div>;
@@ -98,13 +98,13 @@ export const ExerciseSession = ({ moduleTitle, questions, onComplete, onBack, fi
       <QuizCombo combo={state.combo} />
       <div className="flex justify-between items-center text-xs text-muted-foreground"><span>{moduleTitle}</span><span>{state.mastered.length}/{ordered.length}</span><Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label="Leave badge check" onClick={() => requestLeave.current()}><X /></Button></div>
       <div role="progressbar" aria-label="Questions mastered" aria-valuenow={state.mastered.length} aria-valuemax={ordered.length} className="flex gap-0.5 h-1.5">
-        {ordered.map((_, i) => <div key={i} className={cn("flex-1 rounded-full", i < state.mastered.length ? state.combo >= 5 ? "quiz-progress-gold" : "bg-gradient-primary" : "bg-muted")} />)}
+        {ordered.map((_, i) => <div key={i} className={cn("flex-1 rounded-full", i < state.mastered.length ? state.combo >= 5 ? "quiz-progress-gold" : "bg-learn-info" : "bg-muted")} />)}
       </div>
     </div>
     <div className="flex items-center gap-2"><Zap className="h-3.5 w-3.5 text-primary" /><span className="text-xs font-semibold text-primary uppercase tracking-wider">Multiple Choice</span>
       {state.misses[current.id] > 0 && <m.span key={attempt} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0.1 : duration.fast }} className="text-sm text-muted-foreground">Let's revisit</m.span>}
     </div>
-    <div className="space-y-4"><div className="flex items-start gap-4"><p className="text-lg font-medium leading-relaxed flex-1">{current.question}</p>{!feedback && <GuideArt name="guide-thinking" size={72}/>}</div>
+    <div className="space-y-4"><div className="flex items-start gap-4"><p className="text-lg font-medium leading-relaxed flex-1">{current.question}</p>{!feedback && <GuideArt name="guide-thinking" size={72} className="learn-info-icon"/>}</div>
       <RadioGroup key={`${current.id}:${attempt}`} value={selected === null ? "" : String(selected)} onValueChange={v => { if (!feedback && !pending && !error) setSelected(Number(v)); }} className="space-y-2">
         {optionOrder.map((originalIndex, displayIndex) => {
           const correct = feedback && originalIndex === feedback.correct_answer;

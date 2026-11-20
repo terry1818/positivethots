@@ -71,7 +71,7 @@ export function LearnToday({ streak, lastActivityDate, freezes, atRisk, hoursLef
     <div className="relative">
       <div ref={row} className="learn-today-scroll flex gap-2 overflow-x-auto pb-1">
         {chips.map(({ id, title, label, state, icon: Icon, dot }) => <Button key={id} variant="secondary"
-          className={cn("h-[44px] min-h-[44px] shrink-0 gap-2 rounded-full bg-muted text-foreground", highlighted === id && "learn-chip-highlight")}
+          className={cn("h-[44px] min-h-[44px] shrink-0 gap-2 rounded-full bg-muted text-foreground", highlighted === id && "learn-chip-highlight", id === "streak" && "learn-streak-chip")}
           aria-label={`${title}, ${state}`} onClick={() => setSheet(id)}
           data-tour={id === "challenge" ? "learn-daily-challenge" : `learn-${id}`}
           data-walkthrough={id === "challenge" ? "learn-daily-challenge" : `learn-${id}`}>

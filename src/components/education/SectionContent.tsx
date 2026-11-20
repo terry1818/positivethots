@@ -154,9 +154,9 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
               className={cn(
                 "min-h-[44px] px-3 py-1.5 rounded-full text-sm font-medium border transition-all",
                 !isAnswered && "border-border hover:border-purple-400 hover:bg-purple-500/10 cursor-pointer",
-                isAnswered && isThis && isCorrectOption && "border-green-500 bg-green-500/10 text-green-700 dark:text-green-400",
+                isAnswered && isThis && isCorrectOption && "quiz-option-success",
                 isAnswered && isThis && !isCorrectOption && "border-destructive bg-destructive/10 text-destructive",
-                isAnswered && !isThis && isCorrectOption && "border-green-500 bg-green-500/10 text-green-700 dark:text-green-400",
+                isAnswered && !isThis && isCorrectOption && "quiz-option-success",
                 isAnswered && !isThis && !isCorrectOption && "opacity-40 border-border"
               )}
             >
@@ -172,11 +172,11 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
       {isAnswered && (
         <div aria-live="polite" className={cn(
           "rounded-md p-3 text-sm",
-          isCorrect ? "bg-green-500/10" : "bg-destructive/10"
+          isCorrect ? "quiz-feedback-success" : "bg-destructive/10"
         )}>
           <p className="font-medium flex items-center gap-1.5">
             {isCorrect ? (
-              <><CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> Correct!</>
+              <><CheckCircle2 className="h-3.5 w-3.5 quiz-feedback-success" /> Correct!</>
             ) : (
               <><XCircle className="h-3.5 w-3.5 text-destructive" /> Not quite</>
             )}

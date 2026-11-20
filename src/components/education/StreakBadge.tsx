@@ -60,6 +60,7 @@ export const StreakBadge = ({
       <div className="relative">
         <Flame className={cn(
           config.size,
+          "learn-streak-flame",
           isFreezeActive ? "text-blue-400" : config.color,
           !reducedMotion && !dailyComplete && streak >= 30 && "animate-streak-glow",
           urgencyAnim

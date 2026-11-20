@@ -762,3 +762,47 @@ button, [role="button"] {
 .path-guide-placement.path-mascot-right { right: -16px; justify-content: flex-end; }
 .path-guide-placement.path-mascot-left { left: -8px; justify-content: flex-start; }
 @media(max-width:359px) { .path-guide-placement.path-mascot-right { right: 0; }.path-guide-placement.path-mascot-left { left: 0; } }
+
+/* Learn-only semantic accents: each pigment has exactly one state meaning. */
+:root {
+  --learn-correct: 82.711864 77.973568% 55.490196%;
+  --learn-urgent: 11.927711 100% 67.450980%;
+  --learn-info: 198.4375 93.203883% 59.607843%;
+  --learn-reward: 43.255814 96.412556% 56.274510%;
+  --learn-highlight: 173.414634 80.392157% 40%;
+  --learn-ink: 270 38.461538% 10.196078%;
+}
+[data-learn-transition] { --path-gold: var(--learn-reward); --path-gold-light: var(--learn-reward); }
+[data-learn-transition] .path-state-done .path-node-face { color: hsl(var(--learn-ink)); }
+[data-learn-transition] .path-state-done .path-icon-cut { fill: hsl(var(--learn-reward)); }
+[data-learn-transition] .path-start-bubble { background: hsl(var(--learn-correct)); color: hsl(var(--learn-ink)); }
+[data-learn-transition] .path-start-bubble:after { border-top-color: hsl(var(--learn-correct)); }
+[data-learn-transition] .path-flow-dot { fill: hsl(var(--learn-highlight)); filter: drop-shadow(0 0 4px hsl(var(--learn-highlight))); }
+[data-learn-transition] .path-review-chip { color: hsl(var(--learn-ink)); }
+[data-learn-transition] .path-review-chip:hover { background: hsl(var(--learn-reward)); color: hsl(var(--learn-ink)); }
+[data-learn-transition] .path-pinned-star { background: hsl(var(--learn-reward)); color: hsl(var(--learn-ink)); }
+[data-learn-transition] .path-level-celebrating { color: hsl(var(--learn-ink)); }
+[data-learn-transition] .path-ring-start, [data-learn-transition] .path-ring-end { stop-color: hsl(var(--learn-info)); }
+[data-learn-transition] .path-level-pips .path-pip-done { background: hsl(var(--learn-reward)); }
+.quiz-option-success { background: hsl(var(--learn-correct)); border-color: hsl(var(--learn-correct)); color: hsl(var(--learn-ink)); }
+.quiz-feedback-success { background: hsl(var(--learn-correct)); color: hsl(var(--learn-ink)); }
+.quiz-option-success .quiz-feedback-success { color: hsl(var(--learn-ink)); }
+.quiz-progress-gold { background: hsl(var(--learn-info)); }
+[data-learn-transition] .learn-streak-flame { color: hsl(var(--learn-urgent)); }
+[data-learn-transition] .learn-streak-chip { background: hsl(var(--learn-urgent)); color: hsl(var(--learn-ink)); }
+[data-learn-transition] .learn-streak-chip:hover { background: hsl(var(--learn-urgent)); color: hsl(var(--learn-ink)); }
+[data-learn-transition] .learn-info-icon { background: hsl(var(--learn-info)); color: hsl(var(--learn-ink)); }
+[data-learn-transition] .learn-reflection { border-color: hsl(var(--learn-info)); background: hsl(var(--learn-info) / .08); }
+[data-learn-transition] .learn-reflection > .font-semibold { background: hsl(var(--learn-info)); color: hsl(var(--learn-ink)); }
+
+[data-learn-transition] .practice-tile-icon { background: hsl(var(--learn-highlight)); color: hsl(var(--learn-ink)); }
+[data-learn-transition] .practice-tile-icon .path-filled-icon { filter: none; }
+[data-learn-transition] .learn-xp-gained { background: hsl(var(--learn-reward)); color: hsl(var(--learn-ink)); }
+
+/* Keep semantic pops compact; copy remains readable in both themes. */
+.quiz-feedback-success.flex { background: transparent; color: hsl(var(--foreground)); }
+.quiz-feedback-success.flex > svg { background: hsl(var(--learn-correct)); color: hsl(var(--learn-ink)); }
+[data-learn-transition] .learn-streak-flame { fill: hsl(var(--learn-urgent)); stroke: hsl(var(--learn-ink)); }
+[data-learn-transition] .path-state-done .path-node-face > .path-filled-icon { filter: none; }
+
+.quiz-feedback-success:not(.flex) .text-muted-foreground { color: hsl(var(--learn-ink)); }

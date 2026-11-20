@@ -39,10 +39,10 @@ function Checkpoint({ question, saved, onAnswered }: { question: LessonCheckpoin
   useEffect(() => { if (feedback && !saved) { if (feedback.is_correct) playCorrect(); else playMiss(); } }, [feedback, playCorrect, playMiss]);
   useEffect(() => { if (feedback && selected !== null) onAnswered(selected, feedback); }, [feedback, selected, onAnswered]);
   return <div className="space-y-4">{!result && <GuideArt name="guide-thinking" size={72}/>}<p>{question.question}</p><div className="space-y-2">{question.options.map((option, i) => <Button key={i} variant="outline"
-    className={cn("w-full min-h-11 h-auto whitespace-normal justify-start text-left py-3", result && i === result.correct_answer && "border-success text-success disabled:opacity-100", result && selected === i && !result.is_correct && "border-destructive text-destructive disabled:opacity-100")}
+    className={cn("w-full min-h-11 h-auto whitespace-normal justify-start text-left py-3", result && i === result.correct_answer && "quiz-option-success disabled:opacity-100", result && selected === i && !result.is_correct && "border-destructive text-destructive disabled:opacity-100")}
     disabled={pending || !!result || error} onClick={() => { setSelected(i); void check(question.id, i, Date.now() - start.current); }}>
     {pending && selected === i && <Loader2 className="h-4 w-4 mr-2 shrink-0 animate-spin" />}<span>{option}</span>{result && i === result.correct_answer && <CheckCircle2 className="ml-2 h-4 w-4 shrink-0" aria-label="Correct answer" />}{result && selected === i && !result.is_correct && <XCircle className="ml-2 h-4 w-4 shrink-0" aria-label="Your answer was not correct" />}
-  </Button>)}</div><div aria-live="polite">{result && <div className="space-y-2"><p className="flex items-center gap-2 font-semibold">{result.is_correct ? <><CheckCircle2 className="text-success" />Correct!</> : <><XCircle className="text-destructive" />Not quite</>}</p><p>{result.explanation}</p></div>}</div>
+  </Button>)}</div><div aria-live="polite">{result && <div className="space-y-2"><p className="flex items-center gap-2 font-semibold">{result.is_correct ? <><CheckCircle2 className="quiz-feedback-success" />Correct!</> : <><XCircle className="text-destructive" />Not quite</>}</p><p>{result.explanation}</p></div>}</div>
     {error && <div role="alert"><p>We couldn't check that answer. Try again.</p><Button variant="outline" className="min-h-11" onClick={retry} disabled={pending}>Retry</Button></div>}
   </div>;
 }
@@ -127,7 +127,7 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
     <header className="h-[56px] shrink-0 flex items-center gap-1 border-b border-border px-2">
       <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label="Exit lesson" onClick={exit}><X /></Button>
       <div role="progressbar" aria-label="Lesson cards" aria-valuenow={index + 1} aria-valuemin={0} aria-valuemax={cards.length} className="flex flex-1 min-w-0 gap-1">
-        {cards.map((_, i) => <div key={i} className="h-2 flex-1 min-w-0 overflow-hidden rounded-sm bg-muted"><m.div className="h-full bg-gradient-primary origin-left" initial={false} animate={{ scaleX: i <= index ? 1 : 0 }} transition={{ duration: reduced ? 0.1 : duration.normal }} /></div>)}
+        {cards.map((_, i) => <div key={i} className="h-2 flex-1 min-w-0 overflow-hidden rounded-sm bg-muted"><m.div className="h-full bg-learn-info origin-left" initial={false} animate={{ scaleX: i <= index ? 1 : 0 }} transition={{ duration: reduced ? 0.1 : duration.normal }} /></div>)}
       </div>
       <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label="Read aloud" aria-pressed={listenOpen} onClick={() => setListenOpen(v => !v)}><Volume2 /></Button>
       <LessonViewMenu article={false} onSwitch={() => { onSavePosition(index); onArticle(); }} />
