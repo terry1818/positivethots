@@ -20,7 +20,7 @@ export default function FinishSequence({ data, onBack, onDiscovery }: { data: Fi
   const [share, setShare] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const played = useRef(new Set<string>());
-  const { playBadgeUnlock, playStreakMilestone } = useSoundEffects();
+  const { playBadgeUnlock, playStreakMilestone, playLevelComplete } = useSoundEffects();
   const steps = finishSteps(data); const step = steps[index] || steps[steps.length - 1];
   const last = index >= steps.length - 1;
   const foundation = step === "tier" && data.tier === "foundation";
@@ -30,9 +30,9 @@ export default function FinishSequence({ data, onBack, onDiscovery }: { data: Fi
     heading.current?.focus();
     if (played.current.has(step)) return;
     played.current.add(step);
-    if (step === "badge") playBadgeUnlock(); // includes the existing heavy haptic
+    if (step === "badge") { playBadgeUnlock(); playLevelComplete(); } // includes the existing heavy haptic
     if (step === "streak" && isStreakMilestone(data.streak || 0)) playStreakMilestone();
-  }, [step, data.streak, playBadgeUnlock, playStreakMilestone]);
+  }, [step, data.streak, playBadgeUnlock, playStreakMilestone, playLevelComplete]);
   const xp = data.xp === null ? "—" : data.xp === 0 ? "XP already earned" : `+${data.xp}`;
   const stats = step === "lesson" ? [
     { label: "XP", value: xp, counter: data.xp },

@@ -1,5 +1,7 @@
 import { useCallback, useSyncExternalStore } from "react";
 import {
+  playLearningSound,
+  comboExtraNotes,
   playMatchSound,
   playMessageSound,
   playBadgeUnlockSound,
@@ -64,7 +66,21 @@ export function useSoundEffects() {
   const playStreakMilestone = useCallback(() => { if (_soundEnabled) playStreakMilestoneSound(); haptic("heavy"); }, []);
   const playButtonTap = useCallback(() => { if (_soundEnabled) playButtonTapSound(); haptic("light"); }, []);
 
+  const playNodeTap = useCallback(() => { if (_soundEnabled) playLearningSound("nodeTap"); void haptic("light"); }, []);
+  const playCardOpen = useCallback(() => { if (_soundEnabled) playLearningSound("cardOpen"); }, []);
+  const playLessonStart = useCallback(() => { if (_soundEnabled) playLearningSound("lessonStart"); }, []);
+  const playCardAdvance = useCallback(() => { if (_soundEnabled) playLearningSound("cardAdvance"); }, []);
+  const playCorrect = useCallback(() => { if (_soundEnabled) playLearningSound("correct"); void haptic("light"); }, []);
+  const playMiss = useCallback(() => { if (_soundEnabled) playLearningSound("miss"); }, []);
+  const playCombo = useCallback((n: number) => { if (_soundEnabled && comboExtraNotes(n)) playLearningSound("combo", n); void haptic("light"); }, []);
+  const playNodeComplete = useCallback(() => { if (_soundEnabled) playLearningSound("nodeComplete"); void haptic("medium"); }, []);
+  const playTrailFill = useCallback(() => { if (_soundEnabled) playLearningSound("trailFill"); }, []);
+  const playChestOpen = useCallback(() => { if (_soundEnabled) playLearningSound("chestOpen"); void haptic("medium"); }, []);
+  const playLevelComplete = useCallback(() => { if (_soundEnabled) playLearningSound("levelComplete"); }, []);
+  const playLockedTap = useCallback(() => { if (_soundEnabled) playLearningSound("lockedTap"); }, []);
   return {
+    playNodeTap, playCardOpen, playLessonStart, playCardAdvance, playCorrect, playMiss, playCombo,
+    playNodeComplete, playTrailFill, playChestOpen, playLevelComplete, playLockedTap,
     soundEnabled,
     hapticEnabled,
     setSoundEnabled,

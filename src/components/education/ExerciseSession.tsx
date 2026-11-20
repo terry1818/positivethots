@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { m } from "motion/react";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { comboExtraNotes } from "@/lib/soundGenerator";
 import { useQuizAnswer } from "@/hooks/useQuizAnswer";
 import type { QuizAnswer, QuizResult } from "@/lib/quizAnswers";
 import { createMastery, firstTryScore, recordMastery, restoreRemaining, shuffledOptionIndexes } from "@/lib/quizMastery";
@@ -44,6 +46,13 @@ export const ExerciseSession = ({ moduleTitle, questions, onComplete, onBack, fi
   const [lesson, setLesson] = useState<{ title: string; content_text: string | null } | null>(null);
   const [lessonError, setLessonError] = useState(false);
   const { pending, feedback, error, check, retry, reset } = useQuizAnswer();
+  const { playCorrect, playMiss, playCombo } = useSoundEffects();
+  useEffect(() => {
+    if (!feedback) return;
+    if (!feedback.is_correct) playMiss();
+    else if (comboExtraNotes(state.combo + 1)) playCombo(state.combo + 1);
+    else playCorrect();
+  }, [feedback, playCorrect, playMiss, playCombo]);
   const current = ordered.find(q => q.id === state.queue[0]);
   const showScore = state.queue.length === 0;
   const requestLeave = useRef<() => void>(() => {});

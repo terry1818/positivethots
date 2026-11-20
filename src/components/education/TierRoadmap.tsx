@@ -14,7 +14,11 @@ import { moduleCompletionPercent } from "@/lib/learnSmallFixes";
 import { pathOffsets, pathNodeSpacing, windingConnector } from "@/lib/learnHome";
 import { completedNodeId } from "@/lib/learnFinish";
 import { duration, easing, spring } from "@/lib/motionTokens";
-import { ProgressRing } from "@/components/motion/ProgressRing";
+import { PathNode } from "./PathNode";
+import { PathScenery } from "./PathScenery";
+import { PathIcon, TierEmblem } from "./pathIcons";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { usePathAnimation } from "@/hooks/usePathAnimation";
 import { Button } from "@/components/ui/button";
 
 const PathChest = lazy(() => import("./PathChest"));
@@ -79,6 +83,9 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
   sections, completedSectionIds, startedSectionIds, justCompleted, scenarios, optionalDone, questionModules, onChestClaim,
 }: BadgePathMapProps) => {
   const navigate = useNavigate();
+  const { ref: pathRef, running } = usePathAnimation<HTMLDivElement>();
+  const [openNode, setOpenNode] = useState<string | null>(null);
+  const { playNodeComplete, playTrailFill } = useSoundEffects();
   const reduced = useReducedMotion();
   const targetRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(220);
@@ -92,7 +99,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
   const [expandedLevels, setExpandedLevels] = useState(() => new Set([currentModuleId, justCompleted?.moduleId || returnModule].filter((id): id is string => Boolean(id))));
   useEffect(() => {
     if (!justCompleted || reduced) return;
-    const timers = [setTimeout(() => setFinishPhase(1), 100), setTimeout(() => setFinishPhase(2), 500), setTimeout(() => {
+    const timers = [setTimeout(() => { setFinishPhase(1); playNodeComplete(); }, 100), setTimeout(() => { setFinishPhase(2); playTrailFill(); }, 500), setTimeout(() => {
       setFinishPhase(3);
       if (justCompleted.node === "badge") setExpandedLevels(previous => { const next = new Set(previous); next.delete(justCompleted.moduleId); if (currentModuleId) next.add(currentModuleId); return next; });
       if (justCompleted.node === "badge") requestAnimationFrame(() => {
@@ -163,7 +170,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
     if (earnedModuleIds.has(module.id)) go(module, moduleSections(module.id)[0]?.section_number || 1);
     else go(module, lesson?.section_number);
   };
-  return <div role="list" aria-label="Learning path" className="space-y-4" style={{ "--learn-header-height": `${headerHeight}px` } as React.CSSProperties}>
+  return <div ref={pathRef} role="list" aria-label="Learning path" className={cn("space-y-4", running ? "path-running" : "path-paused")} style={{ "--learn-header-height": `${headerHeight}px` } as React.CSSProperties}>
     {TIER_ORDER.map(tier => {
       const modules = modulesByTier[tier] || [];
       if (!modules.length) return null;
@@ -171,9 +178,9 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
       const features = tierFeatures.find(t => t.tier === tier)?.features || [];
       const tierOpen = expandedTiers.has(tier);
       return <div key={tier} role="listitem" className={`learn-tier learn-tier-${tier}`}>
-        <Button variant="ghost" className="min-h-[44px] h-auto w-full whitespace-normal" onClick={() => toggle(tier, true)}
+        <Button variant="ghost" className="path-tier-banner min-h-[44px] h-auto w-full whitespace-normal" onClick={() => toggle(tier, true)}
           aria-expanded={tierOpen} data-tour={tier === currentTier ? "learn-tier-active" : undefined} data-walkthrough={tier === currentTier ? "learn-tier-active" : undefined}>
-          {earned === modules.length && <CheckCircle className="h-4 w-4" />}{tierLabels[tier]} · {earned}/{modules.length}<ChevronDown className={cn("h-4 w-4", tierOpen && "rotate-180")} />
+          <TierEmblem tier={tier}/><span className="flex-1 text-left"><span className="block text-lg font-bold">{tierLabels[tier]}</span><span className="block text-sm">{earned} of {modules.length} levels complete</span><span className="path-tier-progress"><span style={{ width: `${earned / modules.length * 100}%` }}/></span></span><ChevronDown className={cn("h-4 w-4", tierOpen && "rotate-180")} />
         </Button>
         {!tierOpen && earned < modules.length && <p className="text-center text-sm text-muted-foreground">{tier === "advanced" && !isPremium ? "Complete Foundation and get Premium" : "Complete Foundation to unlock"}</p>}
         {tierOpen && <div className="space-y-4">
@@ -186,69 +193,51 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
             const mandatory = lessons.length + 1;
             const nodes = mixedLevelNodes(lessons, completedSectionIds, earnedBadge, unlocked, module.tier||"", scenarios.filter(s=>s.module_id===module.id),optionalDone[module.id]||new Set(),questionModules.has(module.id));
             const done = nodes.filter(n => n.done && (n.kind==="lesson"||n.kind==="badge")).length;
-            const connector = windingConnector(nodes.length);
-            const height = 48 + (nodes.length - 1) * pathNodeSpacing;
+            const connector = windingConnector(nodes.length).replace(/\b48\b/, "52");
+            const height = 52 + (nodes.length - 1) * pathNodeSpacing;
             const firstIncomplete = nodes.findIndex(n => !n.done);
             const donePrefix = firstIncomplete < 0 ? nodes.length : firstIncomplete;
             return <section key={module.id} aria-label={module.title} className="learn-level-block">
-              {expanded ? <header className="learn-level-band sticky z-20 flex items-center gap-2 px-3 py-2" style={{ top: headerHeight }}>
-                <div className="min-w-0 flex-1"><p className="text-xs">{tierLabels[tier]} · Level {levelIndex + 1} of {modules.length}</p><h3 className="text-base font-bold leading-tight">{module.title}</h3></div>
-                <span className="shrink-0 text-sm">{done}/{mandatory}</span>
-                <Button variant="outline" className="min-h-[44px] bg-card text-foreground" onClick={() => setGuideId(module.id)}>Guide</Button>
+              {expanded ? <header className={cn("learn-level-band sticky z-20 flex items-center gap-2 px-3 py-4", justCompleted?.moduleId === module.id && justCompleted.node === "badge" && finishPhase < 3 && "path-level-celebrating")} style={{ top: headerHeight }}>
+                <span className="path-level-number">{levelIndex + 1}</span>
+                <div className="min-w-0 flex-1"><p className="text-xs">{tierLabels[tier].replace(" (Required)", "")} - Level {levelIndex + 1} of {modules.length}</p><h3 className="text-base font-bold leading-snug mt-1">{module.title}</h3><div className="path-level-pips" aria-label={`${done} of ${mandatory} lessons and badge completed`}>{nodes.map(n => <i key={n.id} className={n.done ? "path-pip-done" : ""}/>)}</div></div>
+                <Button variant="outline" className="path-guide-button" onClick={() => setGuideId(module.id)}><PathIcon kind="lesson"/>Guide</Button>
                 {module.id !== currentModuleId && <Button variant="ghost" size="icon" aria-label={`Collapse ${module.title}`} onClick={() => toggle(module.id)}><ChevronDown /></Button>}
-              </header> : <div className="flex min-h-[72px] items-center gap-2 border-b border-border py-2">
-                <Button variant="ghost" className="h-auto min-h-[44px] flex-1 justify-start whitespace-normal text-left" onClick={() => setGuideId(module.id)} aria-label={`${module.title}, ${earnedBadge ? "completed" : reason(module) || "available"}`}>
-                  <span className="text-2xl" aria-hidden="true">{badgeIcons[module.slug] || "★"}</span>
-                  {earnedBadge ? <CheckCircle className="h-5 w-5 shrink-0" /> : !unlocked ? <Lock className="h-5 w-5 shrink-0" /> : null}
+              </header> : <div className={cn("path-level-row flex min-h-[80px] items-center gap-2 py-3", earnedBadge && "path-completed-row")}>
+                <Button variant="ghost" className="h-auto min-h-[44px] flex-1 justify-start whitespace-normal text-left text-foreground" onClick={() => setGuideId(module.id)} aria-label={`${module.title}, ${earnedBadge ? "completed" : reason(module) || "available"}`}>
+                  <span className="path-row-medal"><PathIcon kind={earnedBadge ? "badge" : !unlocked ? "lock" : "lesson"}/></span>
                   <div><h3 className="text-base font-semibold">{module.title}</h3>{!unlocked && <p className="text-xs text-muted-foreground">{reason(module)}</p>}</div>
                 </Button>
-                {earnedBadge && <Button variant="outline" className="min-h-[44px]" onClick={() => toggle(module.id)}>Review</Button>}
+                {earnedBadge && <Button variant="outline" className="path-review-chip" onClick={() => toggle(module.id)}>Review</Button>}
               </div>}
               <div className={cn("grid", !reduced && !justCompleted && "transition-[grid-template-rows] duration-300")} style={{ gridTemplateRows: expanded ? "1fr" : "0fr" }}>
                 <div className="min-h-0">
-                  {expanded && <div className="relative mx-auto w-[320px] max-w-full pt-10">
-                    <svg viewBox={`0 0 320 ${height}`} preserveAspectRatio="none" className="pointer-events-none absolute inset-x-0 top-10 w-full" style={{ height }} aria-hidden="true">
-                      <defs><clipPath id={`completed-${module.id}`}><rect width="320" height={donePrefix > 1 ? 48 + (donePrefix - 1) * pathNodeSpacing : 0} /></clipPath></defs>
-                      <path d={connector} fill="none" stroke="currentColor" strokeWidth="4" className="text-muted" />
-                      <m.path initial={false} animate={{ opacity: justCompleted?.moduleId === module.id && finishPhase < 2 ? 0 : 1, pathLength: justCompleted?.moduleId === module.id && finishPhase < 2 ? 0 : 1 }} transition={{ duration: reduced ? 0 : duration.slow }} d={connector} fill="none" stroke="currentColor" strokeWidth="4" className="learn-tier-color" clipPath={`url(#completed-${module.id})`} />
+                  {expanded && <div className="path-level-stage relative mx-auto w-[320px] max-w-full pt-10">
+                    <PathScenery mood={earnedBadge ? "graduate" : "waving"} index={0} offset={0} spots={nodes.flatMap((n, i) => n.kind === "story" || n.kind === "chest" || n.kind === "badge" ? [{ index: i, offset: pathOffsets[i % pathOffsets.length], mood: n.kind === "story" ? "binoculars" as const : n.kind === "chest" ? "heart" as const : "graduate" as const }] : [])} celebration={justCompleted?.moduleId === module.id && justCompleted.node === "badge" && finishPhase < 3}/>
+                    <svg viewBox={`0 0 320 ${height}`} preserveAspectRatio="none" className="path-trail pointer-events-none absolute inset-x-0 top-10 w-full" style={{ height }} aria-hidden="true">
+                      <defs><clipPath id={`completed-${module.id}`}><rect width="320" height={donePrefix > 0 ? 52 + Math.min(donePrefix, nodes.length - 1) * pathNodeSpacing : 0}/></clipPath></defs>
+                      <path d={connector} className="path-trail-track"/>
+                      <m.path initial={false} animate={{ opacity: justCompleted?.moduleId === module.id && finishPhase < 2 ? 0.4 : 1, pathLength: justCompleted?.moduleId === module.id && finishPhase < 2 ? 0 : 1 }} transition={{ duration: reduced ? 0.1 : 0.5 }} d={connector} className="path-trail-fill" clipPath={`url(#completed-${module.id})`}/>{justCompleted?.moduleId === module.id && finishPhase === 2 && !reduced && <circle r="6" className="path-flow-dot"><animateMotion dur=".5s" repeatCount="1" path={connector}/></circle>}
+                      {!reduced && running && nodes.some(n => n.current && n.unlocked) && <g className="path-flow-dots">{[0, 0.8, 1.6].map(delay => <circle key={delay} r="3" className="path-flow-dot"><animateMotion dur="2.4s" repeatCount="indefinite" begin={`${delay}s`} path={windingConnector(Math.max(2, nodes.findIndex(n => n.current) + 1))} keyPoints="0.6;1" keyTimes="0;1" calcMode="linear"/></circle>)}</g>}
                     </svg>
                     {nodes.map((node, index) => {
                       const current = module.id === currentModuleId && node.current && node.unlocked;
                       const started = node.section ? startedSectionIds.has(node.id) : currentStarted;
-                      const optional = node.kind!=="lesson" && node.kind!=="badge";
-                      const label = optional ? `${node.kind === "story" ? "Story" : node.title}, ${node.title}, ${node.done ? "completed" : node.unlocked ? "available" : "locked"}` : node.section ? `Lesson ${node.section}, ${node.title}, ${node.done ? "completed" : current ? "in progress" : node.unlocked ? "available" : "locked"}`
-                        : `Badge check, ${earnedBadge ? "completed" : node.unlocked ? "available" : `locked, finish ${lessons.length} lessons first`}`;
-                      const completedHere = node.id === finishedNode || node.kind==="badge" && finishedNode === `quiz:${module.id}` || optional && finishedNode === `${module.id}:${node.id}`;
-                      const icon = node.kind==="story" ? <MessagesSquare className="h-6 w-6"/> : node.kind==="practice" ? <Dumbbell className="h-6 w-6"/> : node.kind==="listen" ? <Headphones className="h-6 w-6"/> : node.kind==="chest" ? node.done ? <PackageOpen className="h-10 w-10"/> : <Package className="h-10 w-10"/> : undefined;
-                      const circle = <m.span initial={false} animate={{ scale: reduced ? 1 : completedHere && finishPhase === 1 ? 1.08 : 1 }} transition={{ duration: duration.normal }} className={cn("learn-path-circle relative inline-flex items-center justify-center rounded-full border-2 text-2xl font-bold",
-                        node.section ? "h-[64px] w-[64px]" : "h-[72px] w-[72px]", node.kind==="story" && "rounded-lg", node.kind==="chest" && "border-0 bg-transparent", node.done && (!completedHere || finishPhase >= 1) ? "learn-level-done" : node.unlocked ? "learn-node-open bg-card text-foreground" : "border-border bg-muted text-foreground")}>
-                        {node.kind==="chest" ? icon : node.done && (!completedHere || finishPhase >= 1) ? <CheckCircle className="h-6 w-6" /> : premium ? <Crown className="h-6 w-6" /> : !node.unlocked ? <Lock className="h-6 w-6" /> : icon ? icon : node.section ? <BookOpen className="h-6 w-6" /> : badgeIcons[module.slug] || "★"}
-                      </m.span>;
-                      return <m.div key={node.id} id={`learn-node-${node.section ? node.id : node.kind==="badge" ? `quiz:${module.id}` : `${module.id}:${node.id}`}`} ref={current ? targetRef : undefined}
-                        initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: duration.fast, delay: reduced ? 0 : index * 0.08 }}
-                        className="learn-level-node relative flex flex-col items-center" style={{ height: pathNodeSpacing, marginLeft: pathOffsets[index % pathOffsets.length] * 2 }}>
-                        {current && (!justCompleted || finishPhase >= 2) && <m.span data-current-bubble className="absolute -top-8 z-10 rounded-lg bg-primary px-3 py-1 text-sm font-bold text-primary-foreground"
-                          animate={{ y: reduced ? 0 : [0,-4,0] }} transition={{ duration: 2, repeat: reduced ? 0 : Infinity, ease: easing.smooth }}>{started ? "Continue" : "Start"}</m.span>}
-                        <Button variant="ghost" aria-label={label} title={node.title} className="learn-path-node relative h-[96px] w-[96px] rounded-full p-0 hover:bg-transparent"
-                          onClick={() => { if (premium) navigate("/premium"); else if (!node.unlocked) toast.info(node.section ? "Complete previous badges first" : "Finish the lessons first, you're almost there."); else if(node.kind==="chest"){if(!node.done)setChestId(module.id);} else if(node.kind==="story")navigate(`/learn/${module.slug}/story/${node.scenarioSlug}`);else if(node.kind==="practice"||node.kind==="listen")navigate(`/learn/${module.slug}/${node.kind}`);else go(module, node.section || undefined); }}>
-                          {completedHere && finishPhase < 3 ? <ProgressRing size={node.section ? 80 : 88} strokeWidth={4} percent={finishPhase >= 1 ? 100 : 0}>{circle}</ProgressRing> : current ? <ProgressRing size={node.section ? 80 : 88} strokeWidth={4} percent={moduleCompletionPercent(done, mandatory, earnedBadge)}>{circle}</ProgressRing> : circle}
-                        </Button>
-                        <span className="max-w-[160px] text-center text-sm font-medium text-foreground">{node.section ? `Lesson ${node.section}` : node.kind==="badge" ? "Badge Check" : node.kind==="story" ? "Story" : node.title}</span>
-                        <span className="max-w-[160px] text-center text-xs leading-tight text-muted-foreground">{node.kind==="chest" ? node.done ? "Opened" : node.unlocked ? "Open chest" : "Finish 2 lessons to open" : node.section || optional ? node.title : module.title}</span>
-                      </m.div>;
+                      const optional = node.kind !== "lesson" && node.kind !== "badge";
+                      const label = optional ? `${node.kind === "story" ? "Story" : node.title}, ${node.title}, ${node.done ? "completed" : node.unlocked ? "available" : "locked"}` : node.section ? `Lesson ${node.section}, ${node.title}, ${node.done ? "completed" : current ? "in progress" : node.unlocked ? "available" : "locked"}` : `Badge check, ${earnedBadge ? "completed" : node.unlocked ? "available" : `locked, finish ${lessons.length} lessons first`}`;
+                      const completedHere = node.id === finishedNode || node.kind === "badge" && finishedNode === `quiz:${module.id}` || optional && finishedNode === `${module.id}:${node.id}`;
+                      const nodeId = node.section ? node.id : node.kind === "badge" ? `quiz:${module.id}` : `${module.id}:${node.id}`;
+                      const minutes = Math.max(1, Math.round((module.estimated_minutes || 12) / Math.max(1, lessons.length)));
+                      return <div key={node.id} id={`learn-node-${nodeId}`} ref={current ? targetRef : undefined} className="learn-level-node relative flex flex-col items-center" style={{ height: pathNodeSpacing, marginLeft: pathOffsets[index % pathOffsets.length] * 2 }}>
+                        <PathNode id={nodeId} tier={tier} kind={node.kind} label={label} title={node.kind === "badge" ? module.title : node.title} subtitle={node.section ? `${node.section}|About ${minutes || 3} min · +10 XP` : node.kind === "practice" || node.kind === "listen" ? "+5 XP" : node.kind === "chest" ? node.done ? "Opened" : "A little reward for your progress" : "Keep learning, one step at a time"} state={node.done ? "done" : premium ? "premium-locked" : current ? "current" : node.unlocked ? "available" : "locked"} started={started} progress={moduleCompletionPercent(done, mandatory, earnedBadge)} reason={premium ? reason(module) : node.kind === "chest" ? "Finish 2 lessons to open" : node.section ? "Complete previous lessons first" : "Finish the lessons first, you're almost there."} index={index} celebrate={completedHere && finishPhase === 1} hop={Boolean(justCompleted && finishPhase >= 2)} bubble={!justCompleted || finishPhase >= 2} open={openNode === nodeId} onOpenChange={value => setOpenNode(value ? nodeId : null)} onGo={() => { if (node.kind === "chest") { if (!node.done) setChestId(module.id); } else if (node.kind === "story") navigate(`/learn/${module.slug}/story/${node.scenarioSlug}`); else if (node.kind === "practice" || node.kind === "listen") navigate(`/learn/${module.slug}/${node.kind}`); else go(module, node.section || undefined); }}/>
+                      </div>;
                     })}
                   </div>}
                 </div>
               </div>
             </section>;
           })}
-          <div className="flex flex-col items-center gap-2 py-4">
-            <Button variant="outline" className="h-[72px] w-[72px] rounded-full" aria-label={`${tierLabels[tier]} Review, ${earned >= 2 ? "available" : "locked, earn 2 badges in this tier to unlock"}`}
-              onClick={() => { if (earned >= 2) navigate(`/learn/review/${tier}`); else toast.info("Earn 2 badges in this tier to unlock"); }}>
-              {earned >= 2 ? <Trophy className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
-            </Button><span className="text-sm font-semibold">{tierLabels[tier]} Review</span>
-            {earned < 2 && <span className="text-xs text-muted-foreground">Earn 2 badges in this tier to unlock</span>}
-          </div>
+          <div className="flex justify-center py-8"><PathNode id={`review-${tier}`} tier={tier} kind="review" label={`${tierLabels[tier]} Review, ${earned >= 2 ? "available" : "locked, earn 2 badges in this tier to unlock"}`} title={`${tierLabels[tier]} Review`} subtitle="+30 XP" state={earned >= 2 ? "available" : "locked"} reason="Earn 2 badges in this tier to unlock" open={openNode === `review-${tier}`} onOpenChange={value => setOpenNode(value ? `review-${tier}` : null)} onGo={() => navigate(`/learn/review/${tier}`)}/></div>
         </div>}
       </div>;
     })}

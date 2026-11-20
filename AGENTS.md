@@ -18,3 +18,5 @@
 - Learn finishes use a lazy full-screen ordered sequence and transient router completion state; completion precedes XP and in-memory retries survive navigation without duplicate rewards.
 
 - Mixed path nodes derive mandatory unlocks only from lessons; optional completion uses scenario progress, server chest receipts, XP records and private preference receipts for zero-award practice/listen sessions; Story lookup is module-scoped in every tier.
+
+- Path presentation uses shared raised PathNode/popovers, inline SVG art and visibility-gated loops; synthesised learning sounds share existing preferences, gesture gating and deduplication without changing progress rules.

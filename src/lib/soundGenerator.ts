@@ -128,3 +128,51 @@ export function playCelebrationSound() {
     playNote(c, freq, i * 0.1, 0.3, "sine", 0.15);
   });
 }
+
+
+// Learning sounds are quiet, gesture-gated and deduplicated per sound.
+let learningGesture = false;
+const lastLearningSound = new Map<string, number>();
+if (typeof window !== "undefined") {
+  const unlock = () => { learningGesture = true; };
+  window.addEventListener("pointerdown", unlock, { once: true, capture: true });
+  window.addEventListener("keydown", unlock, { once: true, capture: true });
+}
+export const learningSoundNotes = {
+  nodeTap: [330], cardOpen: [660], lessonStart: [440, 660], cardAdvance: [520],
+  correct: [660, 880], miss: [220], nodeComplete: [330, 660, 880],
+  trailFill: [330, 440, 550, 660], chestOpen: [880, 1100, 1320, 1540, 1760],
+  levelComplete: [523, 659, 784, 1047], lockedTap: [150],
+} as const;
+export function comboExtraNotes(combo: number) { return combo === 3 ? 1 : combo === 5 ? 2 : combo === 10 ? 3 : 0; }
+export function playLearningSound(name: keyof typeof learningSoundNotes | "combo", combo = 0) {
+  if (!learningGesture) return;
+  const now = performance.now();
+  if (now - (lastLearningSound.get(name) ?? -Infinity) < 80) return;
+  lastLearningSound.set(name, now);
+  const c = getCtx(); if (!c) return;
+  if (name === "trailFill") {
+    const osc = c.createOscillator(), gain = c.createGain();
+    osc.connect(gain); gain.connect(c.destination);
+    osc.frequency.setValueAtTime(330, c.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, c.currentTime + .4);
+    gain.gain.setValueAtTime(.001, c.currentTime);
+    gain.gain.linearRampToValueAtTime(.055, c.currentTime + .04);
+    gain.gain.exponentialRampToValueAtTime(.001, c.currentTime + .4);
+    osc.start(); osc.stop(c.currentTime + .4); return;
+  }
+  const frequencies: readonly number[] = name === "combo" ? [660, 880, ...[1047, 1320, 1568].slice(0, comboExtraNotes(combo))] : learningSoundNotes[name];
+  const spacing = name === "levelComplete" ? .16 : .055;
+  const length = name === "nodeTap" ? .06 : name === "cardOpen" ? .08 : name === "cardAdvance" ? .04 : name === "levelComplete" ? .22 : .1;
+  frequencies.forEach((frequency, i) => {
+    const osc = c.createOscillator(), gain = c.createGain();
+    osc.connect(gain); gain.connect(c.destination); osc.type = "sine";
+    const t = c.currentTime + i * spacing;
+    osc.frequency.setValueAtTime(frequency, t);
+    if (name === "nodeTap" || name === "lockedTap") osc.frequency.exponentialRampToValueAtTime(frequency * .6, t + length);
+    gain.gain.setValueAtTime(.001, t);
+    gain.gain.linearRampToValueAtTime(name === "cardAdvance" ? .018 : .055, t + .006);
+    gain.gain.exponentialRampToValueAtTime(.001, t + length);
+    osc.start(t); osc.stop(t + length);
+  });
+}

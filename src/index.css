@@ -570,3 +570,141 @@ button, [role="button"] {
 .quiz-option-success { border-color: hsl(var(--quiz-success)); background: hsl(var(--quiz-success) / 0.08); }
 .quiz-option-miss { border-color: hsl(var(--quiz-miss)); background: hsl(var(--quiz-miss) / 0.08); }
 .quiz-progress-gold { background: linear-gradient(135deg, hsl(var(--quiz-gold-start)), hsl(var(--quiz-gold-end))); }
+
+/* Learn path materials: saturated tier pigments, readable enamel and warm brass. */
+:root {
+  --path-enamel: 0 0% 100%; --path-ink: 263 83% 40%; --path-shadow: 0 0% 0%;
+  --path-gold: 38 95% 40%; --path-gold-light: 40 95% 43%; --path-gold-dark: 30 94% 25%;
+  --path-slate: 225 12% 35%; --path-slate-dark: 225 14% 23%;
+  --path-wood: 22 62% 36%; --path-wood-dark: 20 70% 24%;
+  --path-trail-track: 0 0% 100%;
+  --path-foundation-top: 263 83% 58%; --path-foundation-bottom: 263 83% 46%; --path-foundation-lip: 263 83% 29%;
+  --path-health-top: 160 85% 32%; --path-health-bottom: 160 85% 24%; --path-health-lip: 160 85% 15%;
+  --path-identity-top: 285 65% 46%; --path-identity-bottom: 285 65% 35%; --path-identity-lip: 285 65% 23%;
+  --path-relationships-top: 340 78% 45%; --path-relationships-bottom: 340 78% 34%; --path-relationships-lip: 340 78% 23%;
+  --path-advanced-top: 280 80% 48%; --path-advanced-bottom: 280 80% 36%; --path-advanced-lip: 280 80% 24%;
+}
+.learn-tier, .learn-tier-foundation { --path-top: var(--path-foundation-top); --path-bottom: var(--path-foundation-bottom); --path-lip: var(--path-foundation-lip); }
+.learn-tier-sexual_health { --path-top: var(--path-health-top); --path-bottom: var(--path-health-bottom); --path-lip: var(--path-health-lip); }
+.learn-tier-identity { --path-top: var(--path-identity-top); --path-bottom: var(--path-identity-bottom); --path-lip: var(--path-identity-lip); }
+.learn-tier-relationships { --path-top: var(--path-relationships-top); --path-bottom: var(--path-relationships-bottom); --path-lip: var(--path-relationships-lip); }
+.learn-tier-advanced { --path-top: var(--path-advanced-top); --path-bottom: var(--path-advanced-bottom); --path-lip: var(--path-advanced-lip); }
+.path-tier-banner, .learn-level-band, .path-node-card {
+  background: linear-gradient(165deg, hsl(var(--path-top)), hsl(var(--path-bottom)));
+  color: hsl(var(--path-enamel)); border: 0; border-radius: 16px;
+  box-shadow: 0 4px 0 hsl(var(--path-lip)), inset 0 2px 0 hsl(var(--path-enamel) / .22), 0 12px 20px hsl(var(--path-shadow) / .18);
+}
+.path-tier-banner { gap: 16px; padding: 16px; margin-bottom: 16px; }
+.path-tier-banner:hover { background: linear-gradient(165deg, hsl(var(--path-top)), hsl(var(--path-bottom))); }
+.path-tier-emblem { flex: 0 0 56px; width: 56px; height: 64px; display: grid; place-items: center; transform: rotate(-8deg); }
+.path-tier-emblem .path-filled-icon { width: 48px; height: 48px; }
+.path-tier-progress { display: block; height: 8px; border-radius: 8px; overflow: hidden; background: hsl(var(--path-shadow) / .25); margin-top: 8px; }
+.path-tier-progress > span { display: block; height: 100%; background: hsl(var(--path-enamel)); border-radius: inherit; }
+.learn-level-band { margin-top: 8px; backdrop-filter: none; }
+.path-level-number { border: 2px solid hsl(var(--path-enamel) / .4); background: hsl(var(--path-shadow) / .15); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; font-size: 20px; font-weight: 800; }
+.path-level-pips { display: flex; gap: 4px; margin-top: 10px; }
+.path-level-pips i { width: 8px; height: 8px; border-radius: 50%; background: hsl(var(--path-shadow) / .3); border: 1px solid hsl(var(--path-enamel) / .25); }
+.path-level-pips .path-pip-done { background: hsl(var(--path-enamel)); }
+.path-guide-button, .path-chunky-action { color: hsl(var(--path-ink)); background: hsl(var(--path-enamel)); border: 0; border-radius: 12px; box-shadow: 0 4px 0 hsl(var(--path-enamel) / .55); font-weight: 800; }
+.path-guide-button:hover, .path-chunky-action:hover { background: hsl(var(--path-enamel) / .95); color: hsl(var(--path-ink)); }
+.path-guide-button { padding: 8px; min-width: 56px; flex-direction: column; gap: 2px; height: auto; font-size: 12px; }
+.path-chunky-action { min-height: 48px; }
+.path-level-row { border-bottom: 1px solid hsl(var(--border)); }
+.path-completed-row { position: relative; overflow: hidden; border-bottom-color: hsl(var(--path-gold) / .3); }
+.path-row-medal { display: grid; place-items: center; width: 40px; height: 48px; flex-shrink: 0; color: hsl(var(--muted-foreground)); }
+.path-completed-row .path-row-medal { color: hsl(var(--path-gold-light)); }
+.path-row-medal .path-filled-icon { width: 32px; height: 40px; }
+.path-review-chip { background: hsl(var(--path-gold)); color: hsl(var(--path-enamel)); border: 0; border-radius: 12px; box-shadow: 0 4px 0 hsl(var(--path-gold-dark)); }
+.path-review-chip:hover { background: hsl(var(--path-gold-dark)); color: hsl(var(--path-enamel)); }
+.path-level-stage:before { content: ''; position: absolute; inset: 0 -12px; background: radial-gradient(ellipse at 50% 25%, hsl(var(--path-top) / .15), transparent 65%); pointer-events: none; }
+.path-object { width: 104px; height: 104px; position: relative; display: grid; place-items: center; }
+.path-node-button { width: 104px; height: 104px; border-radius: 50%; padding: 0; background: transparent; overflow: visible; }
+.path-node-button:hover { background: transparent; }
+.path-node-button:focus-visible { outline: 3px solid hsl(var(--path-enamel)); outline-offset: 3px; box-shadow: 0 0 0 7px hsl(var(--path-ink)); }
+.path-node-motion { width: 72px; height: 72px; position: relative; display: inline-block; }
+.path-node-badge .path-node-motion { width: 88px; height: 88px; }
+.path-node-face { position: relative; display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(hsl(var(--path-top)), hsl(var(--path-bottom))); color: hsl(var(--path-enamel)); box-shadow: 0 8px 0 hsl(var(--path-lip)), 0 13px 12px hsl(var(--path-shadow) / .3), inset 0 2px 0 hsl(var(--path-enamel) / .35); transition: transform 80ms, box-shadow 80ms; }
+.path-node-face:before { content: ''; position: absolute; inset: 4px 12px auto; height: 22px; border-radius: 50%; background: linear-gradient(hsl(var(--path-enamel) / .2), hsl(var(--path-enamel) / 0)); pointer-events: none; }
+.path-node-button:active .path-node-face { transform: translateY(6px); box-shadow: 0 2px 0 hsl(var(--path-lip)), 0 6px 8px hsl(var(--path-shadow) / .3), inset 0 2px 0 hsl(var(--path-enamel) / .35); }
+.path-node-face .path-filled-icon { width: 34px; height: 34px; filter: drop-shadow(0 2px 0 hsl(var(--path-lip))); }
+.path-icon-cut { fill: hsl(var(--path-bottom)); }
+.path-state-done { --path-top: var(--path-gold-light); --path-bottom: var(--path-gold); --path-lip: var(--path-gold-dark); }
+.path-state-locked, .path-state-premium-locked { --path-top: var(--path-slate); --path-bottom: var(--path-slate); --path-lip: var(--path-slate-dark); }
+.path-state-locked .path-node-face:before, .path-state-premium-locked .path-node-face:before { display: none; }
+.path-state-locked .path-node-face .path-filled-icon, .path-state-premium-locked .path-node-face .path-filled-icon { opacity: .45; }
+.path-state-premium-locked .path-node-face { outline: 3px solid hsl(var(--path-gold-light)); }
+.path-pinned-star { position: absolute; top: -5px; right: -6px; width: 27px; height: 27px; border-radius: 50%; display: grid; place-items: center; background: hsl(var(--path-enamel)); color: hsl(var(--path-gold)); box-shadow: 0 2px 0 hsl(var(--path-gold-dark)); }
+.path-pinned-star .path-filled-icon { width: 18px; height: 18px; }
+.path-halo { position: absolute; inset: -4px; border-radius: 50%; background: hsl(var(--path-top) / .5); animation: path-halo 1.8s infinite; }
+.path-current-ring { position: absolute; width: 104px; height: 104px; pointer-events: none; overflow: visible; }
+.path-current-ring circle { fill: none; stroke-width: 6; stroke-linecap: round; }
+.path-ring-track { stroke: hsl(var(--path-top) / .3); }
+.path-ring-start { stop-color: hsl(var(--path-foundation-top)); }
+.path-ring-end { stop-color: hsl(var(--secondary)); }
+.path-state-current .path-node-motion { animation: path-node-bob 2.6s infinite ease-in-out; }
+.path-start-bubble { position: absolute; top: -36px; z-index: 10; background: hsl(var(--path-enamel)); color: hsl(var(--path-ink)); border-radius: 24px; padding: 8px 16px; font-size: 13px; font-weight: 900; text-transform: uppercase; box-shadow: 0 4px 0 hsl(var(--path-enamel) / .55); animation: path-bubble 2s infinite ease-in-out; }
+.path-start-bubble:after { content: ''; position: absolute; bottom: -8px; left: calc(50% - 8px); border: 8px solid transparent; border-top-color: hsl(var(--path-enamel)); border-bottom: 0; }
+.path-node-card { width: 280px; max-width: calc(100vw - 32px); padding: 16px; z-index: 60; }
+.path-card-kicker { text-transform: uppercase; font-size: 12px; font-weight: 800; margin-bottom: 6px; }
+.path-card-arrow { fill: hsl(var(--path-bottom)); }
+.path-trail path { fill: none; stroke-width: 14; stroke-linecap: round; }
+.path-trail-track { stroke: hsl(var(--path-trail-track) / .08); }
+.path-trail-fill { stroke: hsl(var(--path-top)); filter: drop-shadow(0 0 6px hsl(var(--path-top) / .5)); }
+.path-flow-dot { fill: hsl(var(--path-enamel)); filter: drop-shadow(0 0 4px hsl(var(--path-enamel))); }
+.path-scenery { position: absolute; inset: 40px 0 0; pointer-events: none; }
+.path-mascot { position: absolute; width: 104px; height: 104px; animation: path-float 3.2s infinite ease-in-out; }
+.path-mascot-left { left: 0; }.path-mascot-right { right: 0; }
+.path-mascot-image { width: 104px; height: 104px; }
+.path-decoration { position: absolute; width: 16px; height: 16px; color: hsl(var(--path-top)); opacity: .25; animation: path-twinkle 3s infinite ease-in-out; }
+.path-decoration-0 { left: 4%; top: 24px; }.path-decoration-1 { right: 4%; top: 240px; animation-delay: .7s; }
+.path-decoration-2 { left: 8%; top: 400px; animation-delay: 1.2s; }.path-decoration-3 { right: 2%; top: 590px; animation-delay: .3s; }
+.path-decoration-4 { left: 4%; top: 820px; animation-delay: 1.8s; }.path-decoration-5 { right: 8%; top: 1080px; animation-delay: 2s; }
+.path-decoration .path-filled-icon { width: 100%; height: 100%; }
+.path-chest-art { width: 88px; height: 88px; overflow: visible; filter: drop-shadow(0 4px 0 hsl(var(--path-wood-dark))); }
+.path-chest-wood { fill: hsl(var(--path-wood)); }.path-chest-grain { fill: hsl(var(--path-wood-dark)); }.path-chest-gold { fill: hsl(var(--path-gold-light)); }.path-chest-shadow { fill: hsl(var(--path-shadow) / .45); }
+.path-node-chest .path-node-face { background: transparent; box-shadow: none; }
+.path-node-chest .path-node-face:before { display: none; }
+.path-node-chest.path-state-available .path-chest-art { animation: path-chest-wiggle 4.6s infinite; filter: drop-shadow(0 0 14px hsl(var(--path-gold) / .45)); }
+.path-node-chest.path-state-done { opacity: .65; }
+.path-node-chest.path-state-locked { filter: grayscale(1); opacity: .65; }
+.path-particles { position: absolute; inset: 0; pointer-events: none; display: grid; place-items: center; }
+.path-particles i { position: absolute; width: 7px; height: 7px; border-radius: 2px; }
+.path-particle-tier { background: hsl(var(--path-top)); }.path-particle-gold { background: hsl(var(--path-gold-light)); }
+.path-done-shine { overflow: hidden; }
+.path-done-shine:after { content: ''; position: absolute; inset: -20%; width: 30%; transform: translateX(-200%) rotate(25deg); background: linear-gradient(90deg, transparent, hsl(var(--path-enamel) / .6), transparent); animation: path-shine .8s ease-out; }
+.path-level-celebrating { background: linear-gradient(135deg, hsl(var(--path-gold-light)), hsl(var(--path-gold))); }
+.path-paused *, .path-paused *:before, .path-paused *:after { animation-play-state: paused !important; }
+.path-running .path-running *, .path-running .path-running *:before, .path-running .path-running *:after { animation-play-state: running; }
+@keyframes path-halo { from { transform: scale(1); opacity: .5; } to { transform: scale(1.18); opacity: 0; } }
+@keyframes path-node-bob { 50% { transform: translateY(-3px); } }
+@keyframes path-bubble { 50% { transform: translateY(-4px); } }
+@keyframes path-float { 50% { transform: translateY(-4px); } }
+@keyframes path-twinkle { 50% { opacity: .15; transform: scale(.8); } }
+@keyframes path-shine { to { transform: translateX(450%) rotate(25deg); } }
+@keyframes path-chest-wiggle { 0%, 13%, 100% { transform: rotate(0); } 3%, 9% { transform: rotate(-5deg); } 6%, 12% { transform: rotate(5deg); } }
+@media (max-width: 359px) { .path-mascot, .path-mascot-image { width: 80px; height: 80px; } }
+@media (prefers-reduced-motion: reduce) {
+  .path-object *, .path-scenery *, .path-object *:before, .path-object *:after { animation: none !important; }
+  .path-node-button:active .path-node-face { transform: none; }
+  .path-halo { opacity: .2; }
+}
+
+/* Keep the trail inspectable in both themes, and override icon-button defaults for art. */
+:root { --path-trail-track: 225 14% 28%; }
+.dark { --path-trail-track: 0 0% 100%; }
+.path-trail-track { stroke: hsl(var(--path-trail-track) / .16); }
+.path-node-button .path-chest-art { width: 88px; height: 88px; }
+.path-tier-banner .path-tier-emblem svg { width: 48px; height: 48px; }
+.path-node-button .path-pinned-star svg { width: 18px; height: 18px; }
+.path-state-current .path-node-motion { animation: none; }
+.path-state-current .path-node-face { animation: path-node-bob 2.6s infinite ease-in-out; }
+.path-state-current:active .path-node-face { animation: none; }
+.path-completed-row:after { content: ''; position: absolute; inset: 0; width: 20%; pointer-events: none; background: linear-gradient(90deg, transparent, hsl(var(--path-gold-light) / .15), transparent); transform: translateX(-200%); animation: path-row-shine .8s ease-out; }
+@keyframes path-row-shine { to { transform: translateX(600%); } }
+@media (prefers-reduced-motion: reduce) { .path-state-current .path-node-face, .path-completed-row:after { animation: none !important; } }
+
+.path-state-done .path-node-face > .path-filled-icon { animation: path-check-arrive .3s ease-out; }
+@keyframes path-check-arrive { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: scale(1); } }
+.path-node-reduced .path-filled-icon { animation: none !important; }
+
+.path-paused { animation-play-state: paused !important; }

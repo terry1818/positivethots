@@ -9,6 +9,7 @@ import { Mascot } from "@/components/mascot/Mascot";
 import { PressScale } from "@/components/motion/PressScale";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useReadAloud } from "@/hooks/useReadAloud";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useQuizAnswer, type AnswerFeedback } from "@/hooks/useQuizAnswer";
 import { buildLessonCards, resumeCardIndex, type LessonCheckpoint, type LessonSection } from "@/lib/lessonCards";
 import { distance, duration, easing } from "@/lib/motionTokens";
@@ -33,6 +34,8 @@ function Checkpoint({ question, saved, onAnswered }: { question: LessonCheckpoin
   const start = useRef(Date.now());
   const { check, pending, feedback, error, retry } = useQuizAnswer();
   const result = saved?.feedback ?? feedback;
+  const { playCorrect, playMiss } = useSoundEffects();
+  useEffect(() => { if (feedback && !saved) { if (feedback.is_correct) playCorrect(); else playMiss(); } }, [feedback, playCorrect, playMiss]);
   useEffect(() => { if (feedback && selected !== null) onAnswered(selected, feedback); }, [feedback, selected, onAnswered]);
   return <div className="space-y-4"><p>{question.question}</p><div className="space-y-2">{question.options.map((option, i) => <Button key={i} variant="outline"
     className={cn("w-full min-h-11 h-auto whitespace-normal justify-start text-left py-3", result && i === result.correct_answer && "border-success text-success disabled:opacity-100", result && selected === i && !result.is_correct && "border-destructive text-destructive disabled:opacity-100")}
@@ -48,6 +51,7 @@ interface Props {
   onComplete: () => Promise<number | null>; onNext: () => void; onReflectionSaved: () => Promise<void>;
 }
 export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, userId, onSavePosition, onExit, onArticle, onComplete, onNext, onReflectionSaved }: Props) {
+  const { playCardAdvance } = useSoundEffects();
   const cards = useMemo(() => buildLessonCards(section, checkpoints), [section, checkpoints]);
   const [index, setIndex] = useState(() => resumeCardIndex(initialIndex, cards.length));
   const [direction, setDirection] = useState(1);
@@ -77,7 +81,7 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
     if (busy.current || (delta > 0 && blocked)) return;
     if (index + delta >= cards.length) { void finish(); return; }
     if (index + delta < 0) return;
-    setDirection(delta); setIndex(index + delta);
+    playCardAdvance(); setDirection(delta); setIndex(index + delta);
   }, [index, blocked, cards.length, finish]);
   const readEndRef = useRef<() => void>(() => {});
   const audio = useReadAloud(() => readEndRef.current());

@@ -1,5 +1,6 @@
 import { useQuizAnswer } from "@/hooks/useQuizAnswer";
-import { useState } from "react";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { useEffect, useState } from "react";
 import { CheckCircle, CheckCircle2, XCircle, PlayCircle, FileText, Image, BookOpen, Sparkles, Volume2, Pause, Play, Square, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -121,6 +122,8 @@ const QuickCheckCard = ({ checkpoint }: { checkpoint: CheckpointQuestion }) => {
   const [started] = useState(Date.now());
   const { pending, feedback, error, check, retry } = useQuizAnswer();
   const [dismissed, setDismissed] = useState(false);
+  const { playCorrect, playMiss } = useSoundEffects();
+  useEffect(() => { if (feedback) { if (feedback.is_correct) playCorrect(); else playMiss(); } }, [feedback, playCorrect, playMiss]);
 
   if (dismissed) return null;
 

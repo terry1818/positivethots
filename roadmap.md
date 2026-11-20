@@ -1,3 +1,7 @@
+# Learn 11 path visual and sound upgrade
+- [x] Upgrade raised nodes, popovers, trail, mascot/scenery, headers and completion motion without changing learning data or rules.
+- [x] Add preference-controlled synthesised sounds and haptics; all nine checks exercised, 55 tests passed. Live lesson saved +10 XP and next node; earned-badge review checked real grading/sounds. Screenshots reviewed in both themes; local frames averaged 16.65ms. Details/limitations in docs/learn11-acceptance.md.
+
 # Learn 09b stories for every module
 - [x] Draft and insert 32 lesson-grounded stories; create docs/learn-stories-review.md with all prose, casts, choices and feedback. No app code, schema or function changes; the four existing row hashes are unchanged. Repeat insertion adds zero rows.
 - [x] All six acceptance checks passed: 36 rows cover 35 modules; 160 new scenes and 384 choices pass IDs, lengths, destinations, scoring, rotated best positions and prohibited-feedback checks. Signed-in Different Speeds (sexual_health) and Phone at Dinner (advanced) reached real summaries with 8/8 points and four saved choices each; 50 XP each persisted. Five existing mixed-node regression tests and build passed.

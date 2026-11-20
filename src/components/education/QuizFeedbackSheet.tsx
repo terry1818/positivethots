@@ -4,15 +4,12 @@ import { BottomSheet } from "@/components/motion/BottomSheet";
 import { Mascot } from "@/components/mascot/Mascot";
 import { Button } from "@/components/ui/button";
 import type { AnswerFeedback } from "@/hooks/useQuizAnswer";
-import { haptic } from "@/lib/haptics";
-import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { choosePraise } from "@/lib/quizMastery";
 const correctLines = ["Nice one!", "You've got it!", "Exactly right.", "Beautifully done.", "Spot on!", "That's the one."];
 const missedLines = ["Not quite - here's the idea.", "Close. Take a look.", "Good try. Here's the answer."];
 export function QuizFeedbackSheet({ feedback, correctOption, onContinue, reread }: {
   feedback: AnswerFeedback | null; correctOption: string; onContinue: () => void; reread?: () => void;
 }) {
-  const { hapticEnabled } = useSoundEffects();
   const button = useRef<HTMLButtonElement>(null);
   const previous = useRef("");
   const [line, setLine] = useState("");
@@ -20,7 +17,6 @@ export function QuizFeedbackSheet({ feedback, correctOption, onContinue, reread 
     if (!feedback) return;
     const praise = choosePraise(feedback.is_correct ? correctLines : missedLines, previous.current);
     previous.current = praise; setLine(praise);
-    if (feedback.is_correct && hapticEnabled) haptic(10);
   }, [feedback]);
   return <BottomSheet open={!!feedback} onOpenChange={() => {}} title={feedback?.is_correct ? "Correct" : "Not quite"}
     tone={feedback?.is_correct ? "success" : "miss"} dismissible={false} initialFocusRef={button}>
