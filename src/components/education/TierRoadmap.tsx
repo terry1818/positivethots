@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { TierUnlock } from "@/hooks/useFeatureUnlocks";
+import { moduleCompletionPercent } from "@/lib/learnSmallFixes";
 
 interface Module {
   id: string;
@@ -309,8 +310,7 @@ export const BadgePathMap = ({
                   {td.modules.map((node, idx) => {
                     const { module, state, icon, progress } = node;
                     const config = td.config;
-                    const progressPercent = progress && progress.total > 0
-                      ? Math.round((progress.completed / progress.total) * 100) : 0;
+                    const progressPercent = moduleCompletionPercent(progress?.completed || 0, progress?.total || 0, earnedModuleIds.has(module.id));
 
                     const isContinueModule = state === "current" && continueModuleId === module.id;
                     const showStreakChip = state === "current" && isStreakAtRisk;

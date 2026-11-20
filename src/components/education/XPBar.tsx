@@ -7,12 +7,13 @@ interface XPBarProps {
 }
 
 export const XPBar = ({ totalXP, level }: XPBarProps) => {
+  const topLevel = level >= 10;
   const currentLevelXP = getXPForCurrentLevel(level);
   const nextLevelXP = getXPForNextLevel(level);
   const xpInLevel = totalXP - currentLevelXP;
   const xpNeeded = nextLevelXP - currentLevelXP;
   const xpRemaining = xpNeeded - xpInLevel;
-  const percent = xpNeeded > 0 ? Math.min((xpInLevel / xpNeeded) * 100, 100) : 100;
+  const percent = topLevel ? 100 : xpNeeded > 0 ? Math.min((xpInLevel / xpNeeded) * 100, 100) : 100;
   const nextReward = getNextReward(level);
   const nextLevelName = getLevelName(level + 1);
 
@@ -31,14 +32,14 @@ export const XPBar = ({ totalXP, level }: XPBarProps) => {
           />
         </div>
         <span className="text-base text-muted-foreground shrink-0 font-medium">
-          Lv.{level} → {level + 1}
+          {topLevel ? "Lv.10" : `Lv.${level} → ${level + 1}`}
         </span>
       </div>
 
       {/* Next reward hint row */}
       <div className="flex items-center justify-between px-0.5">
         <span className="text-sm text-muted-foreground">
-          {xpRemaining > 0 ? `${xpRemaining} XP to ${nextLevelName}` : "Level up!"}
+          {topLevel ? "Top level reached" : xpRemaining > 0 ? `${xpRemaining} XP to ${nextLevelName}` : "Level up!"}
         </span>
         {nextReward && (
           <span className="text-sm text-accent font-semibold flex items-center gap-0.5">

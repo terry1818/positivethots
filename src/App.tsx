@@ -16,7 +16,6 @@ import { useActivityTracker } from "@/hooks/useActivityTracker";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
 import { useNPSSurvey } from "@/hooks/useNPSSurvey";
 import { NpsModal } from "@/components/NpsModal";
-import { DailyRewardModal } from "@/components/rewards/DailyRewardModal";
 import { AppFooter } from "@/components/AppFooter";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { WelcomeBackBanner } from "@/components/WelcomeBackBanner";
@@ -84,7 +83,6 @@ const AppContent = () => {
       <OfflineBanner />
       <AnnouncementBanner />
       <WelcomeBackBanner />
-      <DailyRewardModal />
       <WelcomeBackModal previousChurnStatus={previousChurnStatus} />
       {pendingTrigger && <NpsModal triggerEvent={pendingTrigger} onClose={dismiss} />}
       <Routes>
@@ -111,7 +109,7 @@ const AppContent = () => {
         <Route path="/community-guidelines" element={<Suspense fallback={<PageLoader />}><CommunityGuidelines /></Suspense>} />
         <Route path="/testing-locations" element={<Suspense fallback={<PageLoader />}><TestingLocator /></Suspense>} />
         <Route path="/health-testing" element={<Suspense fallback={<PageLoader />}><HealthTesting /></Suspense>} />
-        <Route path="/celebration-demo" element={<Suspense fallback={<PageLoader />}><CelebrationDemo /></Suspense>} />
+        {import.meta.env.DEV && <Route path="/celebration-demo" element={<Suspense fallback={<PageLoader />}><CelebrationDemo /></Suspense>} />}
         <Route path="/admin" element={<Suspense fallback={<PageLoader />}><Admin /></Suspense>} />
         <Route path="/complaints" element={<Suspense fallback={<PageLoader />}><Complaints /></Suspense>} />
         <Route path="/appeals" element={<Suspense fallback={<PageLoader />}><Appeals /></Suspense>} />
@@ -121,6 +119,7 @@ const AppContent = () => {
 
         <Route path="*" element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
       </Routes>
+      <CookieConsent />
       <AppFooter />
     </>
   );
@@ -139,7 +138,6 @@ const App = () => (
             <Sonner />
             <RouterProvider router={router} />
             <AgeGate />
-            <CookieConsent />
           </TooltipProvider>
         </AuthProvider>
       </QueryClientProvider>

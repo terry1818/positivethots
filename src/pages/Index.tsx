@@ -665,7 +665,7 @@ const Index = () => {
           tier: "premium",
         });
       }
-      const link = `https://positivethots.lovable.app/auth?ref=${code}`;
+      const link = `https://positivethots.app/auth?ref=${code}`;
       await navigator.clipboard.writeText(link);
       toast.success("Referral link copied!", { description: "Share it with friends to earn rewards." });
     } catch (err) {

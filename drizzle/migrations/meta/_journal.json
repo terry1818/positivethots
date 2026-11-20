@@ -36,6 +36,13 @@
       "when": 1795145806578,
       "tag": "0004_restore_private_server_graded_quizzes",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795146357419,
+      "tag": "0005_align_learning_xp_levels",
+      "breakpoints": true
     }
   ]
 }

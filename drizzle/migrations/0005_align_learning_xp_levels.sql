@@ -1,0 +1,4 @@
+CREATE OR REPLACE FUNCTION public.level_for_xp(_xp integer) RETURNS integer LANGUAGE sql IMMUTABLE SET search_path TO 'public' AS $$ SELECT CASE WHEN _xp >= 4500 THEN 10 WHEN _xp >= 3600 THEN 9 WHEN _xp >= 2800 THEN 8 WHEN _xp >= 2100 THEN 7 WHEN _xp >= 1500 THEN 6 WHEN _xp >= 1000 THEN 5 WHEN _xp >= 600 THEN 4 WHEN _xp >= 300 THEN 3 WHEN _xp >= 100 THEN 2 ELSE 1 END $$;
+REVOKE ALL ON FUNCTION public.level_for_xp(integer) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.level_for_xp(integer) TO authenticated, service_role;
+DO $repair$ DECLARE definition text; BEGIN SELECT pg_get_functiondef('public.award_xp(uuid,integer,text,text)'::regprocedure) INTO definition; IF strpos(definition, '_new_level := GREATEST(1, (_new_xp / 500) + 1);') = 0 THEN RAISE EXCEPTION 'Expected award_xp level expression not found'; END IF; EXECUTE replace(definition, '_new_level := GREATEST(1, (_new_xp / 500) + 1);', '_new_level := public.level_for_xp(_new_xp);'); END $repair$;

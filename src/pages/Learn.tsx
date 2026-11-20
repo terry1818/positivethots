@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 
 import { XPBar } from "@/components/education/XPBar";
+import { DailyRewardModal } from "@/components/rewards/DailyRewardModal";
 import { StreakBadge } from "@/components/education/StreakBadge";
 import { StreakCalendar } from "@/components/education/StreakCalendar";
 import { DailyChallenge } from "@/components/education/DailyChallenge";
@@ -19,7 +20,7 @@ import { StreakInterstitial } from "@/components/education/StreakInterstitial";
 
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { useLearningStats, getLevelName, getStreakMultiplier } from "@/hooks/useLearningStats";
+import { useLearningStats, getLevelName, getStreakMultiplier, calculateLevel } from "@/hooks/useLearningStats";
 import { StreakRestoreModal } from "@/components/education/StreakRestoreModal";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -47,6 +48,8 @@ const tierOrder = ["foundation", "sexual_health", "identity", "relationships", "
 const Learn = () => {
   const [moduleSearchQuery, setModuleSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [dailyBonusReady, setDailyBonusReady] = useState(false);
+  const [dailyBonusTrigger, setDailyBonusTrigger] = useState(0);
   const [modules, setModules] = useState<Module[]>([]);
   const [userBadges, setUserBadges] = useState<UserBadge[]>([]);
   const [loading, setLoading] = useState(true);
@@ -315,12 +318,13 @@ const Learn = () => {
         }}
       />
       <h1 className="sr-only">Relationship Education</h1>
+      <DailyRewardModal reopenTrigger={dailyBonusTrigger} onReadyChange={setDailyBonusReady} />
       <header className="border-b border-border bg-card">
         <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2.5">
           {/* Row 1: Logo + quick stats */}
           <div className="flex items-center justify-between mb-1.5">
             <Logo size="md" showText={false} />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2 flex-wrap">
               <StreakBadge
                 streak={stats?.current_streak || 0}
                 showFreeze
@@ -329,6 +333,11 @@ const Learn = () => {
                 atRisk={isStreakAtRisk}
                 hoursLeft={streakHoursLeft}
               />
+              {dailyBonusReady && (
+                <Button variant="outline" size="sm" className="min-h-11 min-w-11 rounded-full" aria-label="Open your daily bonus" onClick={() => setDailyBonusTrigger(n => n + 1)}>
+                  Daily bonus ready
+                </Button>
+              )}
               <div className="flex items-center gap-1 bg-muted/50 rounded-full px-2 py-0.5">
                 <Award className="h-3.5 w-3.5 text-primary" />
                 <span className="text-sm font-medium"><AnimatedCounter end={earnedCount} />/{totalBadges}</span>
@@ -345,7 +354,7 @@ const Learn = () => {
           {/* Row 2: XP bar */}
           {stats && (
             <div data-tour="learn-xp-bar">
-              <XPBar totalXP={stats.total_xp} level={stats.current_level} />
+              <XPBar totalXP={stats.total_xp} level={calculateLevel(stats.total_xp)} />
             </div>
           )}
         </div>

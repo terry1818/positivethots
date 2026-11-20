@@ -297,7 +297,7 @@ const Settings = () => {
   const copyCode = (code: string) => {
     const isReferral = myCodes.find(c => c.code === code)?.type === "referral";
     const text = isReferral
-      ? `https://positivethots.lovable.app/auth?ref=${code}`
+      ? `https://positivethots.app/auth?ref=${code}`
       : code;
     navigator.clipboard.writeText(text);
     setCopiedCode(code);

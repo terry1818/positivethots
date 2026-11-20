@@ -8,6 +8,7 @@ import { ReflectionPrompt } from "./ReflectionPrompt";
 import { cn } from "@/lib/utils";
 import { useReadAloud } from "@/hooks/useReadAloud";
 import DOMPurify from 'dompurify';
+import { extractTakeaway } from "@/lib/learnSmallFixes";
 
 interface CheckpointQuestion {
   id: string;
@@ -45,14 +46,6 @@ const contentTypeIcons: Record<string, React.ReactNode> = {
   infographic: <Image className="h-4 w-4" />,
   study: <BookOpen className="h-4 w-4" />,
   interactive: <Sparkles className="h-4 w-4" />,
-};
-
-const extractTakeaway = (content: string): string => {
-  const boldMatch = content.match(/\*\*(.{20,120})\*\*/);
-  if (boldMatch) return boldMatch[1];
-  const paragraphs = content.split('\n\n').filter(p => p.length > 20 && !p.startsWith('#') && !p.startsWith('['));
-  const raw = paragraphs[paragraphs.length - 1]?.slice(0, 150) || "";
-  return raw.replace(/\*\*/g, '');
 };
 
 const renderParagraph = (paragraph: string, i: number) => {

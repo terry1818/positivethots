@@ -6,6 +6,8 @@ import { CelebrationEngine, CelebrationTier } from "@/components/celebrations/Ce
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { useSessionStore } from "@/stores/sessionStore";
+import { rollDailyReward } from "@/lib/learnSmallFixes";
 
 interface DailyRewardResult {
   xp: number;
@@ -13,16 +15,7 @@ interface DailyRewardResult {
   tier: CelebrationTier;
 }
 
-function rollReward(): DailyRewardResult {
-  const r = Math.random();
-  if (r < 0.6) return { xp: 5, isBoost: false, tier: "micro" };
-  if (r < 0.8) return { xp: 10, isBoost: false, tier: "micro" };
-  if (r < 0.9) return { xp: 15, isBoost: false, tier: "small" };
-  if (r < 0.95) return { xp: 25, isBoost: false, tier: "small" };
-  return { xp: 0, isBoost: true, tier: "medium" };
-}
-
-export const DailyRewardModal = () => {
+export const DailyRewardModal = ({ reopenTrigger, onReadyChange }: { reopenTrigger: number; onReadyChange: (ready: boolean) => void }) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [reward, setReward] = useState<DailyRewardResult | null>(null);
@@ -31,32 +24,51 @@ export const DailyRewardModal = () => {
 
   useEffect(() => {
     if (!user) return;
-    checkDailyReward();
-  }, [user]);
-
-  const checkDailyReward = async () => {
-    if (!user) return;
-    try {
-      const { data: profile } = await supabase
+    let active = true;
+    setClaimed(false);
+    setReward(null);
+    onReadyChange(false);
+    const checkDailyReward = async () => {
+      const { data: profile, error } = await supabase
         .from("profiles")
         .select("last_daily_reward_date")
         .eq("id", user.id)
         .single();
 
       const today = new Date().toISOString().split("T")[0];
-      if ((profile as any)?.last_daily_reward_date === today) return;
+      if (!active || error || !profile || profile.last_daily_reward_date === today) return;
+      setReward(rollDailyReward(user.id, today));
+      const session = useSessionStore.getState();
+      if (!session.isBannerDismissed("daily_reward")) {
+        session.dismissBanner("daily_reward");
+        setIsOpen(true);
+      } else {
+        onReadyChange(true);
+      }
+    };
+    void checkDailyReward().catch(() => {});
+    return () => { active = false; };
+  }, [user, onReadyChange]);
 
-      const r = rollReward();
-      setReward(r);
+  useEffect(() => {
+    if (reopenTrigger > 0 && reward && !claimed) {
       setIsOpen(true);
-    } catch {
-      // Silently fail — non-critical feature
+      onReadyChange(false);
+    }
+  }, [reopenTrigger]);
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      useSessionStore.getState().dismissBanner("daily_reward");
+      onReadyChange(!claimed);
     }
   };
 
   const handleClaim = async () => {
     if (!user || !reward || claimed) return;
     setClaimed(true);
+    onReadyChange(false);
 
     const today = new Date().toISOString().split("T")[0];
 
@@ -89,7 +101,7 @@ export const DailyRewardModal = () => {
   return (
     <>
       <CelebrationEngine tier={reward.tier} trigger={celebrationTrigger} title={`+${reward.xp} XP`} />
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-sm border-0 p-0 overflow-hidden bg-gradient-to-br from-primary to-secondary">
           <div className="p-8 text-center space-y-4">
             <MascotReaction emotion="waving" size="large" position="inline" />

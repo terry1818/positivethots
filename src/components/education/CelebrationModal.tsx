@@ -46,7 +46,7 @@ const tierTopics: Record<string, string> = {
   "Advanced Topics": "ethical non-monogamy, kink education, community leadership, and mentorship",
 };
 
-const APP_URL = "https://positivethots.lovable.app";
+const APP_URL = "https://positivethots.app";
 
 const BRAND_COLORS = [
   "hsl(270 60% 50%)",
@@ -269,9 +269,8 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, badgeSlug, b
                   src={mascotImg}
                   alt="Celebration!"
                   width={112}
-                  height={140}
-                  className="absolute inset-x-0 z-10 mx-auto w-28 object-contain animate-mascot-entrance"
-                  style={{ animationFillMode: "both", bottom: "-48%", height: "162%" }}
+                  height={112}
+                  className="relative z-10 w-full h-full object-cover object-top"
                 />
               </div>
               <div className="animate-float-gentle">

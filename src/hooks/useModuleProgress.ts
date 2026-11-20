@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { moduleCompletionPercent } from "@/lib/learnSmallFixes";
 
 interface Section {
   id: string;
@@ -23,12 +24,14 @@ export const useModuleProgress = (moduleId: string) => {
   const [sections, setSections] = useState<Section[]>([]);
   const [progress, setProgress] = useState<SectionProgress[]>([]);
   const [loading, setLoading] = useState(true);
+  const [badgeEarned, setBadgeEarned] = useState(false);
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const elapsedRef = useRef(0);
   const isVisibleRef = useRef(true);
 
   const loadData = useCallback(async () => {
+    if (!moduleId) return;
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
@@ -40,6 +43,8 @@ export const useModuleProgress = (moduleId: string) => {
         .order("section_number");
 
       setSections(sectionsData || []);
+      const { data: badge } = await supabase.from("user_badges").select("id").eq("user_id", session.user.id).eq("module_id", moduleId).maybeSingle();
+      setBadgeEarned(!!badge);
 
       if (sectionsData && sectionsData.length > 0) {
         const sectionIds = sectionsData.map(s => s.id);
@@ -127,8 +132,7 @@ export const useModuleProgress = (moduleId: string) => {
 
   const completedCount = progress.filter(p => p.completed).length;
   const isAllComplete = sections.length > 0 && completedCount >= sections.length;
-  const rawPercent = sections.length > 0 ? Math.round((completedCount / sections.length) * 100) : 0;
-  const completionPercent = rawPercent >= 100 ? 95 : rawPercent;
+  const completionPercent = moduleCompletionPercent(completedCount, sections.length, badgeEarned);
 
   return {
     sections,

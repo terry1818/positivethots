@@ -3071,6 +3071,7 @@ export type Database = {
         Args: { _event_id: string; _user_id: string }
         Returns: boolean
       }
+      level_for_xp: { Args: { _xp: number }; Returns: number }
       move_to_dlq: {
         Args: {
           dlq_name: string

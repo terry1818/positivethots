@@ -222,7 +222,7 @@ const LearnModule = () => {
       setXpPopup({ show: true, amount: result.newXP });
 
       if (result.leveledUp) {
-        const newLevel = stats?.current_level ? stats.current_level + 1 : 2;
+        const newLevel = result.newLevel;
         setTimeout(() => setCelebration({ type: "level_up", level: newLevel }), 1600);
 
         const reward = LEVEL_REWARDS[newLevel];
@@ -271,6 +271,7 @@ const LearnModule = () => {
     setSubmitted(true);
     setSubmitting(false);
     if (result.passed) {
+      void reloadProgress();
       const isFoundationComplete = await checkFoundationComplete(module.id);
       setTimeout(() => setCelebration({ type: "badge_earned", badgeTitle: module.title, badgeSlug: module.slug, badgeTier: module.tier, isFoundationComplete }), 1600);
       const xpResult = await awardXP(50 + (result.score === 100 ? 25 : 0), result.score === 100 ? "quiz_perfect" : "quiz_pass", module.id);

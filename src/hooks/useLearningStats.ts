@@ -207,8 +207,8 @@ export const useLearningStats = () => {
     loadStats();
   }, [loadStats]);
 
-  const awardXP = useCallback(async (amount: number, source: string, sourceId?: string): Promise<{ newXP: number; leveledUp: boolean; newStreak: number; streakMilestone: boolean; freezeUsed: boolean }> => {
-    if (!stats || !userId) return { newXP: 0, leveledUp: false, newStreak: 0, streakMilestone: false, freezeUsed: false };
+  const awardXP = useCallback(async (amount: number, source: string, sourceId?: string): Promise<{ newXP: number; newLevel: number; leveledUp: boolean; newStreak: number; streakMilestone: boolean; freezeUsed: boolean }> => {
+    if (!stats || !userId) return { newXP: 0, newLevel: 1, leveledUp: false, newStreak: 0, streakMilestone: false, freezeUsed: false };
 
     const today = new Date().toISOString().split("T")[0];
     const lastDate = stats.last_activity_date;
@@ -310,10 +310,10 @@ export const useLearningStats = () => {
         setSectionsToday(prev => prev + 1);
       }
 
-      return { newXP: totalAmount, leveledUp, newStreak: result.new_streak, streakMilestone, freezeUsed };
+      return { newXP: totalAmount, newLevel: result.new_level, leveledUp, newStreak: result.new_streak, streakMilestone, freezeUsed };
     } catch (err) {
       console.error("Error awarding XP:", err);
-      return { newXP: 0, leveledUp: false, newStreak: stats.current_streak, streakMilestone: false, freezeUsed: false };
+      return { newXP: 0, newLevel: stats.current_level, leveledUp: false, newStreak: stats.current_streak, streakMilestone: false, freezeUsed: false };
     }
   }, [stats, userId]);
 
