@@ -26,9 +26,13 @@ export interface LessonConcept extends LessonPicture {
   heading: string;
   /** Letter of the memory aid this idea stands for. */
   letter?: string;
+  /** The idea in one short, everyday sentence. Shown first; the lesson text follows unchanged. */
+  plain?: string;
 }
 export interface LessonEnhancement {
   hero: LessonPicture;
+  /** The lesson's main point in one plain sentence. Without it the takeaway card falls back to a line picked from the text. */
+  takeaway?: string;
   mnemonic?: { word: string; caption: string };
   concepts: LessonConcept[];
   checks: LessonCheck[];

@@ -1,0 +1,351 @@
+{
+ "fe6c4411-4946-4e3b-8cd3-ce9f4f8cae52": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Bodily Autonomy as a Human Right",
+    "art": "reproductive-autonomy/l1-0.webp",
+    "alt": "A guide standing tall with a hand on her heart inside a glowing outline of herself",
+    "size": [
+     274,
+     512
+    ],
+    "plain": "Your body is yours. You have the right to decide what happens to it."
+   },
+   {
+    "heading": "What Bodily Autonomy Means",
+    "art": "reproductive-autonomy/l1-1.webp",
+    "alt": "A guide holding a key and a compass",
+    "size": [
+     512,
+     473
+    ],
+    "plain": "You decide about touch, medical care, sex and having children."
+   },
+   {
+    "heading": "Why This Matters in Relationships",
+    "art": "guide-high-five",
+    "alt": ""
+   },
+   {
+    "heading": "Bodily Autonomy in ENM and Polyamorous Relationships",
+    "art": "reproductive-autonomy/l1-3.webp",
+    "alt": "Three guides standing together, each holding their own key",
+    "size": [
+     512,
+     473
+    ],
+    "plain": "Partners can make agreements, but no one gets to control another person's body."
+   },
+   {
+    "heading": "Intersections with Identity",
+    "art": "guide-tier-identity",
+    "alt": "",
+    "plain": "Not everyone gets this right equally. Some groups face extra barriers."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "fe6c4411-1",
+    "after": "What Bodily Autonomy Means",
+    "prompt": "Bodily autonomy is described as a…",
+    "options": [
+     "Privilege to earn",
+     "Personal preference",
+     "Foundational human right"
+    ],
+    "answer": 2,
+    "explanation": "Foundational human right. Bodily autonomy — the right to make decisions about your own body without external coercion — is a foundational human right that underpins all other rights."
+   },
+   {
+    "id": "fe6c4411-2",
+    "after": "Bodily Autonomy in ENM and Polyamorous Relationships",
+    "prompt": "What does bodily autonomy mean?",
+    "options": [
+     "A medical procedure",
+     "Deciding what happens to your own body",
+     "A partner deciding for you"
+    ],
+    "answer": 1,
+    "explanation": "Deciding what happens to your own body. Bodily autonomy is the principle that every person has the right to decide what happens to their own body."
+   }
+  ],
+  "takeaway": "Your body is yours, and decisions about it belong to you."
+ },
+ "47e2a583-1ee2-401f-9f75-3123715a5141": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Contraception & Informed Choice",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "To choose birth control well you need full, honest information."
+   },
+   {
+    "heading": "The Contraception Landscape",
+    "art": "reproductive-autonomy/l2-1.webp",
+    "alt": "A guide holding a tray of different small boxes and a calendar",
+    "size": [
+     482,
+     491
+    ],
+    "plain": "There are many methods, each with pros and cons."
+   },
+   {
+    "heading": "Informed Choice Means Real Choice",
+    "art": "reproductive-autonomy/l2-2.webp",
+    "alt": "A guide choosing between several open doors, a lightbulb above her",
+    "size": [
+     472,
+     512
+    ],
+    "plain": "A real choice means knowing your options, with no one pressuring you."
+   },
+   {
+    "heading": "Contraception in ENM Relationships",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "With more than one partner, birth control planning takes more talking."
+   },
+   {
+    "heading": "Healthcare Advocacy",
+    "art": "reproductive-autonomy/l2-4.webp",
+    "alt": "He raises a hand with a checklist while talking to her, a doctor in a white coat",
+    "size": [
+     512,
+     393
+    ],
+    "plain": "You may need to speak up to get respectful care. You are allowed to."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "47e2a583-1",
+    "after": "Informed Choice Means Real Choice",
+    "prompt": "Making informed choices about contraception requires…",
+    "options": [
+     "Comprehensive, unbiased information",
+     "A partner's permission",
+     "Guesswork"
+    ],
+    "answer": 0,
+    "explanation": "Comprehensive, unbiased information. Making informed choices about contraception requires access to comprehensive, unbiased information — something that many people never receive due to inadequate sex education, cultural taboos, and healthcare systems that don't prioritize…"
+   },
+   {
+    "id": "47e2a583-2",
+    "after": "Healthcare Advocacy",
+    "prompt": "Are all healthcare providers knowledgeable and affirming about every relationship style?",
+    "options": [
+     "No, so you may need to speak up for yourself",
+     "It never matters",
+     "Yes, always"
+    ],
+    "answer": 0,
+    "explanation": "No, so you may need to speak up for yourself. Not all healthcare providers are knowledgeable about or affirming toward ENM, LGBTQ+, or polyamorous patients."
+   }
+  ],
+  "takeaway": "A real choice about birth control needs full information and no pressure."
+ },
+ "9205f0dd-79d2-4873-9a3a-5172e8b46ea3": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Reproductive Justice vs. Reproductive Rights",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "\"Rights\" and \"justice\" are two different ideas here."
+   },
+   {
+    "heading": "Reproductive Rights: A Limited Framework",
+    "art": "reproductive-autonomy/l3-1.webp",
+    "alt": "A guide holding a single document with a balance-scale icon",
+    "size": [
+     456,
+     447
+    ],
+    "plain": "Reproductive rights is mostly about what the law allows."
+   },
+   {
+    "heading": "Reproductive Justice: A Comprehensive Framework",
+    "art": "reproductive-autonomy/l3-2.webp",
+    "alt": "Three guides holding a large ring together that links small icons of a home, a heart, a child and a health cross",
+    "size": [
+     512,
+     486
+    ],
+    "plain": "Reproductive justice asks whether people can really use those choices in their lives."
+   },
+   {
+    "heading": "Why This Matters for ENM/Poly Communities",
+    "art": "guide-high-five",
+    "alt": ""
+   },
+   {
+    "heading": "Historical Context",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "The history includes people being stopped from having children against their will."
+   },
+   {
+    "heading": "Taking Action",
+    "art": "reproductive-autonomy/l3-5.webp",
+    "alt": "A guide rolling up her sleeves, a megaphone in one hand and a book in the other",
+    "size": [
+     470,
+     509
+    ],
+    "plain": "The lesson lists ways to act: learn more, support groups and speak up."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "9205f0dd-1",
+    "after": "Reproductive Rights: A Limited Framework",
+    "prompt": "The traditional reproductive rights frame focuses mainly on…",
+    "options": [
+     "Housing",
+     "Legal access to abortion and contraception",
+     "School funding"
+    ],
+    "answer": 1,
+    "explanation": "Legal access to abortion and contraception. The reproductive rights movement, as traditionally framed, focuses primarily on legal access to abortion and contraception."
+   },
+   {
+    "id": "9205f0dd-2",
+    "after": "Reproductive Justice: A Comprehensive Framework",
+    "prompt": "Who created the reproductive justice framework in 1994?",
+    "options": [
+     "Twelve Black women",
+     "A government agency",
+     "A drug company"
+    ],
+    "answer": 0,
+    "explanation": "Twelve Black women. The reproductive justice framework was created in 1994 by 12 Black women who recognized that the reproductive rights movement didn't address their lived reality."
+   }
+  ],
+  "takeaway": "Having a legal right is not the same as being able to use it in real life."
+ },
+ "25180ad7-bd2d-46d0-8e47-b4c9d2d099b8": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Access, Equity & Reproductive Advocacy",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "A right only helps if people can actually reach the care."
+   },
+   {
+    "heading": "The Access Gap",
+    "art": "reproductive-autonomy/l4-1.webp",
+    "alt": "A guide standing at the edge of a wide gap, a far-off clinic sign with a medical cross on the other side",
+    "size": [
+     509,
+     463
+    ],
+    "plain": "Distance, cost and insurance keep many people from getting care."
+   },
+   {
+    "heading": "The Digital Divide",
+    "art": "reproductive-autonomy/l4-2.webp",
+    "alt": "A guide holding a phone with a padlock on its screen, looking careful",
+    "size": [
+     457,
+     475
+    ],
+    "plain": "Data from apps and phones can reveal private health details."
+   },
+   {
+    "heading": "What You Can Do",
+    "art": "reproductive-autonomy/l4-3.webp",
+    "alt": "A guide holding a jar of hearts and wearing a volunteer badge",
+    "size": [
+     368,
+     451
+    ],
+    "plain": "The lesson lists ways to help, like giving money or time."
+   },
+   {
+    "heading": "Advocacy in Your Relationships",
+    "art": "guide-story-chat",
+    "alt": "",
+    "plain": "Start close to home by talking openly with partners and friends."
+   },
+   {
+    "heading": "Community-Level Action",
+    "art": "reproductive-autonomy/l4-5.webp",
+    "alt": "Four guides forming a human chain, passing boxes marked with hearts",
+    "size": [
+     507,
+     369
+    ],
+    "plain": "Local groups help people with money, rides and a place to stay."
+   },
+   {
+    "heading": "Systemic Advocacy",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "You can also contact lawmakers and back groups led by the people most affected."
+   },
+   {
+    "heading": "Intersectional Solidarity",
+    "art": "guide-celebrate-all",
+    "alt": "",
+    "plain": "This links to other fairness issues, like money, race and disability."
+   }
+  ],
+  "checks": [
+   {
+    "id": "25180ad7-1",
+    "after": "The Access Gap",
+    "prompt": "\"Reproductive freedom means nothing without…\"",
+    "options": [
+     "Stricter rules",
+     "More apps",
+     "Equitable access"
+    ],
+    "answer": 2,
+    "explanation": "Equitable access. Reproductive freedom means nothing without equitable access. Systemic barriers disproportionately affect marginalized communities, creating a landscape where your zip code, race, income, and identity determine your reproductive options."
+   },
+   {
+    "id": "25180ad7-2",
+    "after": "The Digital Divide",
+    "prompt": "Which kind of app does the lesson flag as a privacy concern?",
+    "options": [
+     "Period tracking apps",
+     "Calculator apps",
+     "Weather apps"
+    ],
+    "answer": 0,
+    "explanation": "Period tracking apps. The lesson lists period tracking apps sharing data as a privacy concern."
+   }
+  ],
+  "takeaway": "Access to care is uneven, and there are concrete ways to help close the gap."
+ }
+}

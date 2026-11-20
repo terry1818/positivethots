@@ -17,6 +17,7 @@ import { CheckCircle2, XCircle, Trophy, Zap, Loader2, X } from "lucide-react";
 import { duration } from "@/lib/motionTokens";
 import { QuizCombo } from "./QuizCombo";
 import { QuizFeedbackSheet } from "./QuizFeedbackSheet";
+import { GlossarySheet } from "./GlossarySheet";
 import { renderMarkdown } from "./SectionContent";
 import { supabase } from "@/integrations/supabase/client";
 import { reportError } from "@/lib/errorReporting";
@@ -121,7 +122,7 @@ export const ExerciseSession = ({ moduleTitle, questions, onComplete, onBack, fi
       {error && <div role="alert"><p>We couldn't check that answer. Try again.</p><Button variant="outline" className="min-h-11" onClick={retry} disabled={pending}>Retry</Button></div>}
     </div>
     <QuizFeedbackSheet feedback={rereadOpen ? null : feedback} correctOption={feedback ? current.options[feedback.correct_answer] : ""} onContinue={handleContinue} reread={missCount >= 3 && current.section_id ? () => void loadLesson() : undefined} />
-    <BottomSheet open={rereadOpen} onOpenChange={setRereadOpen} title={lesson?.title || "Reread this lesson"}>{lessonError ? <><p>We couldn't load this lesson.</p><Button onClick={() => void loadLesson()}>Try again</Button></> : lesson ? renderMarkdown(lesson.content_text || "") : <Loader2 className="animate-spin" aria-label="Loading lesson" />}</BottomSheet>
+    <BottomSheet open={rereadOpen} onOpenChange={setRereadOpen} title={lesson?.title || "Reread this lesson"}>{lessonError ? <><p>We couldn't load this lesson.</p><Button onClick={() => void loadLesson()}>Try again</Button></> : lesson ? <>{renderMarkdown(lesson.content_text || "")}<GlossarySheet floating /></> : <Loader2 className="animate-spin" aria-label="Loading lesson" />}</BottomSheet>
     <BottomSheet open={leave} onOpenChange={setLeave} title="Leave the badge check? You'll start it again next time." initialFocusRef={keepButton}>
       <div className="space-y-3"><Button ref={keepButton} className="w-full min-h-[52px]" onClick={() => setLeave(false)}>Keep going</Button><Button variant="ghost" className="w-full min-h-11" onClick={onBack}>Leave</Button></div>
     </BottomSheet>

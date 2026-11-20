@@ -8,7 +8,8 @@
    {
     "heading": "Boundaries: Acts of Self-Care, Not Punishment",
     "art": "guide-meditate",
-    "alt": ""
+    "alt": "",
+    "plain": "A boundary is a way to look after yourself. It is not a way to punish."
    },
    {
     "heading": "What Boundaries Actually Are",
@@ -17,7 +18,8 @@
     "size": [
      316,
      507
-    ]
+    ],
+    "plain": "A boundary is a limit you set to keep yourself okay."
    },
    {
     "heading": "Boundaries vs. Rules",
@@ -26,7 +28,8 @@
     "size": [
      512,
      408
-    ]
+    ],
+    "plain": "A boundary is about what you will do. A rule tries to control someone else."
    },
    {
     "heading": "Why Boundaries Matter in ENM",
@@ -35,7 +38,8 @@
     "size": [
      452,
      484
-    ]
+    ],
+    "plain": "More relationships means more moments where you need to know your limits."
    },
    {
     "heading": "Types of Boundaries",
@@ -44,7 +48,8 @@
     "size": [
      435,
      490
-    ]
+    ],
+    "plain": "Limits can be about your body, your feelings, your time, your phone or your stuff."
    },
    {
     "heading": "Reframing Boundaries as Self-Honoring",
@@ -53,7 +58,8 @@
     "size": [
      339,
      497
-    ]
+    ],
+    "plain": "Each boundary you set tells you that your needs matter."
    }
   ],
   "checks": [
@@ -81,7 +87,8 @@
     "answer": 2,
     "explanation": "A limit you set to protect your own wellbeing. A boundary is a limit you set to protect your own physical, emotional, or psychological wellbeing."
    }
-  ]
+  ],
+  "takeaway": "A boundary is about what you will do to look after yourself, not about controlling someone else."
  },
  "755682e3-d42b-4085-8078-be668b4d08e3": {
   "hero": {
@@ -92,7 +99,8 @@
    {
     "heading": "Marshall Rosenberg's NVC Framework",
     "art": "guide-study-together",
-    "alt": ""
+    "alt": "",
+    "plain": "NVC is a way to say hard things without blame."
    },
    {
     "heading": "The Four Steps of NVC",
@@ -101,7 +109,8 @@
     "size": [
      461,
      501
-    ]
+    ],
+    "plain": "It has four steps: what happened, how you feel, what you need, what you ask."
    },
    {
     "heading": "1. Observations (What Happened — Without Judgment)",
@@ -110,7 +119,8 @@
     "size": [
      512,
      494
-    ]
+    ],
+    "plain": "Step one: say what happened, just the facts, with no judging."
    },
    {
     "heading": "2. Feelings (Emotions, Not Thoughts)",
@@ -119,7 +129,8 @@
     "size": [
      398,
      472
-    ]
+    ],
+    "plain": "Step two: name the feeling, like sad or scared. Not a thought or a blame."
    },
    {
     "heading": "3. Needs (Universal Human Needs)",
@@ -128,7 +139,8 @@
     "size": [
      491,
      477
-    ]
+    ],
+    "plain": "Step three: say the need under the feeling, like trust or rest."
    },
    {
     "heading": "4. Requests (Specific, Actionable, Negotiable)",
@@ -137,12 +149,14 @@
     "size": [
      512,
      464
-    ]
+    ],
+    "plain": "Step four: ask for one clear thing, and be okay with hearing no."
    },
    {
     "heading": "NVC in Relationship/Sexual Contexts",
     "art": "guide-story-chat",
-    "alt": ""
+    "alt": "",
+    "plain": "These steps work well for talks about consent, jealousy and sex."
    },
    {
     "heading": "Common Patterns NVC Replaces",
@@ -151,7 +165,8 @@
     "size": [
      504,
      498
-    ]
+    ],
+    "plain": "It swaps blame, demands and guilt trips for clear, kind words."
    }
   ],
   "checks": [
@@ -179,7 +194,8 @@
     "answer": 0,
     "explanation": "A request. Finally, make a clear, specific request — not a demand."
    }
-  ]
+  ],
+  "takeaway": "Say what happened, how you feel, what you need, and what you are asking for."
  },
  "1e9e4606-54cc-4c74-8f05-ac7dfefe3a39": {
   "hero": {
@@ -190,7 +206,8 @@
    {
     "heading": "Boundary Challenges Unique to ENM",
     "art": "guide-thinking",
-    "alt": ""
+    "alt": "",
+    "plain": "Having more than one partner brings limits most couples never have to discuss."
    },
    {
     "heading": "Time Management Boundaries",
@@ -199,7 +216,8 @@
     "size": [
      507,
      462
-    ]
+    ],
+    "plain": "Time is limited. Be honest about how much you really have to give."
    },
    {
     "heading": "Sexual Health Agreements",
@@ -208,7 +226,8 @@
     "size": [
      509,
      449
-    ]
+    ],
+    "plain": "Be very clear about safer sex, because it affects everyone connected to you."
    },
    {
     "heading": "Emotional Availability Boundaries",
@@ -217,7 +236,8 @@
     "size": [
      437,
      483
-    ]
+    ],
+    "plain": "Your energy for other people's feelings runs out. It is okay to say so."
    },
    {
     "heading": "Metamour Boundaries",
@@ -226,7 +246,8 @@
     "size": [
      512,
      405
-    ]
+    ],
+    "plain": "You choose how close you are with your partner's other partners."
    },
    {
     "heading": "Soft vs. Hard Boundaries",
@@ -235,12 +256,14 @@
     "size": [
      440,
      480
-    ]
+    ],
+    "plain": "A hard limit never bends. A soft limit can shift with trust."
    },
    {
     "heading": "Using NVC to Communicate Boundary Changes",
     "art": "guide-story-chat",
-    "alt": ""
+    "alt": "",
+    "plain": "Limits change over time. Say so early, using the four steps."
    },
    {
     "heading": "When a Boundary Is Crossed",
@@ -249,7 +272,8 @@
     "size": [
      423,
      489
-    ]
+    ],
+    "plain": "If someone crosses your limit, name it, say what you need and follow through."
    }
   ],
   "checks": [
@@ -277,7 +301,8 @@
     "answer": 1,
     "explanation": "Emotional availability. You are a human with finite emotional resources."
    }
-  ]
+  ],
+  "takeaway": "Know your limits around time, sex and feelings, say them early, and follow through."
  },
  "52aa2645-e6ef-42b5-a58a-aceff9398ed2": {
   "hero": {
@@ -288,7 +313,8 @@
    {
     "heading": "The Art of Receiving Boundaries",
     "art": "guide-lesson-reading",
-    "alt": ""
+    "alt": "",
+    "plain": "Hearing someone else's \"no\" well is a skill too."
    },
    {
     "heading": "Why Receiving Boundaries Is Hard",
@@ -297,7 +323,8 @@
     "size": [
      426,
      505
-    ]
+    ],
+    "plain": "Someone's limit can sting and feel like rejection. It usually is not about you."
    },
    {
     "heading": "NVC Empathic Listening",
@@ -306,7 +333,8 @@
     "size": [
      512,
      429
-    ]
+    ],
+    "plain": "Listen to understand. Repeat back what you heard before you react."
    },
    {
     "heading": "The Difference Between Hearing and Respecting",
@@ -315,7 +343,8 @@
     "size": [
      355,
      468
-    ]
+    ],
+    "plain": "Hearing a limit is not enough. Respecting it means changing what you do."
    },
    {
     "heading": "Managing Your Emotional Response",
@@ -324,7 +353,8 @@
     "size": [
      452,
      503
-    ]
+    ],
+    "plain": "Name your feeling, breathe, and deal with it without making it their job."
    },
    {
     "heading": "Asking for Clarification Without Pressuring",
@@ -333,12 +363,14 @@
     "size": [
      491,
      386
-    ]
+    ],
+    "plain": "Ask so you can support them, not so you can talk them out of it."
    },
    {
     "heading": "Modeling Graceful Acceptance",
     "art": "guide-high-five",
-    "alt": ""
+    "alt": "",
+    "plain": "When you take a \"no\" kindly, people feel safe being honest with you."
    }
   ],
   "checks": [
@@ -366,6 +398,7 @@
     "answer": 0,
     "explanation": "\"Can you help me understand what you need so I can support that?\" There is a difference between."
    }
-  ]
+  ],
+  "takeaway": "Taking someone's \"no\" kindly makes it safe for them to be honest with you."
  }
 }

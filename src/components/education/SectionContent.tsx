@@ -1,4 +1,6 @@
 import { useQuizAnswer } from "@/hooks/useQuizAnswer";
+import { GlossarySheet } from "./GlossarySheet";
+import glossary from "@/content/glossary.json";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useEffect, useState } from "react";
 import { CheckCircle, CheckCircle2, XCircle, PlayCircle, FileText, Image, BookOpen, Sparkles, Volume2, Pause, Play, Square, Loader2 } from "lucide-react";
@@ -49,6 +51,27 @@ const contentTypeIcons: Record<string, React.ReactNode> = {
   interactive: <Sparkles className="h-4 w-4" />,
 };
 
+// Jargon gets a dotted underline and a plain-English meaning on tap (see GlossarySheet).
+const glossaryTerms = Object.keys(glossary).sort((a, b) => b.length - a.length);
+const glossaryPattern = new RegExp(`(^|[^\\w-])(${glossaryTerms.map(term => term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})(e?s)?(?![\\w-])`, "gi");
+/** Short forms that are also everyday words ("prep", "pep") only count when written in capitals. */
+const glossaryAcronym = /^(prep|pep|sti|nre|enm|cnm|nvc|ncii|bdsm|aasect|ssris|u=u)$/;
+/** Terms already marked in the text being rendered, so each is underlined once per card. */
+let glossarySeen: Set<string> | null = null;
+const markGlossary = (html: string) => {
+  let inLink = false;
+  return html.split(/(<[^>]+>)/).map(part => {
+    if (part.startsWith("<")) { if (/^<a\b/i.test(part)) inLink = true; else if (/^<\/a/i.test(part)) inLink = false; return part; }
+    if (inLink) return part;
+    return part.replace(glossaryPattern, (match, before: string, term: string, plural = "") => {
+      const key = term.toLowerCase();
+      if (glossarySeen?.has(key) || (glossaryAcronym.test(key) && !/[A-Z].*[A-Z]/.test(term))) return match;
+      glossarySeen?.add(key);
+      return `${before}<span class="glossary-term" role="button" tabindex="0" data-term="${key}">${term}${plural}</span>`;
+    });
+  }).join("");
+};
+
 /** **bold**, *emphasis* and [links](url) inside one line of lesson text, sanitised. */
 const inlineHtml = (text: string) => {
   const escapeHtml = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -57,9 +80,9 @@ const inlineHtml = (text: string) => {
     const safe = (trimmed.startsWith('javascript:') || trimmed.startsWith('data:') || trimmed.startsWith('vbscript:')) ? '#' : url;
     return `<a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="text-secondary underline hover:text-secondary/80">${escapeHtml(label)}</a>`;
   });
-  return DOMPurify.sanitize(withLinks
+  return markGlossary(DOMPurify.sanitize(withLinks
     .replace(/\*\*([^*\n]+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/(^|[^*\w])\*([^*\s](?:[^*\n]*?[^*\s])?)\*(?![*\w])/g, '$1<em>$2</em>'));
+    .replace(/(^|[^*\w])\*([^*\s](?:[^*\n]*?[^*\s])?)\*(?![*\w])/g, '$1<em>$2</em>')));
 };
 const listLine = /^\s*(?:[-*+]|\d+[.)])\s+/;
 
@@ -143,12 +166,13 @@ const renderParagraph = (paragraph: string, i: number) => {
   const withEmphasis = withLinks
     .replace(/\*\*([^*\n]+?)\*\*/g, '<strong>$1</strong>')
     .replace(/(^|[^*\w])\*([^*\s](?:[^*\n]*?[^*\s])?)\*(?![*\w])/g, '$1<em>$2</em>');
-  return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(withEmphasis) }} />;
+  return <p key={i} className="mb-4 leading-relaxed" dangerouslySetInnerHTML={{ __html: markGlossary(DOMPurify.sanitize(withEmphasis)) }} />;
 };
 
 export const renderMarkdown = (content: string, checkpoints?: CheckpointQuestion[]) => {
   const paragraphs = content.split('\n\n');
   const elements: React.ReactNode[] = [];
+  glossarySeen = new Set();
 
   paragraphs.forEach((paragraph, i) => {
     elements.push(renderParagraph(paragraph, i));
@@ -160,6 +184,7 @@ export const renderMarkdown = (content: string, checkpoints?: CheckpointQuestion
     }
   });
 
+  glossarySeen = null;
   return elements;
 };
 
@@ -410,6 +435,7 @@ export const SectionContent = ({
       {section.content_text && (
         <div className="prose prose-sm max-w-none">
           {renderMarkdown(section.content_text, checkpointQuestions)}
+          <GlossarySheet floating />
         </div>
       )}
 

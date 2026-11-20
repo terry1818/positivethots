@@ -1,0 +1,380 @@
+{
+ "5647f015-f763-4944-b50f-288dcc38dd2a": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Your Body Is Not Broken",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "Worrying that something about your sex life is \"not normal\" is very common."
+   },
+   {
+    "heading": "The Biopsychosocial Model",
+    "art": "common-sexual-concerns/l1-1.webp",
+    "alt": "A guide holding three linked rings showing a body icon, a brain and two people",
+    "size": [
+     461,
+     477
+    ],
+    "plain": "Sex is shaped by three things together: your body, your mind and your life."
+   },
+   {
+    "heading": "\"Normal\" Is a Spectrum, Not a Point",
+    "art": "common-sexual-concerns/l1-2.webp",
+    "alt": "A guide sliding a marker along a wide bar with many notches",
+    "size": [
+     496,
+     457
+    ],
+    "plain": "There is no single \"normal\". There is a wide range."
+   },
+   {
+    "heading": "When Does a Concern Become Clinical?",
+    "art": "common-sexual-concerns/l1-3.webp",
+    "alt": "A guide weighing a clipboard against a heart on a small scale",
+    "size": [
+     420,
+     465
+    ],
+    "plain": "It becomes a problem to treat when it truly bothers you, not just because it happens."
+   },
+   {
+    "heading": "Non-Pathologizing Framing",
+    "art": "guide-meditate",
+    "alt": "",
+    "plain": "Being different is not the same as being sick."
+   }
+  ],
+  "checks": [
+   {
+    "id": "5647f015-1",
+    "after": "The Biopsychosocial Model",
+    "prompt": "Which model looks at biology, psychology and social factors together?",
+    "options": [
+     "Linear",
+     "Biopsychosocial",
+     "Dual control"
+    ],
+    "answer": 1,
+    "explanation": "Biopsychosocial. Contemporary sexual health uses the biopsychosocial model to understand sexual function."
+   },
+   {
+    "id": "5647f015-2",
+    "after": "When Does a Concern Become Clinical?",
+    "prompt": "What mainly decides whether a sexual concern is clinical?",
+    "options": [
+     "How rare it is",
+     "Whether it causes personal distress",
+     "What friends say"
+    ],
+    "answer": 1,
+    "explanation": "Whether it causes personal distress. The key distinguishing factor in modern sexual health is not whether a specific experience occurs, but whether it causes personal distress or interpersonal difficulty."
+   }
+  ],
+  "takeaway": "Most sexual worries are normal differences. It needs treating when it truly bothers you."
+ },
+ "41445b6a-0d48-430e-8bfb-edb5bcc3f368": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Sexuality Across the Lifespan",
+    "art": "common-sexual-concerns/l2-0.webp",
+    "alt": "Four guides standing in a row at different life stages, all smiling",
+    "size": [
+     481,
+     467
+    ],
+    "plain": "Your sex life changes as you age. That is expected."
+   },
+   {
+    "heading": "Young Adulthood (18–30s)",
+    "art": "common-sexual-concerns/l2-1.webp",
+    "alt": "A guide exploring with a compass and a backpack",
+    "size": [
+     409,
+     467
+    ],
+    "plain": "Early adulthood is often about exploring and working out what you like."
+   },
+   {
+    "heading": "Midlife (30s–50s)",
+    "art": "common-sexual-concerns/l2-2.webp",
+    "alt": "A guide juggling a calendar, a briefcase and a house icon",
+    "size": [
+     473,
+     501
+    ],
+    "plain": "In midlife, kids, work, stress and hormones often shift desire."
+   },
+   {
+    "heading": "Menopause, Perimenopause, and Hormonal Changes",
+    "art": "common-sexual-concerns/l2-3.webp",
+    "alt": "A guide fanning herself with a paper fan, a small thermometer beside her",
+    "size": [
+     449,
+     484
+    ],
+    "plain": "Around menopause, hormones drop and sex can feel different. There are ways to help."
+   },
+   {
+    "heading": "Aging (60s and Beyond)",
+    "art": "common-sexual-concerns/l2-4.webp",
+    "alt": "A guide with silver streaks in her hair, dancing with a heart above",
+    "size": [
+     432,
+     485
+    ],
+    "plain": "Sex does not end at any age. It adapts."
+   },
+   {
+    "heading": "Medications and Sexual Function",
+    "art": "common-sexual-concerns/l2-5.webp",
+    "alt": "A guide reading the label of a pill bottle through a magnifying glass",
+    "size": [
+     446,
+     482
+    ],
+    "plain": "Many common medicines affect sex. Ask your doctor about options."
+   },
+   {
+    "heading": "Transgender Hormone Therapy",
+    "art": "guide-tier-identity",
+    "alt": "",
+    "plain": "Hormones taken for transition can change desire and how arousal feels."
+   },
+   {
+    "heading": "Changes Mean Adaptation, Not Loss",
+    "art": "common-sexual-concerns/l2-7.webp",
+    "alt": "A guide moving a plant into a bigger pot, smiling",
+    "size": [
+     465,
+     498
+    ],
+    "plain": "Change means adjusting, not losing something."
+   }
+  ],
+  "checks": [
+   {
+    "id": "41445b6a-1",
+    "after": "Medications and Sexual Function",
+    "prompt": "Which common medication does the lesson list as able to reduce desire or delay orgasm?",
+    "options": [
+     "Eye drops",
+     "Vitamin C",
+     "Antidepressants (SSRIs)"
+    ],
+    "answer": 2,
+    "explanation": "Antidepressants (SSRIs). Antidepressants (SSRIs) can reduce desire, delay orgasm, or affect arousal."
+   },
+   {
+    "id": "41445b6a-2",
+    "after": "Changes Mean Adaptation, Not Loss",
+    "prompt": "Changes in sexual function over a lifetime are…",
+    "options": [
+     "Not signs of failure or decline",
+     "The end of sexuality",
+     "Proof something is broken"
+    ],
+    "answer": 0,
+    "explanation": "Not signs of failure or decline. The most important message about lifespan sexuality is this: changes in sexual function are not signs of failure or decline."
+   }
+  ],
+  "takeaway": "Your sex life changes as you age. Change means adjusting, not losing."
+ },
+ "e3127092-860b-418f-ad74-fed3d9ae4e74": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Approaching Concerns with Compassion",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "When a sexual worry shows up, start with kindness, not blame."
+   },
+   {
+    "heading": "Pain During Sex",
+    "art": "common-sexual-concerns/l3-1.webp",
+    "alt": "A guide holding a first-aid cross and raising a gentle stop hand",
+    "size": [
+     444,
+     493
+    ],
+    "plain": "Pain during sex is common and can almost always be treated. Do not push through it."
+   },
+   {
+    "heading": "Erectile Changes",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "Erections come and go for many reasons. A change now and then is normal."
+   },
+   {
+    "heading": "Difficulty with Orgasm",
+    "art": "guide-meditate",
+    "alt": "",
+    "plain": "Trouble reaching orgasm is common and takes many forms."
+   },
+   {
+    "heading": "Ejaculatory Concerns",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "Finishing sooner or later than you want is very common, and there are ways to help."
+   },
+   {
+    "heading": "Desire Discrepancy",
+    "art": "common-sexual-concerns/l3-5.webp",
+    "alt": "Two guides holding two differently charged batteries, shrugging and smiling at each other",
+    "size": [
+     507,
+     436
+    ],
+    "plain": "Partners wanting different amounts of sex is one of the most common concerns."
+   },
+   {
+    "heading": "The Role of Anxiety",
+    "art": "common-sexual-concerns/l3-6.webp",
+    "alt": "A guide untangling a knotted ball of string above his head",
+    "size": [
+     512,
+     462
+    ],
+    "plain": "Worry makes most sexual problems worse. Calming the worry helps."
+   },
+   {
+    "heading": "Compassionate Self-Talk",
+    "art": "common-sexual-concerns/l3-7.webp",
+    "alt": "A guide hugging herself and speaking kindly to her reflection",
+    "size": [
+     512,
+     465
+    ],
+    "plain": "Talk to yourself the way you would talk to a good friend."
+   }
+  ],
+  "checks": [
+   {
+    "id": "e3127092-1",
+    "after": "Pain During Sex",
+    "prompt": "Pain during sexual activity is…",
+    "options": [
+     "Rare and untreatable",
+     "Something to push through",
+     "Common and almost always treatable"
+    ],
+    "answer": 2,
+    "explanation": "Common and almost always treatable. Pain during sexual activity is common and almost always treatable. It is never something you should just push through."
+   },
+   {
+    "id": "e3127092-2",
+    "after": "The Role of Anxiety",
+    "prompt": "What plays a central role in many sexual concerns?",
+    "options": [
+     "Age alone",
+     "Diet",
+     "Anxiety"
+    ],
+    "answer": 2,
+    "explanation": "Anxiety. Anxiety plays a central role in many sexual concerns. Performance anxiety, body image anxiety, relationship anxiety, and generalized anxiety all activate the sexual inhibition system."
+   }
+  ],
+  "takeaway": "Most sexual concerns are common and treatable. Start with kindness toward yourself."
+ },
+ "96770907-17a8-41c4-be83-7b409db01205": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Seeking Help Is Self-Care",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "Asking for help does not mean you are broken. It means you are looking after yourself."
+   },
+   {
+    "heading": "Signs That Professional Support Would Be Helpful",
+    "art": "common-sexual-concerns/l4-1.webp",
+    "alt": "A guide ticking items on a checklist with a small flag raised beside it",
+    "size": [
+     484,
+     508
+    ],
+    "plain": "Get help if a problem lasts for months, hurts, or strains your relationship."
+   },
+   {
+    "heading": "Types of Professionals",
+    "art": "common-sexual-concerns/l4-2.webp",
+    "alt": "Three helpers standing together: one with a clipboard, one in a white coat, one with an exercise band",
+    "size": [
+     512,
+     427
+    ],
+    "plain": "Different helpers do different jobs: sex therapists, doctors and pelvic floor therapists."
+   },
+   {
+    "heading": "Finding the Right Provider",
+    "art": "common-sexual-concerns/l4-3.webp",
+    "alt": "A guide studying a map with a heart-shaped pin through a magnifying glass",
+    "size": [
+     474,
+     457
+    ],
+    "plain": "Look for someone who knows the topic and treats you with respect."
+   },
+   {
+    "heading": "What to Expect in Sex Therapy",
+    "art": "common-sexual-concerns/l4-4.webp",
+    "alt": "Two guides sitting in armchairs talking, a plant between them",
+    "size": [
+     512,
+     403
+    ],
+    "plain": "Sex therapy is talking. There is no touching and no undressing."
+   },
+   {
+    "heading": "Advocating for Yourself",
+    "art": "common-sexual-concerns/l4-5.webp",
+    "alt": "A guide raising his hand confidently, a megaphone in the other",
+    "size": [
+     429,
+     512
+    ],
+    "plain": "You are allowed to ask questions, push back and switch providers."
+   }
+  ],
+  "checks": [
+   {
+    "id": "96770907-1",
+    "after": "Seeking Help Is Self-Care",
+    "prompt": "The lesson says seeking help for a sexual concern is…",
+    "options": [
+     "Self-care",
+     "A sign something is seriously wrong",
+     "A last resort"
+    ],
+    "answer": 0,
+    "explanation": "Self-care. The lesson frames seeking help as self-care, not as proof that something is seriously wrong."
+   },
+   {
+    "id": "96770907-2",
+    "after": "Advocating for Yourself",
+    "prompt": "In any healthcare setting, who is your best advocate?",
+    "options": [
+     "The receptionist",
+     "You are",
+     "Your insurer"
+    ],
+    "answer": 1,
+    "explanation": "You are. In any healthcare setting, you are your own best advocate. If a provider dismisses your concerns, pathologizes your identity, or makes you feel judged, you have the right to seek another provider."
+   }
+  ],
+  "takeaway": "Getting professional help is self-care, and you get to choose who helps you."
+ }
+}

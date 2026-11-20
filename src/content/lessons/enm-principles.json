@@ -12,7 +12,8 @@
     "size": [
      512,
      470
-    ]
+    ],
+    "plain": "It means having more than one partner, and everyone knows and says yes."
    },
    {
     "heading": "What CNM Is Not",
@@ -21,7 +22,8 @@
     "size": [
      462,
      468
-    ]
+    ],
+    "plain": "It is not cheating. Cheating is hidden. This is out in the open."
    },
    {
     "heading": "Dr. Elisabeth Sheff's Longitudinal Research",
@@ -30,12 +32,14 @@
     "size": [
      461,
      454
-    ]
+    ],
+    "plain": "A researcher followed these families for many years. Most were doing fine."
    },
    {
     "heading": "CNM as a Valid Relationship Orientation",
     "art": "guide-encourage",
-    "alt": ""
+    "alt": "",
+    "plain": "For some people this is simply how they love, not a phase."
    },
    {
     "heading": "Addressing Common Misconceptions",
@@ -44,7 +48,8 @@
     "size": [
      505,
      463
-    ]
+    ],
+    "plain": "Most of the scary things people say about it turn out to be untrue."
    }
   ],
   "checks": [
@@ -72,7 +77,8 @@
     "answer": 0,
     "explanation": "Everyone involved knows and agrees. Consensual non-monogamy (CNM) refers to any relationship structure in which all partners knowingly and willingly agree that the relationship may include romantic, sexual, or intimate connections with more than one person."
    }
-  ]
+  ],
+  "takeaway": "Having more than one partner is not cheating when everyone knows and agrees."
  },
  "828eaaa3-3922-4828-ad48-d46dc4194e52": {
   "hero": {
@@ -83,7 +89,8 @@
    {
     "heading": "Exploring Different CNM Structures",
     "art": "guide-study-together",
-    "alt": ""
+    "alt": "",
+    "plain": "There is no one right way to do this. You get to pick what fits."
    },
    {
     "heading": "Polyamory",
@@ -92,7 +99,8 @@
     "size": [
      470,
      484
-    ]
+    ],
+    "plain": "Polyamory means loving more than one person, and everyone knows."
    },
    {
     "heading": "Relationship Anarchy",
@@ -101,7 +109,8 @@
     "size": [
      512,
      431
-    ]
+    ],
+    "plain": "You build each relationship your own way. No one type comes first by default."
    },
    {
     "heading": "Open Relationships",
@@ -110,7 +119,8 @@
     "size": [
      466,
      496
-    ]
+    ],
+    "plain": "A couple agrees that one or both can also see other people."
    },
    {
     "heading": "Swinging",
@@ -119,7 +129,8 @@
     "size": [
      512,
      408
-    ]
+    ],
+    "plain": "Couples who meet other couples or singles for sex, often as a social thing."
    },
    {
     "heading": "Solo Polyamory",
@@ -128,7 +139,8 @@
     "size": [
      467,
      468
-    ]
+    ],
+    "plain": "You have several partners but keep your own home and your own life."
    },
    {
     "heading": "The RADAR Check-In System",
@@ -137,12 +149,14 @@
     "size": [
      512,
      406
-    ]
+    ],
+    "plain": "RADAR is a regular check-in with a set list of things to talk about."
    },
    {
     "heading": "No Hierarchy of Validity",
     "art": "guide-celebrate-all",
-    "alt": ""
+    "alt": "",
+    "plain": "No style is better than another. The best one is the one that works for you."
    }
   ],
   "checks": [
@@ -170,7 +184,8 @@
     "answer": 1,
     "explanation": "Solo polyamory. Solo polyamory describes people who maintain multiple relationships while prioritizing their own autonomy and independence."
    }
-  ]
+  ],
+  "takeaway": "There are many ways to have more than one relationship. None is better than the others."
  },
  "83bd54a1-3422-4c24-a601-1ffdcf75fe5c": {
   "hero": {
@@ -181,7 +196,8 @@
    {
     "heading": "Polysecure: Attachment Theory in CNM",
     "art": "guide-lesson-reading",
-    "alt": ""
+    "alt": "",
+    "plain": "How safe you felt with people growing up shapes how you love now."
    },
    {
     "heading": "Attachment Theory Basics",
@@ -190,7 +206,8 @@
     "size": [
      434,
      460
-    ]
+    ],
+    "plain": "People tend to get close in one of a few usual ways. These are learned early."
    },
    {
     "heading": "Attachment in Polyamorous Contexts",
@@ -199,7 +216,8 @@
     "size": [
      441,
      461
-    ]
+    ],
+    "plain": "Having more partners can stir up old fears faster, not slower."
    },
    {
     "heading": "The Concept of Nested Security",
@@ -208,7 +226,8 @@
     "size": [
      510,
      490
-    ]
+    ],
+    "plain": "You need to feel safe in yourself, with each partner, and in the group."
    },
    {
     "heading": "Building Security Across a Polycule",
@@ -217,12 +236,14 @@
     "size": [
      506,
      480
-    ]
+    ],
+    "plain": "Feeling safe takes practice. Small, steady actions build it."
    },
    {
     "heading": "Normalizing Attachment Struggles",
     "art": "guide-encourage",
-    "alt": ""
+    "alt": "",
+    "plain": "Struggling with this is normal. It does not mean you are broken."
    }
   ],
   "checks": [
@@ -250,7 +271,8 @@
     "answer": 2,
     "explanation": "They become more activated. Fern argues that attachment styles become more activated in CNM contexts, not less."
    }
-  ]
+  ],
+  "takeaway": "Feeling safe with several partners is built on purpose, one steady action at a time."
  },
  "9c9d1cfb-4fec-4b13-8e23-9f7434d82d5c": {
   "hero": {
@@ -261,7 +283,8 @@
    {
     "heading": "Ethics and Sustainability in CNM",
     "art": "guide-thinking",
-    "alt": ""
+    "alt": "",
+    "plain": "Doing this well means being honest and fair, again and again."
    },
    {
     "heading": "Transparency and Honesty",
@@ -270,7 +293,8 @@
     "size": [
      428,
      438
-    ]
+    ],
+    "plain": "Tell the truth about who you see and also how you feel."
    },
    {
     "heading": "Rules vs. Agreements",
@@ -279,7 +303,8 @@
     "size": [
      512,
      395
-    ]
+    ],
+    "plain": "A rule is put on someone. An agreement is made together."
    },
    {
     "heading": "Navigating Hierarchy, Veto Power, and Couple Privilege",
@@ -288,7 +313,8 @@
     "size": [
      309,
      512
-    ]
+    ],
+    "plain": "Watch out when one couple's comfort always beats everyone else's needs."
    },
    {
     "heading": "Sheff's Research on Long-Term Success",
@@ -297,7 +323,8 @@
     "size": [
      512,
      490
-    ]
+    ],
+    "plain": "The people who last talk well, stay flexible and have support."
    },
    {
     "heading": "Ethics of Disclosure",
@@ -306,12 +333,14 @@
     "size": [
      502,
      401
-    ]
+    ],
+    "plain": "Tell new people how your relationships work before things get close."
    },
    {
     "heading": "Continuous Growth",
     "art": "guide-level-up",
-    "alt": ""
+    "alt": "",
+    "plain": "You never finish learning this. You keep practising."
    }
   ],
   "checks": [
@@ -339,6 +368,7 @@
     "answer": 0,
     "explanation": "Early, before intimacy develops. When entering new connections, ethical practice requires disclosing your relationship structure early — before emotional or physical intimacy develops."
    }
-  ]
+  ],
+  "takeaway": "Be honest, make agreements together, and tell new people how your relationships work."
  }
 }

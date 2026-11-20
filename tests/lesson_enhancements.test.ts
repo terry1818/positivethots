@@ -5,7 +5,7 @@ import { guideManifest } from "../src/lib/guideRotation";
 
 // The loader in src/lib/lessonEnhancements.ts uses Vite globs, so the files are read directly here.
 const dir = "src/content/lessons";
-type Extras = { hero: { art: string }; mnemonic?: { word: string }; concepts: { heading: string; art: string; size?: number[]; alt: string; letter?: string }[]; checks: LessonCheck[] };
+type Extras = { hero: { art: string }; mnemonic?: { word: string }; concepts: { heading: string; art: string; size?: number[]; alt: string; letter?: string; plain?: string }[]; checks: LessonCheck[] };
 const modules = readdirSync(dir).filter(file => file.endsWith(".json")).map(file => [file, JSON.parse(readFileSync(`${dir}/${file}`, "utf8")) as Record<string, Extras>] as const);
 const fries = modules.find(([file]) => file === "consent-fundamentals.json")![1]["20612de7-667f-4c06-aa0c-9955d9964a70"];
 const section: LessonSection = { id: "s", title: "FRIES", section_number: 1, estimated_minutes: 5, reflection_prompt: null,
@@ -44,5 +44,20 @@ test("every picture, answer and memory aid in every module file is real", () => 
       expect(check.explanation.length, where).toBeGreaterThan(20);
     }
     if (extras.mnemonic) expect(extras.concepts.filter(concept => concept.letter).map(concept => concept.letter).join(""), where).toBe(extras.mnemonic.word);
+  }
+});
+
+test("plain-words lines are short and the glossary is usable", () => {
+  for (const [file, lessons] of modules) for (const [sectionId, extras] of Object.entries(lessons)) for (const concept of extras.concepts) {
+    if (concept.plain === undefined) continue;
+    expect(concept.plain.length, `${file} ${sectionId} ${concept.heading}`).toBeGreaterThanOrEqual(20);
+    expect(concept.plain.length, `${file} ${sectionId} ${concept.heading}`).toBeLessThanOrEqual(150);
+  }
+  const glossary = JSON.parse(readFileSync("src/content/glossary.json", "utf8")) as Record<string, string>;
+  expect(Object.keys(glossary).length).toBeGreaterThan(50);
+  for (const [term, meaning] of Object.entries(glossary)) {
+    expect(term, term).toBe(term.toLowerCase());
+    expect(meaning.length, term).toBeLessThanOrEqual(140);
+    expect(meaning.toLowerCase().includes(term) && term.length > 6, `${term} is explained with itself`).toBe(false);
   }
 });

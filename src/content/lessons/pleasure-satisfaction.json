@@ -1,0 +1,342 @@
+{
+ "e819f05f-bb0a-4872-acba-900e21839ae2": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Performance Script",
+    "art": "pleasure-satisfaction/l1-0.webp",
+    "alt": "A guide standing on a stage under a spotlight holding a scorecard, looking nervous",
+    "size": [
+     448,
+     491
+    ],
+    "plain": "Many of us learned to treat sex like a show we have to get right."
+   },
+   {
+    "heading": "What Is Pleasure, Really?",
+    "art": "pleasure-satisfaction/l1-1.webp",
+    "alt": "A guide savouring a warm cup with her eyes closed, a small heart above",
+    "size": [
+     437,
+     467
+    ],
+    "plain": "Pleasure is anything that feels good, in your body, your feelings or your connection."
+   },
+   {
+    "heading": "The Pleasure Spectrum",
+    "art": "pleasure-satisfaction/l1-2.webp",
+    "alt": "A guide holding a long colour bar that fades from soft pink to deep purple",
+    "size": [
+     435,
+     504
+    ],
+    "plain": "Pleasure can be soft or strong. Every level counts."
+   },
+   {
+    "heading": "Why Performance Pressure Kills Pleasure",
+    "art": "pleasure-satisfaction/l1-3.webp",
+    "alt": "A guide carrying a heavy stopwatch-shaped weight on his shoulders",
+    "size": [
+     358,
+     512
+    ],
+    "plain": "Pressure to perform hits the brakes and shuts pleasure down."
+   },
+   {
+    "heading": "Normalizing Diverse Pleasure Preferences",
+    "art": "guide-celebrate-all",
+    "alt": "",
+    "plain": "People like very different things. All of it deserves respect."
+   }
+  ],
+  "checks": [
+   {
+    "id": "e819f05f-1",
+    "after": "What Is Pleasure, Really?",
+    "prompt": "How does the lesson define pleasure?",
+    "options": [
+     "Reaching a goal",
+     "Pleasing a partner",
+     "Any experience that feels good"
+    ],
+    "answer": 2,
+    "explanation": "Any experience that feels good. Pleasure is any experience that feels good — physically, emotionally, or relationally."
+   },
+   {
+    "id": "e819f05f-2",
+    "after": "Why Performance Pressure Kills Pleasure",
+    "prompt": "Performance pressure switches on which part of the dual control model?",
+    "options": [
+     "Neither",
+     "The brakes",
+     "The accelerator"
+    ],
+    "answer": 1,
+    "explanation": "The brakes. Performance pressure activates the sexual inhibition system — the brakes in the dual control model."
+   }
+  ],
+  "takeaway": "Sex is not a performance. Pleasure is whatever truly feels good to you."
+ },
+ "5f4c3ba8-078e-42e3-ad7c-47bc41807b99": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Know Yourself First",
+    "art": "pleasure-satisfaction/l2-0.webp",
+    "alt": "A guide looking curiously into a heart-shaped hand mirror",
+    "size": [
+     455,
+     488
+    ],
+    "plain": "Getting to know what you enjoy is the first step."
+   },
+   {
+    "heading": "Creating Your Pleasure Map",
+    "art": "pleasure-satisfaction/l2-1.webp",
+    "alt": "A guide drawing a treasure map dotted with hearts and stars",
+    "size": [
+     470,
+     492
+    ],
+    "plain": "A pleasure map is your own list of what feels good, where and how. It keeps changing."
+   },
+   {
+    "heading": "Solo Exploration as Valid Sexuality",
+    "art": "guide-meditate",
+    "alt": "",
+    "plain": "Exploring on your own is real, complete sexuality. It is not second best."
+   },
+   {
+    "heading": "Tools and Aids",
+    "art": "pleasure-satisfaction/l2-3.webp",
+    "alt": "A guide holding an open toolbox with a feather, a bottle and a ribbon inside",
+    "size": [
+     457,
+     512
+    ],
+    "plain": "Toys and lube are helpful tools. Using them does not mean something is lacking."
+   },
+   {
+    "heading": "Erotic Blueprints",
+    "art": "pleasure-satisfaction/l2-4.webp",
+    "alt": "A guide holding five coloured cards fanned out, each with a different simple icon",
+    "size": [
+     495,
+     501
+    ],
+    "plain": "People tend to have a \"type\" of touch or mood that works best for them."
+   },
+   {
+    "heading": "Sharing Your Map",
+    "art": "pleasure-satisfaction/l2-5.webp",
+    "alt": "She hands him a rolled-up map tied with a ribbon",
+    "size": [
+     498,
+     438
+    ],
+    "plain": "Telling a partner what you like is a gift, not a demand."
+   }
+  ],
+  "checks": [
+   {
+    "id": "5f4c3ba8-1",
+    "after": "Solo Exploration as Valid Sexuality",
+    "prompt": "How does the lesson describe solo exploration?",
+    "options": [
+     "A complete, valid experience in its own right",
+     "A substitute for partnered sex",
+     "Something to hide"
+    ],
+    "answer": 0,
+    "explanation": "A complete, valid experience in its own right. Solo sexual exploration is not a substitute for partnered sex — it's a complete, valid sexual experience in its own right."
+   },
+   {
+    "id": "5f4c3ba8-2",
+    "after": "Sharing Your Map",
+    "prompt": "Sharing your pleasure map with a partner is described as an act of…",
+    "options": [
+     "Criticism",
+     "Generosity and trust",
+     "Obligation"
+    ],
+    "answer": 1,
+    "explanation": "Generosity and trust. Once you know your pleasure map, sharing it with partners becomes an act of generosity and trust."
+   }
+  ],
+  "takeaway": "Learn what you enjoy, then share it with your partners."
+ },
+ "e497a740-abfc-485f-bb17-02e31a911af3": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "What Is Sensate Focus?",
+    "art": "pleasure-satisfaction/l3-0.webp",
+    "alt": "Two guides sitting facing each other, gently touching fingertips",
+    "size": [
+     512,
+     405
+    ],
+    "plain": "Sensate focus is a slow touching exercise with no goal except noticing."
+   },
+   {
+    "heading": "The Progressive Stages",
+    "art": "pleasure-satisfaction/l3-1.webp",
+    "alt": "A guide climbing three wide steps, each glowing a little brighter",
+    "size": [
+     409,
+     512
+    ],
+    "plain": "It moves in stages, starting with touch away from private areas."
+   },
+   {
+    "heading": "Why Removing Goals Works",
+    "art": "pleasure-satisfaction/l3-2.webp",
+    "alt": "A guide tossing a finish flag over his shoulder, relaxed and smiling",
+    "size": [
+     478,
+     512
+    ],
+    "plain": "When there is nothing to achieve, pressure drops and feeling comes back."
+   },
+   {
+    "heading": "Adapting Sensate Focus",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "You can adjust it for any body, any partner and any relationship."
+   },
+   {
+    "heading": "Building Presence",
+    "art": "pleasure-satisfaction/l3-4.webp",
+    "alt": "A guide sitting peacefully with open hands, a paused hourglass beside her",
+    "size": [
+     487,
+     483
+    ],
+    "plain": "The real prize is being fully present with yourself and your partner."
+   }
+  ],
+  "checks": [
+   {
+    "id": "e497a740-1",
+    "after": "What Is Sensate Focus?",
+    "prompt": "What is sensate focus?",
+    "options": [
+     "A structured touching exercise",
+     "A breathing app",
+     "A type of medication"
+    ],
+    "answer": 0,
+    "explanation": "A structured touching exercise. Sensate focus is a structured touching exercise originally developed by sex researchers William Masters and Virginia Johnson in the 1960s as a therapeutic technique for couples experiencing sexual difficulties."
+   },
+   {
+    "id": "e497a740-2",
+    "after": "Why Removing Goals Works",
+    "prompt": "Sensate focus works partly by removing what?",
+    "options": [
+     "Communication",
+     "Touch",
+     "Sexual goals"
+    ],
+    "answer": 2,
+    "explanation": "Sexual goals. This may sound counterintuitive: how does removing sexual goals improve sexual experiences?"
+   }
+  ],
+  "takeaway": "Slow touch with no goal takes the pressure off and brings feeling back."
+ },
+ "abb2a991-eebf-4cfb-b81a-670482cffeab": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Why Talking About Pleasure Is Hard",
+    "art": "pleasure-satisfaction/l4-0.webp",
+    "alt": "A guide with a zip over his mouth and a speech bubble full of tangled scribble",
+    "size": [
+     493,
+     476
+    ],
+    "plain": "Most people find it hard to say what feels good. Shame and fear get in the way."
+   },
+   {
+    "heading": "Communication Tools That Work",
+    "art": "pleasure-satisfaction/l4-1.webp",
+    "alt": "A guide holding a speech bubble that contains a heart and a thumbs up",
+    "size": [
+     465,
+     458
+    ],
+    "plain": "Simple starters help, like \"I like when...\" and \"Could we try...\"."
+   },
+   {
+    "heading": "Giving and Receiving Feedback",
+    "art": "pleasure-satisfaction/l4-2.webp",
+    "alt": "She gives him a small gift box while he listens with a smile",
+    "size": [
+     512,
+     387
+    ],
+    "plain": "Give feedback kindly and clearly. Take feedback without getting defensive."
+   },
+   {
+    "heading": "The Ongoing Conversation",
+    "art": "guide-story-chat",
+    "alt": "",
+    "plain": "What you like changes over time, so keep talking about it."
+   },
+   {
+    "heading": "Pleasure Communication in ENM",
+    "art": "pleasure-satisfaction/l4-4.webp",
+    "alt": "Three guides sitting together, each with a differently coloured speech bubble",
+    "size": [
+     503,
+     454
+    ],
+    "plain": "Each partner is different. Do not assume what worked with one works with another."
+   },
+   {
+    "heading": "When to Seek Professional Support",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "If shame keeps blocking these talks, a sex therapist can help."
+   }
+  ],
+  "checks": [
+   {
+    "id": "abb2a991-1",
+    "after": "Giving and Receiving Feedback",
+    "prompt": "What makes feedback about pleasure land well?",
+    "options": [
+     "Staying vague",
+     "Being specific, kind and timely",
+     "Waiting for months"
+    ],
+    "answer": 1,
+    "explanation": "Being specific, kind and timely. Giving feedback: Be specific, be kind, and be timely."
+   },
+   {
+    "id": "abb2a991-2",
+    "after": "The Ongoing Conversation",
+    "prompt": "Pleasure preferences are…",
+    "options": [
+     "Not static, so the conversation continues",
+     "Fixed for life",
+     "The same for everyone"
+    ],
+    "answer": 0,
+    "explanation": "Not static, so the conversation continues. Pleasure preferences are not static."
+   }
+  ],
+  "takeaway": "Saying what feels good, kindly and clearly, makes sex better for everyone."
+ }
+}

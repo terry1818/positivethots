@@ -1,0 +1,320 @@
+{
+ "2f611ea6-a996-4b55-a0ec-6ca2372172df": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Anatomy Beyond the Binary",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "Most of us were taught too little about bodies, and some of it was shaming."
+   },
+   {
+    "heading": "Inclusive Language for Real Bodies",
+    "art": "sexual-wellness-basics/l1-1.webp",
+    "alt": "A guide holding an open textbook and a speech bubble with a heart, speaking kindly",
+    "size": [
+     474,
+     502
+    ],
+    "plain": "Use words for body parts that fit the person, not their assumed gender."
+   },
+   {
+    "heading": "Pleasure-Relevant Anatomy",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "School taught how babies are made. It skipped which parts feel good."
+   },
+   {
+    "heading": "Anatomical Diversity Is Normal",
+    "art": "sexual-wellness-basics/l1-3.webp",
+    "alt": "Four guides standing together in a row with different heights and builds, arms around each other",
+    "size": [
+     465,
+     512
+    ],
+    "plain": "Bodies come in endless shapes, sizes and colours. Yours is normal."
+   },
+   {
+    "heading": "A Trauma-Informed Perspective",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "If you feel shame or distance from your body, go gently. You set the pace."
+   }
+  ],
+  "checks": [
+   {
+    "id": "2f611ea6-1",
+    "after": "Inclusive Language for Real Bodies",
+    "prompt": "Why does the lesson pay attention to the words used for anatomy?",
+    "options": [
+     "Language matters",
+     "Only doctors may name body parts",
+     "Words make no difference"
+    ],
+    "answer": 0,
+    "explanation": "Language matters. Language matters in anatomy education. Many people use terms for their bodies that differ from clinical language, and both are valid."
+   },
+   {
+    "id": "2f611ea6-2",
+    "after": "Anatomical Diversity Is Normal",
+    "prompt": "What does the lesson say about differences between bodies?",
+    "options": [
+     "Variation means something is wrong",
+     "There is one normal body",
+     "Bodies vary far more than textbooks suggest"
+    ],
+    "answer": 2,
+    "explanation": "Bodies vary far more than textbooks suggest. Bodies vary far more than most anatomy textbooks suggest."
+   }
+  ],
+  "takeaway": "Bodies vary widely, and yours is normal."
+ },
+ "ef0e57b8-01aa-4169-a14c-14e36ceea6f2": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Old Model of Arousal",
+    "art": "sexual-wellness-basics/l2-0.webp",
+    "alt": "A guide drawing a straight line with four dots on a board",
+    "size": [
+     484,
+     481
+    ],
+    "plain": "The old idea was that arousal follows one straight line of steps."
+   },
+   {
+    "heading": "Non-Linear and Circular Models",
+    "art": "sexual-wellness-basics/l2-1.webp",
+    "alt": "A guide drawing looping circles and waves on a board, smiling",
+    "size": [
+     495,
+     442
+    ],
+    "plain": "Real arousal loops, pauses and starts in different places."
+   },
+   {
+    "heading": "Arousal Non-Concordance",
+    "art": "sexual-wellness-basics/l2-2.webp",
+    "alt": "A guide holding a thought bubble with a red cross while a small gauge beside her points to green",
+    "size": [
+     512,
+     473
+    ],
+    "plain": "Your body can react when your mind is not into it, and the other way round."
+   },
+   {
+    "heading": "Context, Safety, and Connection",
+    "art": "guide-meditate",
+    "alt": "",
+    "plain": "Feeling safe and connected makes arousal much easier."
+   },
+   {
+    "heading": "Orgasm Is Not the Goal",
+    "art": "sexual-wellness-basics/l2-4.webp",
+    "alt": "A guide relaxing in a hammock with a crossed-out finish flag beside him",
+    "size": [
+     474,
+     465
+    ],
+    "plain": "Chasing orgasm makes it harder. Enjoying the moment works better."
+   },
+   {
+    "heading": "Inclusive Arousal",
+    "art": "guide-celebrate-all",
+    "alt": "",
+    "plain": "Arousal looks different across bodies, ages, abilities and medicines."
+   }
+  ],
+  "checks": [
+   {
+    "id": "ef0e57b8-1",
+    "after": "Arousal Non-Concordance",
+    "prompt": "Your body shows physical arousal but your mind is not interested. What is this called?",
+    "options": [
+     "Arousal non-concordance",
+     "Responsive desire",
+     "Spectatoring"
+    ],
+    "answer": 0,
+    "explanation": "Arousal non-concordance. One of the most important concepts in modern sex science is arousal non-concordance — the phenomenon where your body's physical arousal response doesn't match your mental/emotional experience of desire."
+   },
+   {
+    "id": "ef0e57b8-2",
+    "after": "Orgasm Is Not the Goal",
+    "prompt": "Watching and judging yourself during sex instead of feeling it is called…",
+    "options": [
+     "Sensate focus",
+     "Spectatoring",
+     "Embodiment"
+    ],
+    "answer": 1,
+    "explanation": "Spectatoring. When orgasm becomes the goal, it often becomes harder to achieve — a phenomenon sex therapists call \"spectatoring.\""
+   }
+  ],
+  "takeaway": "Arousal does not follow one straight line, and your body reacting is not the same as wanting."
+ },
+ "24232af6-d8d7-4cde-9a06-330312fe2eb7": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Body Image-Sexuality Connection",
+    "art": "sexual-wellness-basics/l3-0.webp",
+    "alt": "A guide giving her reflection in a mirror a warm smile, a heart between them",
+    "size": [
+     479,
+     456
+    ],
+    "plain": "How you feel about your body affects how much you enjoy sex."
+   },
+   {
+    "heading": "How Shame Shows Up in Intimacy",
+    "art": "sexual-wellness-basics/l3-1.webp",
+    "alt": "A guide hiding behind a big blanket, peeking over it with worried eyes",
+    "size": [
+     485,
+     471
+    ],
+    "plain": "Body shame shows up as hiding, avoiding, or watching yourself instead of feeling."
+   },
+   {
+    "heading": "Embodiment: Coming Home to Your Body",
+    "art": "sexual-wellness-basics/l3-2.webp",
+    "alt": "Eyes closed with her hands on her belly, a soft glow around her whole body",
+    "size": [
+     360,
+     451
+    ],
+    "plain": "Embodiment means feeling your body from the inside, not judging it from outside."
+   },
+   {
+    "heading": "All Bodies Are Sexual Bodies",
+    "art": "guide-celebrate-all",
+    "alt": "",
+    "plain": "Every body deserves pleasure and closeness. No body is left out."
+   }
+  ],
+  "checks": [
+   {
+    "id": "24232af6-1",
+    "after": "How Shame Shows Up in Intimacy",
+    "prompt": "Turning down intimacy so you will not be seen or touched is which shame pattern?",
+    "options": [
+     "Embodiment",
+     "Compersion",
+     "Avoidance"
+    ],
+    "answer": 2,
+    "explanation": "Avoidance. Avoidance means declining intimacy to avoid being seen or touched."
+   },
+   {
+    "id": "24232af6-2",
+    "after": "Embodiment: Coming Home to Your Body",
+    "prompt": "Feeling your body from the inside instead of judging how it looks is called…",
+    "options": [
+     "Avoidance",
+     "Embodiment",
+     "Spectatoring"
+    ],
+    "answer": 1,
+    "explanation": "Embodiment. Embodiment is the practice of being fully present in your physical experience — feeling your body from the inside rather than evaluating it from the outside."
+   }
+  ],
+  "takeaway": "Feeling at home in your body makes pleasure easier. Every body deserves it."
+ },
+ "ad816ede-61c6-4dd6-a1f4-54228ad68386": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Sexual Wellness as Self-Care",
+    "art": "sexual-wellness-basics/l4-0.webp",
+    "alt": "Wrapped in a cosy robe holding a cup of tea with heart-shaped steam",
+    "size": [
+     422,
+     486
+    ],
+    "plain": "Looking after your sexual self is ongoing self-care, like sleep or exercise."
+   },
+   {
+    "heading": "Integrating Embodiment Into Daily Life",
+    "art": "guide-meditate",
+    "alt": "",
+    "plain": "Small moments of noticing your body during the day add up."
+   },
+   {
+    "heading": "Pelvic Floor Awareness",
+    "art": "sexual-wellness-basics/l4-2.webp",
+    "alt": "A guide doing a calm seated stretch on a yoga mat",
+    "size": [
+     501,
+     476
+    ],
+    "plain": "The pelvic floor is a set of muscles low in your hips. It can be too tight or too weak."
+   },
+   {
+    "heading": "The Foundations of Sexual Wellness",
+    "art": "sexual-wellness-basics/l4-3.webp",
+    "alt": "A guide holding a pillow, an apple and a water bottle, a moon icon above",
+    "size": [
+     429,
+     495
+    ],
+    "plain": "Sleep, stress, movement and food all affect your sex life."
+   },
+   {
+    "heading": "When to Seek Professional Support",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "Pain or distress that will not go away is a good reason to see a professional."
+   },
+   {
+    "heading": "Your Personal Wellness Toolkit",
+    "art": "sexual-wellness-basics/l4-5.webp",
+    "alt": "A guide opening a toolbox filled with hearts, a feather and a candle",
+    "size": [
+     445,
+     512
+    ],
+    "plain": "Build your own mix of habits. There is no single right way."
+   }
+  ],
+  "checks": [
+   {
+    "id": "ad816ede-1",
+    "after": "Pelvic Floor Awareness",
+    "prompt": "What is the pelvic floor?",
+    "options": [
+     "A type of exercise mat",
+     "Muscles that support the bladder, bowel and reproductive organs",
+     "A hormone"
+    ],
+    "answer": 1,
+    "explanation": "Muscles that support the bladder, bowel and reproductive organs. The pelvic floor is a group of muscles that supports your bladder, bowel, and reproductive organs."
+   },
+   {
+    "id": "ad816ede-2",
+    "after": "The Foundations of Sexual Wellness",
+    "prompt": "Which everyday factor does the lesson say suppresses desire hormones when you lack it?",
+    "options": [
+     "Cold weather",
+     "Bright screens",
+     "Sleep"
+    ],
+    "answer": 2,
+    "explanation": "Sleep. Sleep deprivation suppresses hormones involved in desire."
+   }
+  ],
+  "takeaway": "Looking after your sexual self is everyday self-care, built from small habits."
+ }
+}

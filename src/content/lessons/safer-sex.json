@@ -8,7 +8,8 @@
    {
     "heading": "A Pleasure-Positive Approach to Safer Sex",
     "art": "guide-encourage",
-    "alt": ""
+    "alt": "",
+    "plain": "Harm reduction means making sex safer in real life, without shame."
    },
    {
     "heading": "Why Shame-Based Approaches Fail",
@@ -17,7 +18,8 @@
     "size": [
      506,
      427
-    ]
+    ],
+    "plain": "Scaring and shaming people does not make them safer. It makes them hide."
    },
    {
     "heading": "The Harm Reduction Alternative",
@@ -26,7 +28,8 @@
     "size": [
      411,
      492
-    ]
+    ],
+    "plain": "People will have sex. Good information helps them do it more safely."
    },
    {
     "heading": "The Spectrum of Safer Sex",
@@ -35,7 +38,8 @@
     "size": [
      478,
      412
-    ]
+    ],
+    "plain": "Sex is not just \"safe\" or \"unsafe\". Risk goes from lower to higher."
    },
    {
     "heading": "Pleasure-Positive Framing",
@@ -44,7 +48,8 @@
     "size": [
      465,
      484
-    ]
+    ],
+    "plain": "Talking about safety first lets everyone relax and enjoy it more."
    }
   ],
   "checks": [
@@ -72,7 +77,8 @@
     "answer": 1,
     "explanation": "As a spectrum from lower to higher. Rather than thinking of sex as either \"safe\" or \"unsafe,\" harm reduction invites us to see a spectrum."
    }
-  ]
+  ],
+  "takeaway": "Safer sex works best with good information and no shame."
  },
  "90c7413a-4271-4948-a458-e6546e98bc81": {
   "hero": {
@@ -92,7 +98,8 @@
     "size": [
      478,
      499
-    ]
+    ],
+    "plain": "Condoms, dental dams and gloves block fluids. They are cheap and they work."
    },
    {
     "heading": "PrEP and PEP: HIV Prevention",
@@ -101,7 +108,8 @@
     "size": [
      429,
      502
-    ]
+    ],
+    "plain": "PrEP is medicine you take before to prevent HIV. PEP is emergency medicine after."
    },
    {
     "heading": "U=U: Undetectable = Untransmittable",
@@ -110,7 +118,8 @@
     "size": [
      512,
      499
-    ]
+    ],
+    "plain": "A person on HIV treatment that works cannot pass HIV on through sex."
    },
    {
     "heading": "Testing Recommendations for ENM",
@@ -119,7 +128,8 @@
     "size": [
      451,
      468
-    ]
+    ],
+    "plain": "With more than one partner, get tested regularly. Every 3 months is common."
    },
    {
     "heading": "Talking About Testing",
@@ -128,7 +138,8 @@
     "size": [
      512,
      430
-    ]
+    ],
+    "plain": "Talking about testing feels awkward at first. A few simple lines make it easy."
    },
    {
     "heading": "Destigmatizing STIs",
@@ -137,7 +148,8 @@
     "size": [
      453,
      454
-    ]
+    ],
+    "plain": "An STI is a health issue, not a mark on your character. Most are treatable."
    }
   ],
   "checks": [
@@ -165,7 +177,8 @@
     "answer": 2,
     "explanation": "About every 3 months. For people with multiple partners, regular testing is an act of care for yourself and your network."
    }
-  ]
+  ],
+  "takeaway": "Use barriers, know about PrEP and PEP, and get tested about every 3 months if you have more than one partner."
  },
  "605941de-2545-43b4-be7e-3cdf6ab2e7d3": {
   "hero": {
@@ -176,7 +189,8 @@
    {
     "heading": "Navigating Fluid Bonding in ENM",
     "art": "guide-thinking",
-    "alt": ""
+    "alt": "",
+    "plain": "Stopping condoms with one partner is a big decision that touches everyone."
    },
    {
     "heading": "What Is Fluid Bonding?",
@@ -185,7 +199,8 @@
     "size": [
      486,
      466
-    ]
+    ],
+    "plain": "Fluid bonding means agreeing to have sex with a certain partner without barriers."
    },
    {
     "heading": "Why Fluid Bonding Matters in ENM",
@@ -199,7 +214,8 @@
     "size": [
      466,
      455
-    ]
+    ],
+    "plain": "A good agreement says who uses what with whom, how often you test and what happens after a slip."
    },
    {
     "heading": "When New Partners Enter",
@@ -208,7 +224,8 @@
     "size": [
      512,
      442
-    ]
+    ],
+    "plain": "A new partner means it is time to talk the agreement through again."
    },
    {
     "heading": "The Emotional Dimensions",
@@ -217,12 +234,14 @@
     "size": [
      417,
      476
-    ]
+    ],
+    "plain": "This is about feelings as well as health. It can mean trust and closeness."
    },
    {
     "heading": "Sample Agreement Framework",
     "art": "guide-lesson-reading",
-    "alt": ""
+    "alt": "",
+    "plain": "Write your agreement down in plain steps so no one has to guess."
    }
   ],
   "checks": [
@@ -250,7 +269,8 @@
     "answer": 0,
     "explanation": "Revisit the agreement before anything changes. One of the most common situations that tests fluid bonding agreements is the introduction of a new sexual partner."
    }
-  ]
+  ],
+  "takeaway": "Going without barriers is a shared agreement. Talk it through again when anything changes."
  },
  "1075b350-032e-404b-96e8-b4ecc37c8bc5": {
   "hero": {
@@ -261,7 +281,8 @@
    {
     "heading": "Beyond the Binary: Sexual Health for Everyone",
     "art": "guide-celebrate-all",
-    "alt": ""
+    "alt": "",
+    "plain": "Most sex ed was written for one kind of body. Good sex ed fits every body."
    },
    {
     "heading": "Inclusive Anatomy Language",
@@ -270,7 +291,8 @@
     "size": [
      477,
      462
-    ]
+    ],
+    "plain": "Use the words for body parts that the person uses for themselves."
    },
    {
     "heading": "Sexual Health for Trans and Nonbinary People",
@@ -279,7 +301,8 @@
     "size": [
      512,
      442
-    ]
+    ],
+    "plain": "Trans and nonbinary people have their own health needs and deserve care that fits."
    },
    {
     "heading": "Pleasure and Safety for People with Disabilities",
@@ -288,7 +311,8 @@
     "size": [
      392,
      512
-    ]
+    ],
+    "plain": "Disabled people have sex lives too, and deserve both pleasure and safety."
    },
    {
     "heading": "Age-Inclusive Sexual Health",
@@ -297,7 +321,8 @@
     "size": [
      259,
      512
-    ]
+    ],
+    "plain": "Sex does not stop at a certain age. Bodies change and so do the needs."
    },
    {
     "heading": "Systemic Barriers",
@@ -306,7 +331,8 @@
     "size": [
      446,
      474
-    ]
+    ],
+    "plain": "Some groups face extra walls to getting care, like cost, bias and distance."
    },
    {
     "heading": "Finding Inclusive Providers",
@@ -315,7 +341,8 @@
     "size": [
      439,
      479
-    ]
+    ],
+    "plain": "There are lists that help you find a doctor who will treat you with respect."
    }
   ],
   "checks": [
@@ -343,6 +370,7 @@
     "answer": 1,
     "explanation": "No, it matters at every age. Sexual health does not stop at a certain age."
    }
-  ]
+  ],
+  "takeaway": "Good sexual health care fits every body, age and ability."
  }
 }

@@ -8,7 +8,8 @@
    {
     "heading": "The Spectrum from Enthusiastic to Coercive",
     "art": "guide-study-together",
-    "alt": ""
+    "alt": "",
+    "plain": "A yes can be eager, unsure or forced. Only the eager kind really counts."
    },
    {
     "heading": "What Enthusiastic Consent Looks Like",
@@ -17,7 +18,8 @@
     "size": [
      512,
      474
-    ]
+    ],
+    "plain": "A real yes shows in the whole person: words, body and mood."
    },
    {
     "heading": "What Coercion Looks Like",
@@ -26,7 +28,8 @@
     "size": [
      506,
      489
-    ]
+    ],
+    "plain": "Coercion means pushing, guilting or wearing someone down until they give in."
    },
    {
     "heading": "Recognizing the Gray Areas",
@@ -35,7 +38,8 @@
     "size": [
      497,
      472
-    ]
+    ],
+    "plain": "Sometimes you went along with something you did not want. That matters too."
    },
    {
     "heading": "Coercion Is Never the Receiver's Fault",
@@ -44,7 +48,8 @@
     "size": [
      512,
      481
-    ]
+    ],
+    "plain": "If you were pressured, it is not your fault. It is on the person who pushed."
    },
    {
     "heading": "Building a Practice of Enthusiastic Consent",
@@ -77,7 +82,8 @@
     "answer": 0,
     "explanation": "With the person who applied the pressure. Regardless of the circumstances, if someone was coerced, the responsibility lies with the person who applied pressure — not the person who experienced it."
    }
-  ]
+  ],
+  "takeaway": "Only a free, eager yes counts. A yes won by pressure is not consent."
  },
  "950ac1ad-1eea-473c-bc94-0466f2b4db98": {
   "hero": {
@@ -92,7 +98,8 @@
     "size": [
      512,
      369
-    ]
+    ],
+    "plain": "The same consent basics apply. There are just more people to check in with."
    },
    {
     "heading": "Ongoing Renegotiation",
@@ -101,7 +108,8 @@
     "size": [
      512,
      389
-    ]
+    ],
+    "plain": "Agreements need a fresh look often, because things keep changing."
    },
    {
     "heading": "Consent to One Thing Is Not Consent to Everything",
@@ -110,7 +118,8 @@
     "size": [
      461,
      435
-    ]
+    ],
+    "plain": "A yes to one thing, or one person, is not a yes to everything."
    },
    {
     "heading": "Metamour Agreements and Consent Networks",
@@ -119,12 +128,14 @@
     "size": [
      510,
      438
-    ]
+    ],
+    "plain": "Your choices reach your partner's other partners too, so keep them in mind."
    },
    {
     "heading": "Practical Tools for Multi-Partner Consent",
     "art": "guide-practice-dumbbell",
-    "alt": ""
+    "alt": "",
+    "plain": "Simple habits help: regular check-ins and clear, shared agreements."
    },
    {
     "heading": "When Consent Gets Complicated",
@@ -133,7 +144,8 @@
     "size": [
      475,
      476
-    ]
+    ],
+    "plain": "Your head can say yes while your heart says \"not yet\". Say so out loud."
    }
   ],
   "checks": [
@@ -161,7 +173,8 @@
     "answer": 2,
     "explanation": "A yes in your head can still be hard in your heart. Sometimes in ENM, a partner may consent to something intellectually but struggle with it emotionally."
    }
-  ]
+  ],
+  "takeaway": "With more partners, check in more often. A yes to one thing or one person is never a yes to all."
  },
  "d8cb5e39-e96d-4392-8cf7-3cbe2eb3d051": {
   "hero": {
@@ -172,7 +185,8 @@
    {
     "heading": "When Consent Is Violated: Recognition, Response, and Healing",
     "art": "guide-encourage",
-    "alt": ""
+    "alt": "",
+    "plain": "Consent gets broken in every kind of community. Knowing what to do helps."
    },
    {
     "heading": "Recognizing When Consent Was Absent",
@@ -181,7 +195,8 @@
     "size": [
      427,
      484
-    ]
+    ],
+    "plain": "Sometimes it is obvious. Sometimes you only see it later."
    },
    {
     "heading": "Responding When Someone Tells You Their Consent Was Violated",
@@ -190,7 +205,8 @@
     "size": [
      500,
      443
-    ]
+    ],
+    "plain": "If someone tells you, listen first. Believe them. Do not argue."
    },
    {
     "heading": "Community Accountability vs. Punishment",
@@ -199,7 +215,8 @@
     "size": [
      512,
      454
-    ]
+    ],
+    "plain": "The goal is to repair harm and change behaviour, not only to punish."
    },
    {
     "heading": "Finding Support",
@@ -208,7 +225,8 @@
     "size": [
      440,
      483
-    ]
+    ],
+    "plain": "If this happened to you, you deserve help. You do not have to carry it alone."
    },
    {
     "heading": "Your Role in Consent Culture",
@@ -217,7 +235,8 @@
     "size": [
      512,
      437
-    ]
+    ],
+    "plain": "Everyone helps build a place where \"no\" is respected."
    }
   ],
   "checks": [
@@ -245,7 +264,8 @@
     "answer": 1,
     "explanation": "Accountability. Many communities, especially in ENM and kink spaces, are moving toward accountability-based models rather than purely punitive ones."
    }
-  ]
+  ],
+  "takeaway": "When consent is broken: believe, support, and aim to repair the harm."
  },
  "20612de7-667f-4c06-aa0c-9955d9964a70": {
   "hero": {
@@ -264,7 +284,8 @@
    {
     "heading": "Understanding Consent Through the FRIES Model",
     "art": "guide-study-together",
-    "alt": "Two guides learning together"
+    "alt": "Two guides learning together",
+    "plain": "Consent is more than hearing a yes. FRIES is five things to check."
    },
    {
     "heading": "Freely Given",
@@ -274,7 +295,8 @@
      590,
      640
     ],
-    "alt": "One person offers an open hand while the other takes her time to decide, an open padlock between them"
+    "alt": "One person offers an open hand while the other takes her time to decide, an open padlock between them",
+    "plain": "A real yes comes with no pressure, guilt or fear."
    },
    {
     "heading": "Reversible",
@@ -284,7 +306,8 @@
      371,
      640
     ],
-    "alt": "A guide holding an undo arrow sign and raising a hand to pause"
+    "alt": "A guide holding an undo arrow sign and raising a hand to pause",
+    "plain": "Anyone can change their mind at any time, even in the middle."
    },
    {
     "heading": "Informed",
@@ -294,7 +317,8 @@
      487,
      640
     ],
-    "alt": "Two guides reading a checklist together under a lightbulb"
+    "alt": "Two guides reading a checklist together under a lightbulb",
+    "plain": "You can only say yes to what you actually know about."
    },
    {
     "heading": "Enthusiastic",
@@ -304,7 +328,8 @@
      430,
      640
     ],
-    "alt": "A guide jumping for joy beside a speech bubble with a heart"
+    "alt": "A guide jumping for joy beside a speech bubble with a heart",
+    "plain": "Look for a happy, eager yes. Silence or \"I guess\" is not a yes."
    },
    {
     "heading": "Specific",
@@ -314,7 +339,8 @@
      516,
      640
     ],
-    "alt": "A guide pointing at a list where only one box is ticked"
+    "alt": "A guide pointing at a list where only one box is ticked",
+    "plain": "A yes to one thing is not a yes to anything else."
    },
    {
     "heading": "Why This Matters",
@@ -347,6 +373,7 @@
     "answer": 1,
     "explanation": "Enthusiastic. Look for a genuine, excited yes. Silence, hesitation, or “I guess so” are not enthusiasm."
    }
-  ]
+  ],
+  "takeaway": "A real yes is freely given, can be taken back, informed, eager and specific."
  }
 }

@@ -18,6 +18,7 @@ import { guideUrl } from "@/lib/guideAssets";
 import { guideManifest, type GuideName } from "@/lib/guideRotation";
 import { distance, duration, easing } from "@/lib/motionTokens";
 import { cn } from "@/lib/utils";
+import { GlossarySheet } from "./GlossarySheet";
 import { KeyTakeaway } from "./KeyTakeaway";
 import { LessonMnemonic, LessonRecap, LocalCheck, RichContent, RichTitle } from "./LessonRich";
 import { ReflectionPrompt } from "./ReflectionPrompt";
@@ -191,12 +192,13 @@ function LessonCards({ rich, section, checkpoints, initialIndex, isCompleted, us
             {card.type === "practice" && <LocalCheck check={card.check} selected={local[card.check.id]} onAnswer={choice => setLocal(previous => ({ ...previous, [card.check.id]: choice }))} />}
             {card.type === "checkpoint" && <Checkpoint question={card.checkpoint} saved={results[card.checkpoint.id]} onAnswered={answered} />}
             {card.type === "takeaway" && rich?.mnemonic && steps.length > 0 && <LessonRecap word={rich.mnemonic.word} steps={steps} />}
-            {card.type === "takeaway" && <KeyTakeaway takeaway={card.body} sectionTitle={section.title} sectionId={section.id} />}
+            {card.type === "takeaway" && <KeyTakeaway takeaway={rich?.takeaway || card.body} sectionTitle={section.title} sectionId={section.id} />}
             {card.type === "reflection" && <ReflectionPrompt sectionId={section.id} userId={userId} prompt={card.body} onSkip={() => void finish()} onSaveAndContinue={async () => { await onReflectionSaved(); void finish(); }} />}
           </div>
         </m.section>
       </AnimatePresence>
     </div>
+    <GlossarySheet key={index} />
     <footer className="shrink-0 border-t border-border p-4 pb-[max(16px,env(safe-area-inset-bottom))]">
       {completionError && <p role="alert" className="mb-2 text-destructive">We couldn't save your lesson. Try again.</p>}
       <div className="flex gap-2 max-w-[65ch] mx-auto">

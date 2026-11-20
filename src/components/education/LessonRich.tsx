@@ -47,12 +47,13 @@ export function RichTitle({ enhancement, lesson, minutes, steps }: { enhancement
 
 /** A content card: the picture shows the idea, the first sentence stands out, the text is unchanged. */
 export function RichContent({ body, concept, continued, tone = 0 }: { body: string; concept: LessonConcept; continued: boolean; tone?: number }) {
-  const lead = continued ? null : splitLead(body);
+  const lead = continued || concept.plain ? null : splitLead(body);
   return <div className="lesson-concept">
     {!continued && concept.art && <div className="lesson-art" data-tone={tone % 3}>
       {concept.letter && <span className="lesson-letter" aria-hidden="true">{concept.letter}</span>}
       <LessonPictureArt picture={concept} size={188}/>
     </div>}
+    {!continued && concept.plain && <p className="lesson-plain"><span className="lesson-plain-tag">In plain words</span>{concept.plain}</p>}
     <div className="lesson-body">
       {lead ? <><div className="lesson-lead">{renderMarkdown(lead.lead)}</div>{renderMarkdown(lead.rest)}</> : renderMarkdown(body)}
     </div>

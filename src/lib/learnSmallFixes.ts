@@ -22,8 +22,9 @@ export function moduleCompletionPercent(completed: number, total: number, badgeE
 
 export function extractTakeaway(content: string): string {
   const clean = (text: string) => text.replace(/\*\*/g, "").replace(/^\s*-\s+/gm, "").replace(/\s+/g, " ").trim();
-  const bold = content.match(/\*\*(.{20,120}?)\*\*/);
-  if (bold) return clean(bold[1]);
+  // Only a bold full sentence is a takeaway; bold list labels ("Barrier methods:") are not.
+  const bold = [...content.matchAll(/\*\*(.{20,120}?)\*\*/g)].map(match => clean(match[1])).find(text => /[.!?]$/.test(text));
+  if (bold) return bold;
   const paragraphs = content.split(/\n\s*\n/).filter(p => p.trim().length > 20 && !/^[#[]/.test(p.trim()));
   const paragraph = clean(paragraphs[paragraphs.length - 1] || "");
   const sentences = paragraph.match(/[^.!?]+(?:[.!?]+(?=\s|$)|$)/g) || [];

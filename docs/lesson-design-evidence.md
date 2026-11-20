@@ -14,6 +14,8 @@ text is never rewritten to fit them: extras are added around it.
 | Recall questions inside the lesson, with the answer explained | Testing effect (Rowland 2014; Adesope et al. 2017) | g = 0.50, and 0.69 when tested more than a day later |
 | Multiple choice is acceptable for those questions | Adesope et al. 2017 | at least as effective as free recall |
 
+| Each card opens with the idea in one short everyday sentence; jargon is underlined and explains itself on tap | Pre-training principle (Mayer): learners do better when key terms are introduced simply before the detail | see Mayer |
+
 ## What this means when adding a lesson
 
 1. Each heading in the lesson text becomes one card with one picture.
@@ -22,6 +24,8 @@ text is never rewritten to fit them: extras are added around it.
 4. Add one recall question per two or three ideas. It awards no XP, so it can be checked on the device.
 5. Colour meanings stay fixed: lime correct, sky progress, gold reward, coral streak, teal highlight.
 6. Everything animated has a still version under `prefers-reduced-motion`.
+7. Give every card a `plain` line: one or two short sentences a twelve-year-old could read, no jargon. The lesson text itself is never changed by it.
+8. A new specialist word goes in `src/content/glossary.json` (lower-case term, meaning in under 140 characters, not explained with itself).
 
 ## Sources
 

@@ -1,0 +1,334 @@
+{
+ "9937453f-0d6e-4fb6-bca2-39cadcbe8fe0": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Rethinking What Desire \"Should\" Look Like",
+    "art": "understanding-desire/l1-0.webp",
+    "alt": "A guide watching a small lightning bolt fizzle out while a warm glowing ember grows in her hands",
+    "size": [
+     378,
+     475
+    ],
+    "plain": "Wanting sex does not always strike out of the blue. That is only one way it works."
+   },
+   {
+    "heading": "Dr. Rosemary Basson's Responsive Desire Model",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "For many people, wanting comes after things start to feel good, not before."
+   },
+   {
+    "heading": "Spontaneous vs. Responsive Desire",
+    "art": "understanding-desire/l1-2.webp",
+    "alt": "He holds a lightning bolt, she holds a slowly warming candle, both smiling",
+    "size": [
+     512,
+     432
+    ],
+    "plain": "Some people feel desire first. Others feel it once things get going. Both are normal."
+   },
+   {
+    "heading": "The Full Spectrum of Desire",
+    "art": "understanding-desire/l1-3.webp",
+    "alt": "A guide standing beside a long dial that runs from low to high, pointing to the middle",
+    "size": [
+     487,
+     501
+    ],
+    "plain": "People want sex in very different amounts and ways. All of it is normal."
+   },
+   {
+    "heading": "A Trauma-Informed Perspective",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "If you feel shame about how your desire works, nothing is wrong with you."
+   }
+  ],
+  "checks": [
+   {
+    "id": "9937453f-1",
+    "after": "Spontaneous vs. Responsive Desire",
+    "prompt": "Dana rarely feels desire out of nowhere, but it builds once things feel warm and connected. What kind of desire is this?",
+    "options": [
+     "Responsive desire",
+     "A lack of desire",
+     "Spontaneous desire"
+    ],
+    "answer": 0,
+    "explanation": "Responsive desire. Responsive desire shows up in response to things like touch, closeness or the right setting, and the lesson calls it equally normal."
+   },
+   {
+    "id": "9937453f-2",
+    "after": "The Full Spectrum of Desire",
+    "prompt": "How does the lesson describe desire?",
+    "options": [
+     "As one normal level",
+     "As a wide spectrum",
+     "As fixed for life"
+    ],
+    "answer": 1,
+    "explanation": "As a wide spectrum. Desire exists on a wide spectrum. Some people experience strong spontaneous desire throughout their lives."
+   }
+  ],
+  "takeaway": "Desire that shows up after things get going is just as normal as desire that shows up first."
+ },
+ "b5984aa9-678f-47d3-8f91-3d71a1f83eef": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Your Sexual Response Has Two Systems",
+    "art": "understanding-desire/l2-0.webp",
+    "alt": "A guide sitting in a small cartoon car with one foot hovering over two pedals",
+    "size": [
+     512,
+     474
+    ],
+    "plain": "Think of a car: you have a gas pedal for turn-ons and a brake for turn-offs."
+   },
+   {
+    "heading": "The Sexual Excitation System (Accelerators)",
+    "art": "understanding-desire/l2-1.webp",
+    "alt": "A guide pressing a green accelerator pedal, small hearts sparking around it",
+    "size": [
+     492,
+     451
+    ],
+    "plain": "The gas pedal is everything that turns you on."
+   },
+   {
+    "heading": "The Sexual Inhibition System (Brakes)",
+    "art": "understanding-desire/l2-2.webp",
+    "alt": "A guide pressing a red brake pedal, a stop sign beside her",
+    "size": [
+     488,
+     450
+    ],
+    "plain": "The brake is everything that turns you off, like stress or worry."
+   },
+   {
+    "heading": "Why \"Just Relax\" Doesn't Work",
+    "art": "understanding-desire/l2-3.webp",
+    "alt": "A guide pushing a small car from behind while its red brake light stays on",
+    "size": [
+     501,
+     414
+    ],
+    "plain": "\"Just relax\" fails because the fix is taking your foot off the brake, not pushing the gas."
+   },
+   {
+    "heading": "Sensitive Brakes Are Not Dysfunction",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "Some people have touchy brakes. That is how they are built, not a problem."
+   },
+   {
+    "heading": "Context Is Everything",
+    "art": "understanding-desire/l2-5.webp",
+    "alt": "A guide arranging a cosy corner with a soft lamp, a plant and a blanket",
+    "size": [
+     512,
+     498
+    ],
+    "plain": "Where you are, how you feel and who you are with change everything."
+   }
+  ],
+  "checks": [
+   {
+    "id": "b5984aa9-1",
+    "after": "The Sexual Inhibition System (Brakes)",
+    "prompt": "Stress, distraction and self-consciousness all press on which system?",
+    "options": [
+     "The accelerators (excitation)",
+     "Neither system",
+     "The brakes (inhibition)"
+    ],
+    "answer": 2,
+    "explanation": "The brakes (inhibition). Your Sexual Inhibition System (SIS) is everything that reduces or suppresses your sexual response."
+   },
+   {
+    "id": "b5984aa9-2",
+    "after": "Why \"Just Relax\" Doesn't Work",
+    "prompt": "Why does \"just relax\" or \"try harder\" rarely help?",
+    "options": [
+     "Relaxing is harmful",
+     "The brakes are still on",
+     "Desire needs more effort"
+    ],
+    "answer": 1,
+    "explanation": "The brakes are still on. The dual control model explains why: trying harder presses the accelerator while the brakes stay on."
+   }
+  ],
+  "takeaway": "Desire needs more gas and less brake. Easing what holds you back often helps most."
+ },
+ "014cae3a-3a48-465e-9947-12c9956244e6": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Desire Discrepancy Is Normal",
+    "art": "understanding-desire/l3-0.webp",
+    "alt": "Two guides holding batteries with different charge levels, smiling at each other",
+    "size": [
+     497,
+     446
+    ],
+    "plain": "Partners almost never want sex the exact same amount. That is normal."
+   },
+   {
+    "heading": "New Relationship Energy (NRE)",
+    "art": "understanding-desire/l3-1.webp",
+    "alt": "A guide floating among fizzing sparkles and hearts",
+    "size": [
+     453,
+     473
+    ],
+    "plain": "New love brings a rush of desire. It fades, and that is normal too."
+   },
+   {
+    "heading": "Navigating Desire Differences",
+    "art": "understanding-desire/l3-2.webp",
+    "alt": "Two guides sitting facing each other with a question mark and a magnifying glass between them",
+    "size": [
+     511,
+     454
+    ],
+    "plain": "Swap blame for curiosity. Ask what helps instead of who is wrong."
+   },
+   {
+    "heading": "Basson's Model in ENM",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "You may feel desire differently with different partners. That is okay."
+   },
+   {
+    "heading": "Communication Without Pressure",
+    "art": "understanding-desire/l3-4.webp",
+    "alt": "Two guides talking on a sofa with relaxed open hands, a small dove above them",
+    "size": [
+     512,
+     496
+    ],
+    "plain": "Talk about desire in a way that never makes someone feel they owe you."
+   }
+  ],
+  "checks": [
+   {
+    "id": "014cae3a-1",
+    "after": "Navigating Desire Differences",
+    "prompt": "Partners want sex at different rates. What shift does the lesson recommend?",
+    "options": [
+     "From patience to pressure",
+     "From blame to curiosity",
+     "From talking to silence"
+    ],
+    "answer": 1,
+    "explanation": "From blame to curiosity. When partners have different desire patterns, the key is to move from blame to curiosity."
+   },
+   {
+    "id": "014cae3a-2",
+    "after": "Communication Without Pressure",
+    "prompt": "Partners wanting sex at different times or amounts is…",
+    "options": [
+     "A sign the relationship is failing",
+     "Always a medical problem",
+     "One of the most common concerns"
+    ],
+    "answer": 2,
+    "explanation": "One of the most common concerns. One of the most common concerns people bring to therapists and relationship discussions is desire discrepancy — when partners want sex at different frequencies or in different ways."
+   }
+  ],
+  "takeaway": "Partners rarely want the same amount of sex. Get curious instead of blaming."
+ },
+ "e377b076-3a3f-453c-acad-6238032b676a": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Desire Is a Garden, Not a Light Switch",
+    "art": "understanding-desire/l4-0.webp",
+    "alt": "A guide watering a small garden of heart-shaped flowers, a crossed-out light switch beside her",
+    "size": [
+     487,
+     485
+    ],
+    "plain": "Desire is like a garden. You tend it. It is not a switch you flip."
+   },
+   {
+    "heading": "Mindfulness and Embodiment",
+    "art": "understanding-desire/l4-1.webp",
+    "alt": "Eyes closed with a hand on his chest, breathing slowly, small leaves floating by",
+    "size": [
+     428,
+     479
+    ],
+    "plain": "Get out of your head and notice what your body feels."
+   },
+   {
+    "heading": "The Role of Context",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "Set up the things that help, like rest, time and feeling safe."
+   },
+   {
+    "heading": "Scheduling Intimacy",
+    "art": "understanding-desire/l4-3.webp",
+    "alt": "Two guides marking a heart on a shared wall calendar together",
+    "size": [
+     512,
+     445
+    ],
+    "plain": "Planning time for closeness is not unromantic. It shows it matters."
+   },
+   {
+    "heading": "When to Seek Professional Support",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "If desire changes a lot and it worries you, a professional can help."
+   },
+   {
+    "heading": "Desire Is Connection",
+    "art": "guide-high-five",
+    "alt": "",
+    "plain": "At heart, desire is about feeling connected to yourself and to others."
+   }
+  ],
+  "checks": [
+   {
+    "id": "e377b076-1",
+    "after": "Mindfulness and Embodiment",
+    "prompt": "The lesson says desire is more like a garden than a…",
+    "options": [
+     "Race",
+     "Contract",
+     "Light switch"
+    ],
+    "answer": 2,
+    "explanation": "Light switch. One of the most liberating shifts in understanding desire is moving from thinking of it as something that either happens or doesn't — like a light switch — to understanding it as something you can cultivate, like a garden."
+   },
+   {
+    "id": "e377b076-2",
+    "after": "Scheduling Intimacy",
+    "prompt": "Why do many people resist scheduling intimacy?",
+    "options": [
+     "It feels \"unromantic\"",
+     "Doctors advise against it",
+     "It costs money"
+    ],
+    "answer": 0,
+    "explanation": "It feels \"unromantic\". Many people resist the idea of scheduling intimacy because it feels \"unromantic.\""
+   }
+  ],
+  "takeaway": "Desire grows when you tend it: rest, safety, time and attention."
+ }
+}

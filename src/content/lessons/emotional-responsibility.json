@@ -8,7 +8,8 @@
    {
     "heading": "Goleman's Four Domains of Emotional Intelligence",
     "art": "guide-lesson-reading",
-    "alt": ""
+    "alt": "",
+    "plain": "Emotional intelligence means noticing feelings and handling them well."
    },
    {
     "heading": "The Four Domains",
@@ -17,7 +18,8 @@
     "size": [
      437,
      512
-    ]
+    ],
+    "plain": "Four parts: know your feelings, manage them, read others and handle relationships."
    },
    {
     "heading": "EQ Is a Skill, Not a Trait",
@@ -26,7 +28,8 @@
     "size": [
      437,
      474
-    ]
+    ],
+    "plain": "This is a skill. You can get better at it with practice."
    },
    {
     "heading": "Why EQ Matters More in ENM",
@@ -59,7 +62,8 @@
     "answer": 2,
     "explanation": "Yes, it is a skill you can build. One of the most important things to understand about emotional intelligence is that it is not fixed."
    }
-  ]
+  ],
+  "takeaway": "Handling feelings well is a skill, and you can get better at it."
  },
  "f00cc65f-977f-405d-8264-d650dfa597bd": {
   "hero": {
@@ -70,7 +74,8 @@
    {
     "heading": "Understanding Your Nervous System Through Polyvagal Theory",
     "art": "guide-thinking",
-    "alt": ""
+    "alt": "",
+    "plain": "Your body has a built-in alarm system that decides if you feel safe."
    },
    {
     "heading": "The Three States",
@@ -79,7 +84,8 @@
     "size": [
      403,
      482
-    ]
+    ],
+    "plain": "Your body has three modes: calm and connected, fight or flight, and shut down."
    },
    {
     "heading": "The Window of Tolerance",
@@ -88,7 +94,8 @@
     "size": [
      451,
      489
-    ]
+    ],
+    "plain": "Your \"window\" is the zone where you can think clearly and stay present."
    },
    {
     "heading": "Recognizing When You're Outside Your Window",
@@ -97,7 +104,8 @@
     "size": [
      440,
      483
-    ]
+    ],
+    "plain": "Learn your early signs, like a racing heart or going numb."
    },
    {
     "heading": "Regulation Techniques",
@@ -106,12 +114,14 @@
     "size": [
      393,
      449
-    ]
+    ],
+    "plain": "You can calm down alone, like with slow breathing, or with someone you trust."
    },
    {
     "heading": "Dysregulation Is Not a Character Flaw",
     "art": "guide-encourage",
-    "alt": ""
+    "alt": "",
+    "plain": "Getting overwhelmed is your body protecting you. It is not a flaw."
    }
   ],
   "checks": [
@@ -139,7 +149,8 @@
     "answer": 2,
     "explanation": "Slow breathing with a longer exhale. Self-regulation (things you can do alone)."
    }
-  ]
+  ],
+  "takeaway": "When you feel flooded, your body is in alarm mode. Calm the body first, then talk."
  },
  "1e5bcd97-ff56-4138-9b42-8c6fd226efb9": {
   "hero": {
@@ -150,7 +161,8 @@
    {
     "heading": "The Science of Emotional Connection",
     "art": "guide-study-together",
-    "alt": ""
+    "alt": "",
+    "plain": "Small daily moments decide whether a relationship lasts."
    },
    {
     "heading": "What Are Emotional Bids?",
@@ -159,7 +171,8 @@
     "size": [
      512,
      462
-    ]
+    ],
+    "plain": "A bid is any small reach for connection, like a comment, a touch or a sigh."
    },
    {
     "heading": "Three Responses to Bids",
@@ -168,7 +181,8 @@
     "size": [
      512,
      377
-    ]
+    ],
+    "plain": "You can turn toward a bid, turn away from it, or turn against it."
    },
    {
     "heading": "Why This Matters",
@@ -182,7 +196,8 @@
     "size": [
      512,
      359
-    ]
+    ],
+    "plain": "With more partners there are more bids to catch, so pay attention on purpose."
    },
    {
     "heading": "Building a Bid Practice",
@@ -215,7 +230,8 @@
     "answer": 2,
     "explanation": "Turning toward. Turning toward means acknowledging and engaging with the bid."
    }
-  ]
+  ],
+  "takeaway": "Relationships grow when you notice small reaches for connection and turn toward them."
  },
  "696069c9-d959-4232-a61d-c8cd363fb693": {
   "hero": {
@@ -226,7 +242,8 @@
    {
     "heading": "Owning Your Emotions in Multi-Partner Relationships",
     "art": "guide-meditate",
-    "alt": ""
+    "alt": "",
+    "plain": "Your feelings are yours to understand and look after."
    },
    {
     "heading": "Emotional Responsibility vs. Emotional Caretaking",
@@ -235,7 +252,8 @@
     "size": [
      488,
      448
-    ]
+    ],
+    "plain": "Own your feelings. Do not make them someone's job, and do not take on theirs."
    },
    {
     "heading": "Navigating Jealousy",
@@ -244,7 +262,8 @@
     "size": [
      446,
      458
-    ]
+    ],
+    "plain": "Jealousy is normal. Treat it as a signal to look at, not an order to obey."
    },
    {
     "heading": "Compersion",
@@ -253,7 +272,8 @@
     "size": [
      503,
      490
-    ]
+    ],
+    "plain": "Compersion is feeling glad that your partner is happy with someone else."
    },
    {
     "heading": "New Relationship Energy (NRE)",
@@ -262,7 +282,8 @@
     "size": [
      490,
      504
-    ]
+    ],
+    "plain": "New love feels like a rush. Enjoy it, and keep showing up for the people you already have."
    },
    {
     "heading": "The Skill of Sitting with Discomfort",
@@ -271,12 +292,14 @@
     "size": [
      446,
      512
-    ]
+    ],
+    "plain": "You can feel uncomfortable without acting on it straight away."
    },
    {
     "heading": "When to Seek Support",
     "art": "guide-high-five",
-    "alt": ""
+    "alt": "",
+    "plain": "Owning your feelings includes asking for help when you need it."
    }
   ],
   "checks": [
@@ -304,6 +327,7 @@
     "answer": 1,
     "explanation": "New relationship energy. NRE is the intense excitement, infatuation, and preoccupation that often accompanies new romantic connections."
    }
-  ]
+  ],
+  "takeaway": "Your feelings are yours to look after. Ask for support without handing them to someone else."
  }
 }

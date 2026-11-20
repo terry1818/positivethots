@@ -1,0 +1,347 @@
+{
+ "e6192f83-055a-4885-b753-d8d5e98ccfe6": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Consent in the Digital Age",
+    "art": "digital-consent-boundaries/l1-0.webp",
+    "alt": "A guide holding a phone with a heart and a tick on its screen",
+    "size": [
+     425,
+     479
+    ],
+    "plain": "Phones and apps changed how consent works between people."
+   },
+   {
+    "heading": "Why Digital Consent Matters",
+    "art": "guide-high-five",
+    "alt": ""
+   },
+   {
+    "heading": "The Unique Challenges of Digital Consent",
+    "art": "digital-consent-boundaries/l1-2.webp",
+    "alt": "A guide watching a photo float out of his phone and multiply into copies",
+    "size": [
+     512,
+     475
+    ],
+    "plain": "What you send can be saved, copied and passed on. It does not just go away."
+   },
+   {
+    "heading": "Foundational Principles",
+    "art": "digital-consent-boundaries/l1-3.webp",
+    "alt": "A guide holding a phone that shows a loop arrow and a tick",
+    "size": [
+     420,
+     486
+    ],
+    "plain": "The same rules apply online: a yes is ongoing, specific and can be taken back."
+   },
+   {
+    "heading": "Practical First Steps",
+    "art": "digital-consent-boundaries/l1-4.webp",
+    "alt": "Two guides sitting together with their phones face down, talking",
+    "size": [
+     512,
+     404
+    ],
+    "plain": "Start with a simple chat about what each of you is okay with online."
+   }
+  ],
+  "checks": [
+   {
+    "id": "e6192f83-1",
+    "after": "The Unique Challenges of Digital Consent",
+    "prompt": "Why is digital consent different from in-person consent?",
+    "options": [
+     "What you share can persist and spread",
+     "Screens make consent automatic",
+     "It matters less online"
+    ],
+    "answer": 0,
+    "explanation": "What you share can persist and spread. Unlike physical consent, digital consent involves persistent artifacts."
+   },
+   {
+    "id": "e6192f83-2",
+    "after": "Foundational Principles",
+    "prompt": "Someone shared a photo once. May you keep and share it forever?",
+    "options": [
+     "Only if it is flattering",
+     "Yes, once sent it is yours",
+     "No, consent is ongoing"
+    ],
+    "answer": 2,
+    "explanation": "No, consent is ongoing. Consent is ongoing: Just because someone shared a photo once doesn't mean they consent to you keeping it forever or sharing it with others."
+   }
+  ],
+  "takeaway": "Consent applies online too. Ask first, and remember that what you send can last."
+ },
+ "5a7edd14-be07-44c1-9942-0f374faba23e": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Sexting, Nudes & Photo Sharing",
+    "art": "guide-story-chat",
+    "alt": "",
+    "plain": "Sending sexy photos or messages is a normal thing many adults do."
+   },
+   {
+    "heading": "The Consent Framework for Intimate Content",
+    "art": "digital-consent-boundaries/l2-1.webp",
+    "alt": "Each holding a phone, a speech bubble with a question mark and a tick between them",
+    "size": [
+     512,
+     452
+    ],
+    "plain": "Ask before you send. Agree on what happens to the photos afterwards."
+   },
+   {
+    "heading": "Legal Realities",
+    "art": "digital-consent-boundaries/l2-2.webp",
+    "alt": "A guide holding a gavel and a phone with a padlock on its screen",
+    "size": [
+     481,
+     459
+    ],
+    "plain": "Sharing someone's private photos without their okay is against the law in most places."
+   },
+   {
+    "heading": "Safer Sexting Practices",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "In Polyamorous Contexts",
+    "art": "digital-consent-boundaries/l2-4.webp",
+    "alt": "Each holding a phone with a padlocked folder floating above it",
+    "size": [
+     509,
+     488
+    ],
+    "plain": "With more partners, be extra clear about who may see what."
+   },
+   {
+    "heading": "Reflection",
+    "art": "guide-meditate",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "5a7edd14-1",
+    "after": "The Consent Framework for Intimate Content",
+    "prompt": "Before sending an intimate photo, what should be true?",
+    "options": [
+     "It is late at night",
+     "You feel confident",
+     "The other person has clearly said they want it"
+    ],
+    "answer": 2,
+    "explanation": "The other person has clearly said they want it. Before sharing, check that the other person has explicitly said they want to receive it."
+   },
+   {
+    "id": "5a7edd14-2",
+    "after": "Legal Realities",
+    "prompt": "Sharing someone's intimate images without their consent is…",
+    "options": [
+     "Only rude",
+     "Illegal in most US states",
+     "Legal if you once dated"
+    ],
+    "answer": 1,
+    "explanation": "Illegal in most US states. Non-consensual sharing of intimate images (NCII) — commonly called \"revenge porn\" — is illegal in the majority of US states and many countries worldwide."
+   }
+  ],
+  "takeaway": "Ask before sending or sharing private photos, and never pass on someone else's."
+ },
+ "9181783f-1aed-45ed-bf13-34b833297426": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Online Harassment & Stalking",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "Online spaces should feel safe, but many people get harassed there."
+   },
+   {
+    "heading": "Forms of Digital Harassment",
+    "art": "digital-consent-boundaries/l3-1.webp",
+    "alt": "A guide holding a phone flooded with angry red message bubbles, her other hand raised to block them",
+    "size": [
+     498,
+     488
+    ],
+    "plain": "It ranges from messages that will not stop to threats and tracking."
+   },
+   {
+    "heading": "Who Is Most at Risk?",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "It happens to a lot of people, and some groups are targeted more."
+   },
+   {
+    "heading": "Digital Safety Practices",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "Supporting Others",
+    "art": "digital-consent-boundaries/l3-4.webp",
+    "alt": "She comforts him with a hand on his shoulder while he holds his phone",
+    "size": [
+     512,
+     412
+    ],
+    "plain": "If it happens to someone you know, believe them and help them save the proof."
+   },
+   {
+    "heading": "Legal Protections",
+    "art": "digital-consent-boundaries/l3-5.webp",
+    "alt": "A guide holding a shield with a gavel on it",
+    "size": [
+     403,
+     469
+    ],
+    "plain": "Many places now have laws against online stalking and harassment."
+   }
+  ],
+  "checks": [
+   {
+    "id": "9181783f-1",
+    "after": "Forms of Digital Harassment",
+    "prompt": "Repeatedly messaging someone after they asked you to stop is…",
+    "options": [
+     "A form of digital harassment",
+     "Normal persistence",
+     "Flattering"
+    ],
+    "answer": 0,
+    "explanation": "A form of digital harassment. Unwanted contact, such as repeated messages after being asked to stop, is a form of digital harassment."
+   },
+   {
+    "id": "9181783f-2",
+    "after": "Supporting Others",
+    "prompt": "A friend is being harassed online. What is the first step the lesson lists?",
+    "options": [
+     "Ask what they posted",
+     "Believe them",
+     "Tell them to log off forever"
+    ],
+    "answer": 1,
+    "explanation": "Believe them. If someone in your community is experiencing digital harassment: Believe them."
+   }
+  ],
+  "takeaway": "Online harassment is real harm. Save the proof, get support, and know the law may protect you."
+ },
+ "a1fbd0ec-727c-41a3-9472-3a2831a5c216": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Digital Boundaries & Healthy Tech Habits",
+    "art": "digital-consent-boundaries/l4-0.webp",
+    "alt": "Two guides sitting on a sofa comparing phones, a dotted line drawn between them",
+    "size": [
+     512,
+     426
+    ],
+    "plain": "Every relationship needs to talk about phones, social media and privacy."
+   },
+   {
+    "heading": "Common Digital Boundary Conversations",
+    "art": "guide-story-chat",
+    "alt": "",
+    "plain": "Common topics: posting about each other, reply times and sharing location."
+   },
+   {
+    "heading": "The Autonomy Spectrum",
+    "art": "digital-consent-boundaries/l4-2.webp",
+    "alt": "A guide pointing at a traffic light showing red, yellow and green",
+    "size": [
+     474,
+     460
+    ],
+    "plain": "Healthy means each person keeps their privacy. Demanding passwords is control."
+   },
+   {
+    "heading": "Navigating ENM Digitally",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "With more partners, decide what goes online and who is shown."
+   },
+   {
+    "heading": "Digital Wellness Practices",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "Creating Your Digital Relationship Agreement",
+    "art": "digital-consent-boundaries/l4-5.webp",
+    "alt": "Two guides writing on a shared tablet together",
+    "size": [
+     501,
+     442
+    ],
+    "plain": "Sit down together and write out your own phone and online agreement."
+   },
+   {
+    "heading": "Digital Aftercare",
+    "art": "digital-consent-boundaries/l4-6.webp",
+    "alt": "He sends a heart from his phone that lands as a warm blanket around her shoulders",
+    "size": [
+     512,
+     395
+    ],
+    "plain": "After a tense online moment, check in and care for each other."
+   },
+   {
+    "heading": "Building Positive Digital Habits",
+    "art": "digital-consent-boundaries/l4-7.webp",
+    "alt": "A guide smiling at her phone as a small heart and a flower pop out of it",
+    "size": [
+     464,
+     495
+    ],
+    "plain": "Small kind messages build closeness."
+   }
+  ],
+  "checks": [
+   {
+    "id": "a1fbd0ec-1",
+    "after": "The Autonomy Spectrum",
+    "prompt": "\"You must share all passwords and let me check your phone anytime.\" Where does this sit on the autonomy spectrum?",
+    "options": [
+     "Healthy",
+     "Private",
+     "Controlling"
+    ],
+    "answer": 2,
+    "explanation": "Controlling. The lesson places demanding every password and phone checks at the controlling end of the spectrum."
+   },
+   {
+    "id": "a1fbd0ec-2",
+    "after": "Digital Aftercare",
+    "prompt": "Checking in after a difficult text conversation is an example of…",
+    "options": [
+     "Digital aftercare",
+     "Surveillance",
+     "Digital harassment"
+    ],
+    "answer": 0,
+    "explanation": "Digital aftercare. Just as we practice aftercare in physical intimacy, digital interactions sometimes need aftercare too."
+   }
+  ],
+  "takeaway": "Agree together on phone and online habits. Privacy is healthy, and demanding passwords is control."
+ }
+}
