@@ -146,7 +146,7 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
             {card.type === "title" && <div className="text-center space-y-6"><Mascot mood="waving" size="md" /><p>Lesson {card.lesson} of 4{card.minutes ? ` · ${card.minutes} min` : ""}</p></div>}
             {(card.type === "content" || card.type === "video") && <div>{renderMarkdown(card.body)}</div>}
             {card.type === "checkpoint" && <Checkpoint question={card.checkpoint} saved={results[card.checkpoint.id]} onAnswered={answered} />}
-            {card.type === "takeaway" && <KeyTakeaway takeaway={card.body} sectionTitle={section.title} />}
+            {card.type === "takeaway" && <KeyTakeaway takeaway={card.body} sectionTitle={section.title} sectionId={section.id} />}
             {card.type === "reflection" && <ReflectionPrompt sectionId={section.id} userId={userId} prompt={card.body} onSkip={() => void finish()} onSaveAndContinue={async () => { await onReflectionSaved(); void finish(); }} />}
           </div>
         </m.section>

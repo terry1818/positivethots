@@ -2597,6 +2597,38 @@ export type Database = {
         }
         Relationships: []
       }
+      user_saved_takeaways: {
+        Row: {
+          created_at: string
+          id: string
+          section_id: string
+          takeaway_text: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          section_id: string
+          takeaway_text: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          section_id?: string
+          takeaway_text?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_saved_takeaways_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "module_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_scenario_progress: {
         Row: {
           choices_made: Json
@@ -2911,6 +2943,10 @@ export type Database = {
         Args: { _module_id: string; _quiz_score: number }
         Returns: undefined
       }
+      award_practice_xp: {
+        Args: { _mode: string; _session_key: string }
+        Returns: Json
+      }
       award_xp: {
         Args: {
           _amount: number
@@ -2920,7 +2956,9 @@ export type Database = {
         }
         Returns: Json
       }
-      check_match: { Args: { user1: string; user2: string }; Returns: string }
+      check_match:
+        | { Args: { _pairs: Json; _question_id: string }; Returns: Json }
+        | { Args: { user1: string; user2: string }; Returns: string }
       check_message_rate_limit: {
         Args: { _match_id: string; _user_id: string }
         Returns: Json
@@ -2930,6 +2968,14 @@ export type Database = {
           _question_id: string
           _selected_answer: number
           _time_taken_ms?: number
+        }
+        Returns: Json
+      }
+      check_rapid_fire: {
+        Args: {
+          _claimed_true: boolean
+          _option_index: number
+          _question_id: string
         }
         Returns: Json
       }
@@ -3032,6 +3078,30 @@ export type Database = {
           profile_image: string
         }[]
       }
+      get_match_sets: {
+        Args: { _limit?: number }
+        Returns: {
+          id: string
+          left_items: Json
+          question: string
+          right_items: Json
+        }[]
+      }
+      get_mistake_count: { Args: never; Returns: number }
+      get_mistake_questions: {
+        Args: { _limit?: number }
+        Returns: {
+          exercise_type: string
+          id: string
+          is_checkpoint: boolean
+          module_id: string
+          options: Json
+          order_index: number
+          position_in_section: number
+          question: string
+          section_id: string
+        }[]
+      }
       get_module_counts: {
         Args: never
         Returns: {
@@ -3095,6 +3165,15 @@ export type Database = {
           section_id: string
         }[]
       }
+      get_rapid_fire_items: {
+        Args: { _limit?: number }
+        Returns: {
+          id: string
+          option_index: number
+          option_text: string
+          question: string
+        }[]
+      }
       get_review_questions: {
         Args: { _limit?: number; _tier: string }
         Returns: {
@@ -3138,6 +3217,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      has_match_content: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -3161,6 +3241,7 @@ export type Database = {
         }
         Returns: number
       }
+      practice_eligible: { Args: { _module_id: string }; Returns: boolean }
       purge_old_verification_selfies: { Args: never; Returns: number }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }

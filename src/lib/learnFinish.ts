@@ -9,6 +9,7 @@ export interface FinishData {
   tierComplete?: boolean; tierLabel?: string; features?: string[];
   saving?: boolean;
   replay?: boolean;
+  message?: string;
   storySummary?: { score: number; maxScore: number; choicesMade: { sceneId: string; choiceIdx: number; isBest: boolean }[]; scenes: { id: string; choices: { text: string; is_best: boolean; feedback: string }[] }[] };
 }
 export type FinishStep = "lesson" | "streak" | "level" | "badge" | "results" | "tier" | "review";

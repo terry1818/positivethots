@@ -20,3 +20,5 @@
 - Mixed path nodes derive mandatory unlocks only from lessons; optional completion uses scenario progress, server chest receipts, XP records and private preference receipts for zero-award practice/listen sessions; Story lookup is module-scoped in every tier.
 
 - Path presentation uses shared raised PathNode/popovers, inline SVG art and visibility-gated loops; synthesised learning sounds share existing preferences, gesture gating and deduplication without changing progress rules.
+
+- Practice hub/modes lazy-load separately from Path; private saved takeaways and safe caller-eligible RPCs keep answer keys off loading, and award_practice_xp serializes daily rewards without badge writes or changes to legacy award_xp.

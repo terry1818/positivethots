@@ -26,6 +26,7 @@ const Auth = lazy(() => import("./pages/Auth"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Learn = lazy(() => import("./pages/Learn"));
+const PracticeHub = lazy(() => import("./pages/PracticeHub"));
 const LearnModule = lazy(() => import("./pages/LearnModule"));
 const TierReview = lazy(() => import("./pages/TierReview"));
 const LearnStory = lazy(() => import("./pages/LearnStory"));
@@ -102,6 +103,7 @@ const AppContent = () => {
         <Route path="/wallet" element={<Suspense fallback={<PageLoader />}><Wallet /></Suspense>} />
         <Route path="/learn" element={<LearnLayout />}>
           <Route index element={<Suspense fallback={<PageSkeleton variant="learn" />}><Learn /></Suspense>} />
+          <Route path="practice" element={<Suspense fallback={<PageSkeleton variant="learn" />}><PracticeHub /></Suspense>} />
           <Route path="review/:tier" element={<Suspense fallback={<PageSkeleton variant="learn" />}><TierReview /></Suspense>} />
           <Route path=":slug/story/:scenarioSlug" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnStory /></Suspense>} />
           <Route path=":slug/practice" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnPractice /></Suspense>} />

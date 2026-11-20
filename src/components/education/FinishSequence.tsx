@@ -51,6 +51,7 @@ export default function FinishSequence({ data, onBack, onDiscovery }: { data: Fi
       <h1 key={step} ref={heading} tabIndex={-1} className="text-3xl font-bold outline-none">{title}</h1>
       <Button className="fixed bottom-[max(24px,env(safe-area-inset-bottom))] left-4 right-4 mx-auto max-w-[480px] min-h-[52px] z-20" onClick={foundation ? onDiscovery : next}>{foundation ? "Explore Discovery" : last ? "Back to my path" : "Continue"}</Button>
       {step === "lesson" && <Mascot mood="celebration" size="lg" animate={!reduced} />}
+      {data.message && <p role="status">{data.message}</p>}
       {data.replay && <p>Replay - no XP this time</p>}
       {data.storySummary && <Suspense fallback={null}><StorySummary embedded title={data.title} xpReward={data.xp || 0} {...data.storySummary} /></Suspense>}
       {step === "badge" && <><div className="flex items-center justify-center gap-4"><m.div initial={reduced ? false : { scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: duration.slow }} className={reduced ? "" : "rounded-full bg-primary/10"}><EducationBadge moduleSlug={data.slug} title={data.title} tier={data.tier} isEarned size="lg" /></m.div><Mascot mood="graduate" size="md" animate={!reduced} /></div><p className="text-xl font-semibold">{data.title}</p></>}

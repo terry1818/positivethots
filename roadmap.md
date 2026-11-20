@@ -1,3 +1,9 @@
+# Learn 10 Practice tab
+- [x] Add safe practice RPCs, saved takeaways and serialized server daily practice XP cap without changing badges or legacy award_xp.
+- [x] Build lazy Practice hub and four modes with raised tiles, existing sounds, shared learning shell, timer/saved preferences and finish states.
+- [x] Run seven acceptance checks, 60 passing learning tests and mobile/desktop visual review; live mistakes/save/timer/cap/unchanged badges passed.
+- [ ] Real zero/one-badge and regular-user cap end-to-end: temporary user approval unavailable; injected administrator account exercised cap without any admin branch. Browser-only zero-badge fixture and server permissions verified. See docs/learn10-acceptance.md.
+
 # Learn 11 path visual and sound upgrade
 - [x] Upgrade raised nodes, popovers, trail, mascot/scenery, headers and completion motion without changing learning data or rules.
 - [x] Add preference-controlled synthesised sounds and haptics; all nine checks exercised, 55 tests passed. Live lesson saved +10 XP and next node; earned-badge review checked real grading/sounds. Screenshots reviewed in both themes; local frames averaged 16.65ms. Details/limitations in docs/learn11-acceptance.md.

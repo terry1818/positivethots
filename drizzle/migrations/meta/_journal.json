@@ -85,6 +85,13 @@
       "when": 1795152155008,
       "tag": "0011_learn_optional_practice_and_path_chests",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1795157252030,
+      "tag": "0012_learn_practice_hub",
+      "breakpoints": true
     }
   ]
 }

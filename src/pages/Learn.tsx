@@ -29,6 +29,8 @@ import { SEO } from "@/components/SEO";
 import { cn } from "@/lib/utils";
 import { SearchInput } from "@/components/SearchInput";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
+import { LearnHeader } from "@/components/education/LearnHeader";
+import { LearnTabs } from "@/components/education/LearnTabs";
 import { LearnToday } from "@/components/education/LearnToday";
 import { LearnContinueBar } from "@/components/education/LearnContinueBar";
 import { nextLearningTarget } from "@/lib/learnHome";
@@ -354,39 +356,9 @@ const Learn = () => {
       />
       <h1 className="sr-only">Relationship Education</h1>
       <DailyRewardModal reopenTrigger={dailyBonusTrigger} onReadyChange={setDailyBonusReady} />
-      <header className="sticky top-0 z-30 border-b border-border bg-card">
-        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2.5">
-          {/* Row 1: Logo + quick stats */}
-          <div className="flex items-center justify-between mb-1.5">
-            <Logo size="md" showText={false} />
-            <div className="flex items-center justify-end gap-2 flex-wrap">
-              <StreakBadge
-                streak={stats?.current_streak || 0}
-                showFreeze
-                freezeCount={stats?.streak_freezes || 0}
-                freezeAvailable={stats?.streak_freeze_available}
-              />
-              <div className="flex items-center gap-1 bg-muted/50 rounded-full px-2 py-0.5">
-                <Award className="h-3.5 w-3.5 text-primary" />
-                <span className="text-sm font-medium"><AnimatedCounter end={earnedCount} />/{totalBadges ?? "—"}</span>
-              </div>
-              <Button variant="ghost" size="icon"
-                onClick={() => setShowSearch(s => !s)}
-                className="min-h-[44px] min-w-[44px] rounded-full"
-                aria-label={showSearch ? "Close search" : "Search modules"}
-              >
-                {showSearch ? <X className="h-4 w-4 text-muted-foreground" /> : <Search className="h-4 w-4 text-muted-foreground" />}
-              </Button>
-            </div>
-          </div>
-          {/* Row 2: XP bar */}
-          {stats && (
-            <div data-tour="learn-xp-bar">
-              <XPBar totalXP={stats.total_xp} level={calculateLevel(stats.total_xp)} initialXP={justCompleted?.oldXP} />
-            </div>
-          )}
-        </div>
-      </header>
+      <LearnHeader stats={stats} earned={earnedCount} total={totalBadges} initialXP={justCompleted?.oldXP} searchOpen={showSearch} onSearch={() => setShowSearch(s => !s)}/>
+      <LearnTabs/>
+
 
       <main className="flex-1 container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-3 space-y-2">
         {/* Collapsible search */}

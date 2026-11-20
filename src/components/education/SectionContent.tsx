@@ -369,7 +369,7 @@ export const SectionContent = ({
 
       {/* Key Takeaway */}
       {takeaway && (
-        <KeyTakeaway takeaway={takeaway} sectionTitle={section.title} />
+        <KeyTakeaway takeaway={takeaway} sectionTitle={section.title} sectionId={section.id} />
       )}
 
       {/* Reflection prompt */}

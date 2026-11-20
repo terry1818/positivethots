@@ -708,3 +708,39 @@ button, [role="button"] {
 .path-node-reduced .path-filled-icon { animation: none !important; }
 
 .path-paused { animation-play-state: paused !important; }
+
+/* Practice uses the same enamel and tier pigments as the raised path objects. */
+.learn-segment { border: 1px solid hsl(var(--border)); border-radius: 12px; padding: 4px; }
+.learn-segment [role=tab] { border-radius: 8px; font-weight: 800; }
+.learn-segment [role=tab][data-state=active] { box-shadow: inset 0 -3px 0 hsl(var(--primary)), 0 2px 0 hsl(var(--border)); }
+.learn-segment .path-filled-icon { width: 22px; height: 22px; }
+.practice-tile { position: relative; width: 100%; min-height: 184px; height: auto; padding: 20px 12px; display: flex; flex-direction: column; gap: 10px; white-space: normal; border: 0; border-radius: 16px; color: hsl(var(--path-enamel)); background: linear-gradient(165deg,hsl(var(--path-top)),hsl(var(--path-bottom))); box-shadow: 0 8px 0 hsl(var(--path-lip)), 0 14px 18px hsl(var(--path-shadow) / .2), inset 0 2px 0 hsl(var(--path-enamel) / .35); transition: transform 80ms,box-shadow 80ms; }
+.practice-tile:hover { background: linear-gradient(165deg,hsl(var(--path-top)),hsl(var(--path-bottom))); }
+.practice-tile:active { transform: translateY(6px); box-shadow: 0 2px 0 hsl(var(--path-lip)),inset 0 2px 0 hsl(var(--path-enamel) / .35); }
+.practice-tile:disabled { opacity: 1; --path-top: var(--path-slate); --path-bottom: var(--path-slate); --path-lip: var(--path-slate-dark); }
+.practice-tile strong { font-size: 18px; }.practice-tile > span:not(.practice-tile-icon):not(.practice-count) { font-size: 14px; line-height: 1.5; }
+.practice-tile-icon { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 50%; background: hsl(var(--path-shadow) / .12); }
+.practice-tile .path-filled-icon { width: 36px; height: 36px; filter: drop-shadow(0 2px 0 hsl(var(--path-lip))); }
+.practice-count { position: absolute; top: 12px; right: 12px; min-width: 28px; height: 28px; border-radius: 50%; background: hsl(var(--path-enamel)); color: hsl(var(--path-ink)); display: grid; place-items: center; font-weight: 800; }
+.practice-answer { box-shadow: 0 4px 0 hsl(var(--path-foundation-lip)); border-radius: 12px; font-weight: 800; }
+.practice-statement { border-left: 4px solid hsl(var(--primary)); padding: 16px; background: hsl(var(--primary) / .08); font-size: 20px; font-weight: 700; }
+.practice-flip-stage { perspective: 1000px; height: 360px; }
+.practice-flip-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
+.practice-flash-face { position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; gap: 24px; white-space: normal; padding: 24px; font-size: 18px; line-height: 1.6; border-radius: 16px; background: linear-gradient(hsl(var(--path-foundation-top)),hsl(var(--path-foundation-bottom))); color: hsl(var(--path-enamel)); box-shadow: 0 8px 0 hsl(var(--path-foundation-lip)),inset 0 2px 0 hsl(var(--path-enamel) / .35); }
+.practice-flash-face:hover { background: hsl(var(--path-foundation-bottom)); color: hsl(var(--path-enamel)); }
+.practice-flash-face .path-filled-icon { width: 48px; height: 48px; }
+.practice-flash-back { transform: rotateY(180deg); }
+@media(prefers-reduced-motion:reduce) { .practice-tile:active { transform: none; }.practice-flash-back { transform: none; }.practice-flash-back[aria-hidden=true] { opacity: 0; pointer-events: none; }.practice-flash-back[aria-hidden=false] { opacity: 1; }.practice-flash-front[aria-pressed=true] { opacity: 0; pointer-events: none; } }
+
+.practice-tile:disabled { background: hsl(var(--path-slate)); box-shadow: 0 8px 0 hsl(var(--path-slate-dark)), inset 0 2px 0 hsl(var(--path-enamel) / .2); }
+.practice-flash-face[aria-hidden=true] { pointer-events: none; }
+
+.practice-tile:disabled { color: hsl(var(--path-enamel)); opacity: 1; }.practice-tile:disabled > span, .practice-tile:disabled > strong { opacity: 1; }
+
+@media(prefers-reduced-motion:reduce) { .practice-flash-face { transition: opacity .3s !important; background: hsl(var(--path-foundation-bottom)); } }
+
+.practice-tile:disabled { color: hsl(var(--path-enamel)) !important; opacity: 1 !important; }
+.practice-tile:disabled .path-filled-icon { opacity: 1; }
+.practice-tile { min-height: 168px; }
+.practice-tile:not(:disabled):active { transform: translateY(6px) !important; }
+.practice-flash-front[aria-pressed=true] { visibility: hidden; }
