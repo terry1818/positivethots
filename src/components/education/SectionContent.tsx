@@ -49,19 +49,61 @@ const contentTypeIcons: Record<string, React.ReactNode> = {
   interactive: <Sparkles className="h-4 w-4" />,
 };
 
+/** **bold**, *emphasis* and [links](url) inside one line of lesson text, sanitised. */
+const inlineHtml = (text: string) => {
+  const escapeHtml = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const withLinks = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
+    const trimmed = url.trim().toLowerCase();
+    const safe = (trimmed.startsWith('javascript:') || trimmed.startsWith('data:') || trimmed.startsWith('vbscript:')) ? '#' : url;
+    return `<a href="${escapeHtml(safe)}" target="_blank" rel="noopener noreferrer" class="text-secondary underline hover:text-secondary/80">${escapeHtml(label)}</a>`;
+  });
+  return DOMPurify.sanitize(withLinks
+    .replace(/\*\*([^*\n]+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*\w])\*([^*\s](?:[^*\n]*?[^*\s])?)\*(?![*\w])/g, '$1<em>$2</em>'));
+};
+const listLine = /^\s*(?:[-*+]|\d+[.)])\s+/;
+
 const renderParagraph = (paragraph: string, i: number) => {
+  // Authors often open a list straight after a sentence, with no blank line: show the sentence, then the list.
+  const lines = paragraph.split('\n');
+  if (!paragraph.startsWith('#') && !paragraph.startsWith('|') && lines.length > 1 && !listLine.test(lines[0]) && lines.slice(1).some(line => listLine.test(line))) {
+    const groups: { list: boolean; ordered: boolean; lines: string[] }[] = [];
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      const list = listLine.test(line); const last = groups[groups.length - 1];
+      if (last && last.list === list) last.lines.push(line); else groups.push({ list, ordered: /^\s*\d/.test(line), lines: [line] });
+    }
+    return <div key={i} className="mb-4">{groups.map((group, j) => group.list
+      ? group.ordered
+        ? <ol key={j} className="list-decimal pl-5 space-y-1 mb-3">{group.lines.map((line, k) => <li key={k} dangerouslySetInnerHTML={{ __html: inlineHtml(line.replace(listLine, '')) }} />)}</ol>
+        : <ul key={j} className="list-disc pl-5 space-y-1 mb-3">{group.lines.map((line, k) => <li key={k} dangerouslySetInnerHTML={{ __html: inlineHtml(line.replace(listLine, '')) }} />)}</ul>
+      : <p key={j} className="mb-3 leading-relaxed" dangerouslySetInnerHTML={{ __html: inlineHtml(group.lines.join(' ')) }} />)}</div>;
+  }
   if (paragraph.startsWith('## ')) {
     return <h2 key={i} className="text-xl font-bold mt-6 mb-3">{paragraph.slice(3)}</h2>;
   }
   if (paragraph.startsWith('### ')) {
     return <h3 key={i} className="text-lg font-semibold mt-4 mb-2">{paragraph.slice(4)}</h3>;
   }
+  if (/^\s*\d+[.)]\s/.test(paragraph)) {
+    // A numbered list: lines without a number continue the item above them.
+    const items: string[] = [];
+    for (const line of lines) { if (listLine.test(line) || !items.length) items.push(line.replace(listLine, '')); else if (line.trim()) items[items.length - 1] += ` ${line.trim()}`; }
+    return <ol key={i} className="list-decimal pl-5 space-y-1 mb-4">{items.map((item, j) => <li key={j} dangerouslySetInnerHTML={{ __html: inlineHtml(item) }} />)}</ol>;
+  }
+  if (paragraph.trim().startsWith('|')) {
+    const rows = lines.filter(line => line.trim().startsWith('|') && !/^\s*\|[\s:|-]+\|?\s*$/.test(line)).map(line => line.trim().replace(/^\||\|$/g, '').split('|').map(cell => cell.trim()));
+    if (rows.length > 1) return <div key={i} className="mb-4 overflow-x-auto"><table className="w-full border-collapse text-sm">
+      <thead><tr>{rows[0].map((cell, j) => <th key={j} scope="col" className="border border-border bg-muted/50 p-2 text-left font-bold" dangerouslySetInnerHTML={{ __html: inlineHtml(cell) }} />)}</tr></thead>
+      <tbody>{rows.slice(1).map((row, r) => <tr key={r}>{row.map((cell, j) => <td key={j} className="border border-border p-2 align-top" dangerouslySetInnerHTML={{ __html: inlineHtml(cell) }} />)}</tr>)}</tbody>
+    </table></div>;
+  }
   if (paragraph.startsWith('- ')) {
     const items = paragraph.split('\n').filter(line => line.startsWith('- '));
     return (
       <ul key={i} className="list-disc list-inside space-y-1 mb-4">
         {items.map((item, j) => (
-          <li key={j}>{item.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}</li>
+          <li key={j} dangerouslySetInnerHTML={{ __html: inlineHtml(item.slice(2)) }} />
         ))}
       </ul>
     );

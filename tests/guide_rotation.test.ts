@@ -1,8 +1,8 @@
 import { test, expect } from "bun:test";
 import { guideManifest, localGuideDate, selectGuide } from "../src/lib/guideRotation";
 
-test("23 alternates and 6 lesson pictures join 24 originals with explicit dimensions", () => {
-  expect(Object.keys(guideManifest)).toHaveLength(53);
+test("23 alternates join 24 originals with explicit dimensions", () => {
+  expect(Object.keys(guideManifest)).toHaveLength(47);
   expect(guideManifest["guide-waving-b.webp"]).toEqual([284, 640]);
 });
 test("a user's daily image never changes between renders", () => {

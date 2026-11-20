@@ -1,0 +1,344 @@
+{
+ "f68fa226-1d2b-411c-b6c4-d0a1df5c1f85": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Understanding Consensual Non-Monogamy",
+    "art": "enm-principles/l1-0.webp",
+    "alt": "Three guides standing together smiling, each giving a thumbs up",
+    "size": [
+     512,
+     470
+    ]
+   },
+   {
+    "heading": "What CNM Is Not",
+    "art": "enm-principles/l1-1.webp",
+    "alt": "A guide holding a theatre mask away from his face, the mask crossed out by a red circle-slash",
+    "size": [
+     462,
+     468
+    ]
+   },
+   {
+    "heading": "Dr. Elisabeth Sheff's Longitudinal Research",
+    "art": "enm-principles/l1-2.webp",
+    "alt": "A guide as a researcher with a clipboard and magnifying glass, studying a chart of connected hearts",
+    "size": [
+     461,
+     454
+    ]
+   },
+   {
+    "heading": "CNM as a Valid Relationship Orientation",
+    "art": "guide-encourage",
+    "alt": ""
+   },
+   {
+    "heading": "Addressing Common Misconceptions",
+    "art": "enm-principles/l1-4.webp",
+    "alt": "A guide popping a thought bubble that holds a question mark, using a pin",
+    "size": [
+     505,
+     463
+    ]
+   }
+  ],
+  "checks": [
+   {
+    "id": "f68fa226-1",
+    "after": "What CNM Is Not",
+    "prompt": "Alex starts seeing someone new and hides it from their partner. Is that consensual non-monogamy?",
+    "options": [
+     "No, it is cheating",
+     "Yes, if nobody finds out",
+     "Yes, any second relationship counts"
+    ],
+    "answer": 0,
+    "explanation": "No, it is cheating. CNM is not cheating. Cheating involves deception — one or more partners are unaware of or have not agreed to outside connections."
+   },
+   {
+    "id": "f68fa226-2",
+    "after": "CNM as a Valid Relationship Orientation",
+    "prompt": "What makes a relationship consensually non-monogamous?",
+    "options": [
+     "Everyone involved knows and agrees",
+     "Keeping partners apart",
+     "Having more than one partner"
+    ],
+    "answer": 0,
+    "explanation": "Everyone involved knows and agrees. Consensual non-monogamy (CNM) refers to any relationship structure in which all partners knowingly and willingly agree that the relationship may include romantic, sexual, or intimate connections with more than one person."
+   }
+  ]
+ },
+ "828eaaa3-3922-4828-ad48-d46dc4194e52": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Exploring Different CNM Structures",
+    "art": "guide-study-together",
+    "alt": ""
+   },
+   {
+    "heading": "Polyamory",
+    "art": "enm-principles/l2-1.webp",
+    "alt": "Each holding a string of one big heart-shaped balloon",
+    "size": [
+     470,
+     484
+    ]
+   },
+   {
+    "heading": "Relationship Anarchy",
+    "art": "enm-principles/l2-2.webp",
+    "alt": "A guide drawing her own map of hearts and stars on a big sheet, a crossed-out ladder beside her",
+    "size": [
+     512,
+     431
+    ]
+   },
+   {
+    "heading": "Open Relationships",
+    "art": "enm-principles/l2-3.webp",
+    "alt": "A couple holding hands, each using their free hand to open a door",
+    "size": [
+     466,
+     496
+    ]
+   },
+   {
+    "heading": "Swinging",
+    "art": "enm-principles/l2-4.webp",
+    "alt": "Two couples clinking glasses together at a party",
+    "size": [
+     512,
+     408
+    ]
+   },
+   {
+    "heading": "Solo Polyamory",
+    "art": "enm-principles/l2-5.webp",
+    "alt": "A guide standing confidently on his own holding up a house key, small hearts orbiting him",
+    "size": [
+     467,
+     468
+    ]
+   },
+   {
+    "heading": "The RADAR Check-In System",
+    "art": "enm-principles/l2-6.webp",
+    "alt": "A guide watching a round radar screen that shows heart blips, clipboard in hand",
+    "size": [
+     512,
+     406
+    ]
+   },
+   {
+    "heading": "No Hierarchy of Validity",
+    "art": "guide-celebrate-all",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "828eaaa3-1",
+    "after": "Open Relationships",
+    "prompt": "Sam treats friends, lovers and partners as equally important and refuses to rank them. Which style is this?",
+    "options": [
+     "An open relationship",
+     "Relationship anarchy",
+     "Swinging"
+    ],
+    "answer": 1,
+    "explanation": "Relationship anarchy. Relationship anarchy, a concept developed by Andie Nordgren, rejects the idea that romantic or sexual relationships should automatically take precedence over friendships or other connections."
+   },
+   {
+    "id": "828eaaa3-2",
+    "after": "The RADAR Check-In System",
+    "prompt": "Jordan has several loving relationships, lives alone and puts their own independence first. Which style is this?",
+    "options": [
+     "Relationship anarchy",
+     "Solo polyamory",
+     "Swinging"
+    ],
+    "answer": 1,
+    "explanation": "Solo polyamory. Solo polyamory describes people who maintain multiple relationships while prioritizing their own autonomy and independence."
+   }
+  ]
+ },
+ "83bd54a1-3422-4c24-a601-1ffdcf75fe5c": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Polysecure: Attachment Theory in CNM",
+    "art": "guide-lesson-reading",
+    "alt": ""
+   },
+   {
+    "heading": "Attachment Theory Basics",
+    "art": "enm-principles/l3-1.webp",
+    "alt": "A guide cradling a small glowing heart protectively, a tiny house icon above it",
+    "size": [
+     434,
+     460
+    ]
+   },
+   {
+    "heading": "Attachment in Polyamorous Contexts",
+    "art": "enm-principles/l3-2.webp",
+    "alt": "A guide holding a heart-rate style gauge whose needle swings high, looking surprised",
+    "size": [
+     441,
+     461
+    ]
+   },
+   {
+    "heading": "The Concept of Nested Security",
+    "art": "enm-principles/l3-3.webp",
+    "alt": "Two guides standing inside three nested rings of light, like layers of shelter",
+    "size": [
+     510,
+     490
+    ]
+   },
+   {
+    "heading": "Building Security Across a Polycule",
+    "art": "enm-principles/l3-4.webp",
+    "alt": "Three guides passing a glowing heart between them in a triangle",
+    "size": [
+     506,
+     480
+    ]
+   },
+   {
+    "heading": "Normalizing Attachment Struggles",
+    "art": "guide-encourage",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "83bd54a1-1",
+    "after": "The Concept of Nested Security",
+    "prompt": "Fern says security in multi-partner relationships needs several layers of safety. What is that idea called?",
+    "options": [
+     "New relationship energy",
+     "Couple privilege",
+     "Nested security"
+    ],
+    "answer": 2,
+    "explanation": "Nested security. Fern introduces the concept of \"nested security\" — the idea that secure attachment in CNM requires multiple layers of safety."
+   },
+   {
+    "id": "83bd54a1-2",
+    "after": "Building Security Across a Polycule",
+    "prompt": "In consensual non-monogamy, what tends to happen to attachment patterns?",
+    "options": [
+     "They disappear",
+     "They stop mattering",
+     "They become more activated"
+    ],
+    "answer": 2,
+    "explanation": "They become more activated. Fern argues that attachment styles become more activated in CNM contexts, not less."
+   }
+  ]
+ },
+ "9c9d1cfb-4fec-4b13-8e23-9f7434d82d5c": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Ethics and Sustainability in CNM",
+    "art": "guide-thinking",
+    "alt": ""
+   },
+   {
+    "heading": "Transparency and Honesty",
+    "art": "enm-principles/l4-1.webp",
+    "alt": "A guide holding an open glass jar with a glowing heart inside, nothing hidden",
+    "size": [
+     428,
+     438
+    ]
+   },
+   {
+    "heading": "Rules vs. Agreements",
+    "art": "enm-principles/l4-2.webp",
+    "alt": "Two guides shaking hands over a shared sheet of paper, both smiling",
+    "size": [
+     512,
+     395
+    ]
+   },
+   {
+    "heading": "Navigating Hierarchy, Veto Power, and Couple Privilege",
+    "art": "enm-principles/l4-3.webp",
+    "alt": "A guide standing on the top step of a small podium holding a stamp, looking down thoughtfully",
+    "size": [
+     309,
+     512
+    ]
+   },
+   {
+    "heading": "Sheff's Research on Long-Term Success",
+    "art": "enm-principles/l4-4.webp",
+    "alt": "A guide watering a tall healthy plant whose leaves are hearts",
+    "size": [
+     512,
+     490
+    ]
+   },
+   {
+    "heading": "Ethics of Disclosure",
+    "art": "enm-principles/l4-5.webp",
+    "alt": "He hands her an open envelope with a heart at the start of a path",
+    "size": [
+     502,
+     401
+    ]
+   },
+   {
+    "heading": "Continuous Growth",
+    "art": "guide-level-up",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "9c9d1cfb-1",
+    "after": "Rules vs. Agreements",
+    "prompt": "Two partners talk it through and decide together how they will handle sleepovers. Is that a rule or an agreement?",
+    "options": [
+     "A veto",
+     "A rule",
+     "An agreement"
+    ],
+    "answer": 2,
+    "explanation": "An agreement. Agreements are collaboratively created by all affected parties."
+   },
+   {
+    "id": "9c9d1cfb-2",
+    "after": "Ethics of Disclosure",
+    "prompt": "When should you tell a new connection about your relationship structure?",
+    "options": [
+     "Early, before intimacy develops",
+     "After things get serious",
+     "Only if they ask"
+    ],
+    "answer": 0,
+    "explanation": "Early, before intimacy develops. When entering new connections, ethical practice requires disclosing your relationship structure early — before emotional or physical intimacy develops."
+   }
+  ]
+ }
+}

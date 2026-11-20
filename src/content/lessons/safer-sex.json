@@ -1,0 +1,348 @@
+{
+ "bcba76bd-16d3-4fd6-a96f-18369ea26ce4": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "A Pleasure-Positive Approach to Safer Sex",
+    "art": "guide-encourage",
+    "alt": ""
+   },
+   {
+    "heading": "Why Shame-Based Approaches Fail",
+    "art": "safer-sex/l1-1.webp",
+    "alt": "A guide pushing away a dark storm cloud with a pointing finger inside it, looking unimpressed",
+    "size": [
+     506,
+     427
+    ]
+   },
+   {
+    "heading": "The Harm Reduction Alternative",
+    "art": "safer-sex/l1-2.webp",
+    "alt": "Two guides walking side by side on a path, one holding a small first-aid kit with a heart",
+    "size": [
+     411,
+     492
+    ]
+   },
+   {
+    "heading": "The Spectrum of Safer Sex",
+    "art": "safer-sex/l1-3.webp",
+    "alt": "A guide sliding a marker along a long colour bar that fades from green to orange",
+    "size": [
+     478,
+     412
+    ]
+   },
+   {
+    "heading": "Pleasure-Positive Framing",
+    "art": "safer-sex/l1-4.webp",
+    "alt": "A guide holding a heart in one hand and a shield in the other, smiling confidently",
+    "size": [
+     465,
+     484
+    ]
+   }
+  ],
+  "checks": [
+   {
+    "id": "bcba76bd-1",
+    "after": "The Harm Reduction Alternative",
+    "prompt": "A clinic gives people clear facts and tools without judging their choices. Which approach is this?",
+    "options": [
+     "Harm reduction",
+     "Abstinence-only",
+     "Shame-based education"
+    ],
+    "answer": 0,
+    "explanation": "Harm reduction. Harm reduction acknowledges that people are going to have sex — and that sex is a normal, healthy part of human life."
+   },
+   {
+    "id": "bcba76bd-2",
+    "after": "The Spectrum of Safer Sex",
+    "prompt": "How does harm reduction describe sexual risk?",
+    "options": [
+     "As simply safe or unsafe",
+     "As a spectrum from lower to higher",
+     "As too personal to discuss"
+    ],
+    "answer": 1,
+    "explanation": "As a spectrum from lower to higher. Rather than thinking of sex as either \"safe\" or \"unsafe,\" harm reduction invites us to see a spectrum."
+   }
+  ]
+ },
+ "90c7413a-4271-4948-a458-e6546e98bc81": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Modern Prevention Tools and Testing Practices",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "Barrier Methods",
+    "art": "safer-sex/l2-1.webp",
+    "alt": "A guide holding a shield with a heart on it in front of him like an umbrella",
+    "size": [
+     478,
+     499
+    ]
+   },
+   {
+    "heading": "PrEP and PEP: HIV Prevention",
+    "art": "safer-sex/l2-2.webp",
+    "alt": "A guide holding a pill bottle and a small calendar, a shield icon above",
+    "size": [
+     429,
+     502
+    ]
+   },
+   {
+    "heading": "U=U: Undetectable = Untransmittable",
+    "art": "safer-sex/l2-3.webp",
+    "alt": "Two guides standing close with arms around each other's shoulders under a big equals sign",
+    "size": [
+     512,
+     499
+    ]
+   },
+   {
+    "heading": "Testing Recommendations for ENM",
+    "art": "safer-sex/l2-4.webp",
+    "alt": "A guide holding a calendar with a test tube icon on one day, giving a thumbs up",
+    "size": [
+     451,
+     468
+    ]
+   },
+   {
+    "heading": "Talking About Testing",
+    "art": "safer-sex/l2-5.webp",
+    "alt": "Two guides talking over coffee, a speech bubble with a test tube icon and a heart between them",
+    "size": [
+     512,
+     430
+    ]
+   },
+   {
+    "heading": "Destigmatizing STIs",
+    "art": "safer-sex/l2-6.webp",
+    "alt": "A guide peeling a dark label off a jar to show a plain medical cross underneath",
+    "size": [
+     453,
+     454
+    ]
+   }
+  ],
+  "checks": [
+   {
+    "id": "90c7413a-1",
+    "after": "U=U: Undetectable = Untransmittable",
+    "prompt": "What does U=U mean?",
+    "options": [
+     "Undetectable equals untransmittable",
+     "Unprotected equals unsafe",
+     "Untested equals unknown"
+    ],
+    "answer": 0,
+    "explanation": "Undetectable equals untransmittable. This is known as U=U (Undetectable = Untransmittable)."
+   },
+   {
+    "id": "90c7413a-2",
+    "after": "Testing Recommendations for ENM",
+    "prompt": "For people with multiple partners, what testing rhythm does the lesson mention as common?",
+    "options": [
+     "Only when symptoms appear",
+     "Once in a lifetime",
+     "About every 3 months"
+    ],
+    "answer": 2,
+    "explanation": "About every 3 months. For people with multiple partners, regular testing is an act of care for yourself and your network."
+   }
+  ]
+ },
+ "605941de-2545-43b4-be7e-3cdf6ab2e7d3": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Navigating Fluid Bonding in ENM",
+    "art": "guide-thinking",
+    "alt": ""
+   },
+   {
+    "heading": "What Is Fluid Bonding?",
+    "art": "safer-sex/l3-1.webp",
+    "alt": "Two guides holding hands, a small droplet icon inside a heart floating between them",
+    "size": [
+     486,
+     466
+    ]
+   },
+   {
+    "heading": "Why Fluid Bonding Matters in ENM",
+    "art": "guide-high-five",
+    "alt": ""
+   },
+   {
+    "heading": "What to Include in a Fluid Bonding Agreement",
+    "art": "safer-sex/l3-3.webp",
+    "alt": "Two guides signing a shared paper on a clipboard together, a pen each",
+    "size": [
+     466,
+     455
+    ]
+   },
+   {
+    "heading": "When New Partners Enter",
+    "art": "safer-sex/l3-4.webp",
+    "alt": "One welcomes a newcomer at a door while the third holds a pause sign beside a checklist",
+    "size": [
+     512,
+     442
+    ]
+   },
+   {
+    "heading": "The Emotional Dimensions",
+    "art": "safer-sex/l3-5.webp",
+    "alt": "A guide holding a heart close to his chest with both hands, eyes closed",
+    "size": [
+     417,
+     476
+    ]
+   },
+   {
+    "heading": "Sample Agreement Framework",
+    "art": "guide-lesson-reading",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "605941de-1",
+    "after": "What Is Fluid Bonding?",
+    "prompt": "What does fluid bonding mean?",
+    "options": [
+     "Sharing a home",
+     "Using barriers with everyone",
+     "Sex that involves sharing bodily fluids without barriers"
+    ],
+    "answer": 2,
+    "explanation": "Sex that involves sharing bodily fluids without barriers. Fluid bonding refers to engaging in sexual activities that involve the exchange of bodily fluids (semen, vaginal fluid, blood) without barriers."
+   },
+   {
+    "id": "605941de-2",
+    "after": "When New Partners Enter",
+    "prompt": "A fluid-bonded partner starts seeing someone new. What does the lesson suggest?",
+    "options": [
+     "Revisit the agreement before anything changes",
+     "Say nothing and carry on",
+     "End the agreement in secret"
+    ],
+    "answer": 0,
+    "explanation": "Revisit the agreement before anything changes. One of the most common situations that tests fluid bonding agreements is the introduction of a new sexual partner."
+   }
+  ]
+ },
+ "1075b350-032e-404b-96e8-b4ecc37c8bc5": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Beyond the Binary: Sexual Health for Everyone",
+    "art": "guide-celebrate-all",
+    "alt": ""
+   },
+   {
+    "heading": "Inclusive Anatomy Language",
+    "art": "safer-sex/l4-1.webp",
+    "alt": "A guide holding up a speech bubble with a heart and a body-outline icon, speaking kindly",
+    "size": [
+     477,
+     462
+    ]
+   },
+   {
+    "heading": "Sexual Health for Trans and Nonbinary People",
+    "art": "safer-sex/l4-2.webp",
+    "alt": "He talks with her, a friendly doctor in a white coat, both smiling",
+    "size": [
+     512,
+     442
+    ]
+   },
+   {
+    "heading": "Pleasure and Safety for People with Disabilities",
+    "art": "safer-sex/l4-3.webp",
+    "alt": "A guide sitting in a wheelchair, smiling warmly, holding a heart",
+    "size": [
+     392,
+     512
+    ]
+   },
+   {
+    "heading": "Age-Inclusive Sexual Health",
+    "art": "safer-sex/l4-4.webp",
+    "alt": "A guide with silver streaks in her purple hair, dancing joyfully with a heart above",
+    "size": [
+     259,
+     512
+    ]
+   },
+   {
+    "heading": "Systemic Barriers",
+    "art": "safer-sex/l4-5.webp",
+    "alt": "A guide standing in front of a tall wall with a small locked door, hands on hips",
+    "size": [
+     446,
+     474
+    ]
+   },
+   {
+    "heading": "Finding Inclusive Providers",
+    "art": "safer-sex/l4-6.webp",
+    "alt": "A guide holding a map with a pin marked by a medical cross and a heart",
+    "size": [
+     439,
+     479
+    ]
+   }
+  ],
+  "checks": [
+   {
+    "id": "1075b350-1",
+    "after": "Pleasure and Safety for People with Disabilities",
+    "prompt": "What does society often wrongly assume about people with disabilities?",
+    "options": [
+     "That they have no sexual desires or needs",
+     "That they need no healthcare",
+     "That they cannot have friends"
+    ],
+    "answer": 0,
+    "explanation": "That they have no sexual desires or needs. People with disabilities are often desexualized by society — treated as though they do not have sexual desires or needs."
+   },
+   {
+    "id": "1075b350-2",
+    "after": "Age-Inclusive Sexual Health",
+    "prompt": "Does sexual health stop mattering at a certain age?",
+    "options": [
+     "Yes, after 50",
+     "No, it matters at every age",
+     "Yes, after retirement"
+    ],
+    "answer": 1,
+    "explanation": "No, it matters at every age. Sexual health does not stop at a certain age."
+   }
+  ]
+ }
+}

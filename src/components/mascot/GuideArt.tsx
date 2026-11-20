@@ -18,7 +18,8 @@ const firstLoads = new Map<string, HTMLSpanElement>();
 const releasedPages = new Set<string>();
 const sessionDay = localGuideDate();
 const plainScreens = /^\/(settings|admin|complaints|appeals|contact|privacy(?:-policy)?|terms|community-guidelines|unsubscribe|verification|report|safety|moderation)(?:\/|$)/;
-export function GuideArt({ name, size, className = "", alt = "", animate = true, secondary = false, interactive = true }: { name: GuideName; size: number; className?: string; alt?: string; animate?: boolean; secondary?: boolean; interactive?: boolean }) {
+/** `source` shows one specific picture (a lesson illustration) with the same motion and touch behaviour as a guide. */
+export function GuideArt({ name, size, className = "", alt = "", animate = true, secondary = false, interactive = true, source }: { name: GuideName; size: number; className?: string; alt?: string; animate?: boolean; secondary?: boolean; interactive?: boolean; source?: { src: string; width: number; height: number } }) {
   const { user, loading: authLoading } = useAuth();
   const day = sessionDay;
   const { ref, running, visible } = usePathAnimation<HTMLSpanElement>();
@@ -59,16 +60,16 @@ export function GuideArt({ name, size, className = "", alt = "", animate = true,
     el.style.setProperty("--bubble-shift", `${shift.toFixed(0)}px`);
   }, [fx.hover, fx.line, fx.host]);
   // A tap flips to the next version of this pose when alternates exist.
-  const choices = guideChoices(name);
-  const file = choices[(Math.max(0, choices.indexOf(selectGuide(name, user?.id, day))) + fx.flip) % choices.length];
-  const [width, height] = guideManifest[file];
-  const src = guideFileUrl(file);
+  const choices = source ? [] : guideChoices(name);
+  const file = source ? source.src : choices[(Math.max(0, choices.indexOf(selectGuide(name, user?.id, day))) + fx.flip) % choices.length];
+  const [width, height] = source ? [source.width, source.height] : guideManifest[file];
+  const src = source ? source.src : guideFileUrl(file);
   if (plainScreens.test(window.location.pathname)) return null;
   return <LazyMotion features={domAnimation} strict><m.span ref={ref} className={`guide-art ${className}`} style={{ height: size, width: size * width / height, maxWidth: "100%", aspectRatio: `${width}/${height}` }}
     initial={animate ? reduced ? { opacity: 0 } : { opacity: 0, scale: .8 } : false} animate={{ opacity: 1, scale: 1 }} transition={reduced ? { duration: .1 } : { type: "spring", ...spring.pop }}>
     {loaded && <span ref={fx.host} className={fx.classes} style={{ "--guide-mask": `url(${src})` } as React.CSSProperties} {...fx.handlers}>
       <span className="guide-pop">
-        <img key={file} src={src} width={width} height={height} loading="lazy" decoding="async" alt={alt} data-guide={name} draggable={false}
+        <img key={file} src={src} width={width} height={height} loading="lazy" decoding="async" alt={alt} data-guide={source ? "lesson-art" : name} draggable={false}
           className={animate && !reduced && running ? "guide-art-image guide-floating guide-breathe" : "guide-art-image"}/>
         <span className="guide-gloss" aria-hidden="true"/>
       </span>

@@ -143,6 +143,8 @@ export const learningSoundNotes = {
   correct: [660, 880], miss: [220], nodeComplete: [330, 660, 880],
   trailFill: [330, 440, 550, 660], chestOpen: [880, 1100, 1320, 1540, 1760],
   levelComplete: [523, 659, 784, 1047], lockedTap: [150],
+  // Finishing a lesson: a rising five-note major arpeggio that lands on a held top note.
+  lessonComplete: [523, 659, 784, 1047, 1319],
 } as const;
 export function comboExtraNotes(combo: number) { return combo === 3 ? 1 : combo === 5 ? 2 : combo === 10 ? 3 : 0; }
 export function playLearningSound(name: keyof typeof learningSoundNotes | "combo", combo = 0) {
@@ -162,17 +164,18 @@ export function playLearningSound(name: keyof typeof learningSoundNotes | "combo
     osc.start(); osc.stop(c.currentTime + .4); return;
   }
   const frequencies: readonly number[] = name === "combo" ? [660, 880, ...[1047, 1320, 1568].slice(0, comboExtraNotes(combo))] : learningSoundNotes[name];
-  const spacing = name === "levelComplete" ? .16 : .055;
-  const length = name === "nodeTap" ? .06 : name === "cardOpen" ? .08 : name === "cardAdvance" ? .04 : name === "levelComplete" ? .22 : .1;
+  const spacing = name === "levelComplete" ? .16 : name === "lessonComplete" ? .1 : .055;
+  const length = name === "nodeTap" ? .06 : name === "cardOpen" ? .08 : name === "cardAdvance" ? .04 : name === "levelComplete" ? .22 : name === "lessonComplete" ? .2 : .1;
   frequencies.forEach((frequency, i) => {
     const osc = c.createOscillator(), gain = c.createGain();
     osc.connect(gain); gain.connect(c.destination); osc.type = "sine";
     const t = c.currentTime + i * spacing;
+    const hold = name === "lessonComplete" && i === frequencies.length - 1 ? .35 : 0;
     osc.frequency.setValueAtTime(frequency, t);
     if (name === "nodeTap" || name === "lockedTap") osc.frequency.exponentialRampToValueAtTime(frequency * .6, t + length);
     gain.gain.setValueAtTime(.001, t);
     gain.gain.linearRampToValueAtTime(name === "cardAdvance" ? .018 : .055, t + .006);
-    gain.gain.exponentialRampToValueAtTime(.001, t + length);
-    osc.start(t); osc.stop(t + length);
+    gain.gain.exponentialRampToValueAtTime(.001, t + length + hold);
+    osc.start(t); osc.stop(t + length + hold);
   });
 }

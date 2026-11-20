@@ -10,6 +10,10 @@ import { getLevelName, LEVEL_REWARDS, isStreakMilestone } from "@/hooks/useLearn
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { duration, spring } from "@/lib/motionTokens";
 import { finishSteps, type FinishData } from "@/lib/learnFinish";
+import { CelebrationCast } from "./CelebrationCast";
+const Confetti = lazy(() => import("@/components/celebrations/ConfettiSystem").then(m => ({ default: m.ConfettiSystem })));
+// Brand purple and pink lead; gold, lime and sky follow the app's meaning colours.
+const confettiColors = ["#7C3AED", "#EC4899", "#FBBF24", "#A3E635", "#38BDF8"];
 const CelebrationEngine = lazy(() => import("@/components/celebrations/CelebrationEngine").then(m => ({ default: m.CelebrationEngine })));
 const ShareCard = lazy(() => import("@/components/ShareableAchievementCard").then(m => ({ default: m.ShareableAchievementCard })));
 const StorySummary = lazy(() => import("./scenarios/ScenarioSummary").then(m => ({ default: m.ScenarioSummary })));
@@ -20,7 +24,7 @@ export default function FinishSequence({ data, onBack, onDiscovery }: { data: Fi
   const [share, setShare] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const played = useRef(new Set<string>());
-  const { playBadgeUnlock, playStreakMilestone, playLevelComplete } = useSoundEffects();
+  const { playBadgeUnlock, playStreakMilestone, playLevelComplete, playLessonComplete } = useSoundEffects();
   const steps = finishSteps(data); const step = steps[index] || steps[steps.length - 1];
   const last = index >= steps.length - 1;
   const foundation = step === "tier" && data.tier === "foundation";
@@ -31,8 +35,9 @@ export default function FinishSequence({ data, onBack, onDiscovery }: { data: Fi
     if (played.current.has(step)) return;
     played.current.add(step);
     if (step === "badge") { playBadgeUnlock(); playLevelComplete(); } // includes the existing heavy haptic
+    if (step === "lesson") playLessonComplete();
     if (step === "streak" && isStreakMilestone(data.streak || 0)) playStreakMilestone();
-  }, [step, data.streak, playBadgeUnlock, playStreakMilestone, playLevelComplete]);
+  }, [step, data.streak, playBadgeUnlock, playStreakMilestone, playLevelComplete, playLessonComplete]);
   const xp = data.xp === null ? "—" : data.xp === 0 ? "XP already earned" : `+${data.xp}`;
   const stats = step === "lesson" ? [
     { label: "XP", value: xp, counter: data.xp },
@@ -47,10 +52,11 @@ export default function FinishSequence({ data, onBack, onDiscovery }: { data: Fi
     if (event.key === "Enter" && !share && (event.target === heading.current || event.target === event.currentTarget)) { event.preventDefault(); next(); }
   }}>
     {step === "badge" && !reduced && <Suspense fallback={null}><CelebrationEngine tier="large" trigger={1} confettiOnly /></Suspense>}
+    {step === "lesson" && !reduced && <Suspense fallback={null}><Confetti intensity="heavy" trigger={1} colors={confettiColors} duration={3200} /></Suspense>}
     <div className="flex-1 flex flex-col items-center justify-center gap-6 w-full max-w-[480px] mx-auto text-center pb-24">
       <h1 key={step} ref={heading} tabIndex={-1} className="text-3xl font-bold outline-none">{title}</h1>
       <Button className="fixed bottom-[max(24px,env(safe-area-inset-bottom))] left-4 right-4 mx-auto max-w-[480px] min-h-[52px] z-20" onClick={foundation ? onDiscovery : next}>{foundation ? "Explore Discovery" : last ? "Back to my path" : "Continue"}</Button>
-      {step === "lesson" && <GuideArt name="guide-thumbs-up" size={176} alt="Guide cheering" />}
+      {step === "lesson" && <CelebrationCast start={data.lessonsDone || 0} />}
       {step === "review" && <GuideArt name={data.kind === "story" ? "guide-story-chat" : data.kind === "practice" ? "guide-practice-dumbbell" : data.kind === "listen" ? "guide-listen-headphones" : "guide-trophy"} size={176} alt="Guide celebrating"/>}
       {step === "tier" && <GuideArt name={tierGuide(data.tier)} size={160} alt="Tier guide cheering"/>}
       {data.message && <p role="status">{data.message}</p>}

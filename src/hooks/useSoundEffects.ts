@@ -76,12 +76,13 @@ export function useSoundEffects() {
   const playCombo = useCallback((n: number) => { if (n >= 5) emitReaction("combo"); if (_soundEnabled && comboExtraNotes(n)) playLearningSound("combo", n); void haptic("light"); }, []);
   const playNodeComplete = useCallback(() => { emitReaction("win"); if (_soundEnabled) playLearningSound("nodeComplete"); void haptic("medium"); }, []);
   const playTrailFill = useCallback(() => { if (_soundEnabled) playLearningSound("trailFill"); }, []);
+  const playLessonComplete = useCallback(() => { emitReaction("win"); if (_soundEnabled) playLearningSound("lessonComplete"); void haptic("medium"); }, []);
   const playChestOpen = useCallback(() => { emitReaction("chest"); if (_soundEnabled) playLearningSound("chestOpen"); void haptic("medium"); }, []);
   const playLevelComplete = useCallback(() => { emitReaction("win"); if (_soundEnabled) playLearningSound("levelComplete"); }, []);
   const playLockedTap = useCallback(() => { if (_soundEnabled) playLearningSound("lockedTap"); }, []);
   return {
     playNodeTap, playCardOpen, playLessonStart, playCardAdvance, playCorrect, playMiss, playCombo,
-    playNodeComplete, playTrailFill, playChestOpen, playLevelComplete, playLockedTap,
+    playNodeComplete, playTrailFill, playLessonComplete, playChestOpen, playLevelComplete, playLockedTap,
     soundEnabled,
     hapticEnabled,
     setSoundEnabled,

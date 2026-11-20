@@ -13,8 +13,9 @@ import { useReadAloud } from "@/hooks/useReadAloud";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useQuizAnswer, type AnswerFeedback } from "@/hooks/useQuizAnswer";
 import { buildLessonCards, resumeCardIndex, type LessonCheckpoint, type LessonSection } from "@/lib/lessonCards";
-import { enhancementFor } from "@/lib/lessonEnhancements";
+import { lessonPictureUrl, loadEnhancement, type LessonEnhancement } from "@/lib/lessonEnhancements";
 import { guideUrl } from "@/lib/guideAssets";
+import { guideManifest, type GuideName } from "@/lib/guideRotation";
 import { distance, duration, easing } from "@/lib/motionTokens";
 import { cn } from "@/lib/utils";
 import { KeyTakeaway } from "./KeyTakeaway";
@@ -50,14 +51,25 @@ function Checkpoint({ question, saved, onAnswered }: { question: LessonCheckpoin
   </div>;
 }
 interface Props {
-  section: LessonSection; checkpoints: LessonCheckpoint[]; initialIndex: number; isCompleted: boolean; userId: string; tier?: string | null;
+  section: LessonSection; checkpoints: LessonCheckpoint[]; initialIndex: number; isCompleted: boolean; userId: string; tier?: string | null; moduleSlug?: string;
   onSavePosition: (index: number) => void; onExit: () => void; onArticle: () => void;
   onComplete: () => Promise<number | null>; onNext: () => void; onReflectionSaved: () => Promise<void>;
 }
-export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, userId, tier, onSavePosition, onExit, onArticle, onComplete, onNext, onReflectionSaved }: Props) {
+/** Fetches the lesson's extras (pictures, memory aid, recall questions) before the first card is drawn, so cards never shift. */
+export function LessonPlayer(props: Props) {
+  const [rich, setRich] = useState<LessonEnhancement | null | undefined>(props.moduleSlug ? undefined : null);
+  useEffect(() => {
+    let active = true;
+    if (!props.moduleSlug) { setRich(null); return; }
+    void loadEnhancement(props.moduleSlug, props.section.id).then(value => { if (active) setRich(value); });
+    return () => { active = false; };
+  }, [props.moduleSlug, props.section.id]);
+  if (rich === undefined) return <LessonPlayerSkeleton />;
+  return <LessonCards {...props} rich={rich} />;
+}
+function LessonCards({ rich, section, checkpoints, initialIndex, isCompleted, userId, tier, onSavePosition, onExit, onArticle, onComplete, onNext, onReflectionSaved }: Props & { rich: LessonEnhancement | null }) {
   const { playCardAdvance, playLessonStart, playTrailFill } = useSoundEffects();
   // Lessons with presentation extras get pictures, a memory aid and recall questions; the rest are unchanged.
-  const rich = useMemo(() => enhancementFor(section.id), [section.id]);
   const cards = useMemo(() => buildLessonCards(section, checkpoints, rich?.checks), [section, checkpoints, rich]);
   const steps = useMemo(() => (rich?.concepts ?? []).flatMap(concept => {
     const at = cards.findIndex(c => c.type === "content" && c.title === concept.heading);
@@ -86,7 +98,7 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
   // Fetch the pictures for the cards ahead once the first card has settled, so no card opens on an empty panel.
   useEffect(() => {
     if (!rich) return;
-    const timer = window.setTimeout(() => { for (const name of [...rich.concepts.map(c => c.art), "guide-thinking" as const]) { const image = new Image(); image.src = guideUrl(name, userId); } }, 1200);
+    const timer = window.setTimeout(() => { for (const art of [...rich.concepts.map(c => c.art), "guide-thinking"]) { const src = lessonPictureUrl(art) ?? (guideManifest[`${art}.webp`] ? guideUrl(art as GuideName, userId) : ""); if (src) new Image().src = src; } }, 1200);
     return () => window.clearTimeout(timer);
   }, [rich, userId]);
   const finish = useCallback(async () => {

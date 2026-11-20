@@ -1,0 +1,371 @@
+{
+ "071377ef-753d-4725-9ecb-f755c07bffac": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Boundaries: Acts of Self-Care, Not Punishment",
+    "art": "guide-meditate",
+    "alt": ""
+   },
+   {
+    "heading": "What Boundaries Actually Are",
+    "art": "boundaries-communication/l1-1.webp",
+    "alt": "A guide standing calmly inside a glowing circle drawn on the ground, hand over her heart",
+    "size": [
+     316,
+     507
+    ]
+   },
+   {
+    "heading": "Boundaries vs. Rules",
+    "art": "boundaries-communication/l1-2.webp",
+    "alt": "One points at himself with a thumb while the other wags a finger at someone off to the side",
+    "size": [
+     512,
+     408
+    ]
+   },
+   {
+    "heading": "Why Boundaries Matter in ENM",
+    "art": "boundaries-communication/l1-3.webp",
+    "alt": "A guide juggling three hearts carefully while standing behind a small picket fence",
+    "size": [
+     452,
+     484
+    ]
+   },
+   {
+    "heading": "Types of Boundaries",
+    "art": "boundaries-communication/l1-4.webp",
+    "alt": "A guide holding four cards showing a hand, a heart, a clock and a speech bubble",
+    "size": [
+     435,
+     490
+    ]
+   },
+   {
+    "heading": "Reframing Boundaries as Self-Honoring",
+    "art": "boundaries-communication/l1-5.webp",
+    "alt": "A guide hugging herself warmly, a small crown floating above her head",
+    "size": [
+     339,
+     497
+    ]
+   }
+  ],
+  "checks": [
+   {
+    "id": "071377ef-1",
+    "after": "Boundaries vs. Rules",
+    "prompt": "\"If you stay out late, I will go to bed without waiting up.\" Is that a boundary or a rule?",
+    "options": [
+     "A punishment",
+     "A boundary",
+     "A rule"
+    ],
+    "answer": 1,
+    "explanation": "A boundary. A boundary is about what you will do (\"I will...\"). A rule tells someone else what they must do."
+   },
+   {
+    "id": "071377ef-2",
+    "after": "Reframing Boundaries as Self-Honoring",
+    "prompt": "What is a boundary?",
+    "options": [
+     "A punishment for bad behaviour",
+     "A way to control a partner",
+     "A limit you set to protect your own wellbeing"
+    ],
+    "answer": 2,
+    "explanation": "A limit you set to protect your own wellbeing. A boundary is a limit you set to protect your own physical, emotional, or psychological wellbeing."
+   }
+  ]
+ },
+ "755682e3-d42b-4085-8078-be668b4d08e3": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Marshall Rosenberg's NVC Framework",
+    "art": "guide-study-together",
+    "alt": ""
+   },
+   {
+    "heading": "The Four Steps of NVC",
+    "art": "boundaries-communication/l2-1.webp",
+    "alt": "A guide holding up four fingers beside four stepping stones leading forward",
+    "size": [
+     461,
+     501
+    ]
+   },
+   {
+    "heading": "1. Observations (What Happened — Without Judgment)",
+    "art": "boundaries-communication/l2-2.webp",
+    "alt": "A guide looking through a camera lens, a plain photo frame beside her",
+    "size": [
+     512,
+     494
+    ]
+   },
+   {
+    "heading": "2. Feelings (Emotions, Not Thoughts)",
+    "art": "boundaries-communication/l2-3.webp",
+    "alt": "A guide holding a glowing heart with a small face showing an emotion",
+    "size": [
+     398,
+     472
+    ]
+   },
+   {
+    "heading": "3. Needs (Universal Human Needs)",
+    "art": "boundaries-communication/l2-4.webp",
+    "alt": "A guide holding a battery icon half full next to a heart, a plug in his other hand",
+    "size": [
+     491,
+     477
+    ]
+   },
+   {
+    "heading": "4. Requests (Specific, Actionable, Negotiable)",
+    "art": "boundaries-communication/l2-5.webp",
+    "alt": "She offers an open hand with a question mark above it, he considers with a smile",
+    "size": [
+     512,
+     464
+    ]
+   },
+   {
+    "heading": "NVC in Relationship/Sexual Contexts",
+    "art": "guide-story-chat",
+    "alt": ""
+   },
+   {
+    "heading": "Common Patterns NVC Replaces",
+    "art": "boundaries-communication/l2-7.webp",
+    "alt": "A guide sweeping broken pointing-finger shapes into a bin with a broom",
+    "size": [
+     504,
+     498
+    ]
+   }
+  ],
+  "checks": [
+   {
+    "id": "755682e3-1",
+    "after": "2. Feelings (Emotions, Not Thoughts)",
+    "prompt": "\"You came home at midnight.\" versus \"You never care about me.\" Which one is an observation?",
+    "options": [
+     "\"You came home at midnight.\"",
+     "Neither of them",
+     "\"You never care about me.\""
+    ],
+    "answer": 0,
+    "explanation": "\"You came home at midnight.\" The first step is to describe what you observed, using concrete, factual language — free from evaluation, interpretation, or blame."
+   },
+   {
+    "id": "755682e3-2",
+    "after": "4. Requests (Specific, Actionable, Negotiable)",
+    "prompt": "\"Would you be willing to text me if you will be late?\" Which NVC step is this?",
+    "options": [
+     "A request",
+     "An observation",
+     "A feeling"
+    ],
+    "answer": 0,
+    "explanation": "A request. Finally, make a clear, specific request — not a demand."
+   }
+  ]
+ },
+ "1e9e4606-54cc-4c74-8f05-ac7dfefe3a39": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Boundary Challenges Unique to ENM",
+    "art": "guide-thinking",
+    "alt": ""
+   },
+   {
+    "heading": "Time Management Boundaries",
+    "art": "boundaries-communication/l3-1.webp",
+    "alt": "A guide holding a big calendar with coloured hearts on different days",
+    "size": [
+     507,
+     462
+    ]
+   },
+   {
+    "heading": "Sexual Health Agreements",
+    "art": "boundaries-communication/l3-2.webp",
+    "alt": "Each holding a small health checklist card with green ticks, bumping fists",
+    "size": [
+     509,
+     449
+    ]
+   },
+   {
+    "heading": "Emotional Availability Boundaries",
+    "art": "boundaries-communication/l3-3.webp",
+    "alt": "A guide holding a battery that is nearly empty, a gentle tired smile, hand raised to pause",
+    "size": [
+     437,
+     483
+    ]
+   },
+   {
+    "heading": "Metamour Boundaries",
+    "art": "boundaries-communication/l3-4.webp",
+    "alt": "Two guides standing a friendly distance apart, a low open gate between them, both waving",
+    "size": [
+     512,
+     405
+    ]
+   },
+   {
+    "heading": "Soft vs. Hard Boundaries",
+    "art": "boundaries-communication/l3-5.webp",
+    "alt": "One hand on a solid brick wall, the other on a swinging garden gate",
+    "size": [
+     440,
+     480
+    ]
+   },
+   {
+    "heading": "Using NVC to Communicate Boundary Changes",
+    "art": "guide-story-chat",
+    "alt": ""
+   },
+   {
+    "heading": "When a Boundary Is Crossed",
+    "art": "boundaries-communication/l3-7.webp",
+    "alt": "Calmly holding up a hand next to a stepped-on line on the ground",
+    "size": [
+     423,
+     489
+    ]
+   }
+  ],
+  "checks": [
+   {
+    "id": "1e9e4606-1",
+    "after": "Soft vs. Hard Boundaries",
+    "prompt": "Sam will never agree to skip barriers with new partners, no matter what. What kind of boundary is that?",
+    "options": [
+     "A hard boundary",
+     "A rule for others",
+     "A soft boundary"
+    ],
+    "answer": 0,
+    "explanation": "A hard boundary. Not all boundaries carry the same weight: Hard boundaries are non-negotiable."
+   },
+   {
+    "id": "1e9e4606-2",
+    "after": "When a Boundary Is Crossed",
+    "prompt": "\"I have no energy left to process this tonight. Can we talk tomorrow?\" Which boundary is this?",
+    "options": [
+     "Time management",
+     "Emotional availability",
+     "Sexual health"
+    ],
+    "answer": 1,
+    "explanation": "Emotional availability. You are a human with finite emotional resources."
+   }
+  ]
+ },
+ "52aa2645-e6ef-42b5-a58a-aceff9398ed2": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Art of Receiving Boundaries",
+    "art": "guide-lesson-reading",
+    "alt": ""
+   },
+   {
+    "heading": "Why Receiving Boundaries Is Hard",
+    "art": "boundaries-communication/l4-1.webp",
+    "alt": "A guide holding his chest as small storm clouds swirl around his head",
+    "size": [
+     426,
+     505
+    ]
+   },
+   {
+    "heading": "NVC Empathic Listening",
+    "art": "boundaries-communication/l4-2.webp",
+    "alt": "She speaks while he listens closely, cupping one ear, a heart above them",
+    "size": [
+     512,
+     429
+    ]
+   },
+   {
+    "heading": "The Difference Between Hearing and Respecting",
+    "art": "boundaries-communication/l4-3.webp",
+    "alt": "A guide bowing slightly with one hand on her heart and the other cupped to her ear",
+    "size": [
+     355,
+     468
+    ]
+   },
+   {
+    "heading": "Managing Your Emotional Response",
+    "art": "boundaries-communication/l4-4.webp",
+    "alt": "A guide sitting cross-legged breathing slowly, a small storm cloud shrinking above him",
+    "size": [
+     452,
+     503
+    ]
+   },
+   {
+    "heading": "Asking for Clarification Without Pressuring",
+    "art": "boundaries-communication/l4-5.webp",
+    "alt": "He holds a question mark gently in open palms toward her, she nods",
+    "size": [
+     491,
+     386
+    ]
+   },
+   {
+    "heading": "Modeling Graceful Acceptance",
+    "art": "guide-high-five",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "52aa2645-1",
+    "after": "The Difference Between Hearing and Respecting",
+    "prompt": "Taylor says \"I hear you\" and then does the thing anyway. What is missing?",
+    "options": [
+     "Hearing the boundary",
+     "Clarifying the boundary",
+     "Respecting the boundary"
+    ],
+    "answer": 2,
+    "explanation": "Respecting the boundary. Respecting a boundary means adjusting your behavior accordingly — even when it is inconvenient or emotionally uncomfortable."
+   },
+   {
+    "id": "52aa2645-2",
+    "after": "Asking for Clarification Without Pressuring",
+    "prompt": "A partner sets a boundary and you are confused. Which reply fits the lesson?",
+    "options": [
+     "\"Can you help me understand what you need so I can support that?\"",
+     "\"Why are you doing this to me?\"",
+     "\"That makes no sense.\""
+    ],
+    "answer": 0,
+    "explanation": "\"Can you help me understand what you need so I can support that?\" There is a difference between."
+   }
+  ]
+ }
+}

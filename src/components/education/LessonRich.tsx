@@ -1,11 +1,20 @@
 import { useState } from "react";
 import { Check, Clock, Lightbulb, X } from "lucide-react";
-import { GuideArt } from "@/components/mascot/GuideArt";
+import { GuideArt, type GuideName } from "@/components/mascot/GuideArt";
+import { guideManifest } from "@/lib/guideRotation";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import type { LessonCheck } from "@/lib/lessonCards";
-import { splitLead, type LessonConcept, type LessonEnhancement } from "@/lib/lessonEnhancements";
+import { lessonPictureUrl, splitLead, type LessonConcept, type LessonEnhancement, type LessonPicture } from "@/lib/lessonEnhancements";
 import { cn } from "@/lib/utils";
 import { renderMarkdown } from "./SectionContent";
+
+/** A lesson picture: either one of the shared guides or an illustration made for this idea. */
+export function LessonPictureArt({ picture, size }: { picture: LessonPicture; size: number }) {
+  const src = lessonPictureUrl(picture.art);
+  if (src && picture.size) return <GuideArt name="guide-lesson-reading" source={{ src, width: picture.size[0], height: picture.size[1] }} size={size} alt={picture.alt}/>;
+  const name = (guideManifest[`${picture.art}.webp`] ? picture.art : "guide-lesson-reading") as GuideName;
+  return <GuideArt name={name} size={size} alt={picture.alt}/>;
+}
 
 /** One letter of the lesson's memory aid, tied to the card that teaches it. */
 export interface MnemonicStep { letter: string; heading: string; index: number }
@@ -25,7 +34,7 @@ export function LessonMnemonic({ word, steps, currentHeading, reached, onJump }:
 /** First card: the picture that anchors the memory aid, how long it takes, and the ideas ahead by name. */
 export function RichTitle({ enhancement, lesson, minutes, steps }: { enhancement: LessonEnhancement; lesson: number; minutes: number | null; steps: MnemonicStep[] }) {
   return <div className="lesson-title-card">
-    <div className="lesson-art lesson-art-hero"><GuideArt name={enhancement.hero.art} size={172} alt={enhancement.hero.alt}/></div>
+    <div className="lesson-art lesson-art-hero"><LessonPictureArt picture={enhancement.hero} size={172}/></div>
     <p className="lesson-pills"><span className="lesson-pill">Lesson {lesson} of 4</span>{minutes ? <span className="lesson-pill"><Clock aria-hidden="true" className="h-4 w-4"/>{minutes} min</span> : null}{steps.length > 0 && <span className="lesson-pill"><Lightbulb aria-hidden="true" className="h-4 w-4"/>{steps.length} ideas</span>}</p>
     {enhancement.mnemonic && steps.length > 0 && <>
       <p className="lesson-caption">{enhancement.mnemonic.caption}</p>
@@ -40,9 +49,9 @@ export function RichTitle({ enhancement, lesson, minutes, steps }: { enhancement
 export function RichContent({ body, concept, continued, tone = 0 }: { body: string; concept: LessonConcept; continued: boolean; tone?: number }) {
   const lead = continued ? null : splitLead(body);
   return <div className="lesson-concept">
-    {!continued && <div className="lesson-art" data-tone={tone % 3}>
+    {!continued && concept.art && <div className="lesson-art" data-tone={tone % 3}>
       {concept.letter && <span className="lesson-letter" aria-hidden="true">{concept.letter}</span>}
-      <GuideArt name={concept.art} size={188} alt={concept.alt}/>
+      <LessonPictureArt picture={concept} size={188}/>
     </div>}
     <div className="lesson-body">
       {lead ? <><div className="lesson-lead">{renderMarkdown(lead.lead)}</div>{renderMarkdown(lead.rest)}</> : renderMarkdown(body)}

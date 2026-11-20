@@ -1,0 +1,352 @@
+{
+ "73b2086f-2265-4dec-8bb1-da6079185930": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Spectrum from Enthusiastic to Coercive",
+    "art": "guide-study-together",
+    "alt": ""
+   },
+   {
+    "heading": "What Enthusiastic Consent Looks Like",
+    "art": "consent-fundamentals/l2-1.webp",
+    "alt": "Two guides leaning toward each other with bright smiles, one giving two thumbs up, sparkles between them",
+    "size": [
+     512,
+     474
+    ]
+   },
+   {
+    "heading": "What Coercion Looks Like",
+    "art": "consent-fundamentals/l2-2.webp",
+    "alt": "A guide leaning back with an uneasy face as a large cartoon hand pushes on his shoulder",
+    "size": [
+     506,
+     489
+    ]
+   },
+   {
+    "heading": "Recognizing the Gray Areas",
+    "art": "consent-fundamentals/l2-3.webp",
+    "alt": "A guide weighing a green tick against a red cross on a balance scale, looking unsure, a grey fog cloud behind her",
+    "size": [
+     497,
+     472
+    ]
+   },
+   {
+    "heading": "Coercion Is Never the Receiver's Fault",
+    "art": "consent-fundamentals/l2-4.webp",
+    "alt": "She rests a supportive hand on his shoulder, a small shield with a heart floating beside them",
+    "size": [
+     512,
+     481
+    ]
+   },
+   {
+    "heading": "Building a Practice of Enthusiastic Consent",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "73b2086f-1",
+    "after": "What Coercion Looks Like",
+    "prompt": "Riley says no twice. Their date keeps asking and sulking until Riley gives in. What is this?",
+    "options": [
+     "Coercion",
+     "Enthusiastic consent",
+     "A healthy check-in"
+    ],
+    "answer": 0,
+    "explanation": "Coercion. Coercion involves using pressure, manipulation, or power to override someone's ability to freely choose."
+   },
+   {
+    "id": "73b2086f-2",
+    "after": "Coercion Is Never the Receiver's Fault",
+    "prompt": "Someone was pressured into saying yes. Where does the responsibility lie?",
+    "options": [
+     "With the person who applied the pressure",
+     "With the person who gave in",
+     "With both equally"
+    ],
+    "answer": 0,
+    "explanation": "With the person who applied the pressure. Regardless of the circumstances, if someone was coerced, the responsibility lies with the person who applied pressure — not the person who experienced it."
+   }
+  ]
+ },
+ "950ac1ad-1eea-473c-bc94-0466f2b4db98": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Navigating Consent Across Multiple Relationships",
+    "art": "consent-fundamentals/l3-0.webp",
+    "alt": "Three guides sitting in a circle talking, each holding up a green tick card",
+    "size": [
+     512,
+     369
+    ]
+   },
+   {
+    "heading": "Ongoing Renegotiation",
+    "art": "consent-fundamentals/l3-1.webp",
+    "alt": "Two guides sitting at a table with a calendar and two coffee cups, going over a checklist together",
+    "size": [
+     512,
+     389
+    ]
+   },
+   {
+    "heading": "Consent to One Thing Is Not Consent to Everything",
+    "art": "consent-fundamentals/l3-2.webp",
+    "alt": "A guide holding up one puzzle piece marked with a green tick while other puzzle pieces float untouched",
+    "size": [
+     461,
+     435
+    ]
+   },
+   {
+    "heading": "Metamour Agreements and Consent Networks",
+    "art": "consent-fundamentals/l3-3.webp",
+    "alt": "Linked together by a string of hearts like a network, waving at each other",
+    "size": [
+     510,
+     438
+    ]
+   },
+   {
+    "heading": "Practical Tools for Multi-Partner Consent",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "When Consent Gets Complicated",
+    "art": "consent-fundamentals/l3-5.webp",
+    "alt": "A guide holding a glowing brain in one hand and a worried heart in the other, comparing them",
+    "size": [
+     475,
+     476
+    ]
+   }
+  ],
+  "checks": [
+   {
+    "id": "950ac1ad-1",
+    "after": "Consent to One Thing Is Not Consent to Everything",
+    "prompt": "Kai agreed that their partner could go on dates. The partner assumes overnight stays are fine too. Which idea was missed?",
+    "options": [
+     "Ongoing renegotiation",
+     "Metamour agreements",
+     "Consent to one thing is not consent to everything"
+    ],
+    "answer": 2,
+    "explanation": "Consent to one thing is not consent to everything. For example: Consenting to your partner dating someone new does not mean consenting to specific sexual activities with that person."
+   },
+   {
+    "id": "950ac1ad-2",
+    "after": "When Consent Gets Complicated",
+    "prompt": "Jo said yes and truly meant it, but now feels knots in their stomach about it. What does the lesson say about this?",
+    "options": [
+     "Jo's consent was fake",
+     "Jo should hide the feeling",
+     "A yes in your head can still be hard in your heart"
+    ],
+    "answer": 2,
+    "explanation": "A yes in your head can still be hard in your heart. Sometimes in ENM, a partner may consent to something intellectually but struggle with it emotionally."
+   }
+  ]
+ },
+ "d8cb5e39-e96d-4392-8cf7-3cbe2eb3d051": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "When Consent Is Violated: Recognition, Response, and Healing",
+    "art": "guide-encourage",
+    "alt": ""
+   },
+   {
+    "heading": "Recognizing When Consent Was Absent",
+    "art": "consent-fundamentals/l4-1.webp",
+    "alt": "A guide looking thoughtfully at a traffic light showing red, one hand on her chest",
+    "size": [
+     427,
+     484
+    ]
+   },
+   {
+    "heading": "Responding When Someone Tells You Their Consent Was Violated",
+    "art": "consent-fundamentals/l4-2.webp",
+    "alt": "Two guides sitting close, she listens with full attention while he speaks, a heart-shaped ear icon above her",
+    "size": [
+     500,
+     443
+    ]
+   },
+   {
+    "heading": "Community Accountability vs. Punishment",
+    "art": "consent-fundamentals/l4-3.webp",
+    "alt": "Three guides standing in a circle around a small growing plant, hands open, repairing together",
+    "size": [
+     512,
+     454
+    ]
+   },
+   {
+    "heading": "Finding Support",
+    "art": "consent-fundamentals/l4-4.webp",
+    "alt": "A guide holding a phone in one hand and a life ring in the other, offering help",
+    "size": [
+     440,
+     483
+    ]
+   },
+   {
+    "heading": "Your Role in Consent Culture",
+    "art": "consent-fundamentals/l4-5.webp",
+    "alt": "Four guides standing side by side with linked arms, a big shield with a heart in front of them",
+    "size": [
+     512,
+     437
+    ]
+   }
+  ],
+  "checks": [
+   {
+    "id": "d8cb5e39-1",
+    "after": "Responding When Someone Tells You Their Consent Was Violated",
+    "prompt": "A friend tells you their consent was violated. What is the most helpful first response?",
+    "options": [
+     "Listen without doubting them",
+     "Ask what they did to cause it",
+     "Tell them to forget it"
+    ],
+    "answer": 0,
+    "explanation": "Listen without doubting them. Do not question their experience or perception."
+   },
+   {
+    "id": "d8cb5e39-2",
+    "after": "Community Accountability vs. Punishment",
+    "prompt": "A community wants someone to understand the harm they caused and change, not just be thrown out. What is this approach called?",
+    "options": [
+     "Punishment",
+     "Accountability",
+     "Silence"
+    ],
+    "answer": 1,
+    "explanation": "Accountability. Many communities, especially in ENM and kink spaces, are moving toward accountability-based models rather than purely punitive ones."
+   }
+  ]
+ },
+ "20612de7-667f-4c06-aa0c-9955d9964a70": {
+  "hero": {
+   "art": "consent-fundamentals/fries-hero.webp",
+   "size": [
+    329,
+    640
+   ],
+   "alt": "A guide holding up a carton of five fries, one for each letter of FRIES"
+  },
+  "mnemonic": {
+   "word": "FRIES",
+   "caption": "Five letters to remember what a real yes looks like."
+  },
+  "concepts": [
+   {
+    "heading": "Understanding Consent Through the FRIES Model",
+    "art": "guide-study-together",
+    "alt": "Two guides learning together"
+   },
+   {
+    "heading": "Freely Given",
+    "letter": "F",
+    "art": "consent-fundamentals/fries-free.webp",
+    "size": [
+     590,
+     640
+    ],
+    "alt": "One person offers an open hand while the other takes her time to decide, an open padlock between them"
+   },
+   {
+    "heading": "Reversible",
+    "letter": "R",
+    "art": "consent-fundamentals/fries-reverse.webp",
+    "size": [
+     371,
+     640
+    ],
+    "alt": "A guide holding an undo arrow sign and raising a hand to pause"
+   },
+   {
+    "heading": "Informed",
+    "letter": "I",
+    "art": "consent-fundamentals/fries-informed.webp",
+    "size": [
+     487,
+     640
+    ],
+    "alt": "Two guides reading a checklist together under a lightbulb"
+   },
+   {
+    "heading": "Enthusiastic",
+    "letter": "E",
+    "art": "consent-fundamentals/fries-enthusiastic.webp",
+    "size": [
+     430,
+     640
+    ],
+    "alt": "A guide jumping for joy beside a speech bubble with a heart"
+   },
+   {
+    "heading": "Specific",
+    "letter": "S",
+    "art": "consent-fundamentals/fries-specific.webp",
+    "size": [
+     516,
+     640
+    ],
+    "alt": "A guide pointing at a list where only one box is ticked"
+   },
+   {
+    "heading": "Why This Matters",
+    "art": "guide-high-five",
+    "alt": "Two guides sharing a high five"
+   }
+  ],
+  "checks": [
+   {
+    "id": "fries-reversible",
+    "after": "Informed",
+    "prompt": "Sam said yes to staying over. Later that night Sam says, “I’ve changed my mind. I’m going to head home.” Which part of FRIES covers this?",
+    "options": [
+     "Freely given",
+     "Reversible",
+     "Informed"
+    ],
+    "answer": 1,
+    "explanation": "Reversible. Anyone can change their mind at any time, for any reason, even if they said yes before."
+   },
+   {
+    "id": "fries-enthusiastic",
+    "after": "Specific",
+    "prompt": "Jo asks, “Want to kiss?” Riley shrugs and says, “I guess so…” Which part of FRIES is missing?",
+    "options": [
+     "Specific",
+     "Enthusiastic",
+     "Reversible"
+    ],
+    "answer": 1,
+    "explanation": "Enthusiastic. Look for a genuine, excited yes. Silence, hesitation, or “I guess so” are not enthusiasm."
+   }
+  ]
+ }
+}

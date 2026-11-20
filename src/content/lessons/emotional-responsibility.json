@@ -1,0 +1,309 @@
+{
+ "5992e693-069d-4699-99db-1cd3ca70120c": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Goleman's Four Domains of Emotional Intelligence",
+    "art": "guide-lesson-reading",
+    "alt": ""
+   },
+   {
+    "heading": "The Four Domains",
+    "art": "emotional-responsibility/l1-1.webp",
+    "alt": "A guide holding four balloons showing a mirror, a steering wheel, an ear and two linked hands",
+    "size": [
+     437,
+     512
+    ]
+   },
+   {
+    "heading": "EQ Is a Skill, Not a Trait",
+    "art": "emotional-responsibility/l1-2.webp",
+    "alt": "A guide lifting a small dumbbell shaped like a heart, flexing with a grin",
+    "size": [
+     437,
+     474
+    ]
+   },
+   {
+    "heading": "Why EQ Matters More in ENM",
+    "art": "guide-high-five",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "5992e693-1",
+    "after": "The Four Domains",
+    "prompt": "Which domain is described as the foundation of all emotional intelligence?",
+    "options": [
+     "Social awareness",
+     "Self-awareness",
+     "Relationship management"
+    ],
+    "answer": 1,
+    "explanation": "Self-awareness. Self-awareness is described as the foundation of all emotional intelligence."
+   },
+   {
+    "id": "5992e693-2",
+    "after": "EQ Is a Skill, Not a Trait",
+    "prompt": "Can emotional intelligence change over time?",
+    "options": [
+     "Only in childhood",
+     "No, you are born with it",
+     "Yes, it is a skill you can build"
+    ],
+    "answer": 2,
+    "explanation": "Yes, it is a skill you can build. One of the most important things to understand about emotional intelligence is that it is not fixed."
+   }
+  ]
+ },
+ "f00cc65f-977f-405d-8264-d650dfa597bd": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Understanding Your Nervous System Through Polyvagal Theory",
+    "art": "guide-thinking",
+    "alt": ""
+   },
+   {
+    "heading": "The Three States",
+    "art": "emotional-responsibility/l2-1.webp",
+    "alt": "A guide standing beside a traffic light with all three lights glowing",
+    "size": [
+     403,
+     482
+    ]
+   },
+   {
+    "heading": "The Window of Tolerance",
+    "art": "emotional-responsibility/l2-2.webp",
+    "alt": "A guide standing calmly inside a wide open window frame, sky behind him",
+    "size": [
+     451,
+     489
+    ]
+   },
+   {
+    "heading": "Recognizing When You're Outside Your Window",
+    "art": "emotional-responsibility/l2-3.webp",
+    "alt": "A guide noticing a thermometer rising in her hand, eyes wide",
+    "size": [
+     440,
+     483
+    ]
+   },
+   {
+    "heading": "Regulation Techniques",
+    "art": "emotional-responsibility/l2-4.webp",
+    "alt": "A guide breathing out slowly with eyes closed, one hand on his belly, a leaf floating by",
+    "size": [
+     393,
+     449
+    ]
+   },
+   {
+    "heading": "Dysregulation Is Not a Character Flaw",
+    "art": "guide-encourage",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "f00cc65f-1",
+    "after": "The Window of Tolerance",
+    "prompt": "What is the \"window of tolerance\"?",
+    "options": [
+     "A time limit for arguments",
+     "A type of boundary",
+     "The zone where you can still function well"
+    ],
+    "answer": 2,
+    "explanation": "The zone where you can still function well. The \"window of tolerance\" describes the zone of nervous system activation where you can function effectively."
+   },
+   {
+    "id": "f00cc65f-2",
+    "after": "Regulation Techniques",
+    "prompt": "You notice your heart racing in a hard talk. Which tool from the lesson fits?",
+    "options": [
+     "Raising your voice",
+     "Ignoring your body",
+     "Slow breathing with a longer exhale"
+    ],
+    "answer": 2,
+    "explanation": "Slow breathing with a longer exhale. Self-regulation (things you can do alone)."
+   }
+  ]
+ },
+ "1e5bcd97-ff56-4138-9b42-8c6fd226efb9": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Science of Emotional Connection",
+    "art": "guide-study-together",
+    "alt": ""
+   },
+   {
+    "heading": "What Are Emotional Bids?",
+    "art": "emotional-responsibility/l3-1.webp",
+    "alt": "She points happily at a bird outside, he turns toward her with a smile",
+    "size": [
+     512,
+     462
+    ]
+   },
+   {
+    "heading": "Three Responses to Bids",
+    "art": "emotional-responsibility/l3-2.webp",
+    "alt": "She reaches out a hand and he turns toward her with a warm smile",
+    "size": [
+     512,
+     377
+    ]
+   },
+   {
+    "heading": "Why This Matters",
+    "art": "guide-high-five",
+    "alt": ""
+   },
+   {
+    "heading": "Recognizing Bids in ENM",
+    "art": "emotional-responsibility/l3-4.webp",
+    "alt": "Two wave for attention from either side while the third looks back and forth",
+    "size": [
+     512,
+     359
+    ]
+   },
+   {
+    "heading": "Building a Bid Practice",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "1e5bcd97-1",
+    "after": "What Are Emotional Bids?",
+    "prompt": "Your partner says, \"Look at that sunset!\" What is that, in Gottman's terms?",
+    "options": [
+     "A complaint",
+     "An emotional bid",
+     "A boundary"
+    ],
+    "answer": 1,
+    "explanation": "An emotional bid. An emotional bid is any attempt by one person to connect with another — to get attention, affirmation, affection, or any kind of positive engagement."
+   },
+   {
+    "id": "1e5bcd97-2",
+    "after": "Three Responses to Bids",
+    "prompt": "Which response to a bid builds connection?",
+    "options": [
+     "Turning away",
+     "Turning against",
+     "Turning toward"
+    ],
+    "answer": 2,
+    "explanation": "Turning toward. Turning toward means acknowledging and engaging with the bid."
+   }
+  ]
+ },
+ "696069c9-d959-4232-a61d-c8cd363fb693": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Owning Your Emotions in Multi-Partner Relationships",
+    "art": "guide-meditate",
+    "alt": ""
+   },
+   {
+    "heading": "Emotional Responsibility vs. Emotional Caretaking",
+    "art": "emotional-responsibility/l4-1.webp",
+    "alt": "A guide carrying her own backpack with a heart on it, declining to take a second backpack offered to her",
+    "size": [
+     488,
+     448
+    ]
+   },
+   {
+    "heading": "Navigating Jealousy",
+    "art": "emotional-responsibility/l4-2.webp",
+    "alt": "A guide looking at a small green-eyed cloud sitting on his shoulder with curiosity",
+    "size": [
+     446,
+     458
+    ]
+   },
+   {
+    "heading": "Compersion",
+    "art": "emotional-responsibility/l4-3.webp",
+    "alt": "A guide beaming with joy and clapping as two small hearts dance together nearby",
+    "size": [
+     503,
+     490
+    ]
+   },
+   {
+    "heading": "New Relationship Energy (NRE)",
+    "art": "emotional-responsibility/l4-4.webp",
+    "alt": "A guide floating slightly off the ground surrounded by fizzing sparkles and hearts",
+    "size": [
+     490,
+     504
+    ]
+   },
+   {
+    "heading": "The Skill of Sitting with Discomfort",
+    "art": "emotional-responsibility/l4-5.webp",
+    "alt": "A guide sitting calmly on a bench beside a small storm cloud, letting it rain itself out",
+    "size": [
+     446,
+     512
+    ]
+   },
+   {
+    "heading": "When to Seek Support",
+    "art": "guide-high-five",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "696069c9-1",
+    "after": "Compersion",
+    "prompt": "Your partner comes home glowing after a great date and you feel happy for them. What is that feeling called?",
+    "options": [
+     "Compersion",
+     "Emotional caretaking",
+     "New relationship energy"
+    ],
+    "answer": 0,
+    "explanation": "Compersion. Compersion — feeling joy when your partner experiences happiness with another partner — is sometimes called \"the opposite of jealousy.\""
+   },
+   {
+    "id": "696069c9-2",
+    "after": "New Relationship Energy (NRE)",
+    "prompt": "Lee can think of nothing but a new partner and forgets plans with others. What is at work?",
+    "options": [
+     "The window of tolerance",
+     "New relationship energy",
+     "Compersion"
+    ],
+    "answer": 1,
+    "explanation": "New relationship energy. NRE is the intense excitement, infatuation, and preoccupation that often accompanies new romantic connections."
+   }
+  ]
+ }
+}

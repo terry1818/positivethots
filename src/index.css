@@ -1060,3 +1060,10 @@ button.lesson-chip:not(:disabled):active { translate: 0 3px; box-shadow: 0 1px 0
   .lesson-chip, .lesson-letter, .lesson-body > *, .lesson-preview li, .lesson-scenario, .lesson-option, .lesson-feedback, .lesson-recap-row *, .lesson-mnemonic .lesson-chip { animation: none !important; transition: none !important; }
   .lesson-rich .lesson-cta { transition: none; }
 }
+
+/* Lesson-complete screen: cheering characters take turns inside a fixed-height stage (no layout shift). */
+.celebration-cast { position: relative; display: grid; place-items: center; width: 100%; }
+.celebration-cast::before { content: ""; position: absolute; left: 50%; top: 50%; width: 260px; height: 260px; translate: -50% -50%; border-radius: 50%; pointer-events: none; background: conic-gradient(from 0deg, hsl(var(--primary) / .0), hsl(var(--primary) / .35), hsl(var(--art-reward) / .3), hsl(var(--primary) / .0), hsl(322 85% 58% / .3), hsl(var(--primary) / .0)); filter: blur(18px); animation: celebration-spin 9s linear infinite; }
+.celebration-cast-pose { position: relative; display: grid; place-items: center; }
+@keyframes celebration-spin { to { rotate: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .celebration-cast::before { animation: none; } }
