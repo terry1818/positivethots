@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 export type CelebrationTier = "micro" | "small" | "medium" | "large" | "epic";
 
 interface CelebrationEngineProps {
+  confettiOnly?: boolean;
   tier: CelebrationTier;
   trigger: number; // increment to fire
   onComplete?: () => void;
@@ -38,6 +39,7 @@ export const CelebrationEngine = ({
   stats,
   onShare,
   children,
+  confettiOnly = false,
 }: CelebrationEngineProps) => {
   const reducedMotion = useReducedMotion();
   const [active, setActive] = useState(false);
@@ -51,7 +53,7 @@ export const CelebrationEngine = ({
 
     // Sound — plays are already gated by the in-memory sound preference in useSoundEffects
     const soundEnabled = true;
-    if (soundEnabled && !reducedMotion) {
+    if (soundEnabled && !reducedMotion && !confettiOnly) {
       if (tier === "small") playBadgeUnlockSound();
       else if (tier === "medium") playCelebrationSound();
       else if (tier === "large") playMatchSound();
@@ -59,13 +61,14 @@ export const CelebrationEngine = ({
     }
 
     // Haptic
-    if (tier === "small") haptic(50);
+    if (confettiOnly) { /* FinishSequence owns sound and haptic once. */ }
+    else if (tier === "small") haptic(50);
     else if (tier === "medium") haptic([50, 30, 100]);
     else if (tier === "large") haptic([100, 50, 100, 50, 200]);
     else if (tier === "epic") haptic([200, 100, 200, 100, 300]);
 
     // Show modal for medium+
-    if (tier === "medium" || tier === "large" || tier === "epic") {
+    if (!confettiOnly && (tier === "medium" || tier === "large" || tier === "epic")) {
       setShowModal(true);
     }
 
@@ -85,6 +88,7 @@ export const CelebrationEngine = ({
   }, [onComplete]);
 
   if (!active && !showModal) return null;
+  if (confettiOnly) return reducedMotion ? null : <ConfettiSystem intensity="heavy" trigger={confettiTrigger} duration={900} />;
 
   // MICRO: inline flash + XP pop
   if (tier === "micro") {

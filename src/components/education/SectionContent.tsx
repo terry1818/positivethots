@@ -289,33 +289,17 @@ export const SectionContent = ({
   userId,
   onReflectionSaved,
 }: SectionContentProps) => {
-  const [showBanner, setShowBanner] = useState(false);
-
+  const [saving, setSaving] = useState(false);
   const handleMarkComplete = async () => {
-    if (!isCompleted) {
-      const awarded = await onComplete();
-      if (awarded === null) return;
-      if (awarded > 0) {
-        setShowBanner(true);
-        setTimeout(() => setShowBanner(false), 2500);
-      }
-    }
-    onNext();
+    if (saving) return;
+    setSaving(true);
+    try { await onComplete(); } finally { setSaving(false); }
   };
 
   const takeaway = section.content_text ? extractTakeaway(section.content_text) : "";
 
   return (
     <div className="space-y-6 relative">
-      {showBanner && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-banner-slide">
-          <div className="bg-success text-success-foreground px-6 py-2 rounded-full font-bold text-sm shadow-lg flex items-center gap-2">
-            <CheckCircle className="h-4 w-4" />
-            Section Complete! +10 XP ⚡
-          </div>
-        </div>
-      )}
-
       {/* Section header */}
       <div className="flex items-center gap-2 text-sm text-foreground/70">
         {contentTypeIcons[section.content_type] || contentTypeIcons.article}
@@ -429,7 +413,7 @@ export const SectionContent = ({
         >
           Previous
         </Button>
-        <Button onClick={handleMarkComplete} className="flex-1">
+        <Button onClick={handleMarkComplete} disabled={saving} className="flex-1">
           {isLast ? "Take Module Quiz" : isCompleted ? "Next Section" : "Complete & Continue"}
         </Button>
       </div>

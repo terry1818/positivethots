@@ -1,9 +1,15 @@
 import { useState } from "react";
 import { CelebrationModal } from "@/components/education/CelebrationModal";
 import { Button } from "@/components/ui/button";
+import { lazy, Suspense } from "react";
+const FinishSequence = lazy(() => import("@/components/education/FinishSequence"));
 
 const CelebrationDemo = () => {
   const [demoType, setDemoType] = useState<"level_up" | "streak_milestone" | "badge_earned" | "tier_complete" | null>(null);
+
+  if (demoType === "tier_complete") return <Suspense fallback={null}><FinishSequence
+    data={{ kind: "badge", moduleId: "demo", node: "badge", title: "Consent & Boundaries", slug: "consent-fundamentals", tier: "foundation", xp: 50, oldXP: 250, level: 3, accuracy: 80, questions: 5, tierComplete: true, tierLabel: "Foundation", features: ["Discovery", "Distance Radar"] }}
+    onBack={() => setDemoType(null)} onDiscovery={() => setDemoType(null)} /></Suspense>;
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 p-8">

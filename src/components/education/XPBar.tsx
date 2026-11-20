@@ -1,12 +1,17 @@
+import { m } from "motion/react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { duration } from "@/lib/motionTokens";
 import { getXPForNextLevel, getXPForCurrentLevel, getLevelName, getNextReward } from "@/hooks/useLearningStats";
 import { Zap } from "lucide-react";
 
 interface XPBarProps {
+  initialXP?: number;
   totalXP: number;
   level: number;
 }
 
-export const XPBar = ({ totalXP, level }: XPBarProps) => {
+export const XPBar = ({ totalXP, level, initialXP }: XPBarProps) => {
+  const reduced = useReducedMotion();
   const topLevel = level >= 10;
   const currentLevelXP = getXPForCurrentLevel(level);
   const nextLevelXP = getXPForNextLevel(level);
@@ -17,6 +22,7 @@ export const XPBar = ({ totalXP, level }: XPBarProps) => {
   const nextReward = getNextReward(level);
   const nextLevelName = getLevelName(level + 1);
 
+  const oldPercent = initialXP === undefined ? percent : topLevel ? 100 : Math.max(0, Math.min(100, (initialXP - currentLevelXP) / xpNeeded * 100));
   return (
     <div className="space-y-1 w-full">
       {/* Bar row */}
@@ -26,10 +32,8 @@ export const XPBar = ({ totalXP, level }: XPBarProps) => {
           <span className="text-base font-bold text-accent">{totalXP} XP</span>
         </div>
         <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-accent to-primary rounded-full transition-all duration-700 ease-out"
-            style={{ width: `${percent}%` }}
-          />
+          <m.div className="h-full w-full origin-left bg-gradient-to-r from-accent to-primary rounded-full"
+            initial={reduced ? false : { scaleX: oldPercent / 100 }} animate={{ scaleX: percent / 100 }} transition={{ duration: reduced ? 0 : duration.slow }} />
         </div>
         <span className="text-base text-muted-foreground shrink-0 font-medium">
           {topLevel ? "Lv.10" : `Lv.${level} → ${level + 1}`}

@@ -1,3 +1,9 @@
+# Learn 08 finish flow
+- [x] Add lazy finish sequence for lessons, badges and reviews; actual awarded XP and transient path completion reaction.
+- [x] Checks 1, 3, 5–7: real lessons/checkpoints saved, real badges/results/tier sequence, transient state cleared, static reduced-motion/confetti suppression, no stacked celebrations; 47 tests and build passed. Real Tier Review reward outage retried and returned awarded=0 correctly.
+- [x] Check 2: first-day/streak and level steps verified with isolated browser fixtures and unit tests; second-day lesson omission verified live. A fresh UTC-day payout was unavailable at the account's current daily ceiling.
+- [ ] Check 4 Discovery browsing: final Foundation badge and “Discovery is open” verified live, but the account has no profile row and existing Discovery redirects it to /auth; unrelated profile/onboarding logic left unchanged.
+
 # Learn 07 feedback and mastery
 - [x] Add feedback sheets, combo milestones, mastery queue and server completion; preserve legacy submit_quiz and review rewards.
 - [x] Checks 1–6 verified: real green/pink non-dismissible focused sheets; original-index shuffled revisit; 3-label and 5-gold; regular-member 80% and 60% badge scores persisted; 50 XP after mastery (later award 0 at existing UTC daily ceiling); incomplete RPC gives remaining with no badge/XP changes; no anti-cheat/tab-switch effects. Badge-save retry, review no badge/XP writes, three-miss real lesson reread and remaining recovery verified; 42 tests/build passed.

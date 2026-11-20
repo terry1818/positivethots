@@ -1,7 +1,7 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useTutorialState } from "@/hooks/useTutorialState";
 import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionStore } from "@/stores/sessionStore";
 import { Button } from "@/components/ui/button";
@@ -66,6 +66,15 @@ const Learn = () => {
   const [hasSpunToday, setHasSpunToday] = useState(true); // default true to prevent flash
   const [showStreakInterstitial, setShowStreakInterstitial] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [justCompleted] = useState<{moduleId: string; node: string; oldXP?: number} | undefined>(() => location.state?.justCompleted);
+  const clearedFinish = useRef(false);
+  useEffect(() => {
+    if (!loading && justCompleted && !clearedFinish.current) {
+      clearedFinish.current = true;
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [loading, justCompleted, navigate, location.pathname]);
   const handleModuleSearch = useCallback((q: string) => setModuleSearchQuery(q.toLowerCase()), []);
   const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak, awardXP } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
@@ -354,7 +363,7 @@ const Learn = () => {
           {/* Row 2: XP bar */}
           {stats && (
             <div data-tour="learn-xp-bar">
-              <XPBar totalXP={stats.total_xp} level={calculateLevel(stats.total_xp)} />
+              <XPBar totalXP={stats.total_xp} level={calculateLevel(stats.total_xp)} initialXP={justCompleted?.oldXP} />
             </div>
           )}
         </div>
@@ -393,7 +402,7 @@ const Learn = () => {
             sections={pathSections} completedSectionIds={completedSectionIds} startedSectionIds={startedSectionIds}
             onModuleClick={slug => navigate(`/learn/${slug}`)} tierFeatures={tiers}
             currentModuleId={nextTarget?.review ? undefined : nextTarget?.module.id}
-            currentStarted={nextTarget?.started || false}
+            currentStarted={nextTarget?.started || false} justCompleted={justCompleted}
           />
         </div>
 

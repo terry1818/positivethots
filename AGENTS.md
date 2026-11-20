@@ -14,3 +14,5 @@
 - Card lessons split unchanged source text with the pure lessonCards helper; position writes are serialized and retry off-screen, while completion awaits markComplete before validated section XP. Article view shares the same grading and completion flow.
 
 - Badge checks requeue missed questions with original option indexes, complete server mastery before XP, and skip badge/XP writes in earned-badge review; tier reviews retain their existing one-pass reward flow.
+
+- Learn finishes use a lazy full-screen ordered sequence and transient router completion state; completion precedes XP and in-memory retries survive navigation without duplicate rewards.

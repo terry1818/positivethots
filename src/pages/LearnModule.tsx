@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { lazy, Suspense, useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -13,8 +13,11 @@ import { type QuizAnswer, type QuizResult } from "@/lib/quizAnswers";
 import { ExerciseSession } from "@/components/education/ExerciseSession";
 import { lessonEntry } from "@/lib/learnLevels";
 import { useSessionStore } from "@/stores/sessionStore";
-import { XPPopup } from "@/components/education/XPPopup";
-import { CelebrationModal } from "@/components/education/CelebrationModal";
+import { type FinishData } from "@/lib/learnFinish";
+import { retryFinish } from "@/lib/finishRetry";
+import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
+const FinishSequence = lazy(() => import("@/components/education/FinishSequence"));
+
 import { ReadingProgress } from "@/components/education/ReadingProgress";
 import { LessonPlayer, LessonPlayerSkeleton, LessonViewMenu } from "@/components/education/LessonPlayer";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
@@ -22,7 +25,7 @@ import { WhatYoullLearn } from "@/components/education/WhatYoullLearn";
 
 import type { MasteryResult } from "@/lib/quizMastery";
 import { useModuleProgress } from "@/hooks/useModuleProgress";
-import { useLearningStats, LEVEL_REWARDS } from "@/hooks/useLearningStats";
+import { useLearningStats } from "@/hooks/useLearningStats";
 import { ChevronLeft, CheckCircle, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { SEO } from "@/components/SEO";
@@ -97,45 +100,11 @@ const LearnModule = () => {
 
   // XP & celebrations
   const { stats, awardXP } = useLearningStats();
-  const [xpPopup, setXpPopup] = useState<{ show: boolean; amount: number }>({ show: false, amount: 0 });
-  const [celebration, setCelebration] = useState<{
-    type: "level_up" | "streak_milestone" | "badge_earned" | "tier_complete" | null;
-    level?: number;
-    streak?: number;
-    badgeTitle?: string;
-    badgeSlug?: string;
-    badgeTier?: string | null;
-    isFoundationComplete?: boolean;
-    tierName?: string;
-  }>({ type: null });
-
-  // Helper: after earning this badge, did the user just complete the
-  // 5th Foundation badge (which unlocks Discovery)?
-  const checkFoundationComplete = useCallback(async (justEarnedModuleId: string): Promise<boolean> => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return false;
-      const { data: foundationModules } = await supabase
-        .from("education_modules")
-        .select("id")
-        .eq("tier", "foundation");
-      if (!foundationModules || foundationModules.length === 0) return false;
-      const foundationIds = new Set(foundationModules.map(m => m.id));
-      // Only treat this as a Foundation completion if the badge we just
-      // earned is itself a Foundation badge.
-      if (!foundationIds.has(justEarnedModuleId)) return false;
-      const { data: earnedBadges } = await supabase
-        .from("user_badges")
-        .select("module_id")
-        .eq("user_id", session.user.id);
-      if (!earnedBadges) return false;
-      const earnedFoundationCount = earnedBadges.filter(b => foundationIds.has(b.module_id)).length;
-      return earnedFoundationCount >= foundationModules.length;
-    } catch (e) {
-      console.error("Foundation completion check failed:", e);
-      return false;
-    }
-  }, []);
+  const [finish, setFinish] = useState<FinishData | null>(null);
+  const { tiers } = useFeatureUnlocks();
+  const awardRef = useRef(awardXP); awardRef.current = awardXP;
+  const lessonStarted = useRef(Date.now());
+  useEffect(() => { lessonStarted.current = Date.now(); }, [slug]);
 
   // Module progress for sections
   const [moduleId, setModuleId] = useState<string>("");
@@ -184,8 +153,7 @@ const LearnModule = () => {
   }, [currentSectionIndex]);
 
   const handleReflectionSaved = useCallback(async (sectionId: string) => {
-    const result = await awardXP(5, "reflection", sectionId);
-    setXpPopup({ show: result.newXP > 0, amount: result.newXP });
+    await awardXP(5, "reflection", sectionId);
   }, [awardXP]);
 
   const loadModule = async () => {
@@ -231,65 +199,94 @@ const LearnModule = () => {
     }
   };
 
-  // Persist section completion before asking the server for its XP award.
+  // Completion is saved before rewards; retries outlive this screen.
+  const sectionBusy = useRef(false);
   const handleSectionComplete = useCallback(async (sectionId: string) => {
-    try {
-      await markComplete(sectionId);
-      const result = await awardXP(10, "section_complete", sectionId);
-      setXpPopup({ show: result.newXP > 0, amount: result.newXP });
-
-      if (result.leveledUp) {
-        const newLevel = result.newLevel;
-        setTimeout(() => setCelebration({ type: "level_up", level: newLevel }), 1600);
-
-        const reward = LEVEL_REWARDS[newLevel];
-        if (reward) {
-          setTimeout(() => {
-            toast.success(`${reward.icon} Level ${newLevel} reward: ${reward.label}!`, {
-              description: "Added to your account automatically.",
-              duration: 5000,
-            });
-          }, 2400);
-        }
-      } else if (result.streakMilestone) {
-        setTimeout(() => setCelebration({ type: "streak_milestone", streak: result.newStreak }), 1600);
-        try {
-          await supabase.functions.invoke('grant-streak-reward', { body: { streak: result.newStreak } });
-        } catch (e) {
-          console.error("Failed to grant streak reward:", e);
-        }
-      }
+    if (sectionBusy.current) return 0;
+    sectionBusy.current = true;
+    const section = sections.find(s => s.id === sectionId);
+    const repeat = sectionProgress.some(p => p.section_id === sectionId && p.completed);
+    const checkpoints = checkpointQuestions.filter(q => q.section_id === sectionId);
+    const today = new Date().toISOString().slice(0, 10);
+    let firstToday = false;
+    let checkpointCount = 0;
+    const base: FinishData = {
+      kind: "lesson", moduleId, node: `lesson-${section?.section_number || 1}`,
+      title: module?.title || "", slug: module?.slug || "", tier: module?.tier || "foundation",
+      xp: repeat ? 0 : null, oldXP: stats?.total_xp || 0, oldStreak: stats?.current_streak || 0,
+      checkpointTotal: checkpoints.length, checkpoints: 0,
+      seconds: Math.round((Date.now() - lessonStarted.current) / 1000),
+      lessonsDone: new Set([...sectionProgress.filter(p => p.completed).map(p => p.section_id), sectionId]).size,
+      lessonTotal: sections.length, saving: !repeat,
+    };
+    let saved = repeat;
+    const persist = async () => {
+      if (!saved) { await markComplete(sectionId); saved = true; }
+      const result = await awardRef.current(10, "section_complete", sectionId, true);
+      setFinish(previous => previous ? { ...previous, xp: result.newXP, newXP: result.totalXP,
+        saving: false, firstLessonToday: firstToday && !repeat, streak: result.newStreak,
+        level: result.leveledUp ? result.newLevel : undefined } : previous);
       return result.newXP;
+    };
+    try {
+      if (userId) {
+        const [daily, performance] = await Promise.all([
+          supabase.from("user_section_progress").select("section_id", { count: "exact", head: true }).eq("user_id", userId).eq("completed", true).gte("last_accessed", `${today}T00:00:00Z`),
+          supabase.from("user_quiz_performance").select("question_id").eq("user_id", userId).in("question_id", checkpoints.map(q => q.id)),
+        ]);
+        firstToday = !daily.error && daily.count === 0;
+        checkpointCount = new Set(performance.data?.map(p => p.question_id)).size;
+      }
+      base.checkpoints = checkpointCount;
+      if (repeat) { setFinish({ ...base, saving: false }); return 0; }
+      await markComplete(sectionId); saved = true;
+      setFinish({ ...base, firstLessonToday: firstToday });
+      return await persist();
     } catch (error) {
-      console.error("Section completion failed:", error);
-      void reportError(error instanceof Error ? error : new Error("Section completion failed"));
-      toast.error("We couldn't save your progress. Please try again.");
-      return null;
-    }
-  }, [markComplete, awardXP, stats]);
+      void reportError(error instanceof Error ? error : new Error("Lesson finish failed"));
+      setFinish(previous => previous || { ...base, saving: true });
+      retryFinish(`lesson:${userId}:${sectionId}`, async () => { await persist(); });
+      return 0;
+    } finally { sectionBusy.current = false; }
+  }, [sections, sectionProgress, checkpointQuestions, moduleId, module, stats, userId, markComplete]);
 
-  const handleSubmitQuiz = async (realAnswers: QuizAnswer[], startedAt: string, reviewSummary?: QuizResult) => {
+  const handleSubmitQuiz = async (realAnswers: QuizAnswer[], startedAt: string, reviewSummary?: QuizResult, background = false) => {
     if (!module || !userId || masteryBusy.current) return;
     setSessionAnswers(realAnswers); setSessionStartedAt(startedAt); setSubmissionError(false); setRemaining(null);
-    if (reviewSession) { if (reviewSummary) setQuizResult(reviewSummary); return; }
+    if (reviewSession) {
+      if (reviewSummary) setFinish({ kind: "review", moduleId, node: "badge", title: module.title, slug: module.slug, tier: module.tier || "foundation", xp: 0, oldXP: stats?.total_xp || 0, accuracy: reviewSummary.score, questions: reviewSummary.total });
+      return;
+    }
     masteryBusy.current = true; setSubmitting(true);
     try {
       const { data, error } = await supabase.rpc("complete_module_mastery", { _module_id: module.id, _session_started_at: startedAt });
       if (error) throw error;
       const result = data as unknown as MasteryResult;
       if (!result || typeof result.passed !== "boolean") throw new Error("Invalid mastery result");
-      if (!result.passed) { setRemaining(result.remaining || []); return; }
+      if (!result.passed) { setFinish(null); setRemaining(result.remaining || []); return; }
       if (typeof result.score !== "number" || typeof result.first_try_correct !== "number" || typeof result.total !== "number") throw new Error("Invalid mastery score");
       setQuizResult({ score: result.score, correct: result.first_try_correct, total: result.total, passed: true });
       setIsAlreadyCompleted(true);
       void reloadProgress();
-      const isFoundationComplete = await checkFoundationComplete(module.id);
-      setTimeout(() => setCelebration({ type: "badge_earned", badgeTitle: module.title, badgeSlug: module.slug, badgeTier: module.tier, isFoundationComplete }), 1600);
-      const xpResult = await awardXP(result.score === 100 ? 75 : 50, result.score === 100 ? "quiz_perfect" : "quiz_pass", module.id);
-      setXpPopup({ show: xpResult.newXP > 0, amount: xpResult.newXP });
+      const base: FinishData = { kind: "badge", moduleId, node: "badge", title: module.title, slug: module.slug, tier: module.tier || "foundation", xp: null, oldXP: stats?.total_xp || 0, accuracy: result.score, questions: result.total, saving: true };
+      setFinish(base);
+      const reward = async () => {
+        const tier = tiers.find(t => t.tier === module.tier);
+        const { data: badges, error: badgeError } = await supabase.from("user_badges").select("module_id").eq("user_id", userId);
+        const { data: tierModules, error: tierError } = await supabase.from("education_modules").select("id").eq("tier", module.tier || "foundation");
+        if (badgeError || tierError) throw badgeError || tierError;
+        const ids = new Set(badges?.map(b => b.module_id));
+        const tierComplete = Boolean(tierModules?.length && tierModules.every(m => ids.has(m.id)));
+        const xp = await awardRef.current(result.score === 100 ? 75 : 50, result.score === 100 ? "quiz_perfect" : "quiz_pass", module.id, true);
+        setFinish(previous => previous ? { ...previous, xp: xp.newXP, newXP: xp.totalXP, level: xp.leveledUp ? xp.newLevel : undefined, tierComplete, tierLabel: tier?.label || module.tier || "", features: tier?.features.map(f => f.label) || [], saving: false } : previous);
+      };
+      try { await reward(); } catch (error) { void reportError(error instanceof Error ? error : new Error("Badge reward failed")); retryFinish(`badge:${userId}:${moduleId}`, reward); }
     } catch (error) {
       setSubmissionError(true);
       void reportError(error instanceof Error ? error : new Error("Could not save mastery"));
+      if (background) throw error;
+      setFinish({ kind: "review", moduleId, node: "badge", title: module.title, slug: module.slug, tier: module.tier || "foundation", xp: null, oldXP: stats?.total_xp || 0, accuracy: reviewSummary?.score, questions: questions.length, saving: true });
+      retryFinish(`mastery:${userId}:${moduleId}`, () => handleSubmitQuiz(realAnswers, startedAt, reviewSummary, true));
     } finally { masteryBusy.current = false; setSubmitting(false); }
   };
 
@@ -322,6 +319,9 @@ const LearnModule = () => {
 
   const canTakeQuiz = !hasSections || allSectionsComplete;
 
+  if (finish) return <Suspense fallback={<LessonPlayerSkeleton />}><FinishSequence data={finish}
+    onBack={() => { useSessionStore.getState().setSessionData("learn-return-node", null); navigate("/learn", { state: { justCompleted: { moduleId: finish.moduleId, node: finish.node, oldXP: finish.oldXP } } }); }}
+    onDiscovery={() => navigate("/")} /></Suspense>;
   if (loading) {
     return <LessonPlayerSkeleton />;
   }
@@ -340,9 +340,7 @@ const LearnModule = () => {
         isCompleted={sectionProgress.some(p => p.section_id === currentSection.id && p.completed)} userId={userId}
         onSavePosition={index => void saveCardPosition(currentSection.id, index)} onExit={backToPath} onArticle={switchLessonView}
         onComplete={() => handleSectionComplete(currentSection.id)} onReflectionSaved={() => handleReflectionSaved(currentSection.id)}
-        onNext={() => { if (currentSectionIndex < sections.length - 1) setCurrentSectionIndex(currentSectionIndex + 1); else setShowQuiz(true); }} />
-      <XPPopup amount={xpPopup.amount} show={xpPopup.show} onDone={() => setXpPopup({ show: false, amount: 0 })} />
-      <CelebrationModal type={celebration.type} level={celebration.level} streak={celebration.streak} onClose={() => setCelebration({ type: null })} />
+        onNext={() => {}} />
     </>;
   }
 
@@ -370,21 +368,6 @@ const LearnModule = () => {
       )}
       {/* Reading progress bar */}
       {!showQuiz && <ReadingProgress />}
-
-      {/* XP Popup */}
-      <XPPopup amount={xpPopup.amount} show={xpPopup.show} onDone={() => setXpPopup({ show: false, amount: 0 })} />
-      {/* Celebration Modal */}
-      <CelebrationModal
-        type={celebration.type}
-        level={celebration.level}
-        streak={celebration.streak}
-        badgeTitle={celebration.badgeTitle}
-        badgeSlug={celebration.badgeSlug}
-        badgeTier={celebration.badgeTier}
-        isFoundationComplete={celebration.isFoundationComplete}
-        tierName={celebration.tierName}
-        onClose={() => setCelebration({ type: null })}
-      />
 
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-10">
@@ -438,10 +421,7 @@ const LearnModule = () => {
                     section={sections[currentSectionIndex]}
                     isCompleted={sectionProgress.some(p => p.section_id === sections[currentSectionIndex].id && p.completed)}
                     onComplete={() => handleSectionComplete(sections[currentSectionIndex].id)}
-                    onNext={() => {
-                      if (currentSectionIndex < sections.length - 1) setCurrentSectionIndex(currentSectionIndex + 1);
-                      else setShowQuiz(true);
-                    }}
+                    onNext={() => {}}
                     onPrev={() => { if (currentSectionIndex > 0) setCurrentSectionIndex(currentSectionIndex - 1); }}
                     isFirst={currentSectionIndex === 0}
                     isLast={currentSectionIndex === sections.length - 1}

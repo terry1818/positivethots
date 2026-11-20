@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ExerciseSession } from "@/components/education/ExerciseSession";
@@ -9,6 +9,8 @@ import { reportError } from "@/lib/errorReporting";
 import { reviewSourceId } from "@/lib/learnLevels";
 import type { XPAwardResult } from "@/lib/xpAward";
 import type { QuizResult } from "@/lib/quizAnswers";
+import { retryFinish } from "@/lib/finishRetry";
+const FinishSequence = lazy(() => import("@/components/education/FinishSequence"));
 import { ChevronLeft } from "lucide-react";
 
 export default function TierReview() {
@@ -47,15 +49,16 @@ export default function TierReview() {
   };
   useEffect(() => { void load(); }, [tier]);
   const finish = async (summary: QuizResult) => {
-    if (saving || result) return;
-    setFinished(summary); setSaving(true); setSaveError(false);
+    if (saving) return;
+    setFinished(summary); setResult(summary); setSaving(true); setSaveError(false);
     try {
       const { data, error } = await supabase.rpc("award_xp", { _user_id: userId, _amount: 30, _source: "tier_review", _source_id: reviewSourceId(tier) });
       if (error) throw error;
       setAwarded((data as unknown as XPAwardResult).awarded); setResult(summary);
-    } catch (e) { setSaveError(true); void reportError(e instanceof Error ? e : new Error("Review reward failed")); }
+    } catch (e) { setSaveError(true); void reportError(e instanceof Error ? e : new Error("Review reward failed")); retryFinish(`review:${userId}:${reviewSourceId(tier)}`, async () => { const {data,error} = await supabase.rpc("award_xp", { _user_id: userId, _amount: 30, _source: "tier_review", _source_id: reviewSourceId(tier) }); if(error) throw error; setAwarded((data as unknown as XPAwardResult).awarded); setSaveError(false); }); }
     finally { setSaving(false); }
   };
+  if (result) return <Suspense fallback={<PageSkeleton variant="learn" />}><FinishSequence data={{ kind: "review", moduleId: tier, node: "review", title: "Tier Review", slug: "", tier, xp: awarded, oldXP: 0, accuracy: result.score, questions: result.total, saving: saving || saveError }} onBack={() => navigate("/learn")} /></Suspense>;
   if (loading) return <PageSkeleton variant="learn" />;
   const back = () => navigate("/learn");
   if (error || locked || !questions.length) return <BrandedEmptyState mascot="graduate" description="" headline={error ? "We couldn't load your path." : locked ? "Earn 2 badges in this tier to unlock" : "Nothing to review yet. Earn a badge first."} ctaLabel={error ? "Try again" : "Back to my path"} onCtaClick={error ? () => void load() : back} />;

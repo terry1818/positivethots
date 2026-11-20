@@ -69,7 +69,7 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
     if (busy.current || finished.current) return;
     busy.current = true; setFinishing(true); setCompletionError(false);
     try {
-      if (!isCompleted) { const award = await onComplete(); if (award === null) { setCompletionError(true); return; } }
+      const award = await onComplete(); if (award === null) { setCompletionError(true); return; }
       finished.current = true; onNext();
     } finally { busy.current = false; setFinishing(false); }
   }, [isCompleted, onComplete, onNext]);

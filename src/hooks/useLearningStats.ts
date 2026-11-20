@@ -210,8 +210,11 @@ export const useLearningStats = () => {
     loadStats();
   }, [loadStats]);
 
-  const awardXP = useCallback(async (amount: number, source: string, sourceId?: string): Promise<{ newXP: number; newLevel: number; leveledUp: boolean; newStreak: number; streakMilestone: boolean; freezeUsed: boolean }> => {
-    if (!stats || !userId) return { newXP: 0, newLevel: 1, leveledUp: false, newStreak: 0, streakMilestone: false, freezeUsed: false };
+  const awardXP = useCallback(async (amount: number, source: string, sourceId?: string, quietRetry = false): Promise<{ newXP: number; newLevel: number; leveledUp: boolean; newStreak: number; streakMilestone: boolean; freezeUsed: boolean; totalXP?: number }> => {
+    if (!stats || !userId) {
+      if (quietRetry) throw new Error("Learning stats not ready");
+      return { newXP: 0, newLevel: 1, leveledUp: false, newStreak: 0, streakMilestone: false, freezeUsed: false };
+    }
 
     const today = new Date().toISOString().split("T")[0];
 
@@ -229,7 +232,7 @@ export const useLearningStats = () => {
       const feedback = xpAwardFeedback(result, stats.current_level);
       if (result.awarded === 0) {
         setStats(prev => prev ? { ...prev, total_xp: result.new_xp, current_level: result.new_level, current_streak: result.new_streak, streak_freezes: result.freezes_remaining } : prev);
-        return { ...feedback, streakMilestone: false };
+        return { ...feedback, totalXP: result.new_xp, streakMilestone: false };
       }
       const { leveledUp, freezeUsed } = feedback;
       const streakMilestone = isStreakMilestone(result.new_streak);
@@ -311,10 +314,11 @@ export const useLearningStats = () => {
         setSectionsToday(prev => prev + 1);
       }
 
-      return { ...feedback, streakMilestone };
+      return { ...feedback, totalXP: result.new_xp, streakMilestone };
     } catch (err) {
       console.error("Error awarding XP:", err);
       void reportError(err instanceof Error ? err : new Error("Error awarding XP"));
+      if (quietRetry) throw err;
       toast.error("Could not save your XP. Please try again.");
       return { newXP: 0, newLevel: stats.current_level, leveledUp: false, newStreak: stats.current_streak, streakMilestone: false, freezeUsed: false };
     }
