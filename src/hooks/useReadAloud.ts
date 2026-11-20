@@ -64,7 +64,8 @@ async function fetchCloudAudio(text: string, voice: VoiceGender, speed: number):
   }
 }
 
-export function useReadAloud(onEnd?: () => void) {
+export function useReadAloud(onEnd?: () => void, onUnavailable?: () => void) {
+  const unavailableRef = useRef(onUnavailable); unavailableRef.current = onUnavailable;
   const onEndRef = useRef(onEnd);
   onEndRef.current = onEnd;
   const requestRef = useRef(0);
@@ -86,14 +87,14 @@ export function useReadAloud(onEnd?: () => void) {
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-    refreshVoice();
+    if (typeof window === "undefined") return;
+    const speechAvailable = "speechSynthesis" in window;
+    if (speechAvailable) refreshVoice();
     const handler = () => refreshVoice();
-    window.speechSynthesis.addEventListener("voiceschanged", handler);
+    if (speechAvailable) window.speechSynthesis.addEventListener("voiceschanged", handler);
     return () => {
       requestRef.current++;
-      window.speechSynthesis.removeEventListener("voiceschanged", handler);
-      window.speechSynthesis.cancel();
+      if (speechAvailable) { window.speechSynthesis.removeEventListener("voiceschanged", handler); window.speechSynthesis.cancel(); }
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
@@ -107,15 +108,16 @@ export function useReadAloud(onEnd?: () => void) {
   }, []);
 
   const playWithSpeechSynthesis = useCallback((text: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) { unavailableRef.current?.(); return; }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     const voices = window.speechSynthesis.getVoices();
+    if (!voices.length && unavailableRef.current) { setIsPlaying(false); setIsPaused(false); unavailableRef.current(); return; }
     const best = pickBestVoice(voices, voiceGender);
     if (best) utterance.voice = best;
     utterance.rate = rate;
     utterance.onend = () => { setIsPlaying(false); setIsPaused(false); onEndRef.current?.(); };
-    utterance.onerror = () => { setIsPlaying(false); setIsPaused(false); };
+    utterance.onerror = () => { setIsPlaying(false); setIsPaused(false); unavailableRef.current?.(); };
     utteranceRef.current = utterance;
     usingCloudRef.current = false;
     window.speechSynthesis.speak(utterance);

@@ -33,6 +33,7 @@ import { LearnToday } from "@/components/education/LearnToday";
 import { LearnContinueBar } from "@/components/education/LearnContinueBar";
 import { nextLearningTarget } from "@/lib/learnHome";
 import { useTotalBadgeCount } from "@/hooks/useTotalBadgeCount";
+import type { PathScenario } from "@/lib/mixedNodes";
 import type { LessonSection } from "@/lib/learnLevels";
 import { reportError } from "@/lib/errorReporting";
 
@@ -56,6 +57,9 @@ const Learn = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   
+  const [scenarios,setScenarios] = useState<PathScenario[]>([]);
+  const [optionalDone,setOptionalDone] = useState<Record<string,Set<string>>>({});
+  const [questionModules,setQuestionModules] = useState<Set<string>>(new Set());
   const [pathSections, setPathSections] = useState<LessonSection[]>([]);
   const [completedSectionIds, setCompletedSectionIds] = useState<Set<string>>(new Set());
   const [startedSectionIds, setStartedSectionIds] = useState<Set<string>>(new Set());
@@ -113,16 +117,31 @@ const Learn = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) { navigate("/auth"); return; }
-      const [modulesResult, badgesResult, sectionsResult, progressResult] = await Promise.all([
+      const [modulesResult, badgesResult, sectionsResult, progressResult, scenariosResult, storyProgress, rewardsResult, xpResult, countsResult, optionalPrefs] = await Promise.all([
         supabase.from("education_modules").select("*").order("order_index"),
         supabase.from("user_badges").select("module_id, earned_at").eq("user_id", session.user.id),
         supabase.from("module_sections").select("id, module_id, section_number, title").order("section_number"),
         supabase.from("user_section_progress").select("section_id, completed").eq("user_id", session.user.id),
+        supabase.from("education_scenarios").select("id,module_id,scenario_slug,title").order("scenario_slug"),
+        supabase.from("user_scenario_progress").select("scenario_id,completed").eq("user_id",session.user.id),
+        supabase.from("user_path_rewards").select("module_id").eq("user_id",session.user.id),
+        supabase.from("xp_transactions").select("source,source_id").eq("user_id",session.user.id).in("source",["practice","listen"]),
+        supabase.rpc("get_module_counts"),
+        supabase.from("user_preferences").select("key,value").eq("user_id",session.user.id).like("key","learn_optional:%"),
       ]);
       if (modulesResult.error) throw modulesResult.error;
       if (badgesResult.error) throw badgesResult.error;
       if (sectionsResult.error) throw sectionsResult.error;
       if (progressResult.error) throw progressResult.error;
+      if(scenariosResult.error || storyProgress.error || rewardsResult.error || xpResult.error || countsResult.error) throw scenariosResult.error || storyProgress.error || rewardsResult.error || xpResult.error || countsResult.error;
+      const stories=scenariosResult.data||[];setScenarios(stories);
+      const optional:Record<string,Set<string>>={}; const done=(mid:string,node:string)=>{(optional[mid] ||= new Set()).add(node);};
+      for(const p of storyProgress.data||[]){const story=stories.find(s=>s.id===p.scenario_id);if(p.completed&&story)done(story.module_id,`story:${story.id}`);}
+      for(const r of rewardsResult.data||[])done(r.module_id,"chest");
+      const practiceDay=new Date().toISOString().slice(0,10);
+      for(const x of xpResult.data||[]){if(x.source==="listen"&&x.source_id)done(x.source_id,"listen");if(x.source==="practice"&&x.source_id?.endsWith(`:${practiceDay}`))done(x.source_id.slice(0,-11),"practice");}
+      for(const p of optionalPrefs.data||[]){if(p.value!==true)continue;const [_,kind,id,date]=p.key.split(":");if(kind==="listen" || kind==="practice"&&date===practiceDay)done(id,kind);}
+      setOptionalDone(optional);setQuestionModules(new Set((countsResult.data||[]).filter(c=>Number(c.question_count)+Number(c.checkpoint_count)>0).map(c=>c.module_id)));
       setContinueModuleId(undefined);
       setContinueSectionNumber(undefined);
 
@@ -403,6 +422,8 @@ const Learn = () => {
             onModuleClick={slug => navigate(`/learn/${slug}`)} tierFeatures={tiers}
             currentModuleId={nextTarget?.review ? undefined : nextTarget?.module.id}
             currentStarted={nextTarget?.started || false} justCompleted={justCompleted}
+            scenarios={scenarios} optionalDone={optionalDone} questionModules={questionModules}
+            onChestClaim={id=>{setOptionalDone(prev=>({...prev,[id]:new Set([...(prev[id]||[]),"chest"])}));void loadData();}}
           />
         </div>
 

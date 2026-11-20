@@ -1,391 +1,77 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
+import { PageSkeleton } from "@/components/PageSkeleton";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
-import { cn } from "@/lib/utils";
-import { ArrowLeft, Star, ChevronRight } from "lucide-react";
-import { ScenarioSummary } from "./ScenarioSummary";
-
-interface Character {
-  name: string;
-  avatar?: string;
-  pronouns: string;
-  role: string;
-}
-
-interface Choice {
-  text: string;
-  next_scene: string;
-  is_best: boolean;
-  feedback: string;
-  points?: number;
-}
-
-interface Scene {
-  id: string;
-  narrator: string;
-  text: string;
-  choices: Choice[];
-}
-
-interface Scenario {
-  id: string;
-  title: string;
-  characters: Character[];
-  scenes: Scene[];
-  xp_reward: number;
-  difficulty_level: number;
-  module_id: string;
-}
-
-interface ScenarioPlayerProps {
-  scenarioId: string;
-  onComplete?: (score: number, xpEarned: number) => void;
-  onBack?: () => void;
-}
-
-const AVATAR_COLORS = [
-  "bg-primary text-primary-foreground",
-  "bg-pink-600 text-white",
-  "bg-emerald-600 text-white",
-  "bg-amber-600 text-white",
-  "bg-cyan-600 text-white",
-];
-
-function getCharacterColor(idx: number) {
-  return AVATAR_COLORS[idx % AVATAR_COLORS.length];
-}
-
-export const ScenarioPlayer = ({ scenarioId, onComplete, onBack }: ScenarioPlayerProps) => {
-  const { user } = useAuth();
-  const reducedMotion = useReducedMotion();
-  const [scenario, setScenario] = useState<Scenario | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  const [currentSceneId, setCurrentSceneId] = useState("scene_1");
-  const [score, setScore] = useState(0);
-  const [maxScore, setMaxScore] = useState(0);
-  const [choicesMade, setChoicesMade] = useState<{ sceneId: string; choiceIdx: number; isBest: boolean }[]>([]);
-  const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [displayedText, setDisplayedText] = useState("");
-  const [typewriterDone, setTypewriterDone] = useState(false);
-  const [completed, setCompleted] = useState(false);
-  const [visitedScenes, setVisitedScenes] = useState<string[]>([]);
-
-  const typewriterRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // Load scenario
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      setError(false);
-      const { data, error: err } = await supabase
-        .from("education_scenarios")
-        .select("*")
-        .eq("id", scenarioId)
-        .single();
-
-      if (err || !data) {
-        setError(true);
-        setLoading(false);
-        return;
-      }
-
-      const s: Scenario = {
-        id: data.id,
-        title: data.title,
-        characters: data.characters as unknown as Character[],
-        scenes: data.scenes as unknown as Scene[],
-        xp_reward: data.xp_reward,
-        difficulty_level: data.difficulty_level,
-        module_id: data.module_id,
-      };
-      setScenario(s);
-
-      // Load existing progress
-      if (user) {
-        const { data: prog } = await supabase
-          .from("user_scenario_progress")
-          .select("*")
-          .eq("user_id", user.id)
-          .eq("scenario_id", scenarioId)
-          .maybeSingle();
-
-        if (prog && !prog.completed) {
-          setCurrentSceneId(prog.current_scene);
-          setScore(prog.score);
-          setMaxScore(prog.max_score);
-          setChoicesMade((prog.choices_made as any[]) || []);
-        }
-      }
-
-      setLoading(false);
-    };
-    load();
-  }, [scenarioId, user]);
-
-  const currentScene = scenario?.scenes.find((s) => s.id === currentSceneId);
-  const sceneIndex = scenario?.scenes.findIndex((s) => s.id === currentSceneId) ?? 0;
-  const totalScenes = scenario?.scenes.length ?? 1;
-  const progressPercent = ((visitedScenes.length) / totalScenes) * 100;
-
-  // Typewriter effect
-  useEffect(() => {
-    if (!currentScene) return;
-    const text = currentScene.text;
-    setDisplayedText("");
-    setTypewriterDone(false);
-    setSelectedChoice(null);
-    setShowFeedback(false);
-
-    if (reducedMotion) {
-      setDisplayedText(text);
-      setTypewriterDone(true);
-      return;
-    }
-
-    let i = 0;
-    typewriterRef.current = setInterval(() => {
-      i++;
-      setDisplayedText(text.slice(0, i));
-      if (i >= text.length) {
-        setTypewriterDone(true);
-        if (typewriterRef.current) clearInterval(typewriterRef.current);
-      }
-    }, 30);
-
-    return () => {
-      if (typewriterRef.current) clearInterval(typewriterRef.current);
-    };
-  }, [currentSceneId, currentScene, reducedMotion]);
-
-  const skipTypewriter = useCallback(() => {
-    if (typewriterDone || !currentScene) return;
-    if (typewriterRef.current) clearInterval(typewriterRef.current);
-    setDisplayedText(currentScene.text);
-    setTypewriterDone(true);
-  }, [typewriterDone, currentScene]);
-
-  const handleChoice = (idx: number) => {
-    if (showFeedback || !currentScene) return;
-    setSelectedChoice(idx);
-    setTimeout(() => setShowFeedback(true), reducedMotion ? 0 : 300);
-
-    const choice = currentScene.choices[idx];
-    const points = choice.is_best ? 2 : choice.points ?? (choice.feedback.toLowerCase().includes("okay") ? 1 : 0);
-    setScore((s) => s + points);
-    setMaxScore((s) => s + 2);
-    setChoicesMade((prev) => [...prev, { sceneId: currentSceneId, choiceIdx: idx, isBest: choice.is_best }]);
-  };
-
-  const advanceScene = async () => {
-    if (!currentScene || selectedChoice === null) return;
-    const choice = currentScene.choices[selectedChoice];
-    const nextId = choice.next_scene;
-    const nextScene = scenario?.scenes.find((s) => s.id === nextId);
-
-    setVisitedScenes((prev) => [...prev, currentSceneId]);
-
-    if (!nextScene) {
-      // End of scenario
-      setCompleted(true);
-      if (user) {
-        await supabase.from("user_scenario_progress").upsert({
-          user_id: user.id,
-          scenario_id: scenarioId,
-          current_scene: currentSceneId,
-          choices_made: choicesMade as any,
-          score,
-          max_score: maxScore,
-          completed: true,
-          completed_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }, { onConflict: "user_id,scenario_id" });
-      }
-      return;
-    }
-
-    setCurrentSceneId(nextId);
-
-    // Save progress
-    if (user) {
-      await supabase.from("user_scenario_progress").upsert({
-        user_id: user.id,
-        scenario_id: scenarioId,
-        current_scene: nextId,
-        choices_made: choicesMade as any,
-        score,
-        max_score: maxScore,
-        completed: false,
-        updated_at: new Date().toISOString(),
-      }, { onConflict: "user_id,scenario_id" });
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background p-4 space-y-4">
-        <Skeleton className="h-2 w-full" />
-        <Skeleton className="h-24 w-full rounded-xl" />
-        <Skeleton className="h-48 w-full rounded-xl" />
-        <Skeleton className="h-14 w-full rounded-xl" />
-        <Skeleton className="h-14 w-full rounded-xl" />
-      </div>
-    );
-  }
-
-  if (error || !scenario) {
-    return (
-      <BrandedEmptyState
-        mascot="confused"
-        headline="Couldn't load scenario"
-        description="Something went wrong. Please try again."
-        ctaLabel="Go Back"
-        onCtaClick={onBack}
-      />
-    );
-  }
-
-  if (completed) {
-    return (
-      <ScenarioSummary
-        title={scenario.title}
-        score={score}
-        maxScore={maxScore}
-        xpReward={scenario.xp_reward}
-        choicesMade={choicesMade}
-        scenes={scenario.scenes}
-        onContinue={() => onComplete?.(score, scenario.xp_reward)}
-        onBack={onBack}
-      />
-    );
-  }
-
-  if (!currentScene) {
-    return (
-      <BrandedEmptyState
-        mascot="confused"
-        headline="Scene not found"
-        description="This scenario may be incomplete."
-        ctaLabel="Go Back"
-        onCtaClick={onBack}
-      />
-    );
-  }
-
-  const narrator = scenario.characters.find((c) => c.name === currentScene.narrator);
-  const narratorIdx = scenario.characters.findIndex((c) => c.name === currentScene.narrator);
-
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur px-4 pt-3 pb-2 space-y-2 border-b border-border/50">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" size="icon" onClick={onBack} className="h-10 w-10">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <span className="text-sm font-medium text-muted-foreground">
-            {scenario.title}
-          </span>
-          <div className="flex items-center gap-1 text-sm text-amber-400">
-            <Star className="h-4 w-4 fill-amber-400" />
-            <span>{score}</span>
-          </div>
-        </div>
-        <Progress value={progressPercent} className="h-1.5" />
-      </div>
-
-      {/* Scene content */}
-      <div className="flex-1 px-4 py-4 space-y-4 max-w-lg mx-auto w-full">
-        {/* Character card */}
-        {narrator && (
-          <div className="flex items-center gap-3">
-            <div className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0",
-              getCharacterColor(narratorIdx)
-            )}>
-              {narrator.name[0]}
-            </div>
-            <div>
-              <div className="font-semibold text-foreground">{narrator.name}</div>
-              <div className="text-sm text-muted-foreground">{narrator.pronouns} · {narrator.role}</div>
-            </div>
-          </div>
-        )}
-
-        {/* Scene text */}
-        <div
-          className="rounded-xl p-4 bg-card border border-border min-h-[120px] cursor-pointer"
-          onClick={skipTypewriter}
-          role="button"
-          aria-label="Tap to skip animation"
-        >
-          <p className="text-foreground leading-relaxed whitespace-pre-line">
-            {displayedText}
-            {!typewriterDone && <span className="animate-pulse text-primary">|</span>}
-          </p>
-        </div>
-
-        {/* Choices */}
-        {typewriterDone && (
-          <div className="space-y-3">
-            {currentScene.choices.map((choice, idx) => {
-              const isSelected = selectedChoice === idx;
-              const isBest = choice.is_best;
-              const showResult = showFeedback;
-
-              return (
-                <button
-                  key={idx}
-                  onClick={() => handleChoice(idx)}
-                  disabled={showFeedback}
-                  className={cn(
-                    "w-full text-left p-4 rounded-xl border-2 transition-all min-h-[44px]",
-                    !showResult && !isSelected && "border-border bg-card hover:border-primary/50",
-                    !showResult && isSelected && "border-primary bg-primary/10",
-                    showResult && isSelected && isBest && "border-green-500 bg-green-500/10",
-                    showResult && isSelected && !isBest && "border-amber-500 bg-amber-500/10",
-                    showResult && !isSelected && isBest && "border-green-500/50 bg-green-500/5",
-                    showResult && !isSelected && !isBest && "border-border/50 opacity-50",
-                    !reducedMotion && showResult && isSelected && !isBest && "animate-shake"
-                  )}
-                >
-                  <span className="text-foreground">{choice.text}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Feedback */}
-        {showFeedback && selectedChoice !== null && (
-          <div className={cn(
-            "rounded-xl p-4 border",
-            currentScene.choices[selectedChoice].is_best
-              ? "bg-green-500/10 border-green-500/30"
-              : "bg-amber-500/10 border-amber-500/30",
-            !reducedMotion && "animate-fade-in"
-          )}>
-            <p className="text-sm font-semibold mb-1">
-              {currentScene.choices[selectedChoice].is_best ? "✓ Great approach!" : "💡 Not quite the best"}
-            </p>
-            <p className="text-sm text-muted-foreground">{currentScene.choices[selectedChoice].feedback}</p>
-          </div>
-        )}
-
-        {/* Continue */}
-        {showFeedback && (
-          <Button onClick={advanceScene} className="w-full rounded-xl" size="lg">
-            Continue <ChevronRight className="h-4 w-4 ml-1" />
-          </Button>
-        )}
-      </div>
-    </div>
-  );
+import { BottomSheet } from "@/components/motion/BottomSheet";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useLearningStats } from "@/hooks/useLearningStats";
+import { storyBubbles } from "@/lib/mixedNodes";
+import { retryFinish } from "@/lib/finishRetry";
+import { reportError } from "@/lib/errorReporting";
+import type { FinishData } from "@/lib/learnFinish";
+import { X } from "lucide-react";
+const FinishSequence = lazy(() => import("../FinishSequence"));
+interface Character { name: string; pronouns: string; role: string }
+interface Choice { text: string; next_scene: string; is_best: boolean; feedback: string; points?: number }
+interface Scene { id: string; narrator: string; text: string; choices: Choice[] }
+interface Scenario { id: string; title: string; characters: Character[]; scenes: Scene[]; xp_reward: number; module_id: string }
+interface MadeChoice { sceneId: string; choiceIdx: number; isBest: boolean }
+interface Line { speaker: string; text: string; reply?: boolean }
+const avatarTokens = ["bg-primary text-primary-foreground", "bg-secondary text-secondary-foreground", "bg-success text-success-foreground", "bg-accent text-accent-foreground"];
+export const ScenarioPlayer = ({ scenarioId, onComplete, onBack }: {scenarioId: string; onComplete?: (score:number,xpEarned:number)=>void; onBack?:()=>void}) => {
+ const {user}=useAuth(); const reduced=useReducedMotion(); const {stats,awardXP}=useLearningStats();
+ const awardRef=useRef(awardXP);awardRef.current=awardXP;
+ const [scenario,setScenario]=useState<Scenario|null>(null);const [loading,setLoading]=useState(true);const [error,setError]=useState(false);
+ const [begun,setBegun]=useState(false);const [sceneId,setSceneId]=useState("");const [lines,setLines]=useState<Line[]>([]);const [revealed,setRevealed]=useState(0);
+ const [choices,setChoices]=useState<MadeChoice[]>([]);const [score,setScore]=useState(0);const [maxScore,setMaxScore]=useState(0);
+ const [selected,setSelected]=useState<number|null>(null);const [saving,setSaving]=useState(false);const [saveError,setSaveError]=useState(false);const [replay,setReplay]=useState(false);
+ const [finish,setFinish]=useState<FinishData|null>(null);const bottom=useRef<HTMLDivElement>(null);const busy=useRef(false);
+ const load=async()=>{setLoading(true);setError(false);try{
+   const {data,error}=await supabase.from("education_scenarios").select("*").eq("id",scenarioId).single();if(error||!data)throw error||new Error("Story unavailable");
+   const story={...data,characters:data.characters as unknown as Character[],scenes:data.scenes as unknown as Scene[]} as Scenario;
+   if(!story.scenes.length)throw new Error("Empty story");setScenario(story);setSceneId(story.scenes[0].id);
+   if(user){const {data:progress,error:pe}=await supabase.from("user_scenario_progress").select("*").eq("user_id",user.id).eq("scenario_id",scenarioId).maybeSingle();if(pe)throw pe;
+    setReplay(!!progress?.completed);if(progress&&!progress.completed){setSceneId(progress.current_scene);setScore(progress.score);setMaxScore(progress.max_score);const history=(progress.choices_made||[]) as unknown as MadeChoice[];setChoices(history);
+     setLines(history.flatMap(c=>{const scene=story.scenes.find(s=>s.id===c.sceneId);return scene?[...storyBubbles(scene.text).map(text=>({speaker:scene.narrator,text})),{speaker:"You",text:scene.choices[c.choiceIdx]?.text||"",reply:true}]:[];}));}
+   }
+ }catch(e){setError(true);void reportError(e instanceof Error?e:new Error("Story load failed"));}finally{setLoading(false);}};
+ useEffect(()=>{void load();},[scenarioId,user?.id]);
+ const scene=scenario?.scenes.find(s=>s.id===sceneId);const bubbles=storyBubbles(scene?.text||"");const allRevealed=revealed>=bubbles.length;
+ const reveal=()=>{if(!scene||allRevealed||selected!==null)return;const text=bubbles[revealed];setLines(prev=>[...prev,{speaker:scene.narrator,text}]);setRevealed(n=>n+1);};
+ useEffect(()=>{bottom.current?.scrollIntoView({behavior:reduced?"instant":"smooth",block:"end"});},[lines,reduced]);
+ const choose=(i:number)=>{if(!scene||selected!==null)return;setSelected(i);const choice=scene.choices[i];setLines(prev=>[...prev,{speaker:"You",text:choice.text,reply:true}]);};
+ const advance=async()=>{
+  if(!scene||!scenario||!user||busy.current)return;busy.current=true;setSaving(true);setSaveError(false);
+  const choice=selected===null?undefined:scene.choices[selected];const next=choice?scenario.scenes.find(s=>s.id===choice.next_scene):undefined;
+  const made=choice&&selected!==null?[...choices,{sceneId:scene.id,choiceIdx:selected,isBest:choice.is_best}]:choices;
+  const nextScore=score+(choice?(choice.is_best?2:choice.points??(choice.feedback.toLowerCase().includes("okay")?1:0)):0);const nextMax=maxScore+(choice?2:0);
+  try{
+   // Replays never overwrite a previously completed progress row.
+   if(!replay){const {error}=await supabase.from("user_scenario_progress").upsert({user_id:user.id,scenario_id:scenarioId,current_scene:next?.id||scene.id,choices_made:made as any,score:nextScore,max_score:nextMax,completed:!next,completed_at:next?null:new Date().toISOString(),updated_at:new Date().toISOString()},{onConflict:"user_id,scenario_id"});if(error)throw error;}
+   setScore(nextScore);setMaxScore(nextMax);setChoices(made);setSelected(null);
+   if(next){setSceneId(next.id);setRevealed(0);}
+   else {const base:FinishData={kind:"story",moduleId:scenario.module_id,node:`story:${scenario.id}`,title:scenario.title,slug:"",tier:"",xp:replay?0:null,oldXP:stats?.total_xp||0,accuracy:nextMax?Math.round(nextScore/nextMax*100):0,questions:made.length,replay,saving:!replay,storySummary:{score:nextScore,maxScore:nextMax,choicesMade:made,scenes:scenario.scenes}};setFinish(base);
+    if(!replay){const reward=async()=>{const xp=await awardRef.current(scenario.xp_reward,"scenario",scenario.id,true);setFinish(prev=>prev?{...prev,xp:xp.newXP,saving:false}:prev);};try{await reward();}catch(e){void reportError(e instanceof Error?e:new Error("Story reward failed"));retryFinish(`story:${user.id}:${scenario.id}`,reward);}}
+   }
+  }catch(e){setSaveError(true);void reportError(e instanceof Error?e:new Error("Story save failed"));}finally{busy.current=false;setSaving(false);}
+ };
+ if(loading)return <PageSkeleton variant="learn"/>;
+ if(error||!scenario||!scene)return <BrandedEmptyState mascot="confused" headline="We couldn't load this story." description="" ctaLabel="Try again" onCtaClick={()=>void load()}/>;
+ if(finish)return <Suspense fallback={<PageSkeleton variant="learn"/>}><FinishSequence data={finish} onBack={()=>{onComplete?.(score,finish.xp||0);onBack?.();}}/></Suspense>;
+ const avatar=(name:string)=>{const index=scenario.characters.findIndex(c=>c.name===name);return <span aria-hidden className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-bold ${avatarTokens[Math.max(0,index)%avatarTokens.length]}`}>{name.split(" ").map(n=>n[0]).slice(0,2).join("")}</span>;};
+ return <main className="min-h-[100dvh] bg-background flex flex-col">
+  <header className="sticky top-0 z-10 bg-background border-b border-border p-4 pt-[max(16px,env(safe-area-inset-top))]"><div className="flex items-center gap-3"><Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label="Back to my path" onClick={onBack}><X/></Button><h1 className="font-bold flex-1">{scenario.title}</h1></div><div role="progressbar" aria-label="Story progress" aria-valuenow={choices.length} aria-valuemax={scenario.scenes.length} className="flex gap-1 h-2 mt-3">{scenario.scenes.map((s,i)=><span key={s.id} className={`flex-1 rounded-full ${i<choices.length?"bg-primary":"bg-muted"}`}/>)}</div></header>
+  {!begun?<div className="flex-1 mx-auto max-w-[480px] w-full p-4 space-y-6"><h2 className="text-2xl font-bold">{scenario.title}</h2>{scenario.characters.map(c=><div key={c.name} className="flex gap-3 items-center">{avatar(c.name)}<div><p className="font-semibold">{c.name} · {c.pronouns}</p><p className="text-muted-foreground">{c.role}</p></div></div>)}<Button className="w-full min-h-[52px]" onClick={()=>{setBegun(true);reveal();}}>Begin</Button></div>:<div className="flex-1 w-full max-w-[480px] mx-auto p-4 pb-24 space-y-4">
+   <div role="button" tabIndex={0} aria-label="Continue the story" onClick={reveal} onKeyDown={e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();reveal();}}} className="space-y-4 min-h-11">
+    {lines.map((line,i)=><div key={i} className={`flex gap-2 ${line.reply?"justify-end":""}`}>{!line.reply&&avatar(line.speaker)}<div className={`max-w-[85%] rounded-lg p-3 ${line.reply?"bg-primary text-primary-foreground":"bg-card border border-border"}`}><p className="text-sm font-semibold">{line.speaker}</p><p className="leading-relaxed">{line.text}</p></div></div>)}<div ref={bottom}/>
+   </div><p className="sr-only" aria-live="polite" aria-atomic="true">{lines[lines.length-1]?.speaker}: {lines[lines.length-1]?.text}</p>
+   {!allRevealed&&<Button className="w-full min-h-[52px]" onClick={reveal}>Continue</Button>}
+   {allRevealed&&scene.choices.slice(0,4).map((choice,i)=><Button key={i} variant="outline" className="w-full h-auto min-h-[52px] whitespace-normal justify-start text-left p-4" disabled={selected!==null||saving} onClick={()=>choose(i)}>{choice.text}</Button>)}
+   {allRevealed&&!scene.choices.length&&<Button className="w-full min-h-[52px]" disabled={saving} onClick={()=>void advance()}>Finish story</Button>}
+   {saveError&&<p role="alert">We're still saving your progress. <Button variant="link" onClick={()=>void advance()}>Try again</Button></p>}
+  </div>}
+  <BottomSheet open={selected!==null} onOpenChange={()=>{}} dismissible={false} tone={selected!==null&&scene.choices[selected]?.is_best?"success":"miss"} title={selected!==null&&scene.choices[selected]?.is_best?"A caring approach":"Here's another way to see it"}><p aria-live="polite" className="mb-4 leading-relaxed">{selected!==null?scene.choices[selected]?.feedback:""}</p>{saveError&&<p role="alert">We're still saving your progress</p>}<Button className="w-full min-h-[52px]" disabled={saving} onClick={()=>void advance()}>{saveError?"Try again":"Continue"}</Button></BottomSheet>
+ </main>;
 };

@@ -78,6 +78,13 @@
       "when": 1795151116622,
       "tag": "0010_mastery_execution_authenticated_only",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1795152155008,
+      "tag": "0011_learn_optional_practice_and_path_chests",
+      "breakpoints": true
     }
   ]
 }

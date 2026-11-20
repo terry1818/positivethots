@@ -6,6 +6,7 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Star, ArrowLeft, CheckCircle2, XCircle } from "lucide-react";
 
 interface ScenarioSummaryProps {
+  embedded?: boolean;
   title: string;
   score: number;
   maxScore: number;
@@ -17,6 +18,7 @@ interface ScenarioSummaryProps {
 }
 
 export const ScenarioSummary = ({
+  embedded = false,
   title,
   score,
   maxScore,
@@ -45,6 +47,10 @@ export const ScenarioSummary = ({
 
   const config = tierConfig[tier];
 
+  if (embedded) return <div className="space-y-3 w-full text-center">
+    <p className="text-xl font-semibold">{title}</p><p>{score} / {maxScore} points</p>
+    <ul className="space-y-2 text-left">{choicesMade.map((choice,i) => { const selected = scenes.find(s => s.id === choice.sceneId)?.choices[choice.choiceIdx]; return <li key={i} className="text-sm text-muted-foreground">{selected?.feedback}</li>; })}</ul>
+  </div>;
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-8 max-w-md mx-auto w-full space-y-6">

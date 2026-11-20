@@ -1,0 +1,36 @@
+import {lazy,Suspense,useEffect,useRef,useState} from "react";
+import {useNavigate,useParams} from "react-router-dom";
+import {supabase} from "@/integrations/supabase/client";
+import {ExerciseSession} from "@/components/education/ExerciseSession";
+import {PageSkeleton} from "@/components/PageSkeleton";
+import {BrandedEmptyState} from "@/components/BrandedEmptyState";
+import {useLearningStats} from "@/hooks/useLearningStats";
+import {LISTEN_ENABLED_TIERS,practiceSourceId} from "@/lib/mixedNodes";
+import {extractTakeaway} from "@/lib/learnSmallFixes";
+import {reportError} from "@/lib/errorReporting";
+import {retryFinish} from "@/lib/finishRetry";
+import type {FinishData} from "@/lib/learnFinish";
+const ListenRecap=lazy(()=>import("@/components/education/ListenRecap"));
+const FinishSequence=lazy(()=>import("@/components/education/FinishSequence"));
+export default function LearnPractice({listen=false}:{listen?:boolean}){
+ const {slug}=useParams();const navigate=useNavigate();const [loading,setLoading]=useState(true);const [error,setError]=useState(false);const [module,setModule]=useState<{id:string;title:string;tier:string|null}|null>(null);const [userId,setUserId]=useState("");
+ const [questions,setQuestions]=useState<React.ComponentProps<typeof ExerciseSession>["questions"]>([]);const [takeaways,setTakeaways]=useState<string[]>([]);const [recapDone,setRecapDone]=useState(!listen);const [finish,setFinish]=useState<FinishData|null>(null);
+ const {stats,awardXP}=useLearningStats();const awardRef=useRef(awardXP);awardRef.current=awardXP;
+ const load=async()=>{setLoading(true);setError(false);try{const {data:{session}}=await supabase.auth.getSession();if(!session){navigate("/auth");return;}setUserId(session.user.id);const {data:mod,error:me}=await supabase.from("education_modules").select("id,title,tier").eq("slug",slug||"").single();if(me||!mod)throw me;
+  if(listen&&!LISTEN_ENABLED_TIERS.some(t=>t===mod.tier))throw new Error("Recap not available");setModule(mod);
+  const [{data,error:qe},{data:sections,error:se}]=await Promise.all([supabase.rpc("get_practice_questions",{_module_id:mod.id,_limit:listen?2:5}),supabase.from("module_sections").select("content_text").eq("module_id",mod.id).order("section_number")]);if(qe||se)throw qe||se;
+  setQuestions((data||[]).map(q=>({...q,options:(typeof q.options==="string"?JSON.parse(q.options):q.options) as string[],exercise_type:q.exercise_type||"multiple_choice"})));setTakeaways((sections||[]).map(s=>extractTakeaway(s.content_text||"")).filter(Boolean));
+ }catch(e){setError(true);void reportError(e instanceof Error?e:new Error("Practice load failed"));}finally{setLoading(false);}};
+ useEffect(()=>{void load();},[slug,listen]);
+ const back=()=>navigate("/learn",{state:{justCompleted:{moduleId:module?.id,node:listen?"listen":"practice",oldXP:stats?.total_xp}}});
+ const complete=(accuracy:number,_correct:number,total:number)=>{if(!module||finish)return;setFinish({kind:listen?"listen":"practice",moduleId:module.id,node:listen?"listen":"practice",title:module.title,slug:slug||"",tier:module.tier||"",xp:null,oldXP:stats?.total_xp||0,accuracy,questions:total,saving:true});
+  const sourceId=listen?module.id:practiceSourceId(module.id);
+  const save=async()=>{const xp=await awardRef.current(5,listen?"listen":"practice",sourceId,true);
+    const {error}=await supabase.from("user_preferences").upsert({user_id:userId,key:`learn_optional:${listen?"listen":"practice"}:${sourceId}`,value:true,updated_at:new Date().toISOString()},{onConflict:"user_id,key"});if(error)throw error;
+    setFinish(prev=>prev?{...prev,xp:xp.newXP,saving:false}:prev);};void save().catch(e=>{void reportError(e instanceof Error?e:new Error("Practice reward failed"));retryFinish(`${listen?"listen":"practice"}:${userId}:${module.id}`,save);});};
+ if(loading)return <PageSkeleton variant="learn"/>;
+ if(error||!module)return <BrandedEmptyState mascot="confused" headline={listen?"We couldn't load this recap.":"We couldn't load this practice."} description="" ctaLabel="Try again" onCtaClick={()=>void load()}/>;
+ if(!questions.length)return <BrandedEmptyState mascot="graduate" headline="Nothing to practise here yet. Finish a lesson first." description="" ctaLabel="Back to my path" onCtaClick={back}/>;
+ if(finish)return <Suspense fallback={<PageSkeleton variant="learn"/>}><FinishSequence data={finish} onBack={back}/></Suspense>;
+ return <main className="min-h-[100dvh] max-w-[480px] mx-auto bg-background p-4 pt-[max(16px,env(safe-area-inset-top))]">{listen&&!recapDone&&takeaways.length?<Suspense fallback={<PageSkeleton variant="learn"/>}><ListenRecap title={module.title} takeaways={takeaways} onComplete={()=>setRecapDone(true)}/></Suspense>:<ExerciseSession moduleId={module.id} moduleTitle={listen?"Listen":"Practice"} userId={userId} questions={questions} mastery={false} review preserveQuestionOrder finalResult={null} submitting={false} submissionError={false} onRetrySubmit={()=>{}} onBack={back} onComplete={complete}/>}</main>;
+}

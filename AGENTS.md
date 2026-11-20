@@ -16,3 +16,5 @@
 - Badge checks requeue missed questions with original option indexes, complete server mastery before XP, and skip badge/XP writes in earned-badge review; tier reviews retain their existing one-pass reward flow.
 
 - Learn finishes use a lazy full-screen ordered sequence and transient router completion state; completion precedes XP and in-memory retries survive navigation without duplicate rewards.
+
+- Mixed path nodes derive mandatory unlocks only from lessons; optional completion uses scenario progress, server chest receipts, XP records and private preference receipts for zero-award practice/listen sessions; Story lookup is module-scoped in every tier.

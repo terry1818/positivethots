@@ -28,6 +28,8 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Learn = lazy(() => import("./pages/Learn"));
 const LearnModule = lazy(() => import("./pages/LearnModule"));
 const TierReview = lazy(() => import("./pages/TierReview"));
+const LearnStory = lazy(() => import("./pages/LearnStory"));
+const LearnPractice = lazy(() => import("./pages/LearnPractice"));
 const Messages = lazy(() => import("./pages/Messages"));
 const Chat = lazy(() => import("./pages/Chat"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -101,6 +103,9 @@ const AppContent = () => {
         <Route path="/learn" element={<LearnLayout />}>
           <Route index element={<Suspense fallback={<PageSkeleton variant="learn" />}><Learn /></Suspense>} />
           <Route path="review/:tier" element={<Suspense fallback={<PageSkeleton variant="learn" />}><TierReview /></Suspense>} />
+          <Route path=":slug/story/:scenarioSlug" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnStory /></Suspense>} />
+          <Route path=":slug/practice" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnPractice /></Suspense>} />
+          <Route path=":slug/listen" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnPractice listen /></Suspense>} />
           <Route path=":slug/*" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnModule /></Suspense>} />
         </Route>
         <Route path="/messages" element={<Suspense fallback={<PageSkeleton variant="messages" />}><Messages /></Suspense>} />

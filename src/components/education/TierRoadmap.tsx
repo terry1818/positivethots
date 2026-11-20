@@ -1,12 +1,13 @@
-import { useState, useEffect, useRef, useMemo } from "react";
-import { Lock, CheckCircle, Crown, ChevronDown, BookOpen, Trophy } from "lucide-react";
+import { lazy, Suspense, useState, useEffect, useRef, useMemo } from "react";
+import { Lock, CheckCircle, Crown, ChevronDown, BookOpen, Trophy, MessagesSquare, Dumbbell, Headphones, Package, PackageOpen } from "lucide-react";
 import { m } from "motion/react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { TierUnlock } from "@/hooks/useFeatureUnlocks";
-import { levelNodes, type LessonSection } from "@/lib/learnLevels";
+import { mixedLevelNodes, type PathScenario } from "@/lib/mixedNodes";
+import { type LessonSection } from "@/lib/learnLevels";
 import { useSessionStore } from "@/stores/sessionStore";
 import { ModuleGuide } from "./ModuleGuide";
 import { moduleCompletionPercent } from "@/lib/learnSmallFixes";
@@ -15,6 +16,8 @@ import { completedNodeId } from "@/lib/learnFinish";
 import { duration, easing, spring } from "@/lib/motionTokens";
 import { ProgressRing } from "@/components/motion/ProgressRing";
 import { Button } from "@/components/ui/button";
+
+const PathChest = lazy(() => import("./PathChest"));
 
 interface Module {
   id: string;
@@ -44,6 +47,10 @@ export interface BadgePathMapProps {
   tierFeatures: TierUnlock[];
   currentModuleId?: string;
   currentStarted?: boolean;
+  scenarios: PathScenario[];
+  optionalDone: Record<string,Set<string>>;
+  questionModules: Set<string>;
+  onChestClaim: (moduleId:string)=>void;
   justCompleted?: { moduleId: string; node: string };
 }
 
@@ -69,7 +76,7 @@ const TIER_ORDER = ["foundation", "sexual_health", "identity", "relationships", 
 
 export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked, isAdvancedPremiumLocked,
   isPremium, moduleProgress, onModuleClick, tierFeatures, currentModuleId, currentStarted = false,
-  sections, completedSectionIds, startedSectionIds, justCompleted,
+  sections, completedSectionIds, startedSectionIds, justCompleted, scenarios, optionalDone, questionModules, onChestClaim,
 }: BadgePathMapProps) => {
   const navigate = useNavigate();
   const reduced = useReducedMotion();
@@ -101,6 +108,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
       return () => clearTimeout(timer);
     }
   }, [justCompleted, reduced, currentModuleId]);
+  const [chestId,setChestId]=useState<string|null>(null);
   const [guideId, setGuideId] = useState<string | null>(null);
   const allModules = TIER_ORDER.flatMap(tier => modulesByTier[tier] || []);
   const guide = allModules.find(m => m.id === guideId);
@@ -175,8 +183,9 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
             const premium = isAdvancedPremiumLocked(module);
             const expanded = expandedLevels.has(module.id);
             const lessons = moduleSections(module.id);
-            const nodes = levelNodes(lessons, completedSectionIds, earnedBadge, unlocked);
-            const done = nodes.filter(n => n.done).length;
+            const mandatory = lessons.length + 1;
+            const nodes = mixedLevelNodes(lessons, completedSectionIds, earnedBadge, unlocked, module.tier||"", scenarios.filter(s=>s.module_id===module.id),optionalDone[module.id]||new Set(),questionModules.has(module.id));
+            const done = nodes.filter(n => n.done && (n.kind==="lesson"||n.kind==="badge")).length;
             const connector = windingConnector(nodes.length);
             const height = 48 + (nodes.length - 1) * pathNodeSpacing;
             const firstIncomplete = nodes.findIndex(n => !n.done);
@@ -184,7 +193,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
             return <section key={module.id} aria-label={module.title} className="learn-level-block">
               {expanded ? <header className="learn-level-band sticky z-20 flex items-center gap-2 px-3 py-2" style={{ top: headerHeight }}>
                 <div className="min-w-0 flex-1"><p className="text-xs">{tierLabels[tier]} · Level {levelIndex + 1} of {modules.length}</p><h3 className="text-base font-bold leading-tight">{module.title}</h3></div>
-                <span className="shrink-0 text-sm">{done}/{nodes.length}</span>
+                <span className="shrink-0 text-sm">{done}/{mandatory}</span>
                 <Button variant="outline" className="min-h-[44px] bg-card text-foreground" onClick={() => setGuideId(module.id)}>Guide</Button>
                 {module.id !== currentModuleId && <Button variant="ghost" size="icon" aria-label={`Collapse ${module.title}`} onClick={() => toggle(module.id)}><ChevronDown /></Button>}
               </header> : <div className="flex min-h-[72px] items-center gap-2 border-b border-border py-2">
@@ -206,24 +215,26 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
                     {nodes.map((node, index) => {
                       const current = module.id === currentModuleId && node.current && node.unlocked;
                       const started = node.section ? startedSectionIds.has(node.id) : currentStarted;
-                      const label = node.section ? `Lesson ${node.section}, ${node.title}, ${node.done ? "completed" : current ? "in progress" : node.unlocked ? "available" : "locked"}`
+                      const optional = node.kind!=="lesson" && node.kind!=="badge";
+                      const label = optional ? `${node.kind === "story" ? "Story" : node.title}, ${node.title}, ${node.done ? "completed" : node.unlocked ? "available" : "locked"}` : node.section ? `Lesson ${node.section}, ${node.title}, ${node.done ? "completed" : current ? "in progress" : node.unlocked ? "available" : "locked"}`
                         : `Badge check, ${earnedBadge ? "completed" : node.unlocked ? "available" : `locked, finish ${lessons.length} lessons first`}`;
-                      const completedHere = node.id === finishedNode || !node.section && finishedNode === `quiz:${module.id}`;
+                      const completedHere = node.id === finishedNode || node.kind==="badge" && finishedNode === `quiz:${module.id}` || optional && finishedNode === `${module.id}:${node.id}`;
+                      const icon = node.kind==="story" ? <MessagesSquare className="h-6 w-6"/> : node.kind==="practice" ? <Dumbbell className="h-6 w-6"/> : node.kind==="listen" ? <Headphones className="h-6 w-6"/> : node.kind==="chest" ? node.done ? <PackageOpen className="h-10 w-10"/> : <Package className="h-10 w-10"/> : undefined;
                       const circle = <m.span initial={false} animate={{ scale: reduced ? 1 : completedHere && finishPhase === 1 ? 1.08 : 1 }} transition={{ duration: duration.normal }} className={cn("learn-path-circle relative inline-flex items-center justify-center rounded-full border-2 text-2xl font-bold",
-                        node.section ? "h-[64px] w-[64px]" : "h-[72px] w-[72px]", node.done && (!completedHere || finishPhase >= 1) ? "learn-level-done" : node.unlocked ? "learn-node-open bg-card text-foreground" : "border-border bg-muted text-foreground")}>
-                        {node.done && (!completedHere || finishPhase >= 1) ? <CheckCircle className="h-6 w-6" /> : premium ? <Crown className="h-6 w-6" /> : !node.unlocked ? <Lock className="h-6 w-6" /> : node.section ? <BookOpen className="h-6 w-6" /> : badgeIcons[module.slug] || "★"}
+                        node.section ? "h-[64px] w-[64px]" : "h-[72px] w-[72px]", node.kind==="story" && "rounded-lg", node.kind==="chest" && "border-0 bg-transparent", node.done && (!completedHere || finishPhase >= 1) ? "learn-level-done" : node.unlocked ? "learn-node-open bg-card text-foreground" : "border-border bg-muted text-foreground")}>
+                        {node.kind==="chest" ? icon : node.done && (!completedHere || finishPhase >= 1) ? <CheckCircle className="h-6 w-6" /> : premium ? <Crown className="h-6 w-6" /> : !node.unlocked ? <Lock className="h-6 w-6" /> : icon ? icon : node.section ? <BookOpen className="h-6 w-6" /> : badgeIcons[module.slug] || "★"}
                       </m.span>;
-                      return <m.div key={node.id} id={`learn-node-${node.section ? node.id : `quiz:${module.id}`}`} ref={current ? targetRef : undefined}
+                      return <m.div key={node.id} id={`learn-node-${node.section ? node.id : node.kind==="badge" ? `quiz:${module.id}` : `${module.id}:${node.id}`}`} ref={current ? targetRef : undefined}
                         initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: duration.fast, delay: reduced ? 0 : index * 0.08 }}
                         className="learn-level-node relative flex flex-col items-center" style={{ height: pathNodeSpacing, marginLeft: pathOffsets[index % pathOffsets.length] * 2 }}>
                         {current && (!justCompleted || finishPhase >= 2) && <m.span data-current-bubble className="absolute -top-8 z-10 rounded-lg bg-primary px-3 py-1 text-sm font-bold text-primary-foreground"
                           animate={{ y: reduced ? 0 : [0,-4,0] }} transition={{ duration: 2, repeat: reduced ? 0 : Infinity, ease: easing.smooth }}>{started ? "Continue" : "Start"}</m.span>}
                         <Button variant="ghost" aria-label={label} title={node.title} className="learn-path-node relative h-[96px] w-[96px] rounded-full p-0 hover:bg-transparent"
-                          onClick={() => { if (premium) navigate("/premium"); else if (!node.unlocked) toast.info(node.section ? "Complete previous badges first" : "Finish the lessons first, you're almost there."); else go(module, node.section || undefined); }}>
-                          {completedHere && finishPhase < 3 ? <ProgressRing size={node.section ? 80 : 88} strokeWidth={4} percent={finishPhase >= 1 ? 100 : 0}>{circle}</ProgressRing> : current ? <ProgressRing size={node.section ? 80 : 88} strokeWidth={4} percent={moduleCompletionPercent(done, nodes.length, earnedBadge)}>{circle}</ProgressRing> : circle}
+                          onClick={() => { if (premium) navigate("/premium"); else if (!node.unlocked) toast.info(node.section ? "Complete previous badges first" : "Finish the lessons first, you're almost there."); else if(node.kind==="chest"){if(!node.done)setChestId(module.id);} else if(node.kind==="story")navigate(`/learn/${module.slug}/story/${node.scenarioSlug}`);else if(node.kind==="practice"||node.kind==="listen")navigate(`/learn/${module.slug}/${node.kind}`);else go(module, node.section || undefined); }}>
+                          {completedHere && finishPhase < 3 ? <ProgressRing size={node.section ? 80 : 88} strokeWidth={4} percent={finishPhase >= 1 ? 100 : 0}>{circle}</ProgressRing> : current ? <ProgressRing size={node.section ? 80 : 88} strokeWidth={4} percent={moduleCompletionPercent(done, mandatory, earnedBadge)}>{circle}</ProgressRing> : circle}
                         </Button>
-                        <span className="max-w-[160px] text-center text-sm font-medium text-foreground">{node.section ? `Lesson ${node.section}` : "Badge Check"}</span>
-                        <span className="max-w-[160px] text-center text-xs leading-tight text-muted-foreground">{node.section ? node.title : module.title}</span>
+                        <span className="max-w-[160px] text-center text-sm font-medium text-foreground">{node.section ? `Lesson ${node.section}` : node.kind==="badge" ? "Badge Check" : node.kind==="story" ? "Story" : node.title}</span>
+                        <span className="max-w-[160px] text-center text-xs leading-tight text-muted-foreground">{node.kind==="chest" ? node.done ? "Opened" : node.unlocked ? "Open chest" : "Finish 2 lessons to open" : node.section || optional ? node.title : module.title}</span>
                       </m.div>;
                     })}
                   </div>}
@@ -241,6 +252,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
         </div>}
       </div>;
     })}
+    {chestId && <Suspense fallback={<p role="status">Opening your chest…</p>}><PathChest moduleId={chestId} onClose={()=>setChestId(null)} onClaim={()=>onChestClaim(chestId)}/></Suspense>}
     {guide && <ModuleGuide module={guide} icon={badgeIcons[guide.slug] || "★"} reason={reason(guide)} premium={isAdvancedPremiumLocked(guide)} earned={earnedModuleIds.has(guide.id)}
       started={(moduleProgress[guide.id]?.completed || 0) > 0 || guide.id === currentModuleId && currentStarted}
       features={(modulesByTier[guide.tier || "foundation"] || []).filter(m => !earnedModuleIds.has(m.id)).length === 1 && !earnedModuleIds.has(guide.id)

@@ -1,3 +1,9 @@
+# Learn 09 mixed nodes
+- [x] Add optional mixed nodes, conversation stories, safe practice RPC, server chest rewards and Foundation listen recap; no new stories or badge/unlock changes. Build and 52 tests passed.
+- [x] Checks 1, 4, 5: live Story counts 2/1/1 across three Foundation modules and zero for others; chest +10 XP persisted, duplicate unchanged, locked claim rejected, direct member insert denied (42501).
+- [x] Checks 2, 3, 6: real story saved/replayed with no replay XP, five-question practice and two-question listen saved, safe columns/missed-first verified; four sequential audio requests only after Play with short test audio, blocked-audio text fallback and keyboard reveal verified.
+- [ ] First-time scenario/practice/listen positive payouts and fresh badge completion after skipping all optional nodes: current member is already at the UTC XP ceiling with all Foundation badges; temporary-user approval unavailable. Exact sources/repeat keys verified live; optional independence and badge unlock verified in tests. Actual cloud speech and 60–90-second recap duration unverified (existing takeaway text is short).
+
 # Learn 08 finish flow
 - [x] Add lazy finish sequence for lessons, badges and reviews; actual awarded XP and transient path completion reaction.
 - [x] Checks 1, 3, 5–7: real lessons/checkpoints saved, real badges/results/tier sequence, transient state cleared, static reduced-motion/confetti suppression, no stacked celebrations; 47 tests and build passed. Real Tier Review reward outage retried and returned awarded=0 correctly.

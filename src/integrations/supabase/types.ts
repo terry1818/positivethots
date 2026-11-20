@@ -2395,6 +2395,41 @@ export type Database = {
         }
         Relationships: []
       }
+      user_path_rewards: {
+        Row: {
+          claimed_at: string
+          id: string
+          module_id: string
+          reward_type: string
+          reward_value: number
+          user_id: string
+        }
+        Insert: {
+          claimed_at?: string
+          id?: string
+          module_id: string
+          reward_type: string
+          reward_value: number
+          user_id: string
+        }
+        Update: {
+          claimed_at?: string
+          id?: string
+          module_id?: string
+          reward_type?: string
+          reward_value?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_path_rewards_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "education_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_photos: {
         Row: {
           created_at: string
@@ -2898,6 +2933,7 @@ export type Database = {
         }
         Returns: Json
       }
+      claim_path_chest: { Args: { _module_id: string }; Returns: Json }
       complete_module_mastery: {
         Args: { _module_id: string; _session_started_at: string }
         Returns: Json
@@ -3006,6 +3042,20 @@ export type Database = {
         }[]
       }
       get_my_verification_code: { Args: { _platform: string }; Returns: string }
+      get_practice_questions: {
+        Args: { _limit?: number; _module_id: string }
+        Returns: {
+          exercise_type: string
+          id: string
+          is_checkpoint: boolean
+          module_id: string
+          options: Json
+          order_index: number
+          position_in_section: number
+          question: string
+          section_id: string
+        }[]
+      }
       get_public_profile: {
         Args: { _user_id: string }
         Returns: {

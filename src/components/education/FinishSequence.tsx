@@ -12,6 +12,7 @@ import { duration, spring } from "@/lib/motionTokens";
 import { finishSteps, type FinishData } from "@/lib/learnFinish";
 const CelebrationEngine = lazy(() => import("@/components/celebrations/CelebrationEngine").then(m => ({ default: m.CelebrationEngine })));
 const ShareCard = lazy(() => import("@/components/ShareableAchievementCard").then(m => ({ default: m.ShareableAchievementCard })));
+const StorySummary = lazy(() => import("./scenarios/ScenarioSummary").then(m => ({ default: m.ScenarioSummary })));
 
 export default function FinishSequence({ data, onBack, onDiscovery }: { data: FinishData; onBack: () => void; onDiscovery?: () => void }) {
   const reduced = useReducedMotion();
@@ -23,7 +24,7 @@ export default function FinishSequence({ data, onBack, onDiscovery }: { data: Fi
   const steps = finishSteps(data); const step = steps[index] || steps[steps.length - 1];
   const last = index >= steps.length - 1;
   const foundation = step === "tier" && data.tier === "foundation";
-  const title = step === "lesson" ? "Lesson complete!" : step === "streak" ? "Streak" : step === "badge" ? "Badge earned!" : step === "results" ? "Your results" : step === "level" ? "Level up" : step === "tier" ? foundation ? "Discovery is open" : `${data.tierLabel} complete!` : "Review complete";
+  const title = step === "lesson" ? "Lesson complete!" : step === "streak" ? "Streak" : step === "badge" ? "Badge earned!" : step === "results" ? "Your results" : step === "level" ? "Level up" : step === "tier" ? foundation ? "Discovery is open" : `${data.tierLabel} complete!` : data.kind === "story" ? "Story complete" : data.kind === "practice" ? "Practice complete" : data.kind === "listen" ? "Listen complete" : "Review complete";
   const next = () => last ? onBack() : setIndex(i => i + 1);
   useEffect(() => {
     heading.current?.focus();
@@ -50,6 +51,8 @@ export default function FinishSequence({ data, onBack, onDiscovery }: { data: Fi
       <h1 key={step} ref={heading} tabIndex={-1} className="text-3xl font-bold outline-none">{title}</h1>
       <Button className="fixed bottom-[max(24px,env(safe-area-inset-bottom))] left-4 right-4 mx-auto max-w-[480px] min-h-[52px] z-20" onClick={foundation ? onDiscovery : next}>{foundation ? "Explore Discovery" : last ? "Back to my path" : "Continue"}</Button>
       {step === "lesson" && <Mascot mood="celebration" size="lg" animate={!reduced} />}
+      {data.replay && <p>Replay - no XP this time</p>}
+      {data.storySummary && <Suspense fallback={null}><StorySummary embedded title={data.title} xpReward={data.xp || 0} {...data.storySummary} /></Suspense>}
       {step === "badge" && <><div className="flex items-center justify-center gap-4"><m.div initial={reduced ? false : { scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: duration.slow }} className={reduced ? "" : "rounded-full bg-primary/10"}><EducationBadge moduleSlug={data.slug} title={data.title} tier={data.tier} isEarned size="lg" /></m.div><Mascot mood="graduate" size="md" animate={!reduced} /></div><p className="text-xl font-semibold">{data.title}</p></>}
       {step === "streak" && <><Flame aria-hidden className="h-16 w-16 text-accent" /><span aria-hidden className="text-5xl font-bold"><AnimatedCounter start={data.oldStreak || 0} end={data.streak || 0} duration={700} /></span><p>{data.streak} days of learning</p></>}
       {step === "level" && <><Star aria-hidden className="h-16 w-16 text-accent" /><p className="text-3xl font-bold">Level {data.level} · {getLevelName(data.level || 1)}</p>{LEVEL_REWARDS[data.level || 0] && <p>{LEVEL_REWARDS[data.level || 0].icon} {LEVEL_REWARDS[data.level || 0].label}</p>}</>}
