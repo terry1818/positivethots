@@ -209,6 +209,7 @@ export const ExerciseSession = ({
                 isCorrectAnswer ? "bg-green-500/5 border-green-500/20" : "bg-destructive/5 border-destructive/20",
                 !reducedMotion && "animate-fade-in"
               )}>
+                <MascotReaction emotion={isCorrectAnswer ? "cheering" : "empathetic"} size="small" position="inline" />
                 <p className="text-sm font-semibold mb-1">
                   {isCorrectAnswer ? <><CheckCircle2 className="inline h-5 w-5" /> Correct</> : <><XCircle className="inline h-5 w-5" /> Not quite</>}
                 </p>

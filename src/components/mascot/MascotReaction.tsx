@@ -1,5 +1,6 @@
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
+import { Mascot, type MascotMood } from "./Mascot";
 
 export type MascotEmotion =
   | "encouraging"
@@ -24,19 +25,19 @@ interface MascotReactionProps {
   onComplete?: () => void;
 }
 
-const EMOTION_EMOJI: Record<MascotEmotion, string> = {
-  encouraging: "💪",
-  cheering: "🎉",
-  empathetic: "🤗",
-  celebrating: "🥳",
-  proud: "😊",
-  worried: "😟",
-  excited: "🤩",
-  thinking: "🤔",
-  waving: "👋",
-  sleeping: "😴",
-  surprised: "😮",
-  love: "😍",
+const EMOTION_MOOD: Record<MascotEmotion, MascotMood> = {
+  encouraging: "waving",
+  cheering: "celebration",
+  empathetic: "shrug",
+  celebrating: "celebration",
+  proud: "graduate",
+  worried: "shrug",
+  excited: "celebration",
+  thinking: "confused",
+  waving: "waving",
+  sleeping: "shrug",
+  surprised: "confused",
+  love: "heart",
 };
 
 const EMOTION_ANIMATION: Record<MascotEmotion, string> = {
@@ -55,10 +56,10 @@ const EMOTION_ANIMATION: Record<MascotEmotion, string> = {
 };
 
 const SIZE_MAP = {
-  small: "text-4xl",
-  medium: "text-6xl",
-  large: "text-8xl",
-};
+  small: "sm",
+  medium: "md",
+  large: "lg",
+} as const;
 
 const POSITION_MAP = {
   inline: "",
@@ -78,7 +79,6 @@ export const MascotReaction = ({
   const reducedMotion = useReducedMotion();
   const shouldAnimate = animate && !reducedMotion;
 
-  const emoji = EMOTION_EMOJI[emotion];
   const animClass = shouldAnimate ? EMOTION_ANIMATION[emotion] : "";
 
   return (
@@ -99,14 +99,9 @@ export const MascotReaction = ({
           </div>
         )}
 
-        {/* Mascot emoji */}
-        <span
-          className={cn(SIZE_MAP[size], animClass)}
-          role="img"
-          aria-label={`Mascot feeling ${emotion}`}
-        >
-          {emoji}
-        </span>
+        <div className={animClass} onAnimationEnd={onComplete}>
+          <Mascot mood={EMOTION_MOOD[emotion]} size={SIZE_MAP[size]} animate={animate} alt={`Mascot feeling ${emotion}`} />
+        </div>
 
         {/* Love hearts */}
         {emotion === "love" && shouldAnimate && (

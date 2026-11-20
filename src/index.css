@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Vaul retains focus trapping without movement for reduced-motion sheets. */
+.learn-sheet-reduced[data-vaul-drawer] {
+  transform: none !important;
+  animation: none !important;
+  transition: opacity 0.1s !important;
+}
+
 /* Positive Thots Design System
    Colors: Deep purple/magenta tones, electric violet accents
    Vibe: Sex-positive, inclusive, sensual, educational

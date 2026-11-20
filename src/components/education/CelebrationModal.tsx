@@ -4,13 +4,15 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { getLevelName } from "@/hooks/useLearningStats";
-import { Flame, Zap, Star, Share2, Copy, Check } from "lucide-react";
+import { Flame, Star, Share2, Copy, Check } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import mascotImg from "@/assets/mascot-celebration.png";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { ShareableAchievementCard } from "@/components/ShareableAchievementCard";
 import type { AchievementData } from "@/lib/shareableCard";
 import { haptic } from "@/lib/haptics";
+import { Mascot } from "@/components/mascot/Mascot";
+import { EducationBadge } from "@/components/EducationBadge";
 
 interface CelebrationModalProps {
   type: "level_up" | "streak_milestone" | "badge_earned" | "tier_complete" | null;
@@ -238,8 +240,9 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, badgeSlug, b
           )}
           {type === "badge_earned" && !isFoundationComplete && (
             <>
-              <Zap className="h-16 w-16 mx-auto text-success mb-4 animate-bounce" />
-              <h2 className="text-2xl font-bold mb-2">
+              <div className="mb-4"><Mascot mood="graduate" size="lg" /></div>
+              <h2 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
+                <EducationBadge moduleSlug={badgeSlug || ""} title={badgeTitle || ""} tier={badgeTier || "foundation"} isEarned size="md" />
                 Badge Earned: {badgeTitle} 💜
               </h2>
               <p className="text-muted-foreground">
@@ -249,11 +252,8 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, badgeSlug, b
           )}
           {type === "badge_earned" && isFoundationComplete && (
             <>
-              <div className="relative mx-auto w-20 h-20 mb-4">
-                <Star className="h-16 w-16 mx-auto text-accent animate-bounce" />
-                <div className="absolute inset-0 rounded-full animate-ripple-complete bg-accent/30" />
-              </div>
-              <h2 className="text-2xl font-bold mb-2">Foundation Complete! 🎉</h2>
+              <div className="mb-4"><Mascot mood="graduate" size="lg" /></div>
+              <h2 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2"><EducationBadge moduleSlug={badgeSlug || ""} title={badgeTitle || ""} tier={badgeTier || "foundation"} isEarned size="md" />Foundation Complete! 🎉</h2>
               <p className="text-muted-foreground">
                 Discovery is now unlocked. Start connecting with people who've done the work too.
               </p>
@@ -340,7 +340,7 @@ export const CelebrationModal = ({ type, level, streak, badgeTitle, badgeSlug, b
         <ShareableAchievementCard
           open={shareOpen}
           onClose={() => setShareOpen(false)}
-          data={getShareData()!}
+          data={getShareData() ?? { type: "badge_earned", badgeName: badgeTitle }}
         />
       )}
     </Dialog>

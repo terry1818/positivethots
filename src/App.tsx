@@ -52,6 +52,10 @@ const Appeals = lazy(() => import("./pages/Appeals"));
 const Cancellation = lazy(() => import("./pages/Cancellation"));
 const Contact = lazy(() => import("./pages/Contact"));
 const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
+const MotionProvider = lazy(() => import("./components/motion/MotionProvider"));
+const LearnTransitions = lazy(() => import("./components/motion/LearnTransitions"));
+
+const LearnLayout = () => <Suspense fallback={<PageSkeleton variant="learn" />}><LearnTransitions /></Suspense>;
 
 
 export const queryClient = new QueryClient({
@@ -93,8 +97,10 @@ const AppContent = () => {
         <Route path="/likes" element={<Suspense fallback={<PageSkeleton variant="likes" />}><LikesYou /></Suspense>} />
         <Route path="/premium" element={<Suspense fallback={<PageLoader />}><Premium /></Suspense>} />
         <Route path="/wallet" element={<Suspense fallback={<PageLoader />}><Wallet /></Suspense>} />
-        <Route path="/learn" element={<Suspense fallback={<PageSkeleton variant="learn" />}><Learn /></Suspense>} />
-        <Route path="/learn/:slug" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnModule /></Suspense>} />
+        <Route path="/learn" element={<LearnLayout />}>
+          <Route index element={<Suspense fallback={<PageSkeleton variant="learn" />}><Learn /></Suspense>} />
+          <Route path=":slug/*" element={<Suspense fallback={<PageSkeleton variant="learn" />}><LearnModule /></Suspense>} />
+        </Route>
         <Route path="/messages" element={<Suspense fallback={<PageSkeleton variant="messages" />}><Messages /></Suspense>} />
         <Route path="/chat/:matchId" element={<Suspense fallback={<PageSkeleton variant="chat" />}><Chat /></Suspense>} />
         <Route path="/profile" element={<Suspense fallback={<PageSkeleton variant="profile" />}><Profile /></Suspense>} />
@@ -136,8 +142,12 @@ const App = () => (
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <RouterProvider router={router} />
-            <AgeGate />
+            <Suspense fallback={<PageLoader />}>
+              <MotionProvider>
+                <RouterProvider router={router} />
+                <AgeGate />
+              </MotionProvider>
+            </Suspense>
           </TooltipProvider>
         </AuthProvider>
       </QueryClientProvider>

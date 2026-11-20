@@ -1,3 +1,8 @@
+# Learn 03 motion foundation
+- [x] Add shared motion primitives and mascot artwork without restyling pages; preserve CSS keyframes and sounds.
+- [x] Verify real signed-in Learn/module/back transitions and quiz wrong/right artwork; Settings has no motion wrapper. Graduate celebration, sheet focus/Escape, counter start/end, ring ARIA, and reduced primitives passed; 16 tests and build passed.
+- [ ] Full production before/after bundle and field performance comparison: harness exposes typecheck success but no production artifacts. Isolated added motion exports measured 93,259 bytes / 34,670 gzip; local Learn LCP 340–460ms and CLS 0.021–0.053. INP field measurement unavailable. Global strict provider is a separate lazy import but required before all page rendering.
+
 # Learn 02c badge count
 - [x] Replace badge-total assumptions with the shared database count; preserve Foundation and lower-tier rules.
 - [x] Verify 20/35, 35/35, loading/failure and mobile with browser-only component fixtures; real signed-in Learn reads 35. All 13 regression tests and build passed; badge-context searches and public SQL-function/trigger audit found no remaining hardcoded total. No member badge data changed.
