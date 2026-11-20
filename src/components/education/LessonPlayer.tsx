@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, m } from "motion/react";
 import { CheckCircle2, ChevronLeft, Loader2, MoreHorizontal, Volume2, X, XCircle } from "lucide-react";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { BrandedEmptyState } from "@/components/BrandedEmptyState";
-import { Mascot } from "@/components/mascot/Mascot";
+import { Mascot } from "@/components/mascot/LearnMascot";
 import { PressScale } from "@/components/motion/PressScale";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useReadAloud } from "@/hooks/useReadAloud";
@@ -37,7 +38,7 @@ function Checkpoint({ question, saved, onAnswered }: { question: LessonCheckpoin
   const { playCorrect, playMiss } = useSoundEffects();
   useEffect(() => { if (feedback && !saved) { if (feedback.is_correct) playCorrect(); else playMiss(); } }, [feedback, playCorrect, playMiss]);
   useEffect(() => { if (feedback && selected !== null) onAnswered(selected, feedback); }, [feedback, selected, onAnswered]);
-  return <div className="space-y-4"><p>{question.question}</p><div className="space-y-2">{question.options.map((option, i) => <Button key={i} variant="outline"
+  return <div className="space-y-4">{!result && <GuideArt name="guide-thinking" size={72}/>}<p>{question.question}</p><div className="space-y-2">{question.options.map((option, i) => <Button key={i} variant="outline"
     className={cn("w-full min-h-11 h-auto whitespace-normal justify-start text-left py-3", result && i === result.correct_answer && "border-success text-success disabled:opacity-100", result && selected === i && !result.is_correct && "border-destructive text-destructive disabled:opacity-100")}
     disabled={pending || !!result || error} onClick={() => { setSelected(i); void check(question.id, i, Date.now() - start.current); }}>
     {pending && selected === i && <Loader2 className="h-4 w-4 mr-2 shrink-0 animate-spin" />}<span>{option}</span>{result && i === result.correct_answer && <CheckCircle2 className="ml-2 h-4 w-4 shrink-0" aria-label="Correct answer" />}{result && selected === i && !result.is_correct && <XCircle className="ml-2 h-4 w-4 shrink-0" aria-label="Your answer was not correct" />}
@@ -121,7 +122,7 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
     if (card.type === "checkpoint") setResults(prev => prev[card.checkpoint.id] ? prev : { ...prev, [card.checkpoint.id]: { selected, feedback } });
   }, [card]);
   const exit = () => { onSavePosition(index); audio.stop(); onExit(); };
-  if (!section.content_text?.trim()) return <div className="fixed inset-0 z-40 bg-background overflow-auto"><BrandedEmptyState mascot="graduate" headline="This lesson is being written. Check back soon." description="" ctaLabel="Back to my path" onCtaClick={exit} /></div>;
+  if (!section.content_text?.trim()) return <div className="fixed inset-0 z-40 bg-background overflow-auto"><BrandedEmptyState illustration={<GuideArt name="guide-waving" size={160}/>} mascot="graduate" headline="This lesson is being written. Check back soon." description="" ctaLabel="Back to my path" onCtaClick={exit} /></div>;
   return <div className="fixed inset-0 z-40 bg-background text-foreground flex flex-col pt-[env(safe-area-inset-top)]">
     <header className="h-[56px] shrink-0 flex items-center gap-1 border-b border-border px-2">
       <Button variant="ghost" size="icon" className="min-h-11 min-w-11" aria-label="Exit lesson" onClick={exit}><X /></Button>
@@ -143,7 +144,7 @@ export function LessonPlayer({ section, checkpoints, initialIndex, isCompleted, 
           onPointerUp={event => { const start = pointer.current; pointer.current = null; if (start && Math.abs(event.clientX - start.x) > 65 && Math.abs(event.clientY - start.y) < 50) move(event.clientX < start.x ? 1 : -1); }}>
           <div className="max-w-[65ch] mx-auto text-base leading-relaxed break-words">
             <h2 ref={heading} tabIndex={-1} id={`lesson-card-${index}`} className={cn("font-bold mb-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring", card.type === "title" ? "text-2xl" : "continued" in card && card.continued ? "text-lg" : "text-xl")}>{card.title || section.title}{"continued" in card && card.continued && <span className="font-normal text-muted-foreground"> — continued</span>}</h2>
-            {card.type === "title" && <div className="text-center space-y-6"><Mascot mood="waving" size="md" /><p>Lesson {card.lesson} of 4{card.minutes ? ` · ${card.minutes} min` : ""}</p></div>}
+            {card.type === "title" && <div className="text-center space-y-6"><GuideArt name={card.lesson === 1 ? "guide-waving" : "guide-lesson-reading"} size={160} /><p>Lesson {card.lesson} of 4{card.minutes ? ` · ${card.minutes} min` : ""}</p></div>}
             {(card.type === "content" || card.type === "video") && <div>{renderMarkdown(card.body)}</div>}
             {card.type === "checkpoint" && <Checkpoint question={card.checkpoint} saved={results[card.checkpoint.id]} onAnswered={answered} />}
             {card.type === "takeaway" && <KeyTakeaway takeaway={card.body} sectionTitle={section.title} sectionId={section.id} />}

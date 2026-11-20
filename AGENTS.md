@@ -22,3 +22,5 @@
 - Path presentation uses shared raised PathNode/popovers, inline SVG art and visibility-gated loops; synthesised learning sounds share existing preferences, gesture gating and deduplication without changing progress rules.
 
 - Practice hub/modes lazy-load separately from Path; private saved takeaways and safe caller-eligible RPCs keep answer keys off loading, and award_practice_xp serializes daily rewards without badge writes or changes to legacy award_xp.
+
+- Learn artwork uses manifest-sized GuideArt with lazy images and visibility-gated floats; Learn-only mascot adapters preserve non-Learn legacy art.

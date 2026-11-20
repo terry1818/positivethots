@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { MascotReaction } from "@/components/mascot/MascotReaction";
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { CelebrationEngine, CelebrationTier } from "@/components/celebrations/CelebrationEngine";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -105,11 +105,11 @@ export const DailyRewardModal = ({ reopenTrigger, onReadyChange }: { reopenTrigg
 
   return (
     <>
-      <CelebrationEngine tier={reward.tier} trigger={celebrationTrigger} title={`+${reward.xp} XP`} />
+      <CelebrationEngine illustration={<GuideArt name="guide-high-five" size={160}/>} tier={reward.tier} trigger={celebrationTrigger} title={`+${reward.xp} XP`} />
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-sm border-0 p-0 overflow-hidden bg-gradient-to-br from-primary to-secondary">
           <div className="p-8 text-center space-y-4">
-            <MascotReaction emotion="waving" size="large" position="inline" />
+            <GuideArt name="guide-chest-open" size={160}/>
             <h2 className="text-2xl font-bold text-white">Welcome back! 🌟</h2>
             <p className="text-white/90">Here's your daily bonus!</p>
 

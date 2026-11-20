@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Flame, Sparkles, Gift, Trophy, Users, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -85,6 +86,7 @@ export function LearnToday({ streak, lastActivityDate, freezes, atRisk, hoursLef
     </div>
     <BottomSheet open={sheet !== null} onOpenChange={open => { if (!open) setSheet(null); }} title={title}>
       <div className="max-h-[65dvh] overflow-y-auto">
+        {sheet && <div className="text-center pb-4"><GuideArt name={sheet === "streak" ? atRisk ? "guide-sleepy" : "guide-streak-flame" : sheet === "spin" ? "guide-daily-spin" : sheet === "sprint" || sheet === "community" ? "guide-study-together" : "guide-lesson-reading"} size={144}/></div>}
         <Suspense fallback={<Skeleton className="h-40 w-full" />}>
           {sheet === "streak" && <StreakCalendar streak={streak} lastActivityDate={lastActivityDate} freezeCount={freezes} />}
           {sheet === "challenge" && <DailyChallenge />}
@@ -92,7 +94,7 @@ export function LearnToday({ streak, lastActivityDate, freezes, atRisk, hoursLef
           {sheet === "sprint" && <WeeklySprintBanner />}
           {sheet === "community" && <CommunityChallengeCard />}
           {(sheet === "sprint" || sheet === "community") && activityAvailable[sheet] === false &&
-            <BrandedEmptyState mascot="waving" headline={sheet === "sprint" ? "The next sprint is on the way." : "New community goals are on the way."}
+            <BrandedEmptyState illustration={<GuideArt name="guide-waving" size={160}/>} mascot="waving" headline={sheet === "sprint" ? "The next sprint is on the way." : "New community goals are on the way."}
               description="Keep learning while you wait." />}
         </Suspense>
       </div>

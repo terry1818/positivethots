@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +21,7 @@ export const MASCOT_IMAGES = {
 export type MascotType = keyof typeof MASCOT_IMAGES;
 
 interface BrandedEmptyStateProps {
+  illustration?: ReactNode;
   mascot: MascotType;
   headline: string;
   description: string;
@@ -35,6 +36,7 @@ interface BrandedEmptyStateProps {
 
 export const BrandedEmptyState = memo(({
   mascot,
+  illustration,
   headline,
   description,
   ctaLabel,
@@ -52,12 +54,12 @@ export const BrandedEmptyState = memo(({
       {/* Mascot with glow */}
       <div className="relative mb-6">
         <div className="absolute inset-0 rounded-full bg-primary/10 blur-2xl scale-150" />
-        <img
+        {illustration || <img
           src={MASCOT_IMAGES[mascot]}
           alt=""
           className="relative w-[187px] h-[187px] object-contain drop-shadow-lg animate-float-gentle"
           loading="lazy"
-        />
+        />}
       </div>
 
       {/* Headline */}

@@ -10,6 +10,7 @@ import { mixedLevelNodes, type PathScenario } from "@/lib/mixedNodes";
 import { type LessonSection } from "@/lib/learnLevels";
 import { useSessionStore } from "@/stores/sessionStore";
 import { ModuleGuide } from "./ModuleGuide";
+import { GuideArt, tierGuide, type GuideName } from "@/components/mascot/GuideArt";
 import { moduleCompletionPercent } from "@/lib/learnSmallFixes";
 import { pathOffsets, pathNodeSpacing, windingConnector } from "@/lib/learnHome";
 import { completedNodeId } from "@/lib/learnFinish";
@@ -84,6 +85,13 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
 }: BadgePathMapProps) => {
   const navigate = useNavigate();
   const { ref: pathRef, running } = usePathAnimation<HTMLDivElement>();
+  const [celebratingLevel, setCelebratingLevel] = useState(justCompleted?.node === "badge" ? justCompleted.moduleId : null);
+  useEffect(() => {
+    if (justCompleted?.node !== "badge") return;
+    setCelebratingLevel(justCompleted.moduleId);
+    const timer = setTimeout(() => setCelebratingLevel(null), 2500);
+    return () => clearTimeout(timer);
+  }, [justCompleted]);
   const [openNode, setOpenNode] = useState<string | null>(null);
   const { playNodeComplete, playTrailFill } = useSoundEffects();
   const reduced = useReducedMotion();
@@ -180,7 +188,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
       return <div key={tier} role="listitem" className={`learn-tier learn-tier-${tier}`}>
         <Button variant="ghost" className="path-tier-banner min-h-[44px] h-auto w-full whitespace-normal" onClick={() => toggle(tier, true)}
           aria-expanded={tierOpen} data-tour={tier === currentTier ? "learn-tier-active" : undefined} data-walkthrough={tier === currentTier ? "learn-tier-active" : undefined}>
-          <TierEmblem tier={tier}/><span className="flex-1 text-left"><span className="block text-lg font-bold">{tierLabels[tier]}</span><span className="block text-sm">{earned} of {modules.length} levels complete</span><span className="path-tier-progress"><span style={{ width: `${earned / modules.length * 100}%` }}/></span></span><ChevronDown className={cn("h-4 w-4", tierOpen && "rotate-180")} />
+          <span className="flex-1 min-w-0 text-left"><span className="block text-lg font-bold">{tierLabels[tier]}</span><span className="block text-sm">{earned} of {modules.length} levels complete</span><span className="path-tier-progress"><span style={{ width: `${earned / modules.length * 100}%` }}/></span></span><GuideArt name={tierGuide(tier)} size={96}/><ChevronDown className={cn("h-4 w-4", tierOpen && "rotate-180")} />
         </Button>
         {!tierOpen && earned < modules.length && <p className="text-center text-sm text-muted-foreground">{tier === "advanced" && !isPremium ? "Complete Foundation and get Premium" : "Complete Foundation to unlock"}</p>}
         {tierOpen && <div className="space-y-4">
@@ -197,6 +205,10 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
             const height = 52 + (nodes.length - 1) * pathNodeSpacing;
             const firstIncomplete = nodes.findIndex(n => !n.done);
             const donePrefix = firstIncomplete < 0 ? nodes.length : firstIncomplete;
+            const artNames: Record<string, GuideName> = { lesson: "guide-lesson-reading", story: "guide-story-chat", practice: "guide-practice-dumbbell", listen: "guide-listen-headphones", chest: "guide-chest-open", badge: "guide-graduate" };
+            const selectedArt = nodes.findIndex(n => openNode === (n.section ? n.id : n.kind === "badge" ? `quiz:${module.id}` : `${module.id}:${n.id}`));
+            const artIndex = selectedArt >= 0 ? selectedArt : Math.max(0, nodes.findIndex(n => n.current && n.unlocked));
+            const artSpots = [artIndex, ...nodes.map((n, i) => n.kind !== "lesson" && i > artIndex && (n.kind !== "chest" || n.unlocked || n.done) ? i : -1).filter(i => i >= 0)].map((i, order) => ({ index: i, offset: order === 0 ? pathOffsets[i % pathOffsets.length] : -pathOffsets[artIndex % pathOffsets.length], name: nodes[i].kind === "lesson" && nodes[i].section === 1 && !startedSectionIds.has(nodes[i].id) && !nodes[i].done ? "guide-waving" as const : artNames[nodes[i].kind] }));
             return <section key={module.id} aria-label={module.title} className="learn-level-block">
               {expanded ? <header className={cn("learn-level-band sticky z-20 flex items-center gap-2 px-3 py-4", justCompleted?.moduleId === module.id && justCompleted.node === "badge" && finishPhase < 3 && "path-level-celebrating")} style={{ top: headerHeight }}>
                 <span className="path-level-number">{levelIndex + 1}</span>
@@ -208,12 +220,13 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
                   <span className="path-row-medal"><PathIcon kind={earnedBadge ? "badge" : !unlocked ? "lock" : "lesson"}/></span>
                   <div><h3 className="text-base font-semibold">{module.title}</h3>{!unlocked && <p className="text-xs text-muted-foreground">{reason(module)}</p>}</div>
                 </Button>
+                {earnedBadge && <CompletedLevelArt moduleId={module.id} celebrating={celebratingLevel === module.id}/>}
                 {earnedBadge && <Button variant="outline" className="path-review-chip" onClick={() => toggle(module.id)}>Review</Button>}
               </div>}
               <div className={cn("grid", !reduced && !justCompleted && "transition-[grid-template-rows] duration-300")} style={{ gridTemplateRows: expanded ? "1fr" : "0fr" }}>
                 <div className="min-h-0">
                   {expanded && <div className="path-level-stage relative mx-auto w-[320px] max-w-full pt-10">
-                    <PathScenery mood={earnedBadge ? "graduate" : "waving"} index={0} offset={0} spots={nodes.flatMap((n, i) => n.kind === "story" || n.kind === "chest" || n.kind === "badge" ? [{ index: i, offset: pathOffsets[i % pathOffsets.length], mood: n.kind === "story" ? "binoculars" as const : n.kind === "chest" ? "heart" as const : "graduate" as const }] : [])} celebration={justCompleted?.moduleId === module.id && justCompleted.node === "badge" && finishPhase < 3}/>
+                    <PathScenery spots={artSpots} celebration={celebratingLevel === module.id}/>
                     <svg viewBox={`0 0 320 ${height}`} preserveAspectRatio="none" className="path-trail pointer-events-none absolute inset-x-0 top-10 w-full" style={{ height }} aria-hidden="true">
                       <defs><clipPath id={`completed-${module.id}`}><rect width="320" height={donePrefix > 0 ? 52 + Math.min(donePrefix, nodes.length - 1) * pathNodeSpacing : 0}/></clipPath></defs>
                       <path d={connector} className="path-trail-track"/>
@@ -237,7 +250,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
               </div>
             </section>;
           })}
-          <div className="flex justify-center py-8"><PathNode id={`review-${tier}`} tier={tier} kind="review" label={`${tierLabels[tier]} Review, ${earned >= 2 ? "available" : "locked, earn 2 badges in this tier to unlock"}`} title={`${tierLabels[tier]} Review`} subtitle="+30 XP" state={earned >= 2 ? "available" : "locked"} reason="Earn 2 badges in this tier to unlock" open={openNode === `review-${tier}`} onOpenChange={value => setOpenNode(value ? `review-${tier}` : null)} onGo={() => navigate(`/learn/review/${tier}`)}/></div>
+          <div className="flex justify-center items-center gap-8 py-8"><GuideArt name="guide-trophy" size={112}/><PathNode id={`review-${tier}`} tier={tier} kind="review" label={`${tierLabels[tier]} Review, ${earned >= 2 ? "available" : "locked, earn 2 badges in this tier to unlock"}`} title={`${tierLabels[tier]} Review`} subtitle="+30 XP" state={earned >= 2 ? "available" : "locked"} reason="Earn 2 badges in this tier to unlock" open={openNode === `review-${tier}`} onOpenChange={value => setOpenNode(value ? `review-${tier}` : null)} onGo={() => navigate(`/learn/review/${tier}`)}/></div>
         </div>}
       </div>;
     })}
@@ -249,3 +262,15 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
       onClose={() => setGuideId(null)} onStart={() => startModule(guide)} onUpgrade={() => navigate("/premium")} />}
   </div>;
 };
+
+function CompletedLevelArt({ moduleId, celebrating }: { moduleId: string; celebrating: boolean }) {
+  const { ref, visible } = usePathAnimation<HTMLSpanElement>();
+  const [show, setShow] = useState(false);
+  const seen = useRef(false);
+  useEffect(() => {
+    if (!visible || seen.current || useSessionStore.getState().isBannerDismissed(`guide-level:${moduleId}`)) return;
+    seen.current = true; useSessionStore.getState().dismissBanner(`guide-level:${moduleId}`); setShow(true);
+  }, [visible, moduleId]);
+  useEffect(() => { if (!show) return; const timer = setTimeout(() => setShow(false), 2500); return () => clearTimeout(timer); }, [show]);
+  return <span ref={ref} className="path-completed-guide-slot">{(show || celebrating) && <GuideArt name="guide-high-five" size={64}/>}</span>;
+}

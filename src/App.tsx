@@ -7,6 +7,8 @@ import { createBrowserRouter, RouterProvider, Routes, Route } from "react-router
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { GuideArt } from "@/components/mascot/GuideArt";
+import { Button } from "@/components/ui/button";
 import { CookieConsent } from "@/components/CookieConsent";
 import { AgeGate } from "@/components/AgeGate";
 import { PageLoader } from "@/components/PageLoader";
@@ -59,7 +61,7 @@ const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
 const MotionProvider = lazy(() => import("./components/motion/MotionProvider"));
 const LearnTransitions = lazy(() => import("./components/motion/LearnTransitions"));
 
-const LearnLayout = () => <Suspense fallback={<PageSkeleton variant="learn" />}><LearnTransitions /></Suspense>;
+const LearnLayout = () => <ErrorBoundary fallback={<main className="min-h-screen flex flex-col items-center justify-center gap-6 px-4 text-center"><GuideArt name="guide-encourage" size={160}/><h1 className="text-xl font-bold">We couldn't load your learning.</h1><Button onClick={() => window.location.reload()}>Try again</Button></main>}><Suspense fallback={<PageSkeleton variant="learn" />}><LearnTransitions /></Suspense></ErrorBoundary>;
 
 
 export const queryClient = new QueryClient({

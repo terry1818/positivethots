@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Button } from "@/components/ui/button";
 import { BottomSheet } from "@/components/motion/BottomSheet";
-import { Mascot } from "@/components/mascot/Mascot";
+import { GuideArt } from "@/components/mascot/GuideArt";
+import { Mascot } from "@/components/mascot/LearnMascot";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { CheckCircle2, XCircle, Trophy, Zap, Loader2, X } from "lucide-react";
@@ -103,7 +104,7 @@ export const ExerciseSession = ({ moduleTitle, questions, onComplete, onBack, fi
     <div className="flex items-center gap-2"><Zap className="h-3.5 w-3.5 text-primary" /><span className="text-xs font-semibold text-primary uppercase tracking-wider">Multiple Choice</span>
       {state.misses[current.id] > 0 && <m.span key={attempt} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0.1 : duration.fast }} className="text-sm text-muted-foreground">Let's revisit</m.span>}
     </div>
-    <div className="space-y-4"><p className="text-lg font-medium leading-relaxed">{current.question}</p>
+    <div className="space-y-4"><div className="flex items-start gap-4"><p className="text-lg font-medium leading-relaxed flex-1">{current.question}</p>{!feedback && <GuideArt name="guide-thinking" size={72}/>}</div>
       <RadioGroup key={`${current.id}:${attempt}`} value={selected === null ? "" : String(selected)} onValueChange={v => { if (!feedback && !pending && !error) setSelected(Number(v)); }} className="space-y-2">
         {optionOrder.map((originalIndex, displayIndex) => {
           const correct = feedback && originalIndex === feedback.correct_answer;

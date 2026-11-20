@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { MascotReaction } from "@/components/mascot/MascotReaction";
+import { MascotReaction } from "@/components/mascot/LearnMascot";
 import { Trophy, TrendingUp, Zap } from "lucide-react";
 
 interface SprintJoinModalProps {

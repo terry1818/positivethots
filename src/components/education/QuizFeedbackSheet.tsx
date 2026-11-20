@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, Info } from "lucide-react";
 import { BottomSheet } from "@/components/motion/BottomSheet";
-import { Mascot } from "@/components/mascot/Mascot";
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { Button } from "@/components/ui/button";
 import type { AnswerFeedback } from "@/hooks/useQuizAnswer";
 import { choosePraise } from "@/lib/quizMastery";
@@ -23,7 +23,7 @@ export function QuizFeedbackSheet({ feedback, correctOption, onContinue, reread 
     <div className="space-y-4">
       <div aria-live="polite" aria-atomic="true" className="space-y-3">
         <div className={feedback?.is_correct ? "quiz-feedback-success flex items-center gap-3" : "quiz-feedback-miss flex items-center gap-3"}>
-          {feedback?.is_correct ? <CheckCircle2 aria-hidden /> : <Info aria-hidden />}<Mascot mood={feedback?.is_correct ? "celebration" : "shrug"} size="sm" /><p className="font-bold text-lg">{line}</p>
+          {feedback?.is_correct ? <CheckCircle2 aria-hidden /> : <Info aria-hidden />}<GuideArt name={feedback?.is_correct ? "guide-thumbs-up" : "guide-encourage"} size={112} /><p className="font-bold text-lg">{line}</p>
         </div>
         {!feedback?.is_correct && <p><strong>Correct answer:</strong> {correctOption}</p>}
         <p className="text-base leading-relaxed">{feedback?.explanation}</p>

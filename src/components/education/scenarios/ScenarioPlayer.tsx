@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -58,7 +59,7 @@ export const ScenarioPlayer = ({ scenarioId, onComplete, onBack }: {scenarioId: 
   }catch(e){setSaveError(true);void reportError(e instanceof Error?e:new Error("Story save failed"));}finally{busy.current=false;setSaving(false);}
  };
  if(loading)return <PageSkeleton variant="learn"/>;
- if(error||!scenario||!scene)return <BrandedEmptyState mascot="confused" headline="We couldn't load this story." description="" ctaLabel="Try again" onCtaClick={()=>void load()}/>;
+ if(error||!scenario||!scene)return <BrandedEmptyState illustration={<GuideArt name="guide-encourage" size={160}/>} mascot="confused" headline="We couldn't load this story." description="" ctaLabel="Try again" onCtaClick={()=>void load()}/>;
  if(finish)return <Suspense fallback={<PageSkeleton variant="learn"/>}><FinishSequence data={finish} onBack={()=>{onComplete?.(score,finish.xp||0);onBack?.();}}/></Suspense>;
  const avatar=(name:string)=>{const index=scenario.characters.findIndex(c=>c.name===name);return <span aria-hidden className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-bold ${avatarTokens[Math.max(0,index)%avatarTokens.length]}`}>{name.split(" ").map(n=>n[0]).slice(0,2).join("")}</span>;};
  return <main className="min-h-[100dvh] bg-background flex flex-col">

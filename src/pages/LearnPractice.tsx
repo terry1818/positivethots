@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import {lazy,Suspense,useEffect,useRef,useState} from "react";
 import {useNavigate,useParams} from "react-router-dom";
 import {supabase} from "@/integrations/supabase/client";
@@ -29,8 +30,8 @@ export default function LearnPractice({listen=false}:{listen?:boolean}){
     const {error}=await supabase.from("user_preferences").upsert({user_id:userId,key:`learn_optional:${listen?"listen":"practice"}:${sourceId}`,value:true,updated_at:new Date().toISOString()},{onConflict:"user_id,key"});if(error)throw error;
     setFinish(prev=>prev?{...prev,xp:xp.newXP,saving:false}:prev);};void save().catch(e=>{void reportError(e instanceof Error?e:new Error("Practice reward failed"));retryFinish(`${listen?"listen":"practice"}:${userId}:${module.id}`,save);});};
  if(loading)return <PageSkeleton variant="learn"/>;
- if(error||!module)return <BrandedEmptyState mascot="confused" headline={listen?"We couldn't load this recap.":"We couldn't load this practice."} description="" ctaLabel="Try again" onCtaClick={()=>void load()}/>;
- if(!questions.length)return <BrandedEmptyState mascot="graduate" headline="Nothing to practise here yet. Finish a lesson first." description="" ctaLabel="Back to my path" onCtaClick={back}/>;
+ if(error||!module)return <BrandedEmptyState illustration={<GuideArt name="guide-encourage" size={160}/>} mascot="confused" headline={listen?"We couldn't load this recap.":"We couldn't load this practice."} description="" ctaLabel="Try again" onCtaClick={()=>void load()}/>;
+ if(!questions.length)return <BrandedEmptyState illustration={<GuideArt name="guide-waving" size={160}/>} mascot="graduate" headline="Nothing to practise here yet. Finish a lesson first." description="" ctaLabel="Back to my path" onCtaClick={back}/>;
  if(finish)return <Suspense fallback={<PageSkeleton variant="learn"/>}><FinishSequence data={finish} onBack={back}/></Suspense>;
  return <main className="min-h-[100dvh] max-w-[480px] mx-auto bg-background p-4 pt-[max(16px,env(safe-area-inset-top))]">{listen&&!recapDone&&takeaways.length?<Suspense fallback={<PageSkeleton variant="learn"/>}><ListenRecap title={module.title} takeaways={takeaways} onComplete={()=>setRecapDone(true)}/></Suspense>:<ExerciseSession moduleId={module.id} moduleTitle={listen?"Listen":"Practice"} userId={userId} questions={questions} mastery={false} review preserveQuestionOrder finalResult={null} submitting={false} submissionError={false} onRetrySubmit={()=>{}} onBack={back} onComplete={complete}/>}</main>;
 }

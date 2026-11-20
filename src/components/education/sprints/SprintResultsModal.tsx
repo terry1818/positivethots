@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { MascotReaction } from "@/components/mascot/MascotReaction";
+import { MascotReaction } from "@/components/mascot/LearnMascot";
 import { cn } from "@/lib/utils";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { TrendingUp, TrendingDown, Minus, Trophy } from "lucide-react";

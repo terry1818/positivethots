@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { MascotReaction } from "@/components/mascot/MascotReaction";
+import { MascotReaction } from "@/components/mascot/LearnMascot";
 import { cn } from "@/lib/utils";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Star, ArrowLeft, CheckCircle2, XCircle } from "lucide-react";

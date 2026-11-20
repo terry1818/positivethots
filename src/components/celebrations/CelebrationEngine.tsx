@@ -1,3 +1,4 @@
+import { type ReactNode } from "react";
 import { useEffect, useState, useCallback } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { ConfettiSystem } from "./ConfettiSystem";
@@ -12,6 +13,7 @@ export type CelebrationTier = "micro" | "small" | "medium" | "large" | "epic";
 
 interface CelebrationEngineProps {
   confettiOnly?: boolean;
+  illustration?: ReactNode;
   tier: CelebrationTier;
   trigger: number; // increment to fire
   onComplete?: () => void;
@@ -40,6 +42,7 @@ export const CelebrationEngine = ({
   onShare,
   children,
   confettiOnly = false,
+  illustration,
 }: CelebrationEngineProps) => {
   const reducedMotion = useReducedMotion();
   const [active, setActive] = useState(false);
@@ -110,7 +113,7 @@ export const CelebrationEngine = ({
       <>
         <ConfettiSystem intensity="light" trigger={confettiTrigger} duration={1200} />
         <div className="fixed bottom-24 right-4 z-[55] animate-slide-up" aria-hidden="true">
-          <MascotReaction emotion="cheering" size="small" position="bottom-right" message={title} />
+          {illustration || <MascotReaction emotion="cheering" size="small" position="bottom-right" message={title} />}
         </div>
       </>
     );
@@ -141,7 +144,7 @@ export const CelebrationEngine = ({
             <div className="relative z-10 space-y-4">
               {/* Mascot */}
               <div className={cn(!reducedMotion && "animate-bounce-in")}>
-                <MascotReaction emotion={mascotEmotion} size="large" position="inline" animate={!reducedMotion} />
+                {illustration || <MascotReaction emotion={mascotEmotion} size="large" position="inline" animate={!reducedMotion} />}
               </div>
 
               {/* Title */}

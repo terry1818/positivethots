@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useTutorialState } from "@/hooks/useTutorialState";
 import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
@@ -304,7 +305,7 @@ const Learn = () => {
         </header>
         <main className="flex-1 container max-w-md mx-auto px-4 py-6 flex items-center justify-center">
           <BrandedEmptyState
-            mascot="confused"
+            illustration={<GuideArt name="guide-encourage" size={160}/>} mascot="confused"
             headline="We couldn't load your path."
             description="Something went wrong on our end. Give it another try!"
             ctaLabel="Try again"
@@ -326,7 +327,7 @@ const Learn = () => {
         </header>
         <main className="flex-1 container max-w-md mx-auto px-4 py-6 flex items-center justify-center">
           <BrandedEmptyState
-            mascot="confused"
+            illustration={<GuideArt name="guide-waving" size={160}/>} mascot="confused"
             headline="New lessons are on the way."
             description="We're working on adding new learning content. Check back soon!"
           />
@@ -386,6 +387,7 @@ const Learn = () => {
         />
 
         <div className="mx-auto w-full max-w-[480px]">
+          {totalBadges !== null && totalBadges > 0 && earnedCount >= totalBadges && <GuideArt name="guide-celebrate-all" size={360} className="guide-full-width"/>}
           <BadgePathMap
             modulesByTier={modulesByTier} earnedModuleIds={earnedModuleIds}
             isModuleUnlocked={isModuleUnlocked} isAdvancedPremiumLocked={isAdvancedPremiumLocked}

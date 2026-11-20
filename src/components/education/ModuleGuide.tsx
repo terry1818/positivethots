@@ -1,3 +1,4 @@
+import { GuideArt, tierGuide } from "@/components/mascot/GuideArt";
 import { BottomSheet } from "@/components/motion/BottomSheet";
 import { PressScale } from "@/components/motion/PressScale";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ export function ModuleGuide({ module, icon, reason, premium, earned, started, fe
   const count = counts.data?.find(c => c.module_id === module.id);
   return <BottomSheet open onOpenChange={open => { if (!open) onClose(); }} title={module.title}>
     <div className="max-h-[65dvh] space-y-4 overflow-y-auto">
-      <div className="text-center text-4xl" aria-hidden="true">{icon}</div>
+      <div className="text-center"><GuideArt name={tierGuide(module.tier)} size={128}/></div>
       <p>{module.description}</p>
       {counts.isLoading ? <Skeleton className="h-6 w-full" /> : counts.isError ? <Button variant="outline" onClick={() => void counts.refetch()}>Try again</Button> :
         <p className="text-sm text-muted-foreground">{count?.section_count ?? "—"} lessons · {count?.question_count ?? "—"} questions · about {module.estimated_minutes ?? "—"} min</p>}

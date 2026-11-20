@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -100,6 +101,7 @@ export const ReflectionPrompt = ({
 
   return (
     <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-4 space-y-3">
+      <div className="text-center"><GuideArt name="guide-meditate" size={112}/></div>
       <p className="text-sm font-semibold">Take a moment to reflect 💭</p>
       <p className="text-sm">{prompt}</p>
       <Textarea

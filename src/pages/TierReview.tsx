@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -61,7 +62,7 @@ export default function TierReview() {
   if (result) return <Suspense fallback={<PageSkeleton variant="learn" />}><FinishSequence data={{ kind: "review", moduleId: tier, node: "review", title: "Tier Review", slug: "", tier, xp: awarded, oldXP: 0, accuracy: result.score, questions: result.total, saving: saving || saveError }} onBack={() => navigate("/learn")} /></Suspense>;
   if (loading) return <PageSkeleton variant="learn" />;
   const back = () => navigate("/learn");
-  if (error || locked || !questions.length) return <BrandedEmptyState mascot="graduate" description="" headline={error ? "We couldn't load your path." : locked ? "Earn 2 badges in this tier to unlock" : "Nothing to review yet. Earn a badge first."} ctaLabel={error ? "Try again" : "Back to my path"} onCtaClick={error ? () => void load() : back} />;
+  if (error || locked || !questions.length) return <BrandedEmptyState illustration={<GuideArt name={error ? "guide-encourage" : "guide-waving"} size={160}/>} mascot="graduate" description="" headline={error ? "We couldn't load your path." : locked ? "Earn 2 badges in this tier to unlock" : "Nothing to review yet. Earn a badge first."} ctaLabel={error ? "Try again" : "Back to my path"} onCtaClick={error ? () => void load() : back} />;
   return <main className="mx-auto min-h-screen max-w-[480px] space-y-4 bg-background px-4 py-4">
     <Button variant="ghost" size="icon" aria-label="Back to my path" onClick={back}><ChevronLeft /></Button>
     <h1 className="text-xl font-bold">{tier.replace(/_/g, " ")} Review</h1>

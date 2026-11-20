@@ -1,3 +1,4 @@
+import { GuideArt } from "@/components/mascot/GuideArt";
 import { lazy, Suspense, useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -326,8 +327,8 @@ const LearnModule = () => {
     return <LessonPlayerSkeleton />;
   }
   if ((progressLoading && !showQuiz) || viewLoading) return <LessonPlayerSkeleton />;
-  if (progressError) return <BrandedEmptyState mascot="confused" headline="We couldn't load this lesson." description="" ctaLabel="Try again" onCtaClick={() => void reloadProgress()} />;
-  if (questionError) return <BrandedEmptyState mascot="confused" headline="We couldn't load your quiz." description="" ctaLabel="Try again" onCtaClick={() => void loadModule()} />;
+  if (progressError) return <BrandedEmptyState illustration={<GuideArt name="guide-encourage" size={160}/>} mascot="confused" headline="We couldn't load this lesson." description="" ctaLabel="Try again" onCtaClick={() => void reloadProgress()} />;
+  if (questionError) return <BrandedEmptyState illustration={<GuideArt name="guide-encourage" size={160}/>} mascot="confused" headline="We couldn't load your quiz." description="" ctaLabel="Try again" onCtaClick={() => void loadModule()} />;
   if (!module) return null;
 
   const currentSection = sections[currentSectionIndex];
@@ -502,7 +503,7 @@ const LearnModule = () => {
           <>
             {/* Exercise Session - mixed exercise types */}
             {questions.length === 0 ? (
-              <BrandedEmptyState mascot="graduate" headline="This quiz is on its way. Check back soon." description="" ctaLabel="Back to my path" onCtaClick={() => navigate("/learn")} />
+              <BrandedEmptyState illustration={<GuideArt name="guide-waving" size={160}/>} mascot="graduate" headline="This quiz is on its way. Check back soon." description="" ctaLabel="Back to my path" onCtaClick={() => navigate("/learn")} />
             ) : (
               <ExerciseSession
                 moduleId={module.id}
