@@ -18,7 +18,8 @@ import { useSessionStore } from "@/stores/sessionStore";
 import { XPPopup } from "@/components/education/XPPopup";
 import { CelebrationModal } from "@/components/education/CelebrationModal";
 import { ReadingProgress } from "@/components/education/ReadingProgress";
-import { SessionIntro } from "@/components/education/SessionIntro";
+import { LessonPlayer, LessonPlayerSkeleton, LessonViewMenu } from "@/components/education/LessonPlayer";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { WhatYoullLearn } from "@/components/education/WhatYoullLearn";
 
 import { useAntiCheat } from "@/hooks/useAntiCheat";
@@ -79,9 +80,22 @@ const LearnModule = () => {
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(new Set());
   const [showFeedback, setShowFeedback] = useState(false);
 
-  // Session intro
-  const [introShownSections, setIntroShownSections] = useState<Set<string>>(new Set());
-  const [showSessionIntro, setShowSessionIntro] = useState(false);
+  const { getPreference, setPreference } = useUserPreferences();
+  const [lessonView, setLessonView] = useState<"cards" | "article">("cards");
+  const [viewLoading, setViewLoading] = useState(true);
+  useEffect(() => {
+    let active = true;
+    setViewLoading(true);
+    getPreference("lesson_view", "cards").then(value => {
+      if (active) { setLessonView(value === "article" ? "article" : "cards"); setViewLoading(false); }
+    });
+    return () => { active = false; };
+  }, [getPreference]);
+  const switchLessonView = () => {
+    const next = lessonView === "cards" ? "article" : "cards";
+    setLessonView(next);
+    void setPreference("lesson_view", next);
+  };
 
   // XP & celebrations
   const { stats, awardXP } = useLearningStats();
@@ -130,6 +144,8 @@ const LearnModule = () => {
   const {
     sections,
     loading: progressLoading,
+    error: progressError,
+    saveCardPosition,
     progress: sectionProgress,
     currentSectionIndex,
     setCurrentSectionIndex,
@@ -173,18 +189,6 @@ const LearnModule = () => {
       window.speechSynthesis?.cancel();
     };
   }, [currentSectionIndex]);
-
-  // Show session intro for new, uncompleted sections
-  useEffect(() => {
-    if (!hasSections || sections.length === 0 || showQuiz) return;
-    const currentSection = sections[currentSectionIndex];
-    if (!currentSection) return;
-    const isCompleted = sectionProgress.some(p => p.section_id === currentSection.id && p.completed);
-    if (!introShownSections.has(currentSection.id) && !isCompleted) {
-      setShowSessionIntro(true);
-      setIntroShownSections(prev => new Set(prev).add(currentSection.id));
-    }
-  }, [currentSectionIndex, sections, hasSections, showQuiz]);
 
   const handleReflectionSaved = useCallback(async (sectionId: string) => {
     const result = await awardXP(5, "reflection", sectionId);
@@ -332,10 +336,28 @@ const LearnModule = () => {
   const canTakeQuiz = !hasSections || allSectionsComplete;
 
   if (loading) {
-    return <PageSkeleton variant="learn" />;
+    return <LessonPlayerSkeleton />;
   }
+  if (progressLoading || viewLoading) return <LessonPlayerSkeleton />;
+  if (progressError) return <BrandedEmptyState mascot="confused" headline="We couldn't load this lesson." description="" ctaLabel="Try again" onCtaClick={() => void reloadProgress()} />;
   if (questionError) return <BrandedEmptyState mascot="confused" headline="We couldn't load your quiz." description="" ctaLabel="Try again" onCtaClick={() => void loadModule()} />;
   if (!module) return null;
+
+  const currentSection = sections[currentSectionIndex];
+  if (!showQuiz && lessonView === "cards" && currentSection && userId) {
+    return <>
+      <SEO title={`${module.title} — Positive Thots Learn`} description={module.description.slice(0, 160)} path={`/learn/${module.slug}`} />
+      <LessonPlayer key={currentSection.id} section={currentSection}
+        checkpoints={checkpointQuestions.filter(q => q.section_id === currentSection.id).map(q => ({ id: q.id, question: q.question, options: q.options, position_in_section: q.position_in_section ?? 0 }))}
+        initialIndex={sectionProgress.find(p => p.section_id === currentSection.id)?.last_card_index ?? 0}
+        isCompleted={sectionProgress.some(p => p.section_id === currentSection.id && p.completed)} userId={userId}
+        onSavePosition={index => void saveCardPosition(currentSection.id, index)} onExit={backToPath} onArticle={switchLessonView}
+        onComplete={() => handleSectionComplete(currentSection.id)} onReflectionSaved={() => handleReflectionSaved(currentSection.id)}
+        onNext={() => { if (currentSectionIndex < sections.length - 1) setCurrentSectionIndex(currentSectionIndex + 1); else setShowQuiz(true); }} />
+      <XPPopup amount={xpPopup.amount} show={xpPopup.show} onDone={() => setXpPopup({ show: false, amount: 0 })} />
+      <CelebrationModal type={celebration.type} level={celebration.level} streak={celebration.streak} onClose={() => setCelebration({ type: null })} />
+    </>;
+  }
 
   const currentQuestion = questions[currentQuestionIndex];
   const almostPassing = !submitted && answeredQuestions.size === questions.length - 1 && questions.length > 0;
@@ -389,6 +411,7 @@ const LearnModule = () => {
             <h1 className="font-bold truncate">{module.title}</h1>
             <p className="text-sm text-muted-foreground truncate">{module.description}</p>
           </div>
+          {!showQuiz && <LessonViewMenu article={true} onSwitch={switchLessonView} />}
           <EducationBadge
             moduleSlug={module.slug} title={module.title}
             isEarned={isAlreadyCompleted || quizResult?.passed === true}
@@ -423,21 +446,6 @@ const LearnModule = () => {
                 </div>
 
                 <p className="mb-4 text-sm text-muted-foreground">Lesson {currentSectionIndex + 1} of {sections.length}</p>
-
-                {/* Session Intro Overlay */}
-                {showSessionIntro && sections[currentSectionIndex] && module && (
-                  <SessionIntro
-                    moduleTitle={module.title}
-                    sectionTitle={sections[currentSectionIndex].title}
-                    estimatedMinutes={sections[currentSectionIndex].estimated_minutes}
-                    xpAvailable={10 + (sections[currentSectionIndex].reflection_prompt ? 5 : 0)}
-                    sectionNumber={currentSectionIndex + 1}
-                    totalSections={sections.length}
-                    onStart={() => setShowSessionIntro(false)}
-                    badgeSlug={module.slug}
-                    badgeTier={module.tier || "foundation"}
-                  />
-                )}
 
                 {/* Current section */}
                 {sections[currentSectionIndex] && (
