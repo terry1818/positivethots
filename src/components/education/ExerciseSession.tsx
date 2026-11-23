@@ -21,6 +21,7 @@ import { GlossarySheet } from "./GlossarySheet";
 import { renderMarkdown } from "./SectionContent";
 import { supabase } from "@/integrations/supabase/client";
 import { reportError } from "@/lib/errorReporting";
+import { lessonText, lessonTitle } from "@/lib/lessonText";
 interface ExerciseQuestion { id: string; question: string; options: string[]; exercise_type: string; order_index: number; section_id?: string | null }
 interface ExerciseSessionProps {
   moduleId: string; moduleTitle: string; questions: ExerciseQuestion[]; userId: string;
@@ -83,7 +84,7 @@ export const ExerciseSession = ({ moduleTitle, questions, onComplete, onBack, fi
   const loadLesson = async () => {
     if (!current?.section_id) return;
     setRereadOpen(true); setLesson(null); setLessonError(false);
-    try { const { data, error } = await supabase.from("module_sections").select("title,content_text").eq("id", current.section_id).single(); if (error) throw error; setLesson(data); }
+    try { const { data, error } = await supabase.from("module_sections").select("title,content_text").eq("id", current.section_id).single(); if (error) throw error; setLesson({ title: lessonTitle(current.section_id, data.title), content_text: await lessonText(current.section_id, data.content_text) }); }
     catch (e) { setLessonError(true); void reportError(e instanceof Error ? e : new Error("Could not load lesson")); }
   };
   if (showScore) return <div className="space-y-6 py-4" aria-live="polite">

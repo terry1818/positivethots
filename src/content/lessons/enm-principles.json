@@ -50,6 +50,11 @@
      463
     ],
     "plain": "Most of the scary things people say about it turn out to be untrue."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -244,6 +249,11 @@
     "art": "guide-encourage",
     "alt": "",
     "plain": "Struggling with this is normal. It does not mean you are broken."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -341,6 +351,11 @@
     "art": "guide-level-up",
     "alt": "",
     "plain": "You never finish learning this. You keep practising."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [

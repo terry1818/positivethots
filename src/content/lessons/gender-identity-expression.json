@@ -40,6 +40,11 @@
      508
     ],
     "plain": "Only you can say what your gender is."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -53,7 +58,7 @@
      "Yes, always"
     ],
     "answer": 0,
-    "explanation": "No, even biological sex isn't binary. Even biological sex isn't binary. Approximately 1.7% of people are born with intersex variations — differences in chromosomes, hormones, or anatomy that don't fit typical male or female categories."
+    "explanation": "No, even biological sex isn't binary. Even biological sex isn't binary. By one widely cited estimate, up to 1.7% of people are born with intersex variations — differences in chromosomes, hormones, or anatomy that don't fit typical male or female categories."
    },
    {
     "id": "1bc0af31-2",
@@ -115,6 +120,16 @@
      494
     ],
     "plain": "Many common beliefs about trans people are wrong, and they do harm."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "If You Need Help Now",
+    "art": "guide-story-chat-c",
+    "alt": ""
    }
   ],
   "checks": [
@@ -259,7 +274,7 @@
     "plain": "If a partner explores their gender, you can feel a lot and still support them."
    },
    {
-    "heading": "Gender Diversity in ENM",
+    "heading": "Gender Diversity in Your Relationships and Communities",
     "art": "guide-celebrate-all",
     "alt": "",
     "plain": "Our communities can lead by making space for every gender."
@@ -279,6 +294,16 @@
     "art": "guide-encourage",
     "alt": "",
     "plain": "A gender-affirming therapist can help you or your partner."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "If You Need Help Now",
+    "art": "guide-story-chat-c",
+    "alt": ""
    }
   ],
   "checks": [

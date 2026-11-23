@@ -32,8 +32,14 @@
     "plain": "This is a skill. You can get better at it with practice."
    },
    {
-    "heading": "Why EQ Matters More in ENM",
+    "heading": "Why EQ Matters in Every Relationship",
     "art": "guide-high-five",
+    "alt": "",
+    "plain": "Dating, partnered or with several partners, you need these skills."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
     "alt": ""
    }
   ],
@@ -190,14 +196,14 @@
     "alt": ""
    },
    {
-    "heading": "Recognizing Bids in ENM",
+    "heading": "Recognizing Bids in Your Relationships",
     "art": "emotional-responsibility/l3-4.webp",
     "alt": "Two wave for attention from either side while the third looks back and forth",
     "size": [
      512,
      359
     ],
-    "plain": "With more partners there are more bids to catch, so pay attention on purpose."
+    "plain": "Bids show up in every relationship. Catch them on purpose."
    },
    {
     "heading": "Building a Bid Practice",
@@ -240,7 +246,7 @@
   },
   "concepts": [
    {
-    "heading": "Owning Your Emotions in Multi-Partner Relationships",
+    "heading": "Owning Your Emotions in Any Relationship",
     "art": "guide-meditate",
     "alt": "",
     "plain": "Your feelings are yours to understand and look after."
@@ -300,6 +306,11 @@
     "art": "guide-high-five",
     "alt": "",
     "plain": "Owning your feelings includes asking for help when you need it."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -313,7 +324,7 @@
      "New relationship energy"
     ],
     "answer": 0,
-    "explanation": "Compersion. Compersion — feeling joy when your partner experiences happiness with another partner — is sometimes called \"the opposite of jealousy.\""
+    "explanation": "Compersion. Compersion means feeling joy at your partner's joy, even when it has nothing to do with you."
    },
    {
     "id": "696069c9-2",

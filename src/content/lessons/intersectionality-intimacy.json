@@ -40,6 +40,11 @@
     "art": "guide-thinking",
     "alt": "",
     "plain": "This is not a contest over who has it worst. It is a way to understand each person."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -123,7 +128,7 @@
     "plain": "A lot of sexual shame around the world was spread by colonial rule."
    },
    {
-    "heading": "Race in ENM Spaces",
+    "heading": "Race in Dating and Community Spaces",
     "art": "intersectionality-intimacy/l2-5.webp",
     "alt": "Four guides sitting in a circle of chairs, warmly offering one empty chair to a newcomer",
     "size": [
@@ -131,6 +136,11 @@
      464
     ],
     "plain": "Our own communities need to look honestly at who feels welcome and who does not."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -212,6 +222,11 @@
      400
     ],
     "plain": "Disabled people should lead the decisions that affect them."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -259,7 +274,7 @@
     "plain": "Saying \"everyone is welcome\" is easy. Making it true takes work."
    },
    {
-    "heading": "How ENM and Kink Spaces Reproduce Exclusion",
+    "heading": "How Open-Minded Spaces Still Exclude People",
     "art": "intersectionality-intimacy/l4-1.webp",
     "alt": "A guide looking up at a tall stack of gold coins blocking a doorway",
     "size": [
@@ -298,8 +313,8 @@
   "checks": [
    {
     "id": "2d2958c6-1",
-    "after": "How ENM and Kink Spaces Reproduce Exclusion",
-    "prompt": "Name one way ENM and kink spaces can shut people out.",
+    "after": "How Open-Minded Spaces Still Exclude People",
+    "prompt": "Name one way a community that sees itself as open can still shut people out.",
     "options": [
      "Too much inclusion",
      "Cost barriers",

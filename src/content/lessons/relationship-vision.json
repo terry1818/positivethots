@@ -54,6 +54,11 @@
      501
     ],
     "plain": "Your early life shaped your views. Check whether they still fit you."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -155,6 +160,11 @@
     "art": "",
     "alt": "",
     "plain": "Education gives you knowledge. Therapy gives you personal healing. They are different."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -168,7 +178,7 @@
      "A foundation, not a finish line"
     ],
     "answer": 2,
-    "explanation": "A foundation, not a finish line. This curriculum is a foundation — not a finish line."
+    "explanation": "A foundation, not a finish line. This curriculum is a foundation — not a finish line. The most skilled, ethical and fulfilled people in any kind of relationship are lifelong learners who continuously seek new perspectives, challenge their assumptions, and deepen their understanding."
    },
    {
     "id": "2ba78fc0-2",
@@ -252,6 +262,11 @@
     "art": "",
     "alt": "",
     "plain": "Going to therapy does not mean something is wrong with you."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -343,6 +358,11 @@
     "art": "guide-celebrate-all",
     "alt": "",
     "plain": "You have put real time into understanding yourself. That counts."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [

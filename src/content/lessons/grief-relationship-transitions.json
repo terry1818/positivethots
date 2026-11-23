@@ -49,6 +49,16 @@
     "heading": "Reflection",
     "art": "guide-meditate",
     "alt": ""
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "If You Need Help Now",
+    "art": "guide-story-chat-c",
+    "alt": ""
    }
   ],
   "checks": [
@@ -116,10 +126,10 @@
     "plain": "There are five steps. The first is letting yourself feel it all without lashing out."
    },
    {
-    "heading": "Conscious Uncoupling in ENM/Poly Contexts",
+    "heading": "Conscious Uncoupling in Different Situations",
     "art": "",
     "alt": "",
-    "plain": "One breakup can ripple through a whole network of partners. Tell people with care."
+    "plain": "Endings ripple outward to friends, family and other partners. Tell people with care."
    },
    {
     "heading": "Practical Tools",
@@ -172,17 +182,17 @@
   },
   "concepts": [
    {
-    "heading": "Grief in Non-Monogamous Structures",
+    "heading": "Grief That Other People Don't See",
     "art": "grief-relationship-transitions/l3-0.webp",
     "alt": "A guide sitting quietly beside a small candle",
     "size": [
      391,
      493
     ],
-    "plain": "People with several partners grieve in ways most others do not notice."
+    "plain": "Some losses go unseen by others. They are still real."
    },
    {
-    "heading": "Forms of Poly-Specific Grief",
+    "heading": "Losses That Come With Having More Than One Partner",
     "art": "grief-relationship-transitions/l3-1.webp",
     "alt": "A guide looking at one empty chair at a table set for four",
     "size": [
@@ -192,7 +202,7 @@
     "plain": "You can grieve when a partner's other relationship ends, because you lose something too."
    },
    {
-    "heading": "Why Poly Grief Is Often Invisible",
+    "heading": "Why This Grief Is Often Invisible",
     "art": "grief-relationship-transitions/l3-2.webp",
     "alt": "A guide holding an outlined see-through heart, looking unseen",
     "size": [
@@ -240,8 +250,8 @@
   "checks": [
    {
     "id": "8df70c07-1",
-    "after": "Why Poly Grief Is Often Invisible",
-    "prompt": "Why is poly grief often invisible?",
+    "after": "Why This Grief Is Often Invisible",
+    "prompt": "Why does grief often go unseen when someone has more than one partner?",
     "options": [
      "It is rare",
      "It hurts less",

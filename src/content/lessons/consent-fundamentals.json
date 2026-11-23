@@ -55,6 +55,11 @@
     "heading": "Building a Practice of Enthusiastic Consent",
     "art": "guide-practice-dumbbell",
     "alt": ""
+   },
+   {
+    "heading": "If You Need Help Now",
+    "art": "guide-story-chat-c",
+    "alt": ""
    }
   ],
   "checks": [
@@ -92,7 +97,7 @@
   },
   "concepts": [
    {
-    "heading": "Navigating Consent Across Multiple Relationships",
+    "heading": "Consent Keeps Moving",
     "art": "consent-fundamentals/l3-0.webp",
     "alt": "Three guides sitting in a circle talking, each holding up a green tick card",
     "size": [
@@ -122,17 +127,17 @@
     "plain": "A yes to one thing, or one person, is not a yes to everything."
    },
    {
-    "heading": "Metamour Agreements and Consent Networks",
+    "heading": "How Your Choices Affect Other People",
     "art": "consent-fundamentals/l3-3.webp",
     "alt": "Linked together by a string of hearts like a network, waving at each other",
     "size": [
      510,
      438
     ],
-    "plain": "Your choices reach your partner's other partners too, so keep them in mind."
+    "plain": "Your choices reach beyond you, so the people affected deserve the facts."
    },
    {
-    "heading": "Practical Tools for Multi-Partner Consent",
+    "heading": "Practical Tools for Ongoing Consent",
     "art": "guide-practice-dumbbell",
     "alt": "",
     "plain": "Simple habits help: regular check-ins and clear, shared agreements."
@@ -171,7 +176,7 @@
      "A yes in your head can still be hard in your heart"
     ],
     "answer": 2,
-    "explanation": "A yes in your head can still be hard in your heart. Sometimes in ENM, a partner may consent to something intellectually but struggle with it emotionally."
+    "explanation": "A yes in your head can still be hard in your heart. Sometimes a partner agrees to something in their head but struggles with it emotionally."
    }
   ],
   "takeaway": "With more partners, check in more often. A yes to one thing or one person is never a yes to all."
@@ -237,6 +242,16 @@
      437
     ],
     "plain": "Everyone helps build a place where \"no\" is respected."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "If You Need Help Now",
+    "art": "guide-story-chat-c",
+    "alt": ""
    }
   ],
   "checks": [

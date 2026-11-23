@@ -36,10 +36,10 @@
     "plain": "We all carry hidden beliefs about money. Researchers found four common ones."
    },
    {
-    "heading": "Money in ENM & Polyamorous Relationships",
+    "heading": "Money in Different Kinds of Relationships",
     "art": "",
     "alt": "",
-    "plain": "With several partners and different incomes, money gets more complicated."
+    "plain": "Money questions look different when you are dating, partnered or have several partners."
    },
    {
     "heading": "The Cost of Financial Secrecy",
@@ -132,10 +132,10 @@
     "plain": "Say how you feel instead of accusing."
    },
    {
-    "heading": "Navigating Financial Communication with Multiple Partners",
+    "heading": "Money Talks in Different Relationships",
     "art": "",
     "alt": "",
-    "plain": "With several partners, there are more layers to talk through."
+    "plain": "Fit the money talk to the relationship."
    },
    {
     "heading": "Building Financial Communication Muscles",
@@ -380,20 +380,30 @@
     "art": "",
     "alt": "",
     "plain": "Financial therapists and fee-only planners can help."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "If You Need Help Now",
+    "art": "guide-story-chat-c",
+    "alt": ""
    }
   ],
   "checks": [
    {
     "id": "b50abbe1-1",
     "after": "Financial Abuse: The Hidden Form of Control",
-    "prompt": "What share of abusive relationships involve financial abuse?",
+    "prompt": "In about what share of domestic violence cases does financial abuse occur?",
     "options": [
-     "48%",
-     "98%",
-     "8%"
+     "49%",
+     "99%",
+     "9%"
     ],
     "answer": 1,
-    "explanation": "98%. 98% of abusive relationships involve financial abuse (National Network to End Domestic Violence)."
+    "explanation": "99%. Financial abuse occurs in an estimated 99% of domestic violence cases (National Network to End Domestic Violence)."
    },
    {
     "id": "b50abbe1-2",

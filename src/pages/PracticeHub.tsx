@@ -23,6 +23,7 @@ import { extractTakeaway } from "@/lib/learnSmallFixes";
 import { flashRewardEligible, practiceSessionKey, practiceUnlocked, type PracticeMode } from "@/lib/practiceHub";
 import { reportError } from "@/lib/errorReporting";
 import type { FinishData } from "@/lib/learnFinish";
+import { lessonText, lessonTitle } from "@/lib/lessonText";
 import type { MistakeQuestion } from "@/components/education/practice/MistakesPractice";
 import type { RapidQuestion } from "@/components/education/exercises/RapidFireExercise";
 import type { FlashIdea } from "@/components/education/practice/FlashPractice";
@@ -53,8 +54,8 @@ export default function PracticeHub() {
       if (selected === "rapid") { const { data, error } = await supabase.rpc("get_rapid_fire_items", { _limit: 10 }); if (error) throw error; setRapid(data || []); }
       if (selected === "match") { const { data, error } = await supabase.rpc("get_match_sets", { _limit: 1 }); if (error) throw error; setSets((data || []).map(q => ({ ...q, left_items: q.left_items as string[], right_items: q.right_items as string[] }))); }
       if (selected === "flash") {
-        if (onlySaved) { const { data, error } = await supabase.from("user_saved_takeaways").select("section_id,takeaway_text,module_sections(title)").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10); if (error) throw error; setCards((data || []).map(r => ({ id: r.section_id, title: r.module_sections?.title || "Key idea", takeaway: r.takeaway_text }))); }
-        else { const { data, error } = await supabase.from("user_section_progress").select("section_id,module_sections(title,content_text)").eq("user_id", user.id).eq("completed", true).order("last_accessed", { ascending: false }).limit(10); if (error) throw error; setCards((data || []).map(r => ({ id: r.section_id, title: r.module_sections?.title || "Key idea", takeaway: extractTakeaway(r.module_sections?.content_text || "") })).filter(c => c.takeaway)); }
+        if (onlySaved) { const { data, error } = await supabase.from("user_saved_takeaways").select("section_id,takeaway_text,module_sections(title)").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10); if (error) throw error; setCards((data || []).map(r => ({ id: r.section_id, title: lessonTitle(r.section_id, r.module_sections?.title || "Key idea"), takeaway: r.takeaway_text }))); }
+        else { const { data, error } = await supabase.from("user_section_progress").select("section_id,module_sections(title,content_text)").eq("user_id", user.id).eq("completed", true).order("last_accessed", { ascending: false }).limit(10); if (error) throw error; setCards((await Promise.all((data || []).map(async r => ({ id: r.section_id, title: lessonTitle(r.section_id, r.module_sections?.title || "Key idea"), takeaway: extractTakeaway(await lessonText(r.section_id, r.module_sections?.content_text || "")) })))).filter(c => c.takeaway)); }
       }
       setStarted(selected !== "flash");
     } catch (e) { setError(true); void reportError(e instanceof Error ? e : new Error("Practice session unavailable")); } finally { setLoading(false); }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { lessonTitle } from "@/lib/lessonText";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlayCircle } from "lucide-react";
@@ -117,7 +118,7 @@ export const ContinueLearning = () => {
       setData({
         moduleSlug: nextModule.slug,
         moduleTitle: nextModule.title,
-        sectionTitle: nextSections?.[0]?.title || "Section 1",
+        sectionTitle: nextSections?.[0] ? lessonTitle(nextSections[0].id, nextSections[0].title) : "Section 1",
         sectionNumber: nextSections?.[0]?.section_number || 1,
         totalSections: nextModuleSectionsAll?.length || 0,
         completedSections: nextCompleted?.length || 0,
@@ -128,7 +129,7 @@ export const ContinueLearning = () => {
     setData({
       moduleSlug: moduleData.slug,
       moduleTitle: moduleData.title,
-      sectionTitle: section.title,
+      sectionTitle: lessonTitle(section.id, section.title),
       sectionNumber: section.section_number,
       totalSections,
       completedSections,

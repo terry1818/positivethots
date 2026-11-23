@@ -8,6 +8,7 @@ import {BrandedEmptyState} from "@/components/BrandedEmptyState";
 import {useLearningStats} from "@/hooks/useLearningStats";
 import {LISTEN_ENABLED_TIERS,practiceSourceId} from "@/lib/mixedNodes";
 import {extractTakeaway} from "@/lib/learnSmallFixes";
+import {patchSections} from "@/lib/lessonText";
 import {reportError} from "@/lib/errorReporting";
 import {retryFinish} from "@/lib/finishRetry";
 import type {FinishData} from "@/lib/learnFinish";
@@ -19,8 +20,8 @@ export default function LearnPractice({listen=false}:{listen?:boolean}){
  const {stats,awardXP}=useLearningStats();const awardRef=useRef(awardXP);awardRef.current=awardXP;
  const load=async()=>{setLoading(true);setError(false);try{const {data:{session}}=await supabase.auth.getSession();if(!session){navigate("/auth");return;}setUserId(session.user.id);const {data:mod,error:me}=await supabase.from("education_modules").select("id,title,tier").eq("slug",slug||"").single();if(me||!mod)throw me;
   if(listen&&!LISTEN_ENABLED_TIERS.some(t=>t===mod.tier))throw new Error("Recap not available");setModule(mod);
-  const [{data,error:qe},{data:sections,error:se}]=await Promise.all([supabase.rpc("get_practice_questions",{_module_id:mod.id,_limit:listen?2:5}),supabase.from("module_sections").select("content_text").eq("module_id",mod.id).order("section_number")]);if(qe||se)throw qe||se;
-  setQuestions((data||[]).map(q=>({...q,options:(typeof q.options==="string"?JSON.parse(q.options):q.options) as string[],exercise_type:q.exercise_type||"multiple_choice"})));setTakeaways((sections||[]).map(s=>extractTakeaway(s.content_text||"")).filter(Boolean));
+  const [{data,error:qe},{data:sections,error:se}]=await Promise.all([supabase.rpc("get_practice_questions",{_module_id:mod.id,_limit:listen?2:5}),supabase.from("module_sections").select("id,content_text").eq("module_id",mod.id).order("section_number")]);if(qe||se)throw qe||se;
+  setQuestions((data||[]).map(q=>({...q,options:(typeof q.options==="string"?JSON.parse(q.options):q.options) as string[],exercise_type:q.exercise_type||"multiple_choice"})));setTakeaways((await patchSections(sections||[])).map(s=>extractTakeaway(s.content_text||"")).filter(Boolean));
  }catch(e){setError(true);void reportError(e instanceof Error?e:new Error("Practice load failed"));}finally{setLoading(false);}};
  useEffect(()=>{void load();},[slug,listen]);
  const back=()=>navigate("/learn",{state:{justCompleted:{moduleId:module?.id,node:listen?"listen":"practice",oldXP:stats?.total_xp}}});

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronLeft, BookOpen } from "lucide-react";
 import { format } from "date-fns";
+import { lessonTitle } from "@/lib/lessonText";
 
 const badgeIcons: Record<string, string> = {
   "consent-fundamentals": "✓",
@@ -45,6 +46,7 @@ interface Reflection {
   response_text: string;
   created_at: string;
   module_sections: {
+    id: string;
     title: string;
     section_number: number;
     module_id: string;
@@ -78,7 +80,7 @@ const LearningJournal = () => {
     const load = async () => {
       const { data } = await supabase
         .from("user_reflections")
-        .select("id, response_text, created_at, module_sections!inner(title, section_number, module_id, education_modules!inner(title, slug, tier))")
+        .select("id, response_text, created_at, module_sections!inner(id, title, section_number, module_id, education_modules!inner(title, slug, tier))")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
@@ -147,7 +149,7 @@ const LearningJournal = () => {
                 <Card key={r.id}>
                   <CardContent className="p-4 space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium">{r.module_sections.title}</p>
+                      <p className="text-sm font-medium">{lessonTitle(r.module_sections.id, r.module_sections.title)}</p>
                       <span className="text-sm text-muted-foreground">
                         {format(new Date(r.created_at), "MMMM d")}
                       </span>

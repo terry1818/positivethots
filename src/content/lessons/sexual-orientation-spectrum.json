@@ -29,6 +29,11 @@
     "heading": "Why This Matters",
     "art": "guide-high-five",
     "alt": ""
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -96,10 +101,15 @@
     "plain": "This happens to people of every gender."
    },
    {
-    "heading": "Fluidity and Identity in ENM",
+    "heading": "Fluidity and Your Relationships",
     "art": "guide-thinking",
     "alt": "",
-    "plain": "Meeting more people can show you new sides of your attraction. That is okay."
+    "plain": "A shift in attraction can happen in any relationship. Talk about it."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -167,7 +177,7 @@
     "plain": "Aromantic people feel little or no romantic attraction."
    },
    {
-    "heading": "Ace and Aro People in Relationships and ENM",
+    "heading": "Ace and Aro People in Relationships",
     "art": "sexual-orientation-spectrum/l3-3.webp",
     "alt": "Two guides sharing a blanket and popcorn on a sofa, laughing as close friends",
     "size": [
@@ -232,7 +242,7 @@
     "plain": "Erasure means acting as if a group, like bi or ace people, is not real."
    },
    {
-    "heading": "Orientation and ENM",
+    "heading": "Orientation and Relationship Style",
     "art": "guide-celebrate-all",
     "alt": "",
     "plain": "Every orientation shows up in every kind of relationship setup."
@@ -252,6 +262,16 @@
     "art": "guide-encourage",
     "alt": "",
     "plain": "If your orientation causes you distress, a supportive therapist can help."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "If You Need Help Now",
+    "art": "guide-story-chat-c",
+    "alt": ""
    }
   ],
   "checks": [

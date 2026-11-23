@@ -46,7 +46,7 @@
     "plain": "How you were cared for as a child shapes how you attach as an adult."
    },
    {
-    "heading": "Trauma in LGBTQ+ and ENM Communities",
+    "heading": "Trauma and Minority Stress",
     "art": "",
     "alt": "",
     "plain": "LGBTQ+ people and people in open relationships often carry extra hurt from rejection."
@@ -54,6 +54,16 @@
    {
     "heading": "Reflection",
     "art": "guide-meditate",
+    "alt": ""
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "If You Need Help Now",
+    "art": "guide-story-chat-c",
     "alt": ""
    }
   ],
@@ -132,14 +142,24 @@
     "plain": "Your \"window\" is the zone where you can feel things without being overwhelmed."
    },
    {
-    "heading": "In Polyamorous Relationships",
+    "heading": "In Different Kinds of Relationships",
     "art": "",
     "alt": "",
-    "plain": "Several partners can mean more triggers, and also more support."
+    "plain": "Triggers can show up in any relationship, and so can support."
    },
    {
     "heading": "Reflection",
     "art": "guide-meditate",
+    "alt": ""
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "If You Need Help Now",
+    "art": "guide-story-chat-c",
     "alt": ""
    }
   ],
@@ -312,7 +332,7 @@
     "heading": "Evidence-Based Approaches",
     "art": "",
     "alt": "",
-    "plain": "Several kinds of therapy are proven to help with trauma."
+    "plain": "Several kinds of therapy have been shown to help with trauma."
    },
    {
     "heading": "Daily Practices for Trauma-Informed Couples",
@@ -324,6 +344,11 @@
     "art": "",
     "alt": "",
     "plain": "Get help if triggers are getting worse or anyone feels unsafe."
+   },
+   {
+    "heading": "If You Need Help Now",
+    "art": "guide-story-chat-c",
+    "alt": ""
    }
   ],
   "checks": [

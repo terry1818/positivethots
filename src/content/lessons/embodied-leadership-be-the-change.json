@@ -34,6 +34,11 @@
      485
     ],
     "plain": "Groups do their best when people feel safe to speak up and make mistakes."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -199,6 +204,11 @@
      467
     ],
     "plain": "Breaks in connection always happen. Repairing them is what builds trust."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -212,7 +222,7 @@
      "Fashion trends"
     ],
     "answer": 0,
-    "explanation": "Emotions, behaviors and health outcomes. Christakis & Fowler (2009) studied social contagion of emotions, behaviors, and health outcomes in large networks."
+    "explanation": "Emotions, behaviors and health outcomes. Fowler & Christakis (2008) studied social contagion of emotions, behaviors, and health outcomes in large networks."
    },
    {
     "id": "43d57759-2",

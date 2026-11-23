@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { patchSections } from "@/lib/lessonText";
 import { saveLessonPosition } from "@/lib/lessonProgress";
 import { reportError } from "@/lib/errorReporting";
 import { moduleCompletionPercent } from "@/lib/learnSmallFixes";
@@ -49,7 +50,7 @@ export const useModuleProgress = (moduleId: string) => {
         .order("section_number");
 
       if (sectionError) throw sectionError;
-      setSections(sectionsData || []);
+      setSections(await patchSections(sectionsData || []));
       const { data: badge } = await supabase.from("user_badges").select("id").eq("user_id", session.user.id).eq("module_id", moduleId).maybeSingle();
       setBadgeEarned(!!badge);
 

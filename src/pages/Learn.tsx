@@ -39,6 +39,7 @@ import { useTotalBadgeCount } from "@/hooks/useTotalBadgeCount";
 import type { PathScenario } from "@/lib/mixedNodes";
 import type { LessonSection } from "@/lib/learnLevels";
 import { reportError } from "@/lib/errorReporting";
+import { lessonTitle } from "@/lib/lessonText";
 
 interface Module {
   id: string; slug: string; title: string; description: string; order_index: number;
@@ -150,7 +151,7 @@ const Learn = () => {
 
       const mods = modulesResult.data || [];
       const badges = badgesResult.data || [];
-      const sections = sectionsResult.data || [];
+      const sections = (sectionsResult.data || []).map(s => ({ ...s, title: lessonTitle(s.id, s.title) }));
       const completedProgress = (progressResult.data || []).filter(p => p.completed);
       setPathSections(sections);
       setStartedSectionIds(new Set((progressResult.data || []).map(p => p.section_id)));

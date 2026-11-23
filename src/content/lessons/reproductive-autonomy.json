@@ -31,7 +31,7 @@
     "alt": ""
    },
    {
-    "heading": "Bodily Autonomy in ENM and Polyamorous Relationships",
+    "heading": "Bodily Autonomy in Your Relationships",
     "art": "reproductive-autonomy/l1-3.webp",
     "alt": "Three guides standing together, each holding their own key",
     "size": [
@@ -50,6 +50,11 @@
     "heading": "Reflection",
     "art": "guide-meditate",
     "alt": ""
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -67,7 +72,7 @@
    },
    {
     "id": "fe6c4411-2",
-    "after": "Bodily Autonomy in ENM and Polyamorous Relationships",
+    "after": "Bodily Autonomy in Your Relationships",
     "prompt": "What does bodily autonomy mean?",
     "options": [
      "A medical procedure",
@@ -113,10 +118,10 @@
     "plain": "A real choice means knowing your options, with no one pressuring you."
    },
    {
-    "heading": "Contraception in ENM Relationships",
+    "heading": "Contraception in Different Relationships",
     "art": "guide-study-together",
     "alt": "",
-    "plain": "With more than one partner, birth control planning takes more talking."
+    "plain": "Your birth control plan should fit your relationships, and change when they do."
    },
    {
     "heading": "Healthcare Advocacy",
@@ -131,6 +136,11 @@
    {
     "heading": "Reflection",
     "art": "guide-meditate",
+    "alt": ""
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
     "alt": ""
    }
   ],
@@ -195,9 +205,10 @@
     "plain": "Reproductive justice asks whether people can really use those choices in their lives."
    },
    {
-    "heading": "Why This Matters for ENM/Poly Communities",
+    "heading": "Who This Affects Most",
     "art": "guide-high-five",
-    "alt": ""
+    "alt": "",
+    "plain": "Unfair rules hit hardest for people whose families or identities don't fit the usual mold."
    },
    {
     "heading": "Historical Context",

@@ -50,6 +50,11 @@
      484
     ],
     "plain": "Talking about safety first lets everyone relax and enjoy it more."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -109,7 +114,7 @@
      429,
      502
     ],
-    "plain": "PrEP is medicine you take before to prevent HIV. PEP is emergency medicine after."
+    "plain": "PrEP prevents HIV: a daily pill, or a shot every 2 or 6 months. PEP is emergency medicine after."
    },
    {
     "heading": "U=U: Undetectable = Untransmittable",
@@ -122,14 +127,14 @@
     "plain": "A person on HIV treatment that works cannot pass HIV on through sex."
    },
    {
-    "heading": "Testing Recommendations for ENM",
+    "heading": "Testing Recommendations",
     "art": "safer-sex/l2-4.webp",
     "alt": "A guide holding a calendar with a test tube icon on one day, giving a thumbs up",
     "size": [
      451,
      468
     ],
-    "plain": "With more than one partner, get tested regularly. Every 3 months is common."
+    "plain": "Test between partners and at least once a year. With new or several partners, about every 3 months."
    },
    {
     "heading": "Talking About Testing",
@@ -167,7 +172,7 @@
    },
    {
     "id": "90c7413a-2",
-    "after": "Testing Recommendations for ENM",
+    "after": "Testing Recommendations",
     "prompt": "For people with multiple partners, what testing rhythm does the lesson mention as common?",
     "options": [
      "Only when symptoms appear",
@@ -175,10 +180,10 @@
      "About every 3 months"
     ],
     "answer": 2,
-    "explanation": "About every 3 months. For people with multiple partners, regular testing is an act of care for yourself and your network."
+    "explanation": "About every 3 months. Every 3 months is a common recommendation for people with new or multiple partners."
    }
   ],
-  "takeaway": "Use barriers, know about PrEP and PEP, and get tested about every 3 months if you have more than one partner."
+  "takeaway": "Use barriers, know about PrEP and PEP, keep vaccines current and test regularly: about every 3 months with new or several partners."
  },
  "605941de-2545-43b4-be7e-3cdf6ab2e7d3": {
   "hero": {
@@ -187,10 +192,10 @@
   },
   "concepts": [
    {
-    "heading": "Navigating Fluid Bonding in ENM",
+    "heading": "Navigating Fluid Bonding",
     "art": "guide-thinking",
     "alt": "",
-    "plain": "Stopping condoms with one partner is a big decision that touches everyone."
+    "plain": "Going without barriers is a decision to make together, with testing first."
    },
    {
     "heading": "What Is Fluid Bonding?",
@@ -203,7 +208,7 @@
     "plain": "Fluid bonding means agreeing to have sex with a certain partner without barriers."
    },
    {
-    "heading": "Why Fluid Bonding Matters in ENM",
+    "heading": "Why Fluid Bonding Matters",
     "art": "guide-high-five",
     "alt": ""
    },
@@ -242,6 +247,11 @@
     "art": "guide-lesson-reading",
     "alt": "",
     "plain": "Write your agreement down in plain steps so no one has to guess."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -343,6 +353,11 @@
      479
     ],
     "plain": "There are lists that help you find a doctor who will treat you with respect."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [

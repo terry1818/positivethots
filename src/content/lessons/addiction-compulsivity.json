@@ -49,6 +49,11 @@
     "heading": "Reflection",
     "art": "guide-meditate",
     "alt": ""
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -211,6 +216,16 @@
     "art": "",
     "alt": "",
     "plain": "Look honestly at your own behaviour too."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "If You Need Help Now",
+    "art": "guide-story-chat-c",
+    "alt": ""
    }
   ],
   "checks": [

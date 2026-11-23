@@ -66,6 +66,11 @@
     "heading": "Reflection",
     "art": "guide-meditate",
     "alt": ""
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
    }
   ],
   "checks": [
@@ -151,6 +156,11 @@
    {
     "heading": "Reflection",
     "art": "guide-meditate",
+    "alt": ""
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
     "alt": ""
    }
   ],
@@ -241,6 +251,11 @@
    {
     "heading": "Reflection",
     "art": "guide-meditate",
+    "alt": ""
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
     "alt": ""
    }
   ],
