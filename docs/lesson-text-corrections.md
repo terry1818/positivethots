@@ -34,8 +34,10 @@ the editor saved.
 Foundation is the tier every member completes before connecting, so its modules have to apply to everyone.
 From the migration `20261123160000_*`: Consent & Sexual Autonomy, Boundaries & NVC, Digital Consent &
 Boundaries, Sexual Health & Harm Reduction, Emotional Intelligence & Self-Regulation. CNM Foundations is an
-optional Identity module, shown before Relationship Orientations. Jealousy & Insecurity and The New Monogamy
-no longer need the CNM Foundations badge.
+Identity module, shown before Relationship Orientations, and counts toward the Identity tier and its rewards.
+Jealousy & Insecurity and The New Monogamy still need the CNM Foundations badge (`20261123170000_*`).
+Accounts that had finished Foundation as it stood before the change were given the Digital Consent &
+Boundaries badge so they did not lose access.
 
 ## Facts corrected, with the source used
 

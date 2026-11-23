@@ -231,7 +231,8 @@ const Learn = () => {
   const earnedSlugs = useMemo(() => new Set(modules.filter(m => earnedModuleIds.has(m.id)).map(m => m.slug)), [modules, earnedModuleIds]);
   const totalBadges = cachedTotal;
   const earnedCount = userBadges.length;
-  const requiredModules = useMemo(() => modules.filter(m => m.is_required), [modules]);
+  // Only Foundation gates the rest of the path (same rule as Index and useRequireAuth); a required flag on a later tier must not lock that tier behind itself.
+  const requiredModules = useMemo(() => modules.filter(m => m.is_required && m.tier === 'foundation'), [modules]);
   const requiredEarned = useMemo(() => requiredModules.filter(m => earnedModuleIds.has(m.id)).length, [requiredModules, earnedModuleIds]);
 
   // Near-miss tier computation
