@@ -3009,15 +3009,6 @@ export type Database = {
         }[]
       }
       decrement_super_like: { Args: { _user_id: string }; Returns: number }
-      delete_email: {
-        Args: { message_id: number; queue_name: string }
-        Returns: boolean
-      }
-      email_queue_dispatch: { Args: never; Returns: undefined }
-      enqueue_email: {
-        Args: { payload: Json; queue_name: string }
-        Returns: number
-      }
       get_admin_dashboard_stats: { Args: never; Returns: Json }
       get_admin_user_list: {
         Args: {
@@ -3232,25 +3223,8 @@ export type Database = {
         Returns: boolean
       }
       level_for_xp: { Args: { _xp: number }; Returns: number }
-      move_to_dlq: {
-        Args: {
-          dlq_name: string
-          message_id: number
-          payload: Json
-          source_queue: string
-        }
-        Returns: number
-      }
       practice_eligible: { Args: { _module_id: string }; Returns: boolean }
       purge_old_verification_selfies: { Args: never; Returns: number }
-      read_email_batch: {
-        Args: { batch_size: number; queue_name: string; vt: number }
-        Returns: {
-          message: Json
-          msg_id: number
-          read_ct: number
-        }[]
-      }
       record_pass: {
         Args: { _swiped_id: string; _swiper_id: string }
         Returns: Json
