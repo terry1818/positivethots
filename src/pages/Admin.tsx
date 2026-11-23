@@ -645,7 +645,7 @@ const ContentManagementTab = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={m.is_required ? "default" : "secondary"} className="text-[10px]">
-                  {m.is_required ? "Published" : "Draft"}
+                  {m.is_required ? "Required" : "Not required"}
                 </Badge>
                 <Switch checked={m.is_required} onCheckedChange={() => toggleModuleRequired(m.id, m.is_required)} />
               </div>

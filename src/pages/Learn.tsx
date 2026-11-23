@@ -231,7 +231,7 @@ const Learn = () => {
   const earnedSlugs = useMemo(() => new Set(modules.filter(m => earnedModuleIds.has(m.id)).map(m => m.slug)), [modules, earnedModuleIds]);
   const totalBadges = cachedTotal;
   const earnedCount = userBadges.length;
-  // Only Foundation gates the rest of the path (same rule as Index and useRequireAuth); a required flag on a later tier must not lock that tier behind itself.
+  // Only Foundation gates the rest of the path (same rule as Index and useRequireAuth). CNM Foundations is required within Identity, and without the tier check it would be locked behind itself.
   const requiredModules = useMemo(() => modules.filter(m => m.is_required && m.tier === 'foundation'), [modules]);
   const requiredEarned = useMemo(() => requiredModules.filter(m => earnedModuleIds.has(m.id)).length, [requiredModules, earnedModuleIds]);
 
