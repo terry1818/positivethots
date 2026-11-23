@@ -29,6 +29,14 @@ the editor saved.
 6. **Later lessons point back.** Where a topic returns (new relationship energy, attachment, hierarchy,
    rules and agreements, bids, the nervous system) the later section opens with a "Building on earlier lessons" line.
 
+## Required modules
+
+Foundation is the tier every member completes before connecting, so its modules have to apply to everyone.
+From the migration `20261123160000_*`: Consent & Sexual Autonomy, Boundaries & NVC, Digital Consent &
+Boundaries, Sexual Health & Harm Reduction, Emotional Intelligence & Self-Regulation. CNM Foundations is an
+optional Identity module, shown before Relationship Orientations. Jealousy & Insecurity and The New Monogamy
+no longer need the CNM Foundations badge.
+
 ## Facts corrected, with the source used
 
 | Was | Now | Source |
