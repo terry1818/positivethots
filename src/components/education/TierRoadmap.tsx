@@ -178,6 +178,15 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
     if (earnedModuleIds.has(module.id)) go(module, moduleSections(module.id)[0]?.section_number || 1);
     else go(module, lesson?.section_number);
   };
+  // What a closed, unfinished level says under its banner. It must match the real lock state:
+  // "Complete Foundation" only while Foundation is unfinished.
+  const foundationDone = (modulesByTier.foundation || []).every(m => earnedModuleIds.has(m.id));
+  const tierHint = (tier: string, modules: Module[]) => {
+    if (tier === "foundation") return "";
+    if (!foundationDone) return tier === "advanced" && !isPremium ? "Complete Foundation and get Premium" : "Complete Foundation to unlock";
+    if (tier === "advanced" && !isPremium) return "Get Premium to unlock";
+    return modules.some(m => !earnedModuleIds.has(m.id) && isModuleUnlocked(m)) ? "" : "Earn the badges these levels build on to unlock";
+  };
   return <div ref={pathRef} role="list" aria-label="Learning path" className={cn("space-y-4", running ? "path-running" : "path-paused")} style={{ "--learn-header-height": `${headerHeight}px` } as React.CSSProperties}>
     {TIER_ORDER.map(tier => {
       const modules = modulesByTier[tier] || [];
@@ -190,7 +199,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
           aria-expanded={tierOpen} data-tour={tier === currentTier ? "learn-tier-active" : undefined} data-walkthrough={tier === currentTier ? "learn-tier-active" : undefined}>
           <span className="flex-1 min-w-0 text-left"><span className="block text-lg font-bold">{tierLabels[tier]}</span><span className="block text-sm">{earned} of {modules.length} levels complete</span><span className="path-tier-progress"><span style={{ width: `${earned / modules.length * 100}%` }}/></span></span><GuideArt name={tierGuide(tier)} size={96}/><ChevronDown className={cn("h-4 w-4", tierOpen && "rotate-180")} />
         </Button>
-        {!tierOpen && earned < modules.length && <p className="text-center text-sm text-muted-foreground">{tier === "advanced" && !isPremium ? "Complete Foundation and get Premium" : "Complete Foundation to unlock"}</p>}
+        {!tierOpen && earned < modules.length && tierHint(tier, modules) && <p className="text-center text-sm text-muted-foreground">{tierHint(tier, modules)}</p>}
         {tierOpen && <div className="space-y-4">
           {modules.map((module, levelIndex) => {
             const earnedBadge = earnedModuleIds.has(module.id);
