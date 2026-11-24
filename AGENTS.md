@@ -38,5 +38,6 @@
 - Screens outside Learn use the app kit at the end of `src/index.css`; the pieces and rules are in `docs/app-kit.md`. Put one `kit-area-*` class on the page root and build with `kit-*` classes instead of new one-off styles.
 - No character art on another member's card or inside a message thread. One `kit-cta` per screen.
 - Outside Learn, animate with CSS. `motion/react` components only animate inside the Learn layout.
-- Sounds go through `useSoundEffects`. Never show a reward the app does not grant.
+- Sounds go through `useSoundEffects`. Never show a reward the app does not grant, and never quote a figure in app copy ("3× more Connects") without a source.
+- Daily spin: every prize is XP within what `award_xp` grants for `daily_spin` (at most 50, once per UTC day). Its sounds are recorded files rendered by `scripts/make_spin_sounds.py`; change the script, not the files.
 - `tests/app_kit.test.ts` guards area-colour contrast, the wheel landing on its prize, and the profile completion steps. Keep it passing.

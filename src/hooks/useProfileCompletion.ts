@@ -32,16 +32,16 @@ export function computeProfileCompletion({ profile, userPhotos, badges, promptCo
   // Profile photo (20%)
   const hasApprovedPhoto = userPhotos.length > 0;
   if (hasApprovedPhoto) pct += 20;
-  else nudges.push({ icon: "Camera", label: "Add a profile photo", weight: "+20%", route: "/profile/edit", section: "photos", motivation: "Profiles with photos get 9× more Connects" });
+  else nudges.push({ icon: "Camera", label: "Add a profile photo", weight: "+20%", route: "/profile/edit", section: "photos", motivation: "A photo is the first thing people see" });
 
   // 3+ photos (10%)
   if (userPhotos.length >= 3) pct += 10;
-  else if (hasApprovedPhoto) nudges.push({ icon: "Camera", label: "Upload more photos", weight: "+10%", route: "/profile/edit", section: "photos", motivation: "3+ photos = 2× more profile views" });
+  else if (hasApprovedPhoto) nudges.push({ icon: "Camera", label: "Upload more photos", weight: "+10%", route: "/profile/edit", section: "photos", motivation: "A few photos show more of who you are" });
 
   // Bio or 2+ prompts (15%)
   const hasBioOrPrompts = profile.bio?.trim() || promptCount >= 2;
   if (hasBioOrPrompts) pct += 15;
-  else nudges.push({ icon: "MessageSquare", label: "Answer profile prompts", weight: "+15%", route: "/profile/edit", section: "about", motivation: "Prompts start 3× more conversations" });
+  else nudges.push({ icon: "MessageSquare", label: "Answer profile prompts", weight: "+15%", route: "/profile/edit", section: "about", motivation: "Prompts give people something to ask you about" });
 
   // 3 prompts (5%)
   if (promptCount >= 3) pct += 5;
@@ -57,7 +57,7 @@ export function computeProfileCompletion({ profile, userPhotos, badges, promptCo
 
   // 5+ interests (10%)
   if (profile.interests?.length >= 5) pct += 10;
-  else nudges.push({ icon: "Sparkles", label: "Add more interests", weight: "+10%", route: "/profile/edit", section: "about", motivation: "Shared interests boost compatibility scores" });
+  else nudges.push({ icon: "Sparkles", label: "Add more interests", weight: "+10%", route: "/profile/edit", section: "about", motivation: "Shared interests count toward your compatibility score" });
 
   // Foundation badge (10%)
   if (badges.length > 0) pct += 10;
@@ -65,7 +65,7 @@ export function computeProfileCompletion({ profile, userPhotos, badges, promptCo
 
   // Verified (5%)
   if (profile.is_verified) pct += 5;
-  else nudges.push({ icon: "Shield", label: "Verify your profile", weight: "+5%", route: "/profile/edit", section: "verification", motivation: "Verified profiles get 2× more Connects" });
+  else nudges.push({ icon: "Shield", label: "Verify your profile", weight: "+5%", route: "/profile/edit", section: "verification", motivation: "Shows people your profile is really you" });
 
   // The same checks as above, listed so the meter can show one pip per step.
   const steps: CompletionStep[] = [

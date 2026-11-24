@@ -34,6 +34,7 @@ import { SEO } from "@/components/SEO";
 import { CrossAppLinksDisplay } from "@/components/cross-app/CrossAppLinksDisplay";
 import { useTotalBadgeCount } from "@/hooks/useTotalBadgeCount";
 import { hasEveryBadge } from "@/lib/badgeCompletion";
+import { shareApp } from "@/lib/shareApp";
 
 interface UserBadge {
   module_id: string;
@@ -98,7 +99,7 @@ const Profile = () => {
   const [showAllUnlocks, setShowAllUnlocks] = useState(false);
 
   const profileTourSteps: TourStep[] = [
-    { target: "profile-completion", title: "Complete Your Profile", description: "Complete your profile to get more Connects! Profiles with photos get 9× more engagement.", position: "below" },
+    { target: "profile-completion", title: "Complete Your Profile", description: "Complete your profile so people can get to know you. A photo is the first thing they see.", position: "below" },
     { target: "profile-explore", title: "Your Hub", description: "Find Events, Resources, Health Testing, and more here. Your profile is your hub!", position: "above" },
   ];
 
@@ -511,11 +512,7 @@ const Profile = () => {
           {[
             { icon: Pencil, label: "Edit", tone: "area", onClick: () => navigate("/profile/edit") },
             { icon: Settings, label: "Settings", tone: "quiet", onClick: () => navigate("/settings") },
-            { icon: Share2, label: "Share", tone: "quiet", onClick: () => {
-              const url = `${window.location.origin}/profile`;
-              navigator.clipboard?.writeText(url);
-              toast.success("Profile link copied!");
-            }},
+            { icon: Share2, label: "Invite", tone: "quiet", onClick: () => { void shareApp(); } },
             ...(!profile?.is_verified ? [{ icon: ShieldCheck, label: "Verify", tone: "quiet", onClick: () => navigate("/profile/edit") }] : []),
           ].map((item) => (
             <button

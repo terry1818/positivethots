@@ -376,15 +376,13 @@ const Learn = () => {
           freezes={stats?.streak_freezes || 0} atRisk={isStreakAtRisk} hoursLeft={streakHoursLeft}
           hasSpunToday={hasSpunToday} bonusReady={dailyBonusReady} openBonus={() => setDailyBonusTrigger(n => n + 1)}
           onReward={async reward => {
-            // The wheel shows the prize itself, so there is no toast here.
-            if (reward.type === "xp" && awardXP) {
-              const result = await awardXP(reward.value, "daily_spin");
-              if (result.newXP === 0) return false;
-              setHasSpunToday(true);
-              return result.newXP;
-            }
-            setHasSpunToday(true);
-            return true;
+            // The wheel shows the prize itself, so there is no toast here. Every prize is XP.
+            if (reward.type !== "xp" || !awardXP) return false;
+            const result = await awardXP(reward.value, "daily_spin");
+            if (result.newXP > 0) { setHasSpunToday(true); return result.newXP; }
+            // The server answered but added nothing: today's spin or today's XP limit is already used.
+            if (result.totalXP !== undefined) { setHasSpunToday(true); return "used" as const; }
+            return false;
           }}
         />
 

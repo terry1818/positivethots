@@ -19,6 +19,11 @@ function getCtx(): AudioContext | null {
   }
 }
 
+/** The one shared audio context, for code that plays recorded sounds (see spinSounds.ts). */
+export function getAudioContext(): AudioContext | null {
+  return getCtx();
+}
+
 function playNote(
   audioCtx: AudioContext,
   freq: number,

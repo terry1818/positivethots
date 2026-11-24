@@ -13,6 +13,7 @@ import {
   playSpinWinSound,
   type SpinRarity,
 } from "@/lib/soundGenerator";
+import { playSpinStartSample, playSpinTickSample, playSpinWinSample, preloadSpinSounds } from "@/lib/spinSounds";
 import { isNative } from "@/lib/capacitor";
 import { emitReaction } from "@/lib/pointerFx";
 
@@ -83,14 +84,16 @@ export function useSoundEffects() {
   const playLessonComplete = useCallback(() => { emitReaction("win"); if (_soundEnabled) playLearningSound("lessonComplete"); void haptic("medium"); }, []);
   const playChestOpen = useCallback(() => { emitReaction("chest"); if (_soundEnabled) playLearningSound("chestOpen"); void haptic("medium"); }, []);
   const playLevelComplete = useCallback(() => { emitReaction("win"); if (_soundEnabled) playLearningSound("levelComplete"); }, []);
-  const playSpinStart = useCallback(() => { if (_soundEnabled) playSpinStartSound(); void haptic("light"); }, []);
-  const playSpinTick = useCallback((pace = 0) => { if (_soundEnabled) playSpinTickSound(pace); }, []);
-  const playSpinWin = useCallback((rarity: SpinRarity) => { if (_soundEnabled) playSpinWinSound(rarity); void haptic(rarity === "common" ? "medium" : "heavy"); }, []);
+  // Wheel sounds are recordings; each falls back to its synthesised version until the files have loaded.
+  const preloadSpin = useCallback(() => { if (_soundEnabled) void preloadSpinSounds(); }, []);
+  const playSpinStart = useCallback(() => { if (_soundEnabled && !playSpinStartSample()) playSpinStartSound(); void haptic("light"); }, []);
+  const playSpinTick = useCallback((pace = 0) => { if (_soundEnabled && !playSpinTickSample(pace)) playSpinTickSound(pace); }, []);
+  const playSpinWin = useCallback((rarity: SpinRarity) => { if (_soundEnabled && !playSpinWinSample(rarity)) playSpinWinSound(rarity); void haptic(rarity === "common" ? "medium" : "heavy"); }, []);
   const playLockedTap = useCallback(() => { if (_soundEnabled) playLearningSound("lockedTap"); }, []);
   return {
     playNodeTap, playCardOpen, playLessonStart, playCardAdvance, playCorrect, playMiss, playCombo,
     playNodeComplete, playTrailFill, playLessonComplete, playChestOpen, playLevelComplete, playLockedTap,
-    playSpinStart, playSpinTick, playSpinWin,
+    preloadSpin, playSpinStart, playSpinTick, playSpinWin,
     soundEnabled,
     hapticEnabled,
     setSoundEnabled,

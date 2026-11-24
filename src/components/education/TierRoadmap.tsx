@@ -233,7 +233,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
                 {earnedBadge && <Button variant="outline" className="path-review-chip" onClick={() => toggle(module.id)}>Review</Button>}
               </div>}
               <div className={cn("grid", !reduced && !justCompleted && "transition-[grid-template-rows] duration-300")} style={{ gridTemplateRows: expanded ? "1fr" : "0fr" }}>
-                <div className="min-h-0">
+                <div className="min-h-0 min-w-0">
                   {expanded && <div className="path-level-stage relative mx-auto w-[320px] max-w-full pt-10">
                     <PathScenery spots={artSpots} celebration={celebratingLevel === module.id}/>
                     <svg viewBox={`0 0 320 ${height}`} preserveAspectRatio="none" className="path-trail pointer-events-none absolute inset-x-0 top-10 w-full" style={{ height }} aria-hidden="true">

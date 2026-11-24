@@ -23,7 +23,7 @@ export const VerificationPrompt = ({ isVerified }: VerificationPromptProps) => {
               <ShieldCheck className="h-5 w-5 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium">Verified profiles get 40% more Connects!</p>
+              <p className="text-sm font-medium">Show people your profile is really you</p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 It takes 30 seconds to verify your identity
               </p>

@@ -87,14 +87,14 @@ export const WelcomeBackModal = ({ previousChurnStatus }: WelcomeBackModalProps)
 
           <div className="kit-rise" style={{ "--i": 1 } as CSSProperties}>
             <DialogTitle className="text-2xl font-extrabold">Welcome Back! 💜</DialogTitle>
-            <DialogDescription className="text-muted-foreground mt-1 text-sm">Here's what you missed:</DialogDescription>
+            <DialogDescription className="text-muted-foreground mt-1 text-sm">Here's where things stand:</DialogDescription>
           </div>
 
           <div className="grid grid-cols-3 gap-2 text-center">
             <div className="kit-stat kit-pop" style={{ "--i": 2 } as CSSProperties}>
               <span className="kit-coin" data-tone="pink"><Heart aria-hidden="true" /></span>
               <span className="kit-stat-value">{stats.newMatches}</span>
-              <span className="kit-stat-label">Matches</span>
+              <span className="kit-stat-label">Connections</span>
             </div>
             <div className="kit-stat kit-pop" style={{ "--i": 3 } as CSSProperties}>
               <span className="kit-coin" data-tone="info"><BookOpen aria-hidden="true" /></span>
@@ -104,7 +104,7 @@ export const WelcomeBackModal = ({ previousChurnStatus }: WelcomeBackModalProps)
             <div className="kit-stat kit-pop" style={{ "--i": 4 } as CSSProperties}>
               <span className="kit-coin" data-tone="urgent"><Flame aria-hidden="true" /></span>
               <span className="kit-stat-value">{stats.streak}</span>
-              <span className="kit-stat-label">Streak</span>
+              <span className="kit-stat-label">Day streak</span>
             </div>
           </div>
 

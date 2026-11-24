@@ -59,12 +59,21 @@ tint reaches 4.5:1 on cards in light and dark. Change a colour and that test tel
 ## Daily spin wheel
 
 `src/components/education/DailySpinWheel.tsx`. The disc is turned from script (not a CSS
-transition) so each wedge can click past the pointer: `playSpinTick` fires as a wedge boundary
-passes, and the pointer flicks. `src/lib/spinWheel.ts` holds the geometry; the test proves the
-wheel stops on the prize it awards. The win card shows the XP actually added, which can be more
-than the wedge says when a bonus applies. If saving fails, the spin is handed back.
+transition) so each wedge can click past the pointer, and it brakes steadily like a real wheel.
+`src/lib/spinWheel.ts` holds the prize list and the geometry; the tests prove the wheel stops on the
+prize it awards and that every prize is one the server grants.
 
-Only XP prizes are granted today. See "Open items" below.
+**Prizes.** Every wedge is XP, between 5 and 50. The server (`award_xp`, source `daily_spin`) grants
+at most 50 XP for a spin and only one spin per UTC day, so the wheel cannot promise more than that.
+The win card shows the XP the server actually added. If the server says today's spin is already used,
+the wheel says so and no prize is shown; if saving fails, the spin is handed back.
+
+**Sounds.** Recorded files in `src/assets/sounds/spin/`, played by `src/lib/spinSounds.ts`: three
+wooden clicks for the pointer (never the same one twice in a row; lower and fuller as the wheel
+slows), a soft push of air at the start, and a bell phrase for each prize tier that grows with the
+tier. They are rendered by `scripts/make_spin_sounds.py` (synthesised from scratch, so nothing is
+licensed from anyone). To change a sound, edit that script and run it; do not hand-edit the files.
+Until the files have loaded, each sound falls back to the simple version in `soundGenerator.ts`.
 
 ## Where it is applied
 
@@ -81,11 +90,7 @@ Only XP prizes are granted today. See "Open items" below.
 
 ## Open items
 
-- The wheel's Badge Hint, +1 Thot and Streak Freeze prizes show as won but nothing is granted for
-  them (`onReward` in `src/pages/Learn.tsx` only awards XP).
-- The profile completion nudges quote figures with no source ("9× more Connects", "2× more profile
-  views", "3× more conversations").
-- Profile "Share" copies the address of the member's own profile page, which opens the viewer's
-  own profile.
-- The welcome-back pop-up says "Here's what you missed" over all-time totals.
-- Learn overflows sideways at 320px wide (it did before this work).
+- Other prize types on the wheel (a Thot, a streak freeze) need a server function that picks and
+  grants the prize. Thots also need `refresh_daily_super_likes` changed first: on a new day it sets
+  the balance to the daily limit, which wipes any bonus Thots, and free members never see a balance.
+- The Learn header shows a streak multiplier ("1.5× XP") but XP is not multiplied anywhere.

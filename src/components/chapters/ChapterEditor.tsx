@@ -197,7 +197,7 @@ export const ChapterEditor = () => {
         <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 text-sm">
           <p className="font-medium">Your story is just getting started! 📖</p>
           <p className="text-muted-foreground mt-1">
-            Profiles with 4+ chapters get 3× more Connects.{' '}
+            Each chapter gives people more to connect with.{' '}
             <span className="font-medium text-foreground">{filledCount} of {chapters.length} chapters complete</span>
           </p>
           <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden">

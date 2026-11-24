@@ -10,6 +10,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { MessageCircle, ChevronLeft, BookOpen, Calendar, BookMarked, Share2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
+import { shareApp } from "@/lib/shareApp";
 import { toast } from "sonner";
 import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
@@ -259,16 +260,7 @@ const Messages = () => {
                   <span className="text-xs text-muted-foreground">Books, journals & more</span>
                 </button>
                 <button
-                  onClick={() => {
-                    navigator.share?.({
-                      title: "Join Positive Thots",
-                      text: "Check out Positive Thots — the relationship wellness app where you learn first and connect better!",
-                      url: "https://positivethots.app",
-                    }).catch(() => {
-                      navigator.clipboard.writeText("https://positivethots.app");
-                      toast.success("Link copied!");
-                    });
-                  }}
+                  onClick={() => { void shareApp(); }}
                   className="flex flex-col items-center gap-1.5 p-3 min-h-[72px] rounded-lg border border-border bg-card hover:bg-accent/50 transition-colors"
                 >
                   <Share2 className="h-5 w-5 text-primary" />

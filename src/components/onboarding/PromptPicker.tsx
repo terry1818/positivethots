@@ -38,7 +38,7 @@ export const PromptPicker = ({ answers, onChange }: PromptPickerProps) => {
       </div>
       {answeredCount < 3 && (
         <p className="text-sm text-primary/70 italic">
-          💡 Profiles with 3 prompts get 2x more connections
+          💡 Three prompts give people more ways to start a conversation
         </p>
       )}
 

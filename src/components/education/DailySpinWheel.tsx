@@ -1,79 +1,38 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import type { CSSProperties } from "react";
-import { Zap, Star, Lightbulb, Gem, Heart, Snowflake, type LucideIcon } from "lucide-react";
+import { Zap, Star, Gem, Crown, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GuideArt, type GuideName } from "@/components/mascot/GuideArt";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
-import { landingRotation, spinTravel } from "@/lib/spinWheel";
-
-interface SpinReward {
-  label: string;
-  emoji: string;
-  type: "xp" | "thot" | "boost" | "freeze" | "hint";
-  value: number;
-  rarity: "common" | "uncommon" | "rare" | "very_rare";
-}
-
-const REWARDS: SpinReward[] = [
-  { label: "+5 XP", emoji: "⚡", type: "xp", value: 5, rarity: "common" },
-  { label: "+10 XP", emoji: "⚡", type: "xp", value: 10, rarity: "common" },
-  { label: "+5 XP", emoji: "⚡", type: "xp", value: 5, rarity: "common" },
-  { label: "+25 XP", emoji: "🌟", type: "xp", value: 25, rarity: "uncommon" },
-  { label: "Badge Hint", emoji: "🔮", type: "hint", value: 1, rarity: "uncommon" },
-  { label: "+50 XP", emoji: "💎", type: "xp", value: 50, rarity: "rare" },
-  { label: "+1 Thot", emoji: "💜", type: "thot", value: 1, rarity: "rare" },
-  { label: "Streak Freeze", emoji: "❄️", type: "freeze", value: 1, rarity: "very_rare" },
-];
-
-// Weighted selection: common 60%, uncommon 25%, rare 12%, very_rare 3%
-const WEIGHTS: Record<string, number> = { common: 60, uncommon: 25, rare: 12, very_rare: 3 };
-
-function pickReward(): { index: number; reward: SpinReward } {
-  const byRarity: Record<string, number[]> = {};
-  REWARDS.forEach((r, i) => {
-    if (!byRarity[r.rarity]) byRarity[r.rarity] = [];
-    byRarity[r.rarity].push(i);
-  });
-
-  const roll = Math.random() * 100;
-  let cumulative = 0;
-  for (const rarity of ["common", "uncommon", "rare", "very_rare"]) {
-    cumulative += WEIGHTS[rarity];
-    if (roll < cumulative && byRarity[rarity]?.length) {
-      const idx = byRarity[rarity][Math.floor(Math.random() * byRarity[rarity].length)];
-      return { index: idx, reward: REWARDS[idx] };
-    }
-  }
-  return { index: 0, reward: REWARDS[0] };
-}
+import { SPIN_REWARDS as REWARDS, pickSpinReward, landingRotation, spinTravel, type SpinReward } from "@/lib/spinWheel";
 
 // One look per wedge, in REWARDS order. Neighbours never share a hue; bright wedges carry dark ink.
 const INK = "hsl(var(--art-ink))";
-const WEDGES: { fill: string; ink: string; icon: LucideIcon; lines: [string, string]; tone: string }[] = [
-  { fill: "hsl(var(--path-foundation-top))", ink: "#fff", icon: Zap, lines: ["+5", "XP"], tone: "area" },
-  { fill: "hsl(var(--art-info))", ink: INK, icon: Zap, lines: ["+10", "XP"], tone: "info" },
-  { fill: "hsl(var(--kit-discover-top))", ink: "#fff", icon: Zap, lines: ["+5", "XP"], tone: "pink" },
-  { fill: "hsl(var(--art-correct))", ink: INK, icon: Star, lines: ["+25", "XP"], tone: "correct" },
-  { fill: "hsl(var(--path-identity-top))", ink: "#fff", icon: Lightbulb, lines: ["Badge", "Hint"], tone: "area" },
-  { fill: "hsl(var(--art-reward))", ink: INK, icon: Gem, lines: ["+50", "XP"], tone: "reward" },
-  { fill: "hsl(245 70% 50%)", ink: "#fff", icon: Heart, lines: ["+1", "Thot"], tone: "pink" },
-  { fill: "hsl(195 95% 88%)", ink: INK, icon: Snowflake, lines: ["Streak", "Freeze"], tone: "info" },
+const WEDGES: { fill: string; ink: string; icon: LucideIcon; tone: string }[] = [
+  { fill: "hsl(var(--path-foundation-top))", ink: "#fff", icon: Zap, tone: "area" },
+  { fill: "hsl(var(--art-info))", ink: INK, icon: Zap, tone: "info" },
+  { fill: "hsl(var(--kit-discover-top))", ink: "#fff", icon: Zap, tone: "pink" },
+  { fill: "hsl(var(--art-correct))", ink: INK, icon: Star, tone: "correct" },
+  { fill: "hsl(var(--path-identity-top))", ink: "#fff", icon: Star, tone: "area" },
+  { fill: "hsl(var(--art-urgent))", ink: INK, icon: Gem, tone: "urgent" },
+  { fill: "hsl(245 70% 50%)", ink: "#fff", icon: Gem, tone: "info" },
+  { fill: "hsl(var(--art-reward))", ink: INK, icon: Crown, tone: "reward" },
 ];
 
 const WIN_COPY: Record<SpinReward["rarity"], { line: string; guide: GuideName }> = {
   common: { line: "Nice spin!", guide: "guide-high-five" },
   uncommon: { line: "Good one!", guide: "guide-high-five" },
   rare: { line: "Lucky spin!", guide: "guide-chest-open" },
-  very_rare: { line: "The rarest prize on the wheel!", guide: "guide-trophy" },
+  very_rare: { line: "The top prize on the wheel!", guide: "guide-trophy" },
 };
 
 const SEG = 360 / REWARDS.length;
 const C = 150;
 const R = 124;
-const SPIN_MS = 4600;
+const SPIN_MS = 4400;
 const BURST_COLORS = ["var(--art-reward)", "var(--art-info)", "var(--art-correct)", "var(--art-urgent)", "var(--kit-discover-top)"];
 
 /** Point on the wheel at `deg` clockwise from the top. */
@@ -85,11 +44,12 @@ const [wx1, wy1] = at(-SEG / 2, R);
 const [wx2, wy2] = at(SEG / 2, R);
 const WEDGE_PATH = `M${C},${C} L${wx1.toFixed(2)},${wy1.toFixed(2)} A${R},${R} 0 0,1 ${wx2.toFixed(2)},${wy2.toFixed(2)} Z`;
 
-type Phase = "ready" | "spinning" | "saving" | "won";
+type Phase = "ready" | "spinning" | "saving" | "won" | "used";
 
 interface DailySpinWheelProps {
-  /** Saves the prize. Resolves false when nothing was saved, true when it was, or the XP actually added (bonuses included). */
-  onReward: (reward: SpinReward) => Promise<boolean | number>;
+  /** Saves the prize. Resolves to the XP actually added (or true) when it was saved, false when saving failed,
+   *  or "used" when the server says today's spin or today's XP limit is already used up. */
+  onReward: (reward: SpinReward) => Promise<boolean | number | "used">;
   hasSpunToday: boolean;
 }
 
@@ -100,7 +60,7 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
   const [missed, setMissed] = useState(false);
   const [wonLabel, setWonLabel] = useState("");
   const reducedMotion = useReducedMotion();
-  const { playSpinStart, playSpinTick, playSpinWin } = useSoundEffects();
+  const { preloadSpin, playSpinStart, playSpinTick, playSpinWin } = useSoundEffects();
   const discRef = useRef<SVGGElement>(null);
   const pointerRef = useRef<SVGGElement>(null);
   // Rest with a wedge centred under the pointer, not a seam.
@@ -109,6 +69,8 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
   const flick = useRef(0);
 
   useEffect(() => () => { cancelAnimationFrame(frame.current); window.clearTimeout(flick.current); }, []);
+  // Fetch the wheel's sounds as soon as it is on screen, so the first click is already the real one.
+  useEffect(() => { preloadSpin(); }, [preloadSpin]);
 
   const turnTo = (deg: number) => {
     rotation.current = deg;
@@ -122,7 +84,7 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
     setMissed(false);
     setWinIndex(null);
 
-    const { index, reward } = pickReward();
+    const { index, reward } = pickSpinReward();
     // The pointer sits at the top. Land somewhere inside the winning wedge, not always dead centre.
     const within = (Math.random() - 0.5) * (SEG - 16);
     const start = rotation.current % 360;
@@ -137,7 +99,7 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
       let lastWedge = Math.floor(start / SEG);
       const step = (now: number) => {
         const t = Math.min(1, (now - t0) / duration);
-        const eased = 1 - Math.pow(1 - t, 3.4);
+        const eased = 1 - Math.pow(1 - t, 2.1); // steady braking, like a real wheel: it keeps clicking until it stops
         const angle = start + total * eased;
         turnTo(angle);
         const wedge = Math.floor(angle / SEG);
@@ -163,7 +125,10 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
       setPhase("saving");
       const awarded = await onReward(reward);
 
-      if (awarded) {
+      if (awarded === "used") {
+        setWinIndex(null);
+        setPhase("used");
+      } else if (awarded) {
         setWonLabel(typeof awarded === "number" ? `+${awarded} XP` : reward.label);
         setResult(reward);
         setPhase("won");
@@ -190,7 +155,7 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
         reward_rarity: reward.rarity,
         reward_value: reward.value,
       });
-    }, duration + (reducedMotion ? 0 : 350));
+    }, duration + (reducedMotion ? 0 : 250));
   }, [phase, hasSpunToday, onReward, reducedMotion, playSpinStart, playSpinTick, playSpinWin]);
 
   const burst = useMemo(() => {
@@ -204,14 +169,18 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
     }));
   }, [result]);
 
-  if (hasSpunToday && phase === "ready") {
+  if (phase === "used" || (hasSpunToday && phase === "ready")) {
     return (
       <div className="flex flex-col items-center text-center pb-2">
         <div className="kit-panel kit-rise w-full max-w-[300px] h-[176px]">
           <GuideArt name="guide-sleepy" size={160} />
         </div>
-        <p className="kit-rise mt-4 text-lg font-extrabold" style={{ "--i": 1 } as CSSProperties}>You've had today's spin</p>
-        <p className="kit-rise text-base text-muted-foreground" style={{ "--i": 2 } as CSSProperties}>Come back tomorrow for another one.</p>
+        <p className="kit-rise mt-4 text-lg font-extrabold" style={{ "--i": 1 } as CSSProperties}>
+          {phase === "used" ? "Today's spin is already used" : "You've had today's spin"}
+        </p>
+        <p className="kit-rise text-base text-muted-foreground" style={{ "--i": 2 } as CSSProperties}>
+          {phase === "used" ? "No XP was added this time. Come back tomorrow." : "Come back tomorrow for another one."}
+        </p>
       </div>
     );
   }
@@ -259,12 +228,12 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
             {REWARDS.map((reward, i) => {
               const look = WEDGES[i];
               const Icon = look.icon;
-              const long = look.lines[0].length > 3;
+              const [amount, unit] = reward.label.split(" ");
               return (
                 <g key={i} className="spin-wedge" data-win={winIndex === i} transform={`rotate(${(i + 0.5) * SEG} ${C} ${C})`}>
                   <path d={WEDGE_PATH} fill={look.fill} stroke="hsl(var(--path-gold-dark))" strokeWidth="2" strokeLinejoin="round" />
-                  <text x={C} y={C - 92} textAnchor="middle" fontSize={long ? 15 : 23} fontWeight="900" fill={look.ink}>{look.lines[0]}</text>
-                  <text x={C} y={C - 76} textAnchor="middle" fontSize={long ? 15 : 13} fontWeight="900" fill={look.ink}>{look.lines[1]}</text>
+                  <text x={C} y={C - 92} textAnchor="middle" fontSize="23" fontWeight="900" fill={look.ink}>{amount}</text>
+                  <text x={C} y={C - 76} textAnchor="middle" fontSize="13" fontWeight="900" fill={look.ink}>{unit}</text>
                   <Icon x={C - 11} y={C - 68} width={22} height={22} color={look.ink} strokeWidth={2.6} aria-hidden="true" />
                 </g>
               );
