@@ -359,18 +359,27 @@ const Index = () => {
       supabase.from("profile_boosts").select("user_id").gt("expires_at", new Date().toISOString()),
     ]);
     // Perks other members can see the effect of. A failure here only means nobody is moved up or badged.
-    const [modulesResult, planPerksResult] = await Promise.all([
-      supabase.from("education_modules").select("id, tier"),
-      (supabase.rpc.bind(supabase) as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: { user_id: string; priority: boolean; mentor: boolean }[] | null }>)(
-        "get_plan_perks", { _ids: (profilesResult.data ?? []).map((p: { id: string }) => p.id) }).catch(() => ({ data: null })),
-    ]);
-    const planFlags = new Map<string, { priority: boolean; mentor: boolean }>((planPerksResult.data ?? []).map(r => [r.user_id, r]));
+    // A database call is awaitable but is not a full Promise (it has no .catch), so failures are caught with try/await.
+    const loadPlanPerks = async (): Promise<{ user_id: string; priority: boolean; mentor: boolean }[]> => {
+      try {
+        const { data, error } = await supabase.rpc("get_plan_perks", { _ids: (profilesResult.data ?? []).map((p: { id: string }) => p.id) });
+        return error || !data ? [] : data;
+      } catch { return []; }
+    };
+    const loadModules = async (): Promise<{ id: string; tier: string }[]> => {
+      try {
+        const { data, error } = await supabase.from("education_modules").select("id, tier");
+        return error || !data ? [] : data;
+      } catch { return []; }
+    };
+    const [modules, planPerks] = await Promise.all([loadModules(), loadPlanPerks()]);
+    const planFlags = new Map<string, { priority: boolean; mentor: boolean }>(planPerks.map(r => [r.user_id, r]));
     const earnedByUser = new Map<string, Set<string>>();
     allBadgesResult.data?.forEach(badge => {
       if (!earnedByUser.has(badge.user_id)) earnedByUser.set(badge.user_id, new Set());
       earnedByUser.get(badge.user_id)!.add(badge.module_id);
     });
-    const perksOf = (id: string) => memberPerks(planFlags.get(id), sectionsFinished(modulesResult.data ?? [], earnedByUser.get(id) ?? new Set()));
+    const perksOf = (id: string) => memberPerks(planFlags.get(id), sectionsFinished(modules, earnedByUser.get(id) ?? new Set()));
 
     if (profilesResult.error || !profilesResult.data) {
       setLoadError(true);

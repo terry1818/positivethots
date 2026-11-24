@@ -482,3 +482,18 @@ test("database functions are never called through a detached reference", () => {
   for (const f of files) if (/supabase\.rpc as unknown as/.test(readFileSync(f, "utf8"))) bad.push(f);
   expect(bad).toEqual([]);
 });
+
+test("a database call is never given .catch or .finally, which it does not have", () => {
+  // supabase.from(...) and supabase.rpc(...) can be awaited but are not full Promises. Chaining .catch
+  // onto one throws before the request is sent; this is what kept Discover from loading.
+  const bad: string[] = [];
+  for (const f of new Bun.Glob("src/**/*.{ts,tsx}").scanSync(".")) {
+    const text = readFileSync(f, "utf8");
+    for (const m of text.matchAll(/supabase\s*\.(?:rpc|from)\b[^;]{0,400}?\)\s*\.(?:catch|finally)\(/g)) {
+      // functions.invoke and queryClient.fetchQuery return real Promises and may be chained.
+      if (!m[0].includes("functions.invoke") && !m[0].includes("fetchQuery")) bad.push(f);
+    }
+  }
+  expect(bad).toEqual([]);
+  expect(readFileSync("src/pages/Index.tsx", "utf8")).toContain("const loadPlanPerks = async ()");
+});
