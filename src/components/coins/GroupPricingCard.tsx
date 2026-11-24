@@ -56,7 +56,7 @@ export const GroupPricingCard = ({ partnerCount }: GroupPricingCardProps) => {
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
-            <CardTitle className="text-base">Polycule Plan</CardTitle>
+            <CardTitle className="text-base">Group plan</CardTitle>
             <Badge className="bg-green-500/20 text-green-400 text-xs">
               Save {bestPlan.savings_percentage}%
             </Badge>

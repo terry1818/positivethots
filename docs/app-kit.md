@@ -14,7 +14,7 @@ up the area colour.
 | Class | Used for | Colour |
 |-------|----------|--------|
 | `kit-area-discover` | Discover | magenta |
-| `kit-area-likes` | Likes | burnt orange |
+| `kit-area-likes` | Connects | burnt orange |
 | `kit-area-learn` | Learn-related cards outside Learn | brand purple |
 | `kit-area-chat` | Chat | blue |
 | `kit-area-profile` | Profile | teal |
@@ -42,6 +42,7 @@ tint reaches 4.5:1 on cards in light and dark. Change a colour and that test tel
 | `kit-option` (`kit-option-sm`) + `kit-option-note` | A choice in a list or grid. `data-selected="true"` marks the chosen one. |
 | `kit-entry` + `kit-entry-column`, `kit-field` | The calm single column for sign-in, reset and onboarding, and its 48px inputs. |
 | `kit-action` (`kit-action-lg`) | Round button with a lip, for a row of icon actions. `data-tone`: default area colour, `quiet`, `reward`. `kit-action-count` is the small number on its corner. Always put a text label under it. |
+| `kit-icon-btn` | 44px icon button for a header (Back). |
 | `kit-eyebrow`, `kit-text` | Small caps label, and text in the area tint. |
 | `kit-header` | Page header strip in the area colour. |
 | `kit-nav-item` + `kit-nav-pill` | Bottom navigation. Each tab carries its own area class. |
@@ -129,7 +130,7 @@ Until the files have loaded, each sound falls back to the simple version in `sou
 | 2 | Discover | Done |
 | 4 | Likes and Chat content | Done |
 | 5 | Onboarding and sign-in | Done |
-| 6 | Premium, Wallet, Events | Not started |
+| 6 | Plans (Premium), Wallet, Events | Done |
 | 7 | Settings, Resources, health pages (colour and spacing only) | Not started |
 
 ## Discover
@@ -162,9 +163,9 @@ phone (`100dvh`) and never scrolls: header, one Learn row, the card, three actio
   one `kit-cta` ("Say hi to …"), and the safety tips row on a first connection.
 - **Loading**: `PageSkeleton variant="discovery"` has the same frame, so nothing jumps.
 
-## Likes
+## Connects
 
-`src/pages/LikesYou.tsx`, `kit-area-likes`. "Likes" is the name of the tab; the action is always
+`src/pages/LikesYou.tsx`, `kit-area-likes`, route `/likes`. The tab is named "Connects"; a member never reads the word "like". The action is always
 Connect. Two views: "Wants to connect" and "Your Connects".
 
 - A person is a `likes-card`: photo, name, then Pass and Connect with their names.
@@ -184,6 +185,26 @@ Connect. Two views: "Wants to connect" and "Your Connects".
 - Every control does something. Do not add a button for a feature that does not exist yet.
 - No character art between messages. The guide appears only on an empty conversation.
 - The policy footer is not shown under the composer; the menu links the Complaints Policy.
+
+## Plans, Wallet and Events
+
+- **Payments switch** (`src/lib/payments.ts`): `PAYMENTS_OPEN` is false until the new processor's
+  checkout is wired in. While false, plans show prices with "Opens soon" (`plan-soon`) in place of a
+  button, paid events show "Tickets open soon", and codes, gifts and group plans are not rendered,
+  because each ends in a checkout that would fail.
+- **Plans** (`src/pages/Premium.tsx`, brand purple): Free as one row, then a `plan-card` per plan
+  listing only what it adds over the plan below (`planAdds`). The recommended plan carries
+  `data-featured`. Prices, "Cancel any time", the Cancellation Policy link and the renewal terms
+  always show. A member on a plan sees "You're on …" with what it includes.
+- **Which plan** comes from the member's own `subscriptions` row (`pickActivePlan`), the same table
+  the server reads for Thots a day and for who sees their Connects.
+- **Wallet** (`src/pages/Wallet.tsx`, reached from Profile): what the member holds right now, read
+  from their own rows. A row with a count of zero stays, greyed, so it is clear what can be won.
+  Thots Coins (buying, the store, "how to earn") are behind `COINS_LIVE`, off, because nothing grants
+  a coin and a coin buys nothing that is delivered.
+- **Events** (`src/pages/Events.tsx`, `kit-area-discover`): three `kit-tabs`, a line saying who that
+  kind is for, then `event-card`s. Loading, could-not-load, nothing-yet and no-search-match are four
+  separate states.
 
 ## Sign-in and onboarding
 

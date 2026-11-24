@@ -111,15 +111,15 @@ export const MONTHLY_TIERS = SUBSCRIPTION_TIERS.filter((t) => t.billingPeriod ==
 export const ANNUAL_TIERS = SUBSCRIPTION_TIERS.filter((t) => t.billingPeriod === "annual");
 
 export const FEATURE_LABELS: Record<FeatureKey, string> = {
-  see_likes: "See Who Likes You",
-  super_likes: "5 Thots/day",
-  priority_visibility: "Priority Visibility",
-  advanced_filters: "Advanced Filters",
-  profile_boost: "1 Profile Boost/mo",
+  see_likes: "See who wants to connect",
+  super_likes: "5 Thots a day",
+  priority_visibility: "Priority visibility",
+  advanced_filters: "Advanced filters",
+  profile_boost: "1 Profile Boost a month",
   unlimited_super_likes: "Unlimited Thots",
-  mentor_badge: "Mentor Badge",
-  verified_educator: "Verified Educator Badge",
-  community_host: "Host Community Events",
+  mentor_badge: "Mentor badge",
+  verified_educator: "Verified Educator badge",
+  community_host: "Host community events",
 };
 
 export const ALL_FEATURES: FeatureKey[] = [
@@ -133,6 +133,17 @@ export const ALL_FEATURES: FeatureKey[] = [
   "verified_educator",
   "community_host",
 ];
+
+const PLAN_ORDER: SubscriptionTier[] = ["plus", "premium", "vip"];
+
+/** What a plan adds on top of the one below it, so each plan is a short list. */
+export function planAdds(tier: SubscriptionTier): { includes: string | null; adds: FeatureKey[] } {
+  const at = PLAN_ORDER.indexOf(tier);
+  const own = MONTHLY_TIERS.find((t) => t.tier === tier)?.features ?? [];
+  if (at <= 0) return { includes: null, adds: own };
+  const below = MONTHLY_TIERS.find((t) => t.tier === PLAN_ORDER[at - 1]);
+  return { includes: below?.name ?? null, adds: own.filter((f) => !(below?.features ?? []).includes(f)) };
+}
 
 export function getTierByProductId(productId: string): SubscriptionTier {
   const tier = SUBSCRIPTION_TIERS.find((t) => t.productId === productId);

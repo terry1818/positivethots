@@ -23,7 +23,7 @@ const STEPS: TourStep[] = [
   {
     target: "bottom-nav",
     title: "Explore the app",
-    description: "Likes, Learn, Chat and your Profile are down here. Have fun! 💜",
+    description: "Connects, Learn, Chat and your Profile are down here. Have fun! 💜",
     position: "above",
   },
 ];

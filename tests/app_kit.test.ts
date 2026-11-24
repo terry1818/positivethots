@@ -282,12 +282,15 @@ test("a failed load of Discover has its own state, and the celebration's safety 
 // Likes and Chat (step 4 of the rollout).
 test("Likes speaks in Connects, celebrates a mutual yes and has its own error states", () => {
   const likes = readFileSync("src/pages/LikesYou.tsx", "utf8");
-  // Words a member reads. "Likes" stays as the name of the tab; the action is always Connect.
-  expect(likes.match(/liked you|\bUnlike\b|Your Likes|Likes You|likes sent/g) ?? []).toEqual([]);
+  // Words a member reads. The tab is "Connects"; the word "like" is never shown.
+  expect(likes.match(/liked you|\bUnlike\b|Your Likes|Likes You|likes sent|>Likes</g) ?? []).toEqual([]);
+  expect(readFileSync("src/components/BottomNav.tsx", "utf8")).toContain('label: "Connects"');
+  // The upsell names the plan the server actually asks for: any plan, so the cheapest one.
+  expect(likes).toContain("Plus is $4.99 a month");
+  expect(likes).not.toContain("9.99");
   expect(likes).toContain(">Wants to connect<");
   expect(likes).toContain(">Your Connects<");
   expect(likes).toContain("<MatchModal");
-  expect(likes).toContain("We couldn't load your Likes.");
   expect(likes).toContain("We couldn't load your Connects.");
   // Pass and Connect are named, not bare icons.
   expect(likes).toMatch(/aria-label=\{`Pass on \$\{liker\.name\}`\}/);
@@ -339,4 +342,57 @@ test("the kit's tabs and choices exist, and choices stand still under reduced mo
   expect(light).toMatch(/\.kit-tabs \.kit-tab\[data-state="active"\]/);
   expect(light).toMatch(/\.kit-option\[data-selected="true"\]/);
   expect(light).toMatch(/prefers-reduced-motion: reduce\) \{ \.kit-option \{ transition: none; \}/);
+});
+
+// Plans, Wallet and Events (step 6 of the rollout).
+test("the app shows the plan the server grants", () => {
+  const { pickActivePlan } = require("../src/hooks/useSubscription") as typeof import("../src/hooks/useSubscription");
+  const now = Date.parse("2026-11-24T12:00:00Z");
+  expect(pickActivePlan([], now)).toBeNull();
+  expect(pickActivePlan([{ plan: "plus", status: "canceled", current_period_end: null }], now)).toBeNull();
+  expect(pickActivePlan([{ plan: "plus", status: "active", current_period_end: "2026-11-01T00:00:00Z" }], now)).toBeNull();
+  expect(pickActivePlan([{ plan: "plus", status: "active", current_period_end: null }, { plan: "vip", status: "active", current_period_end: "2026-12-24T00:00:00Z" }], now)?.plan).toBe("vip");
+  expect(pickActivePlan([{ plan: "gold", status: "active", current_period_end: null }], now)).toBeNull();
+});
+
+test("each plan card lists only what that plan adds, and every feature appears once", () => {
+  const { planAdds, ALL_FEATURES } = require("../src/lib/subscriptionTiers") as typeof import("../src/lib/subscriptionTiers");
+  const plus = planAdds("plus"), premium = planAdds("premium"), vip = planAdds("vip");
+  expect(plus.includes).toBeNull();
+  expect(premium.includes).toBe("Plus");
+  expect(vip.includes).toBe("Premium");
+  expect([...plus.adds, ...premium.adds, ...vip.adds].sort()).toEqual([...ALL_FEATURES].sort());
+});
+
+test("no screen offers a checkout while payments are closed, and plans still show prices and the cancellation policy", () => {
+  const pay = readFileSync("src/lib/payments.ts", "utf8");
+  const plans = readFileSync("src/pages/Premium.tsx", "utf8");
+  const card = readFileSync("src/components/events/EventCard.tsx", "utf8");
+  expect(pay).toMatch(/export const PAYMENTS_OPEN = (true|false);/);
+  expect(plans).toContain("if (!PAYMENTS_OPEN) return;");
+  expect(plans).toContain("{PAYMENTS_OPEN && (\n          <>");
+  expect(card).toContain("PAYMENTS_OPEN ? (");
+  expect(plans).toContain('to="/cancellation"');
+  expect(plans).toContain("${config.price}");
+  // A checkout that fails says so instead of doing nothing.
+  expect(plans).toContain("We couldn't open checkout");
+  expect(plans.match(/Super Like|liked you|likes you|Stripe/gi) ?? []).toEqual([]);
+});
+
+test("the Wallet shows what a member holds and never offers coins that nothing grants", () => {
+  const wallet = readFileSync("src/pages/Wallet.tsx", "utf8");
+  for (const col of ["streak_freezes", "boost_credits", "xp_doublers", "bonus_mystery_reveals", "earned_frames"]) expect(wallet).toContain(col);
+  expect(wallet).toContain("COINS_LIVE ? (");
+  expect(wallet).not.toContain("How to Earn");
+  expect(wallet).toContain("We couldn't load your Wallet.");
+  expect(readFileSync("src/pages/Profile.tsx", "utf8")).toContain('navigate("/wallet")');
+});
+
+test("Events can fail honestly, says who each kind is for, and points its tour at things that exist", () => {
+  const events = readFileSync("src/pages/Events.tsx", "utf8");
+  expect(events).toContain("We couldn't load events.");
+  expect(events).toContain("if (error) throw error;");
+  expect(events).toContain('data-tour={i === 0 ? "events-card-first" : undefined}');
+  expect(events).toContain("For VIP members who have finished the Advanced lessons.");
+  expect(events).toContain("kit-area-discover");
 });

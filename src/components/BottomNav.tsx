@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { path: "/", icon: Heart, label: "Discover", area: "kit-area-discover" },
-  { path: "/likes", icon: Sparkles, label: "Likes", area: "kit-area-likes" },
+  { path: "/likes", icon: Sparkles, label: "Connects", area: "kit-area-likes" },
   { path: "/learn", icon: BookOpen, label: "Learn", area: "kit-area-learn" },
   { path: "/messages", icon: MessageCircle, label: "Chat", area: "kit-area-chat" },
   { path: "/profile", icon: User, label: "Profile", area: "kit-area-profile" },

@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, Loader2, Users, Ticket, Crown, MapPin, Clock, Video, Globe } from "lucide-react";
+import { Calendar, Check, Clock, Globe, Loader2, MapPin, Ticket, Users, Video } from "lucide-react";
 import { format } from "date-fns";
+import { PAYMENTS_OPEN } from "@/lib/payments";
 
 export interface EventData {
   id: string;
@@ -37,17 +36,15 @@ interface EventCardProps {
   onLearn: () => void;
 }
 
-const formatIcon = (format: string | null) => {
-  if (format === "virtual") return <Video className="h-3 w-3" />;
-  if (format === "hybrid") return <Globe className="h-3 w-3" />;
-  return <MapPin className="h-3 w-3" />;
-};
+const PlaceIcon = ({ kind }: { kind: string | null }) =>
+  kind === "virtual" ? <Video aria-hidden="true" /> : kind === "hybrid" ? <Globe aria-hidden="true" /> : <MapPin aria-hidden="true" />;
 
-const tierBadge = (tier: string) => {
-  if (tier === "premium") return <Badge variant="secondary" className="text-sm bg-accent text-accent-foreground border-accent"><Crown className="h-3 w-3 mr-1" />Premium</Badge>;
-  if (tier === "adults_only") return <Badge variant="secondary" className="text-sm bg-destructive/10 text-destructive border-destructive/20">🔒 Adults Only</Badge>;
-  return <Badge variant="secondary" className="text-sm">Community</Badge>;
-};
+const placeWord = (kind: string | null) => (kind === "virtual" ? "Online" : kind === "hybrid" ? "In person and online" : null);
+
+const TierChip = ({ tier }: { tier: string }) =>
+  tier === "premium" ? <span className="kit-chip">Premium</span>
+    : tier === "adults_only" ? <span className="kit-chip" data-tone="area">Adults Only</span>
+    : <span className="kit-chip" data-tone="quiet">Community</span>;
 
 export const EventCard = ({
   event, isRegistered, isRsvpd, canAccess, accessReason, isVIP,
@@ -58,102 +55,82 @@ export const EventCard = ({
   const discountedPrice = isVIP && !isFree ? ((event.price_cents * 0.75) / 100).toFixed(2) : null;
   const eventDate = new Date(event.event_date);
   const isPast = eventDate < new Date();
-  const hasRsvpOrRegistration = isRegistered || isRsvpd;
+  const going = isRegistered || isRsvpd;
+  const place = [placeWord(event.event_format), event.location_name || event.host_name].filter(Boolean).join(" · ");
 
   return (
-    <Card className="overflow-hidden transition-all hover:-translate-y-0.5">
+    <article className="kit-card event-card" aria-label={event.title}>
       {event.image_url && (
-        <div className="h-40 overflow-hidden relative">
-          <img src={event.image_url} alt={event.title} className="w-full h-full object-cover" loading="lazy" />
-          <div className="absolute top-2 right-2">{tierBadge(event.event_tier)}</div>
+        <div className="event-photo">
+          <img src={event.image_url} alt="" className="h-full w-full object-cover" loading="lazy" />
         </div>
       )}
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-lg">{event.title}</CardTitle>
-          {!event.image_url && tierBadge(event.event_tier)}
-          {hasRsvpOrRegistration && (
-            <Badge className="bg-primary text-primary-foreground shrink-0">
-              {isRsvpd ? "RSVP'd" : "Registered"}
-            </Badge>
+      <div className="space-y-3 p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <TierChip tier={event.event_tier} />
+          {going && (
+            <span className="kit-chip" data-tone="correct"><Check className="h-3.5 w-3.5" aria-hidden="true" /> You're going</span>
           )}
         </div>
-        <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mt-1">
-          <span className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            {format(eventDate, "MMM d, yyyy · h:mm a")}
-          </span>
-          <span className="flex items-center gap-1">
-            <Users className="h-3 w-3" />
-            {event.capacity} spots
-          </span>
-          <span className="flex items-center gap-1">
-            {formatIcon(event.event_format)}
-            {event.location_name || event.host_name}
-          </span>
-        </div>
-      </CardHeader>
-      <CardContent>
+        <h3 className="text-lg font-extrabold leading-tight [text-wrap:balance]">{event.title}</h3>
+        <ul className="event-meta">
+          <li><Clock aria-hidden="true" /><span>{format(eventDate, "EEE, MMM d · h:mm a")}</span></li>
+          <li><PlaceIcon kind={event.event_format} /><span>{place}</span></li>
+          <li><Users aria-hidden="true" /><span>Room for {event.capacity}</span></li>
+        </ul>
         {event.description && (
-          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{event.description}</p>
+          <p className="line-clamp-3 text-sm text-muted-foreground [text-wrap:pretty]">{event.description}</p>
         )}
-        <div className="flex items-center justify-between">
-          <div className="flex items-baseline gap-2">
+
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 pt-1">
+          <p className="flex items-baseline gap-2">
             {isFree ? (
-              <span className="text-lg font-bold text-primary">Free</span>
+              <span className="kit-text text-lg font-extrabold">Free</span>
             ) : discountedPrice ? (
               <>
-                <span className="text-lg font-bold text-primary">${discountedPrice}</span>
-                <span className="text-sm text-muted-foreground line-through">${priceFormatted}</span>
+                <span className="kit-text text-lg font-extrabold tabular-nums">${discountedPrice}</span>
+                <span className="text-sm text-muted-foreground line-through tabular-nums">${priceFormatted}</span>
               </>
             ) : (
-              <span className="text-lg font-bold">${priceFormatted}</span>
+              <span className="text-lg font-extrabold tabular-nums">${priceFormatted}</span>
             )}
-          </div>
-          <div className="flex gap-2">
+          </p>
+          <div className="flex flex-wrap justify-end gap-2">
             {canAccess ? (
               <>
-                {hasRsvpOrRegistration && (
-                  <Button variant="outline" size="sm" onClick={() => onAddToCalendar(event)}>
-                    <Calendar className="h-4 w-4 mr-1" /> Calendar
+                {going && (
+                  <Button variant="outline" className="min-h-[44px] font-bold" onClick={() => onAddToCalendar(event)}>
+                    <Calendar className="mr-1 h-4 w-4" aria-hidden="true" /> Add to calendar
                   </Button>
                 )}
                 {isRsvpd && !isRegistered && (
-                  <Button variant="ghost" size="sm" onClick={() => onCancelRsvp(event.id)} disabled={rsvpLoading !== null}>
-                    Cancel
+                  <Button variant="ghost" className="min-h-[44px] font-bold" onClick={() => onCancelRsvp(event.id)} disabled={rsvpLoading !== null}>
+                    Cancel RSVP
                   </Button>
                 )}
-                {!hasRsvpOrRegistration && !isPast && isFree && (
-                  <Button size="sm" onClick={() => onRsvp(event.id)} disabled={rsvpLoading !== null}>
-                    {rsvpLoading === event.id ? <Loader2 className="h-4 w-4 animate-spin" /> : "RSVP Free"}
+                {!going && !isPast && isFree && (
+                  <Button className="min-h-[44px] px-6 font-bold" onClick={() => onRsvp(event.id)} disabled={rsvpLoading !== null}>
+                    {rsvpLoading === event.id ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Saving" /> : "RSVP"}
                   </Button>
                 )}
-                {!hasRsvpOrRegistration && !isPast && !isFree && (
-                  <Button size="sm" onClick={() => onPurchase(event.id)} disabled={purchasing !== null}>
-                    {purchasing === event.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <><Ticket className="h-4 w-4 mr-1" /> Get Ticket</>
-                    )}
-                  </Button>
-                )}
-              </>
-            ) : (
-              <div className="text-right">
-                {accessReason === "education" ? (
-                  <Button size="sm" variant="outline" onClick={onLearn}>
-                    🎓 Complete Curriculum
+                {!going && !isPast && !isFree && (PAYMENTS_OPEN ? (
+                  <Button className="min-h-[44px] px-5 font-bold" onClick={() => onPurchase(event.id)} disabled={purchasing !== null}>
+                    {purchasing === event.id ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Opening checkout" /> : <><Ticket className="mr-1 h-4 w-4" aria-hidden="true" /> Get ticket</>}
                   </Button>
                 ) : (
-                  <Button size="sm" variant="outline" onClick={onUpgrade}>
-                    <Crown className="h-4 w-4 mr-1" /> {accessReason === "premium" ? "Upgrade" : "VIP Required"}
-                  </Button>
-                )}
-              </div>
+                  <span className="plan-soon"><Clock className="h-4 w-4" aria-hidden="true" /> Tickets open soon</span>
+                ))}
+              </>
+            ) : accessReason === "education" ? (
+              <Button variant="outline" className="min-h-[44px] font-bold" onClick={onLearn}>Finish the lessons</Button>
+            ) : (
+              <Button variant="outline" className="min-h-[44px] font-bold" onClick={onUpgrade}>
+                {accessReason === "premium" ? "See plans" : "VIP plan needed"}
+              </Button>
             )}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </article>
   );
 };

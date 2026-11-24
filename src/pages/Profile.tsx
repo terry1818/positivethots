@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock, Rocket, Crown, Award, Calendar, Pencil, Share2, ChevronRight, ExternalLink, Camera, Trophy, NotebookPen, Microscope, Home, ClipboardList, FileText, LifeBuoy, type LucideIcon } from "lucide-react";
+import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock, Rocket, Crown, Award, Calendar, Gift, Pencil, Share2, ChevronRight, ExternalLink, Camera, Trophy, NotebookPen, Microscope, Home, ClipboardList, FileText, LifeBuoy, type LucideIcon } from "lucide-react";
 import { FetLifeBadge } from "@/components/FetLifeBadge";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
@@ -645,11 +645,11 @@ const Profile = () => {
               <div className="flex items-start gap-3">
                 <span className="kit-coin kit-coin-lg" data-tone="reward"><Crown aria-hidden="true" /></span>
                 <div className="flex-1">
-                  <h3 className="font-extrabold text-base">Go Premium</h3>
+                  <h3 className="font-extrabold text-base">Get more from a plan</h3>
                   <ul className="mt-1.5 space-y-1 text-sm text-muted-foreground">
-                    <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />See who likes you</li>
-                    <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Unlimited Thots</li>
-                    <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Priority Visibility</li>
+                    <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />See who wants to connect</li>
+                    <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />More Thots every day</li>
+                    <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Priority visibility</li>
                   </ul>
                   <Button className="mt-3 min-h-[44px] px-5" onClick={() => navigate("/premium")}>
                     View Plans
@@ -714,7 +714,8 @@ const Profile = () => {
         <div className="space-y-1.5">
           <h2 className="kit-eyebrow px-1">Account</h2>
           <Card className="overflow-hidden rounded-2xl">
-            <ProfileNavRow icon={Crown} tone="reward" label="Manage Subscription" onClick={() => navigate("/premium")} />
+            <ProfileNavRow icon={Gift} tone="reward" label="Wallet" onClick={() => navigate("/wallet")} />
+            <ProfileNavRow icon={Crown} tone="reward" label="Plans" onClick={() => navigate("/premium")} />
             <ProfileNavRow icon={FileText} label="Privacy Policy" onClick={() => navigate("/privacy")} />
             <ProfileNavRow icon={FileText} label="Terms of Service" onClick={() => navigate("/terms")} />
             <ProfileNavRow icon={LifeBuoy} label="Help & Support" href="mailto:support@positivethots.org" external />

@@ -147,7 +147,7 @@ const MessagesSkeleton = () => (
 );
 
 const LikesSkeleton = () => (
-  <div className="kit-area-likes min-h-screen bg-background pb-20" aria-busy="true" aria-label="Loading likes">
+  <div className="kit-area-likes min-h-screen bg-background pb-20" aria-busy="true" aria-label="Loading Connects">
     <div className="container max-w-md mx-auto px-4 py-6">
       <div className="flex items-center gap-2 mb-4">
         <Skeleton className="h-6 w-6 rounded-md" />

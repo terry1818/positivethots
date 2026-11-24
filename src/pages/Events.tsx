@@ -1,18 +1,17 @@
 import { GuideArt } from "@/components/mascot/GuideArt";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, type CSSProperties } from "react";
 import { useTutorialState } from "@/hooks/useTutorialState";
 import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BottomNav } from "@/components/BottomNav";
-import { Calendar, ArrowLeft, Loader2 } from "lucide-react";
+import { BrandedEmptyState } from "@/components/BrandedEmptyState";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { Logo } from "@/components/Logo";
 import { EventCard, type EventData } from "@/components/events/EventCard";
 import { SearchInput } from "@/components/SearchInput";
 
@@ -25,19 +24,18 @@ const Events = () => {
   const { isFeatureUnlocked } = useFeatureUnlocks();
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const { seen: eventsTourSeen, markSeen: markEventsTourSeen } = useTutorialState("events_tour");
   const [showEventsTour, setShowEventsTour] = useState(false);
 
-  const eventsTourSteps: TourStep[] = [
-    { target: "events-tier-tabs", title: "Event Tiers", description: "Events are organized by tier. Community events are free for everyone!", position: "below" },
-    { target: "events-card-first", title: "Event Details", description: "RSVP to free events instantly. Premium and Adults Only events require a subscription and education badges.", position: "below" },
-  ];
   const [purchasing, setPurchasing] = useState<string | null>(null);
   const [rsvpLoading, setRsvpLoading] = useState<string | null>(null);
   const [registrations, setRegistrations] = useState<string[]>([]);
   const [rsvps, setRsvps] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<EventTier>("community");
   const [eventSearch, setEventSearch] = useState("");
+  const [searchKey, setSearchKey] = useState(0);
   const handleEventSearch = useCallback((q: string) => setEventSearch(q.toLowerCase()), []);
 
   const hasEventsAccess = isFeatureUnlocked("events_access");
@@ -45,41 +43,56 @@ const Events = () => {
 
   useEffect(() => {
     if (searchParams.get("registered")) {
-      toast.success("You're registered! Check your email for details 🎉");
+      toast.success("You're registered. Check your email for the details.");
     }
   }, [searchParams]);
 
-  // Show events tour after loading
+  // The tour points at real things, so it waits until the page has loaded without an error.
   useEffect(() => {
-    if (!loading && !eventsTourSeen) {
-      setTimeout(() => setShowEventsTour(true), 600);
-    }
-  }, [loading, eventsTourSeen]);
+    if (loading || loadError || eventsTourSeen) return;
+    const t = setTimeout(() => setShowEventsTour(true), 600);
+    return () => clearTimeout(t);
+  }, [loading, loadError, eventsTourSeen]);
 
   useEffect(() => {
+    let cancelled = false;
     const fetchData = async () => {
-      const { data: eventsData } = await supabase
-        .from("events")
-        .select("*")
-        .eq("is_active", true)
-        .gte("event_date", new Date().toISOString())
-        .order("event_date", { ascending: true });
+      try {
+        const { data: eventsData, error } = await supabase
+          .from("events")
+          .select("*")
+          .eq("is_active", true)
+          .gte("event_date", new Date().toISOString())
+          .order("event_date", { ascending: true });
+        if (error) throw error;
 
-      setEvents((eventsData as EventData[]) ?? []);
-
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const [regsResult, rsvpsResult] = await Promise.all([
-          supabase.from("event_registrations").select("event_id").eq("user_id", session.user.id),
-          supabase.from("event_rsvps").select("event_id").eq("user_id", session.user.id).neq("status", "cancelled"),
-        ]);
-        setRegistrations(regsResult.data?.map((r) => r.event_id) ?? []);
-        setRsvps(rsvpsResult.data?.map((r) => r.event_id) ?? []);
+        let regs: string[] = [];
+        let going: string[] = [];
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const [regsResult, rsvpsResult] = await Promise.all([
+            supabase.from("event_registrations").select("event_id").eq("user_id", session.user.id),
+            supabase.from("event_rsvps").select("event_id").eq("user_id", session.user.id).neq("status", "cancelled"),
+          ]);
+          regs = regsResult.data?.map((r) => r.event_id) ?? [];
+          going = rsvpsResult.data?.map((r) => r.event_id) ?? [];
+        }
+        if (cancelled) return;
+        setEvents((eventsData as EventData[]) ?? []);
+        setRegistrations(regs);
+        setRsvps(going);
+        setLoadError(false);
+      } catch (err) {
+        console.error("Error loading events:", err);
+        // A failed load must not read as "no events".
+        if (!cancelled) setLoadError(true);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      setLoading(false);
     };
     fetchData();
-  }, []);
+    return () => { cancelled = true; };
+  }, [reloadKey]);
 
   const handlePurchase = async (eventId: string) => {
     setPurchasing(eventId);
@@ -91,7 +104,7 @@ const Events = () => {
       if (data?.error) throw new Error(data.error);
       if (data?.url) window.open(data.url, "_blank");
     } catch (err: any) {
-      toast.error(err.message || "Failed to start checkout");
+      toast.error("We couldn't open checkout. Please try again.");
     } finally {
       setPurchasing(null);
     }
@@ -111,11 +124,11 @@ const Events = () => {
         status: "confirmed",
       });
       if (error) throw error;
-      toast.success("You're in! 🎉", { icon: <GuideArt name="guide-high-five" size={36} /> });
+      toast.success("You're going!", { icon: <GuideArt name="guide-high-five" size={36} /> });
     } catch (err: any) {
       // Rollback
       setRsvps((prev) => prev.filter((id) => id !== eventId));
-      toast.error(err.message?.includes("duplicate") ? "You've already RSVP'd" : "RSVP failed, try again");
+      toast.error(err.message?.includes("duplicate") ? "You've already RSVP'd" : "Your RSVP didn't save. Please try again.");
     }
   };
 
@@ -146,7 +159,7 @@ const Events = () => {
     } catch {
       // Rollback
       setRsvps(previousRsvps);
-      toast.error("Failed to cancel RSVP, try again");
+      toast.error("We couldn't cancel your RSVP. Please try again.");
     }
   };
 
@@ -173,11 +186,19 @@ const Events = () => {
     return filtered;
   };
 
+  // Who each kind of event is for, in the words the rule actually uses.
   const tierDescriptions: Record<EventTier, string> = {
-    community: "Free events open to all members",
-    premium: "Exclusive meetups for premium subscribers",
-    adults_only: "Intimate events for educated, verified members",
+    community: "Free and open to every member.",
+    premium: "For members on any plan.",
+    adults_only: "For VIP members who have finished the Advanced lessons.",
   };
+
+  const firstCardTier = (["community", "premium", "adults_only"] as EventTier[]).find((t) => events.some((e) => e.event_tier === t));
+  const eventsTourSteps: TourStep[] = [
+    { target: "events-tier-tabs", title: "Three kinds of events", description: "Community events are free for everyone. The other two are for members on a plan.", position: "below" },
+    // Only pointed at when there is an event on the open tab to point at.
+    ...(firstCardTier === activeTab ? [{ target: "events-card-first", title: "Save your spot", description: "RSVP to a free event in one tap, then add it to your calendar.", position: "below" as const }] : []),
+  ];
 
   const renderEventList = (tier: EventTier) => {
     const filtered = tierEvents(tier);
@@ -185,91 +206,116 @@ const Events = () => {
 
     if (loading) {
       return (
-        <div className="flex justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div className="space-y-4" aria-busy="true" aria-label="Loading events">
+          {[0, 1].map((i) => (
+            <div key={i} className="overflow-hidden rounded-[20px] border-2 border-border p-4">
+              <Skeleton className="h-6 w-24 rounded-full" />
+              <Skeleton className="mt-3 h-6 w-3/4" />
+              <Skeleton className="mt-3 h-4 w-1/2" />
+              <Skeleton className="mt-2 h-4 w-2/5" />
+              <Skeleton className="mt-4 h-11 w-28 rounded-xl" />
+            </div>
+          ))}
         </div>
+      );
+    }
+
+    if (loadError) {
+      return (
+        <BrandedEmptyState
+          mascot="confused"
+          headline="We couldn't load events."
+          description="Check your connection and try again."
+          ctaLabel="Try again"
+          onCtaClick={() => { setLoading(true); setReloadKey((k) => k + 1); }}
+          className="py-4"
+        />
       );
     }
 
     if (filtered.length === 0) {
-      return (
-        <Card className="text-center py-12">
-          <CardContent>
-            <GuideArt name={eventSearch ? "guide-thinking" : "guide-study-together"} size={150} />
-            <h3 className="font-semibold text-lg mb-1">No upcoming events</h3>
-            <p className="text-muted-foreground text-sm">Check back soon for new {tier === "community" ? "community" : tier === "premium" ? "premium" : "adults-only"} events!</p>
-            <Button variant="outline" className="mt-4" onClick={() => eventSearch ? setEventSearch("") : navigate("/learn")}>{eventSearch ? "Clear search" : "Go to Learn"}</Button>
-          </CardContent>
-        </Card>
+      return eventSearch ? (
+        <BrandedEmptyState
+          mascot="confused"
+          headline="No events match that search."
+          description="Try a shorter word, or clear the search to see everything."
+          ctaLabel="Clear search"
+          onCtaClick={() => { setEventSearch(""); setSearchKey((k) => k + 1); }}
+          ctaVariant="outline"
+          className="py-4"
+        />
+      ) : (
+        <BrandedEmptyState
+          mascot="together"
+          headline="Nothing on the calendar yet."
+          description="New events are posted here first. Lessons are open any time."
+          ctaLabel="Go to Learn"
+          onCtaClick={() => navigate("/learn")}
+          ctaVariant="outline"
+          className="py-4"
+        />
       );
     }
 
     return (
-      <div className="space-y-4">
-        {filtered.map((event) => (
-          <EventCard
-            key={event.id}
-            event={event}
-            isRegistered={registrations.includes(event.id)}
-            isRsvpd={rsvps.includes(event.id)}
-            canAccess={access.allowed}
-            accessReason={access.reason}
-            isVIP={isVIP}
-            purchasing={purchasing}
-            rsvpLoading={rsvpLoading}
-            onPurchase={handlePurchase}
-            onRsvp={handleRsvp}
-            onCancelRsvp={handleCancelRsvp}
-            onAddToCalendar={addToCalendar}
-            onUpgrade={() => navigate("/premium")}
-            onLearn={() => navigate("/learn")}
-          />
+      <ul className="space-y-4">
+        {filtered.map((event, i) => (
+          <li key={event.id} className="kit-rise" style={{ "--i": Math.min(i, 6) } as CSSProperties} data-tour={i === 0 ? "events-card-first" : undefined}>
+            <EventCard
+              event={event}
+              isRegistered={registrations.includes(event.id)}
+              isRsvpd={rsvps.includes(event.id)}
+              canAccess={access.allowed}
+              accessReason={access.reason}
+              isVIP={isVIP}
+              purchasing={purchasing}
+              rsvpLoading={rsvpLoading}
+              onPurchase={handlePurchase}
+              onRsvp={handleRsvp}
+              onCancelRsvp={handleCancelRsvp}
+              onAddToCalendar={addToCalendar}
+              onUpgrade={() => navigate("/premium")}
+              onLearn={() => navigate("/learn")}
+            />
+          </li>
         ))}
-      </div>
+      </ul>
     );
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6">
-        <header className="flex items-center justify-center mb-4">
-          <Logo size="md" />
-        </header>
-        <div className="flex items-center gap-3 mb-6">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold">Events & Workshops</h1>
-            <p className="text-sm text-muted-foreground">Learn, connect, and grow</p>
-          </div>
+    <div className="kit-area-discover min-h-screen bg-background pb-20">
+      <header className="kit-header sticky top-0 z-30">
+        <div className="mx-auto flex w-full max-w-md items-center gap-1 px-2 py-1 md:max-w-2xl">
+          <button type="button" className="kit-icon-btn" onClick={() => navigate(-1)} aria-label="Back">
+            <ArrowLeft aria-hidden="true" />
+          </button>
+          <h1 className="text-xl font-extrabold">Events</h1>
         </div>
+      </header>
 
-        <div className="events-guide-header flex justify-center mb-4"><GuideArt name="guide-tier-relationships" size={72} /></div>
+      <main className="mx-auto w-full max-w-md px-4 pb-6 pt-3 md:max-w-2xl">
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EventTier)} className="w-full">
-          <TabsList className="w-full grid grid-cols-3 mb-4" data-tour="events-tier-tabs">
-            <TabsTrigger value="community" className="text-sm sm:text-sm">
-              🌐 Community
-            </TabsTrigger>
-            <TabsTrigger value="premium" className="text-sm sm:text-sm">
-              👑 Premium
-            </TabsTrigger>
-            <TabsTrigger value="adults_only" className="text-sm sm:text-sm">
-              🔒 Adults Only
-            </TabsTrigger>
+          <TabsList className="kit-tabs" data-tour="events-tier-tabs">
+            <TabsTrigger value="community" className="kit-tab">Community</TabsTrigger>
+            <TabsTrigger value="premium" className="kit-tab">Premium</TabsTrigger>
+            <TabsTrigger value="adults_only" className="kit-tab">Adults Only</TabsTrigger>
           </TabsList>
 
-          <p className="text-sm text-muted-foreground mb-3 text-center">{tierDescriptions[activeTab]}</p>
+          <p className="my-3 text-center text-sm text-muted-foreground [text-wrap:balance]">{tierDescriptions[activeTab]}</p>
 
-          <div className="mb-4">
-            <SearchInput placeholder="Search events..." ariaLabel="Search events" onSearch={handleEventSearch} />
-          </div>
+          {/* A search box over two or three events is one more thing to read, so it appears once there is a list to search. */}
+          {events.length > 3 && (
+            <div className="mb-4">
+              <SearchInput key={searchKey} placeholder="Search events" ariaLabel="Search events" onSearch={handleEventSearch} />
+            </div>
+          )}
 
-          <TabsContent value="community">{renderEventList("community")}</TabsContent>
-          <TabsContent value="premium">{renderEventList("premium")}</TabsContent>
-          <TabsContent value="adults_only">{renderEventList("adults_only")}</TabsContent>
+          <TabsContent value="community" className="mt-0">{renderEventList("community")}</TabsContent>
+          <TabsContent value="premium" className="mt-0">{renderEventList("premium")}</TabsContent>
+          <TabsContent value="adults_only" className="mt-0">{renderEventList("adults_only")}</TabsContent>
         </Tabs>
-      </div>
+      </main>
       <BottomNav />
       {showEventsTour && (
         <SpotlightTour

@@ -1,60 +1,55 @@
 import { GuideArt } from "@/components/mascot/GuideArt";
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect, type CSSProperties } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionStore } from "@/stores/sessionStore";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { ShimmerButton } from "@/components/ShimmerButton";
-import { StaggerChildren } from "@/components/StaggerChildren";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-  Crown,
-  Heart,
-  Zap,
-  ArrowLeft,
-  Loader2,
-  Check,
-  X,
-  Star,
-  Gift,
-  Send,
-  Coins,
-} from "lucide-react";
+import { Crown, Heart, Zap, ArrowLeft, Loader2, Check, Star, Gift, Send, Clock, AlertTriangle } from "lucide-react";
 import {
   MONTHLY_TIERS,
   ANNUAL_TIERS,
-  ALL_FEATURES,
   FEATURE_LABELS,
-  type FeatureKey,
+  planAdds,
 } from "@/lib/subscriptionTiers";
-import { cn } from "@/lib/utils";
+import { PAYMENTS_OPEN } from "@/lib/payments";
 import { toast } from "sonner";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { CoinBalanceWidget } from "@/components/coins/CoinBalanceWidget";
 import { GroupPricingCard } from "@/components/coins/GroupPricingCard";
-import { usePartnerLinks } from "@/hooks/usePartnerLinks";
-const tierIcons = {
-  plus: Zap,
-  premium: Crown,
-  vip: Star,
+
+const PLAN_ICON = { plus: Zap, premium: Crown, vip: Star } as const;
+const PLAN_TONE = { plus: "info", premium: "area", vip: "reward" } as const;
+const PLAN_LINE: Record<string, string> = {
+  plus: "Know who said yes",
+  premium: "Be seen sooner and filter more",
+  vip: "Everything, and a way to give back",
 };
+const FREE_FEATURES = ["Every lesson and badge", "Discover and Connect", "1 Thot a day", "Chat with your connections"];
+
+const PageHeader = ({ title, onBack }: { title: string; onBack: () => void }) => (
+  <header className="kit-header sticky top-0 z-30">
+    <div className="mx-auto flex w-full max-w-md items-center gap-1 px-2 py-1 md:max-w-4xl">
+      <button type="button" className="kit-icon-btn" onClick={onBack} aria-label="Back">
+        <ArrowLeft aria-hidden="true" />
+      </button>
+      <h1 className="text-xl font-extrabold">{title}</h1>
+    </div>
+  </header>
+);
 
 const Premium = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isPremium, tier: currentTier } = useSubscription();
+  const { isPremium, tier: currentTier, loading: planLoading } = useSubscription();
   const { user } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState(false);
   const [promoCode, setPromoCode] = useState("");
   const [redeemingCode, setRedeemingCode] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
-  const reducedMotion = useReducedMotion();
 
   // Gift state
   const [giftEmail, setGiftEmail] = useState("");
@@ -74,43 +69,25 @@ const Premium = () => {
   const [showCanceledNotice, setShowCanceledNotice] = useState(false);
   const [showFailedNotice, setShowFailedNotice] = useState(false);
 
-  // Show success toast if redirected after redemption / handle return from Stripe
+  // Coming back from checkout
   useEffect(() => {
-    if (searchParams.get("redeemed") === "true") {
-      toast.success("Your trial has started! Welcome aboard 🎉");
-    }
-    if (searchParams.get("canceled") === "true") {
-      setShowCanceledNotice(true);
-    }
-    if (searchParams.get("failed") === "true") {
-      setShowFailedNotice(true);
-    }
+    if (searchParams.get("redeemed") === "true") toast.success("Your trial has started. Welcome aboard!");
+    if (searchParams.get("canceled") === "true") setShowCanceledNotice(true);
+    if (searchParams.get("failed") === "true") setShowFailedNotice(true);
   }, [searchParams]);
 
-  // Tier-specific feature highlights for the welcome card after success
-  const TIER_HIGHLIGHTS: Record<string, string[]> = {
-    plus: ["See who liked you", "Send 5 Thots per day", "Advanced discovery filters"],
-    premium: ["Everything in Plus", "Priority visibility in Discovery", "Advanced compatibility filters"],
-    vip: ["Everything in Premium", "Unlimited Thots", "1 free Profile Boost per month"],
-  };
-
-  // Short descriptors for each tier card
-  const TIER_DESCRIPTORS: Record<string, string> = {
-    plus: "See who likes you",
-    premium: "The full experience",
-    vip: "Go all in",
-  };
-
   const handleSubscribe = async (priceId: string) => {
+    if (!PAYMENTS_OPEN) return;
     setLoading(priceId);
+    setCheckoutError(false);
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { price_id: priceId },
-      });
+      const { data, error } = await supabase.functions.invoke("create-checkout", { body: { price_id: priceId } });
       if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
+      if (!data?.url) throw new Error("No checkout address returned");
+      window.open(data.url, "_blank");
     } catch (err) {
       console.error("Checkout error:", err);
+      setCheckoutError(true);
     } finally {
       setLoading(null);
     }
@@ -120,17 +97,15 @@ const Premium = () => {
     if (!promoCode.trim()) return;
     setRedeemingCode(true);
     try {
-      const { data, error } = await supabase.functions.invoke("redeem-promo-code", {
-        body: { code: promoCode.trim() },
-      });
+      const { data, error } = await supabase.functions.invoke("redeem-promo-code", { body: { code: promoCode.trim() } });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       if (data?.url) {
-        toast.success("Code accepted! Redirecting to checkout…");
+        toast.success("Code accepted. Opening checkout…");
         window.open(data.url, "_blank");
       }
-    } catch (err: any) {
-      toast.error("Something went wrong. Please try again.");
+    } catch {
+      toast.error("That code didn't work. Check it and try again.");
     } finally {
       setRedeemingCode(false);
     }
@@ -162,324 +137,262 @@ const Premium = () => {
       });
       if (sendError) throw sendError;
 
-      toast.success(`Gift sent to ${giftEmail}!`);
+      toast.success(`Gift sent to ${giftEmail}`);
       setGiftEmail("");
-    } catch (err: any) {
-      toast.error("Something went wrong. Please try again.");
+    } catch {
+      toast.error("The gift didn't send. Please try again.");
     } finally {
       setSendingGift(false);
     }
   };
 
+  const goBack = () => navigate(-1);
+
+  // The plan is still being read: say so, instead of flashing the wrong screen.
+  if (planLoading) {
+    return (
+      <div className="kit-area-learn min-h-screen bg-background" aria-busy="true" aria-label="Loading plans">
+        <PageHeader title="Plans" onBack={goBack} />
+        <main className="mx-auto w-full max-w-md space-y-4 px-4 pb-8 pt-4 md:max-w-4xl">
+          <Skeleton className="h-[150px] w-full rounded-[28px]" />
+          <Skeleton className="h-14 w-full rounded-2xl" />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {[0, 1, 2].map((i) => <Skeleton key={i} className="h-44 w-full rounded-[20px]" />)}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   if (isPremium) {
     const currentConfig = MONTHLY_TIERS.find((t) => t.tier === currentTier);
-    const TierIcon = tierIcons[currentTier as keyof typeof tierIcons] ?? Crown;
+    const planName = currentConfig?.name ?? "your plan";
     const justSubscribed = searchParams.get("success") === "true";
-    const highlights = TIER_HIGHLIGHTS[currentTier as keyof typeof TIER_HIGHLIGHTS] ?? [];
+    const owned = currentConfig?.features ?? [];
 
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative overflow-hidden">
-        <div className={cn("absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl", !reducedMotion && "animate-blob-float")} aria-hidden="true" />
-        <div className={cn("absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl", !reducedMotion && "animate-blob-float [animation-delay:5s]")} aria-hidden="true" />
-        <div className={cn("relative z-10 text-center max-w-md", !reducedMotion && "animate-bounce-in")}>
-          <GuideArt name={justSubscribed ? "guide-high-five" : "guide-level-up"} size={160} />
-          {justSubscribed ? (
-            <>
-              <h1 className="text-2xl font-bold mb-2">Welcome to {currentConfig?.name ?? "Premium"}!</h1>
-              <p className="text-muted-foreground mb-4">Your subscription is active. Here's what you just unlocked:</p>
-              {highlights.length > 0 && (
-                <ul className="text-left space-y-2 mb-6 mx-auto inline-block">
-                  {highlights.map((h) => (
-                    <li key={h} className="flex items-start gap-2">
-                      <Check className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                      <span>{h}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <div className="flex gap-3 justify-center flex-wrap">
-                <Button onClick={() => navigate("/")}>Explore Your New Features</Button>
-                <Button variant="outline" onClick={() => navigate("/settings")}>Manage Plan</Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <h1 className="text-2xl font-bold mb-2">You're {currentConfig?.name ?? "Premium"}!</h1>
-              <p className="text-muted-foreground mb-6">You have full access to your plan's features.</p>
-              <div className="flex gap-3 justify-center">
-                <Button onClick={() => navigate("/likes")}>View Your Likes</Button>
-                <Button variant="outline" onClick={() => navigate("/settings")}>
-                  Manage Plan
-                </Button>
-              </div>
-            </>
+      <div className="kit-area-learn min-h-screen bg-background">
+        <PageHeader title="Your plan" onBack={goBack} />
+        <main className="mx-auto w-full max-w-md space-y-4 px-4 pb-8 pt-4">
+          <div className="kit-panel h-[190px]">
+            <div className="pb-2"><GuideArt name={justSubscribed ? "guide-high-five" : "guide-level-up"} size={160} /></div>
+          </div>
+          <div className="text-center">
+            <h2 className="text-2xl font-extrabold [text-wrap:balance]">{justSubscribed ? `Welcome to ${planName}!` : `You're on ${planName}`}</h2>
+            <p className="mt-1 text-muted-foreground [text-wrap:pretty]">
+              {justSubscribed ? "Your plan is active. Here is what it includes." : "Here is what your plan includes."}
+            </p>
+          </div>
+          {owned.length > 0 && (
+            <ul className="kit-card space-y-2 p-4">
+              {owned.map((f) => (
+                <li key={f} className="flex items-start gap-2.5">
+                  <Check className="kit-text mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+                  <span>{FEATURE_LABELS[f]}</span>
+                </li>
+              ))}
+            </ul>
           )}
-        </div>
+          <Button className="kit-cta w-full" onClick={() => navigate("/likes")}>See who wants to connect</Button>
+          <Button variant="outline" className="min-h-[44px] w-full font-bold" onClick={() => navigate("/settings")}>Manage plan</Button>
+          <p className="text-center">
+            <Link to="/cancellation" className="inline-flex min-h-[44px] items-center text-sm font-semibold text-primary hover:underline">Cancellation Policy</Link>
+          </p>
+        </main>
       </div>
     );
   }
 
   const displayTiers = billingPeriod === "monthly" ? MONTHLY_TIERS : ANNUAL_TIERS;
+  const onFree = !currentTier || currentTier === "free";
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      <div className={cn("absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/10 blur-3xl", !reducedMotion && "animate-blob-float")} aria-hidden="true" />
-      <div className={cn("absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/15 blur-3xl", !reducedMotion && "animate-blob-float [animation-delay:5s]")} aria-hidden="true" />
+    <div className="kit-area-learn min-h-screen bg-background">
+      <PageHeader title="Plans" onBack={goBack} />
 
-      <div className="container max-w-4xl mx-auto px-4 py-6 relative z-10">
-        <div className="flex items-center justify-between mb-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
-            <ArrowLeft className="h-4 w-4 mr-1" /> Back
-          </Button>
-          <CoinBalanceWidget onClick={() => navigate("/wallet")} />
+      <main className="mx-auto w-full max-w-md space-y-4 px-4 pb-8 pt-4 md:max-w-4xl">
+        <div className="kit-panel h-[150px]">
+          <div className="pb-1"><GuideArt name="guide-level-up" size={130} /></div>
+        </div>
+        <div className="text-center">
+          <h2 className="text-2xl font-extrabold [text-wrap:balance]">A plan adds more ways to connect</h2>
+          <p className="mt-1 text-muted-foreground [text-wrap:pretty]">Every lesson and badge stays free.</p>
         </div>
 
-        <div className={cn("text-center mb-8", !reducedMotion && "animate-fade-in")}>
-<div className="flex justify-center mb-4"><GuideArt name="guide-level-up" size={160} /></div>
-          <h1 className="text-3xl font-bold mb-2">Choose Your Plan</h1>
-          <p className="text-muted-foreground">Every plan unlocks better connections.</p>
-        </div>
-
-        {/* Payment failed banner */}
-        {showFailedNotice && (
-          <Card className="mb-6 border-destructive/40 bg-destructive/5 animate-fade-in">
-            <CardContent className="pt-6">
-              <h2 className="font-bold text-base mb-1">Payment didn't go through</h2>
-              <p className="text-sm text-muted-foreground mb-3">
-                Your card was declined. This usually means the card expired or has insufficient funds.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Button size="sm" onClick={() => setShowFailedNotice(false)}>
-                  Try Another Payment Method
-                </Button>
-                <Button size="sm" variant="link" asChild>
-                  <a href="mailto:billing@positivethots.app">Contact Support</a>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Subscription canceled banner */}
-        {showCanceledNotice && (
-          <Card className="mb-6 border-primary/30 bg-primary/5 animate-fade-in">
-            <CardContent className="pt-6">
-              <h2 className="font-bold text-base mb-1">We're sorry to see you go</h2>
-              <p className="text-sm text-muted-foreground mb-3">
-                Your features stay active until the end of your billing period. You can resubscribe anytime.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Button size="sm" onClick={() => setShowCanceledNotice(false)}>
-                  Resubscribe
-                </Button>
-                <Button size="sm" variant="link" onClick={() => navigate("/")}>
-                  Continue with Free
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Promo Code Section */}
-        <Card className="mb-6 animate-fade-in border-dashed border-primary/30">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2 mb-3">
-              <Gift className="h-5 w-5 text-primary" />
-              <span className="font-medium">Have a promo or referral code?</span>
-            </div>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Enter code"
-                value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                maxLength={12}
-                className="font-mono tracking-wider uppercase"
-              />
-              <Button
-                onClick={handleRedeemCode}
-                disabled={redeemingCode || !promoCode.trim()}
-              >
-                {redeemingCode ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Redeem"
-                )}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Billing Period Toggle */}
-        <div className="flex flex-col items-center gap-2 mb-6 animate-fade-in">
-          <div className="flex items-center justify-center gap-1">
-            <Button
-              variant={billingPeriod === "monthly" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setBillingPeriod("monthly")}
-              className="rounded-r-none"
-            >
-              Monthly
-            </Button>
-            <Button
-              variant={billingPeriod === "annual" ? "default" : "outline"}
-              size="sm"
-              onClick={() => setBillingPeriod("annual")}
-              className="rounded-l-none"
-            >
-              Annual
-            </Button>
+        {!PAYMENTS_OPEN && (
+          <div className="kit-row" role="status">
+            <span className="kit-coin" data-tone="info"><Clock aria-hidden="true" /></span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-bold leading-tight">Plans open soon</span>
+              <span className="block text-sm text-muted-foreground [text-wrap:pretty]">We're finishing secure checkout. Nothing here can charge you yet.</span>
+            </span>
           </div>
-          <p className="text-sm text-muted-foreground">Save 20% with annual billing</p>
+        )}
+
+        {PAYMENTS_OPEN && (showFailedNotice || checkoutError) && (
+          <div className="kit-row !items-start" role="alert">
+            <span className="kit-coin" data-tone="urgent"><AlertTriangle aria-hidden="true" /></span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-bold leading-tight">{checkoutError ? "We couldn't open checkout" : "Your payment didn't go through"}</span>
+              <span className="block text-sm text-muted-foreground [text-wrap:pretty]">
+                {checkoutError ? "Check your connection and choose a plan again." : "You can try again with another payment method."}
+              </span>
+              <span className="mt-1 flex flex-wrap gap-x-4">
+                <button type="button" className="min-h-[44px] text-sm font-bold text-primary" onClick={() => { setShowFailedNotice(false); setCheckoutError(false); }}>Dismiss</button>
+                <Link to="/contact" className="inline-flex min-h-[44px] items-center text-sm font-bold text-primary">Contact us</Link>
+              </span>
+            </span>
+          </div>
+        )}
+
+        {PAYMENTS_OPEN && showCanceledNotice && (
+          <div className="kit-row !items-start" role="status">
+            <span className="kit-coin" data-tone="info"><Heart aria-hidden="true" /></span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-bold leading-tight">Your plan is cancelled</span>
+              <span className="block text-sm text-muted-foreground [text-wrap:pretty]">It stays active until the end of the period you paid for. You can start a plan again any time.</span>
+              <button type="button" className="mt-1 min-h-[44px] text-sm font-bold text-primary" onClick={() => setShowCanceledNotice(false)}>Dismiss</button>
+            </span>
+          </div>
+        )}
+
+        <div className="kit-tabs" role="group" aria-label="Billing period">
+          <button type="button" className="kit-tab" data-state={billingPeriod === "monthly" ? "active" : "inactive"} aria-pressed={billingPeriod === "monthly"} onClick={() => setBillingPeriod("monthly")}>
+            Monthly
+          </button>
+          <button type="button" className="kit-tab" data-state={billingPeriod === "annual" ? "active" : "inactive"} aria-pressed={billingPeriod === "annual"} onClick={() => setBillingPeriod("annual")}>
+            Yearly, save 20%
+          </button>
         </div>
 
-        {/* Free Tier */}
-        <Card className="mb-6 animate-fade-in border-muted">
-          <CardHeader className="text-center pb-2">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-muted mx-auto mb-2">
-              <Heart className="h-6 w-6 text-muted-foreground" />
+        {/* Free */}
+        <section className="kit-row !items-start" aria-label="Free plan">
+          <span className="kit-coin kit-coin-lg" data-tone="quiet"><Heart aria-hidden="true" /></span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-extrabold leading-tight">Free</h3>
+              {onFree && <span className="kit-chip" data-tone="quiet">Your plan</span>}
+              <p className="ml-auto shrink-0 text-2xl font-black leading-none tabular-nums">$0</p>
             </div>
-            <CardTitle className="text-lg">Free</CardTitle>
-            <p className="text-sm text-muted-foreground">Learn the basics</p>
-            <div className="mt-2">
-              <span className="text-3xl font-bold">$0</span>
-              <span className="text-muted-foreground text-sm">/forever</span>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <ul className="space-y-2 mb-4">
-              {["Browse profiles", "1 daily Thot", "Education access", "Real-time chat", "Basic matching"].map((feature) => (
-                <li key={feature} className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-            {!currentTier || currentTier === "free" ? (
-              <Badge className="w-full justify-center py-1.5" variant="secondary">Current Plan</Badge>
-            ) : null}
-          </CardContent>
-        </Card>
+            <p className="mt-1 text-sm text-muted-foreground [text-wrap:pretty]">{FREE_FEATURES.join(" · ")}</p>
+          </div>
+        </section>
 
-        <StaggerChildren className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8" stagger={100}>
-          {displayTiers.map((config) => {
-            const Icon = tierIcons[config.tier as keyof typeof tierIcons];
-            const isHighlighted = config.highlight;
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {displayTiers.map((config, idx) => {
+            const Icon = PLAN_ICON[config.tier as keyof typeof PLAN_ICON];
             const isAnnual = config.billingPeriod === "annual";
-            const isVip = config.tier === "vip";
+            const { includes, adds } = planAdds(config.tier);
+            const isCurrent = currentTier === config.tier;
 
             return (
-              <Card
+              <article
                 key={`${config.tier}-${config.billingPeriod}`}
-                className={cn(
-                  "relative transition-all hover:-translate-y-1",
-                  isHighlighted && "border-primary shadow-lg ring-2 ring-primary/20"
-                )}
+                className="kit-card kit-rise plan-card flex min-w-0 flex-col p-4"
+                data-featured={config.highlight ? "true" : undefined}
+                style={{ "--i": idx } as CSSProperties}
+                aria-label={`${config.name} plan`}
               >
-                {isHighlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wide">
-                    Most Popular
+                {config.highlight && <p className="mb-2"><span className="kit-chip" data-tone="area">Most popular</span></p>}
+                <div className="flex items-start gap-3">
+                  <span className="kit-coin kit-coin-lg" data-tone={PLAN_TONE[config.tier as keyof typeof PLAN_TONE]}><Icon aria-hidden="true" /></span>
+                  <div className="min-w-0 flex-1 self-center">
+                    <h3 className="text-lg font-extrabold leading-tight">{config.name}</h3>
                   </div>
-                )}
-                {isAnnual && (
-                  <div className="absolute top-3 right-3">
-                    <Badge className="bg-accent text-accent-foreground text-sm">Save 20%</Badge>
+                  <div className="shrink-0 text-right">
+                    <p className="text-xl font-black leading-none tabular-nums min-[360px]:text-2xl">${config.price}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{isAnnual ? "a year" : "a month"}</p>
                   </div>
-                )}
-                <CardHeader className="text-center pb-2">
-<div className="flex justify-center mb-2"><GuideArt name={config.tier === "plus" ? "guide-thumbs-up" : config.tier === "premium" ? "guide-trophy" : "guide-celebrate-all"} size={48} /></div>
-                  <CardTitle className="text-lg">{config.name}</CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    {TIER_DESCRIPTORS[config.tier as keyof typeof TIER_DESCRIPTORS]}
-                  </p>
-                  <div className="mt-2">
-                    {isAnnual ? (
-                      <>
-                        <span className="text-3xl font-bold">${config.price}</span>
-                        <span className="text-muted-foreground text-sm">/year</span>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          (${config.annualMonthlyEquivalent?.toFixed(2)}/mo)
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-3xl font-bold">${config.price}</span>
-                        <span className="text-muted-foreground text-sm">/mo</span>
-                      </>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <ul className="space-y-2 mb-4">
-                    {ALL_FEATURES.map((feature) => {
-                      const has = config.features.includes(feature);
-                      return (
-                        <li key={feature} className="flex items-center gap-2 text-sm">
-                          {has ? (
-                            <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                          ) : (
-                            <X className="h-4 w-4 text-muted-foreground/40 flex-shrink-0" />
-                          )}
-                          <span className={cn(!has && "text-muted-foreground/40")}>
-                            {FEATURE_LABELS[feature]}
-                          </span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  {isVip && (
-                    <p className="text-sm text-muted-foreground italic mb-4">
-                      VIP is for members who've completed the full curriculum and want to give back to the community.
-                    </p>
+                </div>
+                <p className="mt-2 text-sm text-muted-foreground [text-wrap:pretty]">
+                  {PLAN_LINE[config.tier]}{isAnnual && `. Works out to $${config.annualMonthlyEquivalent?.toFixed(2)} a month`}
+                </p>
+
+                <ul className="mt-3 flex-1 space-y-1.5">
+                  {includes && (
+                    <li className="flex items-start gap-2 text-sm font-bold">
+                      <Check className="kit-text mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                      <span>Everything in {includes}</span>
+                    </li>
                   )}
-                  {currentTier === config.tier ? (
-                    <Badge className="w-full justify-center py-1.5" variant="secondary">Current Plan</Badge>
+                  {adds.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2 text-sm">
+                      <Check className="kit-text mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                      <span>{FEATURE_LABELS[feature]}</span>
+                    </li>
+                  ))}
+                </ul>
+                {config.tier === "vip" && (
+                  <p className="mt-2 text-sm text-muted-foreground [text-wrap:pretty]">
+                    For members who have finished the lessons and want to give back to the community.
+                  </p>
+                )}
+
+                <div className="mt-4">
+                  {isCurrent ? (
+                    <p className="plan-soon"><Check className="h-4 w-4" aria-hidden="true" /> Your plan</p>
+                  ) : !PAYMENTS_OPEN ? (
+                    <p className="plan-soon"><Clock className="h-4 w-4" aria-hidden="true" /> Opens soon</p>
                   ) : (
-                    <ShimmerButton
-                      className={cn(
-                        "w-full",
-                        isHighlighted
-                          ? "bg-gradient-to-r from-primary to-secondary"
-                          : "bg-primary"
-                      )}
+                    <Button
+                      variant={config.highlight ? "default" : "outline"}
+                      className={config.highlight ? "kit-cta w-full" : "min-h-[48px] w-full font-bold"}
                       onClick={() => handleSubscribe(config.priceId)}
                       disabled={loading !== null}
                     >
-                      {loading === config.priceId ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        `Start ${config.name}`
-                      )}
-                    </ShimmerButton>
+                      {loading === config.priceId ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Opening checkout" /> : `Start ${config.name}`}
+                    </Button>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </article>
             );
           })}
-        </StaggerChildren>
+        </div>
 
-        {/* Gift Subscription Section */}
-        <Card className="mb-6 animate-fade-in border-dashed border-accent/30">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2 mb-2">
-              <Gift className="h-5 w-5 text-accent" />
-              <span className="font-semibold">Give the Gift of Growth</span>
-            </div>
-            <p className="text-sm text-muted-foreground mb-4">
-              Send a membership to a partner or friend. They'll get full access instantly — no account needed to receive it.
-            </p>
-            <div className="space-y-3">
+        {/* Codes, gifts and group plans all end in a checkout, so they wait for checkout to open. */}
+        {PAYMENTS_OPEN && (
+          <>
+            <section className="kit-card space-y-3 p-4" aria-labelledby="promo-title">
+              <div className="flex items-center gap-3">
+                <span className="kit-coin" data-tone="reward"><Gift aria-hidden="true" /></span>
+                <h3 id="promo-title" className="font-bold leading-tight">Have a promo or referral code?</h3>
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter code"
+                  aria-label="Promo or referral code"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                  maxLength={12}
+                  className="kit-field font-mono uppercase tracking-wider"
+                />
+                <Button className="min-h-[48px] shrink-0 px-5 font-bold" onClick={handleRedeemCode} disabled={redeemingCode || !promoCode.trim()}>
+                  {redeemingCode ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Checking code" /> : "Redeem"}
+                </Button>
+              </div>
+            </section>
+
+            <section className="kit-card space-y-3 p-4" aria-labelledby="gift-title">
+              <div className="flex items-center gap-3">
+                <span className="kit-coin" data-tone="pink"><Gift aria-hidden="true" /></span>
+                <div className="min-w-0">
+                  <h3 id="gift-title" className="font-bold leading-tight">Give a trial</h3>
+                  <p className="text-sm text-muted-foreground [text-wrap:pretty]">Email a partner or friend a code. They redeem it after they sign in.</p>
+                </div>
+              </div>
               <Input
                 type="email"
                 placeholder="their@email.com"
+                aria-label="Their email address"
+                autoComplete="off"
                 value={giftEmail}
                 onChange={(e) => setGiftEmail(e.target.value)}
                 maxLength={100}
+                className="kit-field"
               />
               <div className="flex gap-2">
                 <Select value={giftTier} onValueChange={setGiftTier}>
-                  <SelectTrigger className="flex-1">
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger className="min-h-[48px] flex-1" aria-label="Plan"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="plus">Plus</SelectItem>
                     <SelectItem value="premium">Premium</SelectItem>
@@ -487,9 +400,7 @@ const Premium = () => {
                   </SelectContent>
                 </Select>
                 <Select value={giftDays} onValueChange={setGiftDays}>
-                  <SelectTrigger className="flex-1">
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger className="min-h-[48px] flex-1" aria-label="Length"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="7">7 days</SelectItem>
                     <SelectItem value="14">14 days</SelectItem>
@@ -497,41 +408,26 @@ const Premium = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <Button
-                className="w-full"
-                onClick={handleSendGift}
-                disabled={sendingGift || !giftEmail.trim()}
-              >
-                {sendingGift ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 mr-1" /> Send Gift
-                  </>
-                )}
+              <Button variant="outline" className="min-h-[48px] w-full font-bold" onClick={handleSendGift} disabled={sendingGift || !giftEmail.trim()}>
+                {sendingGift ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Sending" /> : <><Send className="mr-1 h-4 w-4" aria-hidden="true" /> Send gift</>}
               </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </section>
 
-        {/* Group/Polycule Pricing */}
-        <GroupPricingCard partnerCount={1} />
+            <GroupPricingCard partnerCount={1} />
+          </>
+        )}
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          Cancel anytime · {billingPeriod === "annual" ? "Billed annually" : "Billed monthly"} · Secure checkout
-        </p>
-        <div className="text-center">
-          <Link to="/cancellation" className="inline-flex items-center min-h-[44px] text-sm text-primary hover:underline">Cancellation Policy</Link>
+        <div className="space-y-1 pt-2 text-center">
+          <p className="text-sm text-muted-foreground">
+            Cancel any time · {billingPeriod === "annual" ? "Billed once a year" : "Billed once a month"}
+          </p>
+          <Link to="/cancellation" className="inline-flex min-h-[44px] items-center text-sm font-semibold text-primary hover:underline">Cancellation Policy</Link>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground [text-wrap:pretty]">
+            Plans renew at the end of each billing period unless cancelled at least 24 hours before the renewal date. You can manage or cancel your plan in Settings. See our{" "}
+            <Link to="/terms" className="underline hover:text-foreground">Terms of Service</Link> for full details.
+          </p>
         </div>
-
-        <p className="text-xs text-muted-foreground text-center mt-4 max-w-2xl mx-auto leading-relaxed">
-          Subscriptions auto-renew at the end of each billing period unless canceled at least 24 hours before the renewal date. You can manage or cancel your subscription in your account settings. See our{" "}
-          <button onClick={() => navigate("/terms")} className="underline hover:text-foreground">
-            Terms of Service
-          </button>{" "}
-          for full details.
-        </p>
-      </div>
+      </main>
     </div>
   );
 };

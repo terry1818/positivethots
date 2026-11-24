@@ -48,7 +48,11 @@
 - Discover fits one phone screen and does not scroll (`discover-screen`). Pass, Send a Thot and Connect stay visible under the card with their names; do not put anything between the card and those three. A failed load shows its own error state, never the empty state.
 - Dragging a card: only a pressed pointer drags, and a drag is never also a tap. Do not move the card's arrival animation back onto the slot element; it would stop the card following the finger.
 - Tour tips (`SpotlightTour`) must stay on screen at 320 to 430 pixels wide; point a step at something smaller than the screen.
-- Likes: the tab is named "Likes", the action is always Connect. A Connect made from Likes is mutual, so it opens "You Both Said Yes".
+- Connects (route `/likes`): the tab is named "Connects". The word "like" is never shown to a member; the action is always Connect. A Connect made from Likes is mutual, so it opens "You Both Said Yes".
+- Payments: `src/lib/payments.ts` holds `PAYMENTS_OPEN`. While it is false, no screen may show a button that starts a checkout (plans, tickets, codes, gifts, group plans, coins). Show the price and "Opens soon". Flip it in the same change that wires the new processor's checkout. Never add Stripe.
+- The member's plan comes from the `subscriptions` table (`pickActivePlan` in `useSubscription`), the same rows the server reads. Seeing who wants to connect is included in every plan, so upsells name Plus ($4.99 a month).
+- Wallet shows only what a member really holds (Thots, Streak Freezes, Double XP, Profile Boosts, Mystery Match Reveals, frames). Thots Coins stay hidden while `COINS_LIVE` is false: nothing grants a coin and nothing a coin buys is delivered.
+- Events: a failed load has its own state; the search box appears only with more than three events; paid tickets follow `PAYMENTS_OPEN`.
 - Chat: a conversation is `chat-screen` (phone height, only the messages scroll). No control without a working feature behind it. Report stays one tap from the header. No policy footer under the composer.
 - Never load a member's fallback picture from another service; show their initial.
 - Sign-up and onboarding are written for everyone: no question about one relationship style, no "Popular" label without data, no looping background animation.

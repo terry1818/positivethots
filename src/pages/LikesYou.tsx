@@ -285,7 +285,7 @@ const LikesYou = () => {
         <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3 px-4 py-1 md:max-w-2xl lg:max-w-4xl">
           <Logo size="md" showText={false} />
           <div className="flex min-w-0 items-center gap-2">
-            <h1 className="text-xl font-extrabold">Likes</h1>
+            <h1 className="text-xl font-extrabold">Connects</h1>
             {likerCount > 0 && (
               <span className="kit-chip" data-tone="area" aria-label={waiting}>{likerCount}</span>
             )}
@@ -313,7 +313,7 @@ const LikesYou = () => {
             ) : loadError ? (
               <BrandedEmptyState
                 mascot="confused"
-                headline="We couldn't load your Likes."
+                headline="We couldn't load your Connects."
                 description="Check your connection and try again."
                 ctaLabel="Try again"
                 onCtaClick={() => { setLoading(true); setReloadKey(k => k + 1); }}
@@ -334,7 +334,7 @@ const LikesYou = () => {
                     <span className="kit-coin kit-coin-lg" data-tone="reward"><Crown aria-hidden="true" /></span>
                     <div className="min-w-0 flex-1">
                       <h2 className="font-bold leading-tight">See who wants to connect</h2>
-                      <p className="text-sm text-muted-foreground [text-wrap:pretty]">A plan shows you each person the moment they Connect.</p>
+                      <p className="text-sm text-muted-foreground [text-wrap:pretty]">Every plan shows you each person the moment they Connect. Plus is $4.99 a month.</p>
                     </div>
                     <Button variant="outline" className="min-h-[44px] shrink-0 px-4 font-bold" onClick={() => navigate("/premium")}>See plans</Button>
                   </div>
@@ -350,7 +350,7 @@ const LikesYou = () => {
                 </div>
                 <div className="text-center">
                   <h2 className="text-xl font-extrabold [text-wrap:balance]">{waiting} with you</h2>
-                  <p className="mt-1 text-muted-foreground [text-wrap:pretty]">A plan shows you who they are, so you can say yes.</p>
+                  <p className="mt-1 text-muted-foreground [text-wrap:pretty]">Every plan shows you who they are, so you can say yes. Plus is $4.99 a month.</p>
                 </div>
                 <Button className="kit-cta w-full" onClick={() => navigate("/premium")}>See who they are</Button>
                 <button type="button" className="kit-row" onClick={() => navigate("/")}>
