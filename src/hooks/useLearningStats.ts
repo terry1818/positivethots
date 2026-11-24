@@ -15,8 +15,10 @@ export interface LearningStats {
   streak_recovered_at: string | null;
   streak_freezes: number;
   streak_freeze_used_at: string | null;
-  /** Profile Boosts earned by leveling up, not yet used. */
+  /** Profile Boosts earned (levels, daily spin), not yet used. */
   boost_credits?: number | null;
+  /** "2x XP" tokens from the daily spin. Each one doubles the XP of the next lesson finished. */
+  xp_doublers?: number | null;
 }
 
 const LEVEL_THRESHOLDS = [0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500];
@@ -242,7 +244,7 @@ export const useLearningStats = () => {
 
   /** Everything that follows an XP award the server has already made: update what is on screen, and
    *  hand out the level and streak rewards it unlocked. Used by awardXP and by the daily spin. */
-  const applyAward = useCallback(async (result: XPAwardResult, source: string) => {
+  const applyAward = useCallback(async (result: XPAwardResult, source: string, sourceId?: string) => {
     const feedback = xpAwardFeedback(result, stats?.current_level ?? result.new_level);
     const today = new Date().toISOString().split("T")[0];
     if (result.awarded === 0) {
@@ -329,8 +331,27 @@ export const useLearningStats = () => {
       setSectionsToday(prev => prev + 1);
     }
 
+    // A "2x XP" token from the daily spin pays this lesson's XP a second time. The server decides
+    // whether one applies; this only asks when the member holds one.
+    if (source === "section_complete" && sourceId && (stats?.xp_doublers ?? 0) > 0) {
+      try {
+        const { data } = await (supabase.rpc as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }>)("use_xp_doubler", { _section_id: sourceId });
+        const doubled = data as { status: string; bonus: number; new_xp: number; new_level: number; doublers_left: number } | null;
+        if (doubled?.status === "doubled") {
+          setStats(prev => prev ? { ...prev, total_xp: doubled.new_xp, current_level: doubled.new_level, xp_doublers: doubled.doublers_left } : prev);
+          toast.success(`Double XP! +${doubled.bonus} bonus XP`, { description: "Your 2× XP from the daily spin was used on this lesson." });
+          if (doubled.new_level > result.new_level && REWARD_LEVELS.includes(doubled.new_level)) {
+            void supabase.functions.invoke("grant-level-reward", { body: { level: doubled.new_level } }).catch(() => {});
+          }
+          return { ...feedback, newXP: result.awarded + doubled.bonus, newLevel: doubled.new_level, leveledUp: leveledUp || doubled.new_level > result.new_level, totalXP: doubled.new_xp, streakMilestone };
+        }
+      } catch {
+        // The lesson's own XP is already saved; the token stays for next time.
+      }
+    }
+
     return { ...feedback, totalXP: result.new_xp, streakMilestone };
-  }, [stats?.current_level, userId]);
+  }, [stats?.current_level, stats?.xp_doublers, userId]);
 
   const awardXP = useCallback(async (amount: number, source: string, sourceId?: string, quietRetry = false): Promise<{ newXP: number; newLevel: number; leveledUp: boolean; newStreak: number; streakMilestone: boolean; freezeUsed: boolean; totalXP?: number }> => {
     if (!stats || !userId) {
@@ -350,7 +371,7 @@ export const useLearningStats = () => {
 
       if (error) throw error;
 
-      return await applyAward(data as unknown as XPAwardResult, source);
+      return await applyAward(data as unknown as XPAwardResult, source, sourceId);
     } catch (err) {
       console.error("Error awarding XP:", err);
       void reportError(err instanceof Error ? err : new Error("Error awarding XP"));

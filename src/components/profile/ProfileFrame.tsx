@@ -1,7 +1,7 @@
 import { memo, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-export type FrameId = "newbie" | "scholar" | "streak_master" | "century_club" | "social_butterfly" | "educator" | "og";
+export type FrameId = "newbie" | "scholar" | "streak_master" | "century_club" | "social_butterfly" | "educator" | "og" | "lucky_spin";
 
 export interface FrameDefinition {
   id: FrameId;
@@ -60,6 +60,13 @@ export const FRAME_DEFINITIONS: FrameDefinition[] = [
     description: "Vintage exclusive frame",
     unlockRequirement: "Among the first 100 users",
     className: "ring-[3px] ring-amber-600 shadow-[0_0_10px_2px_rgba(180,83,9,0.3)]",
+  },
+  {
+    id: "lucky_spin",
+    label: "Lucky Spin",
+    description: "Gold ring that turns through the wheel's colours",
+    unlockRequirement: "Win it on the daily spin",
+    className: "frame-lucky-spin",
   },
 ];
 

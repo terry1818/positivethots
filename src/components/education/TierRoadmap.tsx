@@ -225,9 +225,9 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
                 <Button variant="outline" className="path-guide-button" onClick={() => setGuideId(module.id)}><PathIcon kind="lesson"/>Guide</Button>
                 {module.id !== currentModuleId && <Button variant="ghost" size="icon" aria-label={`Collapse ${module.title}`} onClick={() => toggle(module.id)}><ChevronDown /></Button>}
               </header> : <div className={cn("path-level-row flex min-h-[80px] items-center gap-2 py-3", earnedBadge && "path-completed-row")}>
-                <Button variant="ghost" className="h-auto min-h-[44px] flex-1 justify-start whitespace-normal text-left text-foreground" onClick={() => setGuideId(module.id)} aria-label={`${module.title}, ${earnedBadge ? "completed" : reason(module) || "available"}`}>
+                <Button variant="ghost" className="h-auto min-h-[44px] min-w-0 flex-1 justify-start whitespace-normal px-1 text-left text-foreground min-[360px]:px-2 min-[420px]:px-4" onClick={() => setGuideId(module.id)} aria-label={`${module.title}, ${earnedBadge ? "completed" : reason(module) || "available"}`}>
                   <span className="path-row-medal"><PathIcon kind={earnedBadge ? "badge" : !unlocked ? "lock" : "lesson"}/></span>
-                  <div><h3 className="text-base font-semibold">{module.title}</h3>{!unlocked && <p className="text-xs text-muted-foreground">{reason(module)}</p>}</div>
+                  <div className="min-w-0"><h3 className="text-base font-semibold [overflow-wrap:anywhere]">{module.title}</h3>{!unlocked && <p className="text-xs text-muted-foreground">{reason(module)}</p>}</div>
                 </Button>
                 {earnedBadge && <CompletedLevelArt moduleId={module.id} celebrating={celebratingLevel === module.id}/>}
                 {earnedBadge && <Button variant="outline" className="path-review-chip" onClick={() => toggle(module.id)}>Review</Button>}

@@ -39,16 +39,20 @@ export const CompactProgressBar = ({ tiers, badgeCount, connectionCount }: Compa
       className="w-full rounded-xl border border-border bg-card p-3.5 text-left transition-colors hover:bg-accent/30 active:scale-[0.99]"
     >
       {/* Row 1: Stats + CTA */}
-      <div className="flex items-center gap-3 mb-3">
-        <div className="flex items-center gap-5 flex-1">
+      {/* The stats share the row evenly and the call to action shortens on narrow phones, so the row
+          always fits: "Keep Learning" from 420px, "Learn" from 360px, the icon alone below that. */}
+      <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center justify-between gap-2 flex-1 min-w-0">
           <StatPill value={badgeCount} label="Badges" className="text-primary" />
           <StatPill value={`${completedTiers}/${tiers.length}`} label="Tiers" className="text-muted-foreground" />
           <StatPill value={connectionCount} label="Connects" className="text-emerald-500" />
         </div>
-        <span className="flex items-center gap-1.5 bg-primary/15 text-primary rounded-full px-3 py-1.5 text-xs font-semibold shrink-0">
-          <BookOpen className="h-3.5 w-3.5" />
-          Keep Learning
-          <ChevronRight className="h-3 w-3" />
+        <span className="flex items-center gap-1 bg-primary/15 text-primary rounded-full px-2.5 py-1.5 text-xs font-semibold shrink-0">
+          <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
+          <span className="hidden min-[420px]:inline">Keep Learning</span>
+          <span className="hidden min-[360px]:inline min-[420px]:hidden">Learn</span>
+          <span className="sr-only min-[360px]:hidden">Keep learning</span>
+          <ChevronRight className="h-3 w-3" aria-hidden="true" />
         </span>
       </div>
 
@@ -79,14 +83,16 @@ export const CompactProgressBar = ({ tiers, badgeCount, connectionCount }: Compa
         {tiers.map((tier) => {
           const pct = tier.totalModules > 0 ? (tier.earnedModules / tier.totalModules) * 100 : 0;
           return (
-            <div key={tier.tier} className="flex-1 flex flex-col items-center gap-0.5">
+            <div key={tier.tier} className="flex-1 min-w-0 flex flex-col items-center gap-1">
               <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
                 <div
-                  className={cn("h-full rounded-full transition-all duration-700", tierColors[tier.tier] || "bg-primary")}
+                  className={cn("h-full rounded-full transition-[width] duration-700 motion-reduce:transition-none", tierColors[tier.tier] || "bg-primary")}
                   style={{ width: `${pct}%` }}
                 />
               </div>
-              <span className="text-sm text-muted-foreground leading-none">
+              {/* Five names fit under the bars from 390px up. Narrower phones show the bars alone;
+                  the "Next" row above already names the tier in progress. */}
+              <span className="sr-only min-[390px]:not-sr-only min-[390px]:block text-xs text-muted-foreground leading-none whitespace-nowrap">
                 {tierLabels[tier.tier] || tier.label.split(" ")[0]}
               </span>
             </div>
@@ -98,8 +104,8 @@ export const CompactProgressBar = ({ tiers, badgeCount, connectionCount }: Compa
 };
 
 const StatPill = ({ value, label, className }: { value: string | number; label: string; className?: string }) => (
-  <div className="flex flex-col items-center">
-    <span className={cn("text-base font-bold leading-none", className)}>{value}</span>
-    <span className="text-sm uppercase tracking-wider text-muted-foreground mt-0.5">{label}</span>
+  <div className="flex flex-col items-center min-w-0">
+    <span className={cn("text-base font-bold leading-none tabular-nums", className)}>{value}</span>
+    <span className="text-xs text-muted-foreground mt-1 leading-none">{label}</span>
   </div>
 );

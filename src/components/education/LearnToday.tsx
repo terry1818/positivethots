@@ -90,7 +90,7 @@ export function LearnToday({ streak, lastActivityDate, freezes, atRisk, hoursLef
         <Suspense fallback={<Skeleton className="h-40 w-full" />}>
           {sheet === "streak" && <StreakCalendar streak={streak} lastActivityDate={lastActivityDate} freezeCount={freezes} />}
           {sheet === "challenge" && <DailyChallenge />}
-          {sheet === "spin" && <DailySpinWheel hasSpunToday={hasSpunToday} onSpin={onSpin} />}
+          {sheet === "spin" && <DailySpinWheel hasSpunToday={hasSpunToday} onSpin={onSpin} streak={streak} />}
           {sheet === "sprint" && <WeeklySprintBanner />}
           {sheet === "community" && <CommunityChallengeCard />}
           {(sheet === "sprint" || sheet === "community") && activityAvailable[sheet] === false &&

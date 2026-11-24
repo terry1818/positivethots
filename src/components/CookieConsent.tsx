@@ -7,35 +7,69 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSessionStore } from "@/stores/sessionStore";
 import { useLocation } from "react-router-dom";
 
+// The answer is kept on the device as well as in the member's account, so the notice is not
+// repeated while sign-in is still loading or when the account lookup is slow or fails.
+const LOCAL_KEY = "pt_cookie_consent";
+
+const readLocalChoice = (): string | null => {
+  try {
+    return localStorage.getItem(LOCAL_KEY);
+  } catch {
+    return null;
+  }
+};
+
+const writeLocalChoice = (choice: string) => {
+  try {
+    localStorage.setItem(LOCAL_KEY, choice);
+  } catch {
+    // Storage can be unavailable (private browsing); the account copy still holds the answer.
+  }
+};
+
 export const CookieConsent = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { pathname } = useLocation();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // If already dismissed in this session, don't show
-    if (useSessionStore.getState().isBannerDismissed("cookie_consent")) return;
+    // Wait until we know whether someone is signed in. Showing the notice before that is what
+    // made it reappear on every visit for members who had already answered.
+    if (authLoading) return;
+
+    if (useSessionStore.getState().isBannerDismissed("cookie_consent") || readLocalChoice()) {
+      setVisible(false);
+      return;
+    }
 
     if (!user) {
-      // No user logged in — show consent (can't check DB)
       setVisible(true);
       return;
     }
 
-    // Check DB for saved consent
+    // Signed in on a device with no saved answer: ask the account.
+    let cancelled = false;
     (async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("user_preferences" as any)
         .select("value")
         .eq("user_id", user.id)
         .eq("key", "cookie_consent")
         .maybeSingle();
-      if (!data) setVisible(true);
+      if (cancelled) return;
+      if (data) {
+        writeLocalChoice(String((data as any).value ?? "accepted"));
+        setVisible(false);
+      } else if (!error) {
+        setVisible(true);
+      }
     })();
-  }, [user]);
+    return () => { cancelled = true; };
+  }, [user, authLoading]);
 
   const respond = async (choice: "accepted" | "declined") => {
     useSessionStore.getState().dismissBanner("cookie_consent");
+    writeLocalChoice(choice);
     setVisible(false);
     if (user) {
       await supabase.from("user_preferences" as any).upsert(

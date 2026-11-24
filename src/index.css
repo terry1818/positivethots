@@ -766,6 +766,13 @@ body:has([role="dialog"]) [role="status"] > .inline-flex > .guide-art { visibili
 .guide-full-width { width: 100% !important; height: auto !important; }
 .path-guide-placement { position: absolute; display: flex; justify-content: center; width: 112px; }
 .path-completed-guide-slot { display: inline-flex; width: 64px; height: 64px; flex-shrink: 0; }
+/* On phones the high-five has no room of its own beside the title and the Review button (it pushed
+   Review off the edge), so it pops up over the level's medal for its two and a half seconds. */
+@media (max-width: 419px) {
+  .path-level-row { position: relative; }
+  .path-completed-guide-slot { position: absolute; left: -6px; top: 50%; z-index: 1; transform: translateY(-50%) scale(.82); transform-origin: left center; pointer-events: none; }
+  .path-level-row:has(.path-completed-guide-slot > *) .path-row-medal { opacity: 0; }
+}
 .practice-tile .practice-tile-icon { position: absolute; top: 12px; left: 12px; width: 28px; height: 28px; }
 .practice-tile .practice-tile-icon .path-filled-icon { width: 20px; height: 20px; }
 .path-flow-dot { fill: hsl(var(--path-health-top)); }
@@ -1193,7 +1200,7 @@ button.lesson-chip:not(:disabled):active { translate: 0 3px; box-shadow: 0 1px 0
 }
 
 /* Daily spin wheel (DailySpinWheel.tsx). The disc is turned from script so each wedge can click past the pointer. */
-.spin-stage { position: relative; display: grid; place-items: center; width: min(100%, 276px); aspect-ratio: 1; margin: 6px auto 0; }
+.spin-stage { position: relative; display: grid; place-items: center; width: min(100%, 300px); aspect-ratio: 1; margin: 6px auto 0; }
 .spin-stage::before { content: ""; position: absolute; inset: -9%; border-radius: 50%; pointer-events: none; background: radial-gradient(circle, hsl(var(--art-reward) / .38), hsl(var(--kit-discover-top) / .16) 52%, transparent 70%); }
 .spin-stage[data-phase="spinning"]::before { animation: spin-glow .9s ease-in-out infinite; }
 .spin-stage[data-phase="won"]::before { animation: lesson-pop .5s cubic-bezier(.34, 1.56, .64, 1); }
@@ -1211,6 +1218,24 @@ button.lesson-chip:not(:disabled):active { translate: 0 3px; box-shadow: 0 1px 0
 .spin-burst { position: absolute; inset: 0; pointer-events: none; }
 .spin-burst i { position: absolute; left: calc(50% - 5px); top: calc(50% - 5px); width: 10px; height: 10px; border-radius: 3px; opacity: 0; animation: spin-burst .9s cubic-bezier(.16, .84, .44, 1) both; }
 .spin-burst i:nth-child(3n) { border-radius: 50%; width: 8px; height: 8px; }
+.spin-prizes { border-radius: 16px; border: 2px solid hsl(var(--border)); background: hsl(var(--card)); }
+.spin-prizes > summary { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; font-weight: 800; cursor: pointer; list-style: none; color: hsl(var(--kit-text, var(--kit-learn-text))); }
+.spin-prizes > summary::-webkit-details-marker { display: none; }
+.spin-prizes > summary::after { content: "+"; margin-left: 8px; font-size: 1.2em; }
+.spin-prizes[open] > summary::after { content: "–"; }
+.spin-prizes > summary:focus-visible { outline: 3px solid hsl(var(--ring)); outline-offset: 2px; border-radius: 14px; }
+.spin-prizes > ul { display: grid; gap: 12px; padding: 4px 14px 14px; }
+.spin-prizes li { display: grid; gap: 4px; text-align: left; }
+.spin-prizes-tier { display: flex; align-items: center; gap: 10px; }
+/* Lucky Spin frame: a turning ring in the wheel's own colours. Won on the daily spin. */
+.frame-lucky-spin { position: relative; box-shadow: 0 0 0 3px hsl(var(--art-reward)), 0 0 14px 3px hsl(var(--art-reward) / .45); animation: frame-lucky-spin 6s linear infinite; }
+@keyframes frame-lucky-spin {
+  0%, 100% { box-shadow: 0 0 0 3px hsl(var(--art-reward)), 0 0 14px 3px hsl(var(--art-reward) / .45); }
+  25% { box-shadow: 0 0 0 3px hsl(322 85% 62%), 0 0 14px 3px hsl(322 85% 62% / .45); }
+  50% { box-shadow: 0 0 0 3px hsl(var(--art-info)), 0 0 14px 3px hsl(var(--art-info) / .45); }
+  75% { box-shadow: 0 0 0 3px hsl(var(--art-correct)), 0 0 14px 3px hsl(var(--art-correct) / .45); }
+}
+@media (prefers-reduced-motion: reduce) { .frame-lucky-spin { animation: none; } }
 @keyframes spin-light { 50% { opacity: .28; } }
 @keyframes spin-glow { 50% { opacity: .55; transform: scale(1.06); } }
 @keyframes spin-burst { 0% { opacity: 1; transform: rotate(var(--a)) translateY(-40px) scale(1); } 100% { opacity: 0; transform: rotate(var(--a)) translateY(calc(-1 * var(--d))) scale(.4) rotate(120deg); } }

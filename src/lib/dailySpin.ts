@@ -12,7 +12,7 @@ export type SpinOutcome =
   | { status: "failed" };
 
 export type ServerSpin =
-  | { status: "won"; index: number; type: SpinReward["type"]; value: number; awarded: number; xp: XPAwardResult | null }
+  | { status: "won"; index: number; type: SpinReward["type"]; value: number; awarded: number; xp: XPAwardResult | null; bonus?: number; multiplier?: number }
   | { status: "used" }
   | { status: "capped"; index: number };
 
@@ -23,11 +23,11 @@ export function isMissingFunction(error: { code?: string; message?: string } | n
 }
 
 /** Ask the server to spin. It picks the prize, grants it, and answers with the wedge to stop on.
- *  Resolves "missing" when the database has no claim_daily_spin yet, and null when the call failed. */
+ *  Resolves "missing" when the database has no claim_daily_spin_v2 yet, and null when the call failed. */
 export async function claimDailySpin(): Promise<ServerSpin | "missing" | null> {
   try {
     // The generated types do not know this function until Lovable regenerates them.
-    const { data, error } = await (supabase.rpc as unknown as (fn: string) => Promise<{ data: unknown; error: { code?: string; message?: string } | null }>)("claim_daily_spin");
+    const { data, error } = await (supabase.rpc as unknown as (fn: string) => Promise<{ data: unknown; error: { code?: string; message?: string } | null }>)("claim_daily_spin_v2");
     if (error) return isMissingFunction(error) ? "missing" : null;
     const spin = data as ServerSpin | null;
     if (!spin || typeof spin !== "object") return null;

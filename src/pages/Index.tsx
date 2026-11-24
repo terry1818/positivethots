@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Heart, BookOpen, Settings, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles, MapPin, Share2, Undo2, RefreshCw } from "lucide-react";
+import { Heart, BookOpen, Settings, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles, Share2, Undo2, RefreshCw } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -28,7 +28,8 @@ import { SwipeDiscoveryCard } from "@/components/discovery/SwipeDiscoveryCard";
 import { ProfileDetailSheet } from "@/components/discovery/ProfileDetailSheet";
 import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
 import { MysteryMatchCard } from "@/components/discovery/MysteryMatchCard";
-import { DiscoveryWalkthrough, shouldShowWalkthrough } from "@/components/discovery/DiscoveryWalkthrough";
+import { DiscoveryWalkthrough } from "@/components/discovery/DiscoveryWalkthrough";
+import { useTutorialState } from "@/hooks/useTutorialState";
 import { SwipeTutorial, shouldShowSwipeTutorial } from "@/components/discovery/SwipeTutorial";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
@@ -184,6 +185,8 @@ const Index = () => {
   const [detailProfile, setDetailProfile] = useState<EnhancedProfile | null>(null);
   const [matchCount, setMatchCount] = useState(0);
   const [mysteryRevealsUsed, setMysteryRevealsUsed] = useState(0);
+  // Extra reveals won on the daily spin. They are spent only after the day's own reveals run out.
+  const [bonusMysteryReveals, setBonusMysteryReveals] = useState(0);
   const [mysteryProfiles, setMysteryProfiles] = useState<Set<string>>(new Set());
   const [matchBreakdown, setMatchBreakdown] = useState<CompatibilityBreakdownResult | null>(null);
   const [showBreakdown, setShowBreakdown] = useState(false);
@@ -207,16 +210,22 @@ const Index = () => {
     }
   }, [searchParams]);
 
-  // Deferred walkthrough check: only show if suggestions are loaded
+  // First-visit tours. Each opens once: only after we know the member has not finished it.
+  const { seen: walkthroughSeen, ready: walkthroughReady } = useTutorialState("discovery_walkthrough");
+  const { seen: swipeTutorialSeen, ready: swipeTutorialReady, markSeen: markSwipeTutorialSeen } =
+    useTutorialState("swipe_tutorial");
+
+  // Deferred walkthrough check: wait for the profiles to load and for the saved tour answers.
   useEffect(() => {
-    if (!showWalkthroughPending || loading) return;
+    if (!showWalkthroughPending || loading || !walkthroughReady || !swipeTutorialReady) return;
     setShowWalkthroughPending(false);
-    if (suggestions.length > 0 && shouldShowWalkthrough()) {
+    if (suggestions.length === 0) return;
+    if (!walkthroughSeen) {
       setTimeout(() => setShowWalkthrough(true), 500);
-    } else if (suggestions.length > 0 && shouldShowSwipeTutorial()) {
+    } else if (!swipeTutorialSeen && shouldShowSwipeTutorial()) {
       setTimeout(() => setShowSwipeTutorial(true), 500);
     }
-  }, [showWalkthroughPending, loading, suggestions.length]);
+  }, [showWalkthroughPending, loading, suggestions.length, walkthroughReady, swipeTutorialReady, walkthroughSeen, swipeTutorialSeen]);
 
   // Dismiss walkthrough if suggestions become empty
   useEffect(() => {
@@ -415,7 +424,7 @@ const Index = () => {
     // Load today's reveal count
     const { data: revealData } = await supabase
       .from("profiles")
-      .select("mystery_reveals_today, mystery_reveals_date")
+      .select("*")
       .eq("id", userId)
       .single();
     if (revealData) {
@@ -423,16 +432,26 @@ const Index = () => {
       setMysteryRevealsUsed(
         (revealData as any).mystery_reveals_date === today ? (revealData as any).mystery_reveals_today : 0
       );
+      setBonusMysteryReveals((revealData as any).bonus_mystery_reveals ?? 0);
     }
 
     setSuggestions(enhancedProfiles.slice(0, 15));
   };
 
   const mysteryRevealLimit = getMysteryRevealLimit(subTier);
-  const canRevealMystery = mysteryRevealsUsed < mysteryRevealLimit;
+  const hasDailyReveal = mysteryRevealsUsed < mysteryRevealLimit;
+  const canRevealMystery = hasDailyReveal || bonusMysteryReveals > 0;
 
   const handleMysteryReveal = useCallback(async (): Promise<boolean> => {
     if (!currentUser || !canRevealMystery) return false;
+    if (!hasDailyReveal) {
+      // The day's reveals are used up: spend one won on the daily spin.
+      const left = bonusMysteryReveals - 1;
+      await supabase.from("profiles").update({ bonus_mystery_reveals: left } as any).eq("id", currentUser.id);
+      setBonusMysteryReveals(left);
+      trackEvent("mystery_match_reveal", { bonus: true });
+      return true;
+    }
     const today = new Date().toISOString().split("T")[0];
     const newCount = mysteryRevealsUsed + 1;
     await supabase.from("profiles").update({
@@ -442,7 +461,7 @@ const Index = () => {
     setMysteryRevealsUsed(newCount);
     trackEvent("mystery_match_reveal", {});
     return true;
-  }, [currentUser, canRevealMystery, mysteryRevealsUsed]);
+  }, [currentUser, canRevealMystery, hasDailyReveal, bonusMysteryReveals, mysteryRevealsUsed]);
 
   const handleMysteryUpgrade = useCallback(() => {
     toast("Want to reveal more Mystery Matches?", {
@@ -746,7 +765,7 @@ const Index = () => {
 
       {/* Profile completion banner for Quick Start users */}
       {showProfileBanner && (
-        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2">
+        <div className="w-full max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2">
           <button
             onClick={() => navigate("/learn")}
             className="w-full flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3 py-2 text-sm"
@@ -762,14 +781,14 @@ const Index = () => {
 
       {/* Compact Progress Strip */}
       {tiers.length > 0 && (
-        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-3">
+        <div className="w-full max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-3">
           <CompactProgressBar tiers={tiers} badgeCount={userBadgeCount} connectionCount={matchCount} />
         </div>
       )}
 
       {/* Nearby Users */}
       {isSharing && (
-        <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 mb-4">
+        <div className="w-full max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 mb-4">
           <NearbyUsers nearbyUsers={nearbyUsers} isSharing={isSharing} />
         </div>
       )}
@@ -794,10 +813,7 @@ const Index = () => {
             <p className="text-xs text-[rgba(255,255,255,0.5)] mt-4" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
               Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup>
             </p>
-            <div className="flex flex-wrap gap-3 mt-6">
-              <Button variant="outline" size="sm" onClick={() => navigate("/settings")} className="min-h-[44px]">
-                <MapPin className="h-4 w-4 mr-1" /> Expand radius
-              </Button>
+            <div className="flex flex-wrap justify-center gap-3 mt-6">
               <Button size="sm" className="bg-gradient-to-r from-primary to-secondary text-primary-foreground min-h-[44px]" onClick={handleReferralClick}>
                 <Share2 className="h-4 w-4 mr-1" /> Invite friends
               </Button>
@@ -966,13 +982,13 @@ const Index = () => {
       {showWalkthrough && suggestions.length > 0 && (
         <DiscoveryWalkthrough onComplete={() => {
           setShowWalkthrough(false);
-          if (shouldShowSwipeTutorial()) setShowSwipeTutorial(true);
+          if (!swipeTutorialSeen && shouldShowSwipeTutorial()) setShowSwipeTutorial(true);
         }} />
       )}
 
       {/* Mobile swipe tutorial */}
       {showSwipeTutorial && !showWalkthrough && (
-        <SwipeTutorial onDismiss={() => setShowSwipeTutorial(false)} />
+        <SwipeTutorial onDismiss={() => { setShowSwipeTutorial(false); markSwipeTutorialSeen(); }} />
       )}
     </div>
   );

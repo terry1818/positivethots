@@ -39,7 +39,10 @@
 - No character art on another member's card or inside a message thread. One `kit-cta` per screen.
 - Outside Learn, animate with CSS. `motion/react` components only animate inside the Learn layout.
 - Sounds go through `useSoundEffects`. Never show a reward the app does not grant, and never quote a figure in app copy ("3× more Connects") without a source.
-- Daily spin: the server picks and grants the prize (`claim_daily_spin`); the app animates to the wedge it is told. `SPIN_REWARDS` in `src/lib/spinWheel.ts` must match the SQL, and a test checks it. Its sounds are recorded files rendered by `scripts/make_spin_sounds.py`; change the script, not the files.
+- Daily spin: the server picks and grants the prize (`claim_daily_spin_v2`); the app animates to the wedge it is told. `SPIN_REWARDS` and `SPIN_WEIGHTS` in `src/lib/spinWheel.ts` must match the SQL (12 wedges, tiers, chances, streak bonus on XP), and a test checks it. Every prize is listed with its chance under "What can I win?". Its sounds are recorded files rendered by `scripts/make_spin_sounds.py`; change the script, not the files.
 - Thots: today's free ones live in `super_like_balance.daily_remaining`, earned or bought ones in `balance` (never reset). The allowance comes from the plan on the server (free 1, Plus and Premium 5, VIP unlimited). Send one only through `send_thot`. Never write these tables from the app.
 - A streak or level reward shown in the app must be one `grant-streak-reward` or `grant-level-reward` really grants.
+- A Profile Boost lasts 24 hours. Say 24 hours wherever it is described.
+- A tour or notice a member has already dealt with must not come back. Tours go through `useTutorialState` (do not open one until `seen` is known to be false); the cookie notice waits for sign-in to settle and checks the device and the account.
+- Pages built as a flex column give each centred section `w-full`, and the text side of a row gets `min-w-0`. Base text is 18.9px, so check layouts at 320 to 393 pixels wide.
 - `tests/app_kit.test.ts` guards area-colour contrast, the wheel landing on its prize, and the profile completion steps. Keep it passing.

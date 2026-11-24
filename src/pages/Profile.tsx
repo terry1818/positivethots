@@ -147,7 +147,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (searchParams.get("boost") === "success") {
-      toast.success("Your profile is boosted!", { description: "Extra visibility for the next 30 minutes." });
+      toast.success("Your profile is boosted!", { description: "You are at the top of Discovery for the next 24 hours." });
       checkActiveBoost();
     }
   }, [searchParams]);
@@ -210,7 +210,7 @@ const Profile = () => {
       if (!error) {
         setHasActiveBoost(true);
         void reloadStats();
-        toast.success("Your profile is boosted!", { description: "You used a boost you earned by leveling up." });
+        toast.success("Your profile is boosted!", { description: "You used a boost you earned. You are at the top of Discovery for the next 24 hours." });
         return;
       }
       if (!isMissingFunction(error)) {
@@ -231,7 +231,7 @@ const Profile = () => {
           }
         } else {
           setHasActiveBoost(true);
-          toast.success("Your profile is boosted!", { description: "Extra visibility for the next 30 minutes." });
+          toast.success("Your profile is boosted!", { description: "You are at the top of Discovery for the next 24 hours." });
           setBoostLoading(false);
           return;
         }
@@ -671,10 +671,10 @@ const Profile = () => {
                   {hasActiveBoost
                     ? "Your profile is currently boosted! 🔥"
                     : boostCredits > 0
-                      ? `You have ${boostCredits} free boost${boostCredits === 1 ? "" : "s"} from leveling up.`
+                      ? `You have ${boostCredits} free boost${boostCredits === 1 ? "" : "s"} ready. Each one is 24 hours at the top of Discovery.`
                     : hasFeature("profile_boost")
                       ? "1 free boost/month with VIP"
-                      : "Get 30 minutes of priority visibility in Discovery — $2.99"}
+                      : "Get 24 hours at the top of Discovery — $2.99"}
                 </p>
                 <Button
                   variant="secondary"

@@ -63,27 +63,50 @@ transition) so each wedge can click past the pointer, and it brakes steadily lik
 `src/lib/spinWheel.ts` holds the prize list and the geometry; the tests prove the wheel stops on the
 prize it awards and that every prize is one the server grants.
 
-**Prizes.** The server runs the spin. `claim_daily_spin()` (in
-`supabase/migrations/20261124090000_*.sql`) picks the prize, grants it and answers with the wedge to
+**Prizes.** The server runs the spin. `claim_daily_spin_v2()` (newest definition:
+`supabase/migrations/20261124100000_*.sql`) picks the prize, grants it and answers with the wedge to
 stop on; the app only animates to it (`src/lib/dailySpin.ts`, `runDailySpin` in `src/pages/Learn.tsx`).
 The wheel spins freely until the answer arrives, then brakes onto that wedge.
+The older `claim_daily_spin()` (8 wedges) is kept for copies of the app published before the
+12-wedge wheel; both write `daily_spins`, so it is still one spin a day. A change to the wedge list
+needs a new function name for the same reason: the published app and the database change at
+different moments, and the wheel must never show a prize other than the one granted.
 
-| Wedge | Prize | Tier | Chance of the tier |
-|-------|-------|------|--------------------|
-| 0, 1, 2 | +5, +10, +5 XP | common | 60% |
-| 3, 4 | +25, +15 XP | uncommon | 25% |
-| 5, 6 | +50 XP, +1 Thot | rare | 12% |
-| 7 | Streak Freeze | very rare | 3% |
+Twelve wedges, XP alternating with the other prizes:
 
-`SPIN_REWARDS` in `src/lib/spinWheel.ts` must list the same prizes in the same order as the SQL;
-`tests/app_kit.test.ts` reads the migration and fails if they drift. One spin per UTC day. A member
-who already holds 3 freezes, or a VIP member (unlimited Thots), is given +50 XP instead of a prize
-that would be worth nothing to them. An XP prize shows the next level and the reward waiting there.
-If today's XP limit is already reached the spin still counts and the wheel says so. If the call fails
-the spin is handed back. An app newer than its database falls back to an XP-only spin.
+| Tier | Chance | Wedges | Prizes |
+|------|--------|--------|--------|
+| Common | 54% | 0, 2, 6, 8 | +5, +10, +5, +15 XP |
+| Uncommon | 28% | 1, 4, 7 | Double XP, +25 XP, Mystery Match Reveal |
+| Rare | 13% | 3, 9, 10 | +1 Thot, Streak Freeze, +50 XP |
+| Very rare | 5% | 5, 11 | Lucky Spin Frame, Profile Boost |
+
+What each one really gives:
+
+- **XP**: the wedge's amount, times a streak bonus (3 days 1.5×, 7 days 2×, 14 days 2.5×, 30 days 3×).
+  The bonus is written as its own `xp_transactions` row (`daily_spin_bonus`) and stays inside the
+  400 XP daily limit. The win card shows the sum and what the next level unlocks.
+- **Double XP**: one token (`user_learning_stats.xp_doublers`, at most 3). The next finished lesson
+  section pays double through `use_xp_doubler(section_id)`; the Learn header shows "2× XP ready".
+- **+1 Thot**: added to the bank (`super_like_balance.balance`), which nothing resets.
+- **Streak Freeze**: `streak_freezes` +1 (at most 3).
+- **Mystery Match Reveal**: `profiles.bonus_mystery_reveals` +1 (at most 5), spent in Discover after
+  the day's own reveals run out.
+- **Lucky Spin Frame**: adds `lucky_spin` to `profiles.earned_frames`. The wheel is the only way to
+  get it; it is chosen in Edit Profile like any other frame.
+- **Profile Boost**: `boost_credits` +1 (at most 3), started from Profile ("Use Free Boost"). 24 hours.
+
+`SPIN_REWARDS` and `SPIN_WEIGHTS` in `src/lib/spinWheel.ts` must match the SQL (order, values, tiers,
+chances, streak bonus); `tests/app_kit.test.ts` reads the migration and fails if they drift. One spin
+per UTC day. A prize that would be worth nothing to the member is swapped on the server: a VIP's
+Thot, a fourth freeze or boost credit, a frame already owned become +50 XP; a fourth doubler or sixth
+bonus reveal becomes +25 XP. If today's XP limit is already reached the spin still counts and the
+wheel says so. If the call fails the spin is handed back. An app newer than its database falls back
+to an XP-only spin. "What can I win?" under the wheel lists every prize with its tier's chance.
 
 To add a prize: add the wedge to the SQL function and to `SPIN_REWARDS`, give it a look in `WEDGES`
-and a line in `PRIZE_NOTE` (`DailySpinWheel.tsx`), and make sure the SQL really grants it.
+and a line in `PRIZE_NOTE` and `PRIZE_LINE` (`DailySpinWheel.tsx`), and make sure the SQL really
+grants it.
 
 **Sounds.** Recorded files in `src/assets/sounds/spin/`, played by `src/lib/spinSounds.ts`: three
 wooden clicks for the pointer (never the same one twice in a row; lower and fuller as the wheel
@@ -119,11 +142,31 @@ Streaks: day 7 gives +1 Thot, day 30 a Profile Boost, day 100 +3 Thots (`grant-s
 Learn header shows the next one ("4d to +1 Thot").
 Levels: 3 gives +1 Thot, 5 a streak freeze, 7 +2 Thots, 10 a Profile Boost credit
 (`grant-level-reward`, which checks the member's real level). A boost credit is spent from Profile
-("Use Free Boost", `use_boost_credit`).
+("Use Free Boost", `use_boost_credit`). A Profile Boost lasts 24 hours
+(`profile_boosts.expires_at`), and every screen says so.
+
+## Things a member sees once
+
+- **Page tours.** `useTutorialState(key)` answers from `profiles.tutorials_completed`, mirrored on the
+  device (`pt_tutorials_seen`, per member). `seen` is true until the answer is known, so a tour opens
+  only when we are sure it has not been finished; `ready` says the answer is in. Finish or skip calls
+  `markSeen()`. Discover's walkthrough and swipe tutorial use the same hook
+  (`discovery_walkthrough`, `swipe_tutorial`).
+- **Cookie notice.** `CookieConsent` waits for sign-in to settle, then shows only when neither the
+  device (`pt_cookie_consent`) nor the account (`user_preferences`, key `cookie_consent`) holds an
+  answer.
+
+## Fitting a phone
+
+- A page laid out as a flex column (`h-screen flex flex-col`, as Discover is) must give each centred
+  section `w-full`. `max-w-md mx-auto` alone lets the section grow as wide as its content, and the
+  page clips it.
+- The app's base text is 18.9px, not 16px, so `rem` sizes are about a fifth larger than Tailwind's
+  usual pixel values. Check rows of several items at 320, 360, 375 and 393 pixels wide.
+- Give the text side of a row `min-w-0` so a button on the other side is never pushed off the edge.
 
 ## Open items
 
-- Boosts last 24 hours in the database (`profile_boosts.expires_at`) but the copy says 30 minutes.
 - Subscription plans are read from Stripe by `check-subscription`, and Stripe is closed, so the app
   treats everyone as free. The server reads the `subscriptions` table instead. These need to become
   one source when the new payment processor is wired in.

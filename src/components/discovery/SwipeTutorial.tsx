@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const STORAGE_KEY = "pt_swipe_tutorial_seen";
 
 interface SwipeTutorialProps {
   onDismiss: () => void;
@@ -32,23 +29,8 @@ export const SwipeTutorial = ({ onDismiss }: SwipeTutorialProps) => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleDismiss = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase.from("profiles").select("tutorials_completed").eq("id", user.id).single();
-        if (profile) {
-          const existing: string[] = (profile as any).tutorials_completed || [];
-          if (!existing.includes("swipe_tutorial")) {
-            await supabase.from("profiles").update({
-              tutorials_completed: [...existing, "swipe_tutorial"],
-            } as any).eq("id", user.id);
-          }
-        }
-      }
-    } catch {}
-    onDismiss();
-  };
+  // The page records that this was seen (useTutorialState("swipe_tutorial")).
+  const handleDismiss = () => onDismiss();
 
   const gestures = [
     { icon: ArrowLeft, label: "Pass", color: "text-muted-foreground" },
@@ -101,11 +83,10 @@ export const SwipeTutorial = ({ onDismiss }: SwipeTutorialProps) => {
 };
 
 /**
- * Whether to show the swipe tutorial. Now always returns true for mobile;
- * the actual gating is done by the tutorials_completed profile field.
+ * Whether this screen is one the swipe tutorial applies to (phones only). Whether the member has
+ * already seen it is the caller's check: useTutorialState("swipe_tutorial").
  */
 export const shouldShowSwipeTutorial = (): boolean => {
   if (typeof window === "undefined") return false;
-  if (window.innerWidth >= 768) return false;
-  return true; // Let the caller check tutorials_completed
+  return window.innerWidth < 768;
 };

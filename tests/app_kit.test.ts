@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test";
 import { readFileSync } from "node:fs";
 import { readdirSync } from "node:fs";
-import { landingRotation, pickLegacyXpReward, SPIN_REWARDS, SPIN_WEIGHTS, spinTravel, wedgeUnderPointer } from "../src/lib/spinWheel";
+import { landingRotation, pickLegacyXpReward, SPIN_REWARDS, SPIN_WEIGHTS, spinTravel, streakSpinMultiplier, wedgeUnderPointer } from "../src/lib/spinWheel";
 import { getNextStreakReward } from "../src/hooks/useLearningStats";
 import { tickShape } from "../src/lib/spinSounds";
 import { computeProfileCompletion } from "../src/hooks/useProfileCompletion";
@@ -107,25 +107,57 @@ const spinSql = (() => {
 
 test("the wheel shows exactly the prizes the server grants, in the same order", () => {
   const values = spinSql.match(/_value := \(ARRAY\[([\d, ]+)\]\)/)![1].split(",").map(Number);
+  const types = spinSql.match(/_type := \(ARRAY\[([a-z', ]+)\]\)/)![1].split(",").map(t => t.trim().replace(/'/g, ""));
   expect(values).toEqual(SPIN_REWARDS.map(r => r.value));
-  const typeOf = (i: number) => (i === 6 ? "thot" : i === 7 ? "freeze" : "xp");
-  expect(spinSql).toContain("CASE _index WHEN 6 THEN 'thot' WHEN 7 THEN 'freeze' ELSE 'xp' END");
-  SPIN_REWARDS.forEach((reward, i) => expect(reward.type).toBe(typeOf(i)));
+  expect(types).toEqual(SPIN_REWARDS.map(r => r.type));
+  expect(SPIN_REWARDS).toHaveLength(12);
   for (const reward of SPIN_REWARDS.filter(r => r.type === "xp")) {
     expect(reward.label).toBe(`+${reward.value} XP`);
     expect(reward.value).toBeLessThanOrEqual(50); // award_xp grants at most 50 for a spin
   }
+  // Every other kind of prize appears once, so a wedge never promises two of something.
+  for (const type of ["thot", "freeze", "doubler", "reveal", "frame", "boost"]) {
+    expect(SPIN_REWARDS.filter(r => r.type === type)).toHaveLength(1);
+  }
+  // No two neighbours are the same kind: XP alternates with the other prizes all the way round.
+  SPIN_REWARDS.forEach((reward, i) => expect(reward.type === "xp").toBe(i % 2 === 0));
+});
+
+test("the app calls the spin function that matches its wheel", () => {
+  // The 8-wedge claim_daily_spin stays for older published copies; this wheel needs the 12-wedge one.
+  expect(spinSql).toContain("FUNCTION public.claim_daily_spin_v2()");
+  expect(readFileSync("src/lib/dailySpin.ts", "utf8")).toContain('("claim_daily_spin_v2")');
 });
 
 test("the wheel's tiers and chances match the server's", () => {
   const tiers = [...spinSql.matchAll(/_roll < (\d+) THEN\s+_index := \(ARRAY\[([\d, ]+)\]\)/g)].map(m => ({ upTo: Number(m[1]), wedges: m[2].split(",").map(Number) }));
-  expect(tiers.map(t => t.upTo)).toEqual([60, 85, 97]);
+  const rest = spinSql.match(/ELSE\s+_index := \(ARRAY\[([\d, ]+)\]\)/)![1].split(",").map(Number);
+  expect(tiers.map(t => t.upTo)).toEqual([54, 82, 95]);
   const byRarity = (rarity: string) => SPIN_REWARDS.map((r, i) => (r.rarity === rarity ? i : -1)).filter(i => i >= 0);
   expect(tiers[0].wedges).toEqual(byRarity("common"));
   expect(tiers[1].wedges).toEqual(byRarity("uncommon"));
   expect(tiers[2].wedges).toEqual(byRarity("rare"));
-  expect(byRarity("very_rare")).toEqual([7]);
-  expect(SPIN_WEIGHTS).toEqual({ common: 60, uncommon: 25, rare: 12, very_rare: 3 });
+  expect(rest).toEqual(byRarity("very_rare"));
+  expect(SPIN_WEIGHTS).toEqual({ common: 54, uncommon: 28, rare: 13, very_rare: 5 });
+  expect(Object.values(SPIN_WEIGHTS).reduce((a, b) => a + b, 0)).toBe(100);
+});
+
+test("the streak bonus the wheel advertises is the one the server pays", () => {
+  const rule = spinSql.match(/_mult := CASE (.+?) ELSE 1 END/)![1];
+  const steps = [...rule.matchAll(/WHEN _streak >= (\d+) THEN ([\d.]+)/g)].map(m => [Number(m[1]), Number(m[2])]);
+  expect(steps).toEqual([[30, 3], [14, 2.5], [7, 2], [3, 1.5]]);
+  for (const [days, multiplier] of steps) {
+    expect(streakSpinMultiplier(days)).toBe(multiplier);
+    expect(streakSpinMultiplier(days - 1)).toBeLessThan(multiplier);
+  }
+  expect(streakSpinMultiplier(0)).toBe(1);
+});
+
+test("a profile boost is 24 hours everywhere it is described", () => {
+  const profile = readFileSync("src/pages/Profile.tsx", "utf8");
+  expect(profile).not.toMatch(/30[ -]minutes?/i);
+  expect(profile).toMatch(/24 hours/);
+  expect(readFileSync("src/components/education/DailySpinWheel.tsx", "utf8")).toMatch(/24 hours at the top of Discover/);
 });
 
 test("the fallback for an older database only ever picks XP", () => {
@@ -151,4 +183,31 @@ test("the wheel's recorded sounds exist and its clicks get lower and fuller as i
   expect(slow.gain).toBeGreaterThan(fast.gain);
   expect(slow.rate).toBeLessThan(fast.rate);
   expect(tickShape(5).gain).toBe(slow.gain);
+});
+
+// First-visit tours and the cookie notice must not come back for someone who has already dealt with them.
+test("a tour opens only once we know the member has not finished it", () => {
+  const hook = readFileSync("src/hooks/useTutorialState.ts", "utf8");
+  expect(hook).toContain('useState<TutorialStatus>("unknown")');
+  expect(hook).toContain('seen: status !== "unseen"');
+  expect(hook).toContain("localStorage");
+  const discover = readFileSync("src/pages/Index.tsx", "utf8");
+  expect(discover).toContain('useTutorialState("discovery_walkthrough")');
+  expect(discover).toContain('useTutorialState("swipe_tutorial")');
+  expect(discover).toMatch(/!walkthroughReady \|\| !swipeTutorialReady\) return/);
+});
+
+test("the cookie notice waits for sign-in and remembers the answer on the device", () => {
+  const notice = readFileSync("src/components/CookieConsent.tsx", "utf8");
+  expect(notice).toMatch(/if \(authLoading\) return;/);
+  expect(notice).toContain("writeLocalChoice(choice)");
+  expect(notice).toMatch(/if \(data\) \{\s+writeLocalChoice/);
+});
+
+test("Discover's sections fill the phone's width instead of growing to fit their content", () => {
+  const discover = readFileSync("src/pages/Index.tsx", "utf8");
+  // In the page's flex column, mx-auto without w-full lets a section grow as wide as its content.
+  const sections = discover.match(/className="[^"]*max-w-md md:max-w-2xl lg:max-w-4xl mx-auto[^"]*"/g) ?? [];
+  expect(sections.length).toBeGreaterThanOrEqual(4);
+  for (const section of sections) expect(section).toMatch(/\bw-full\b|\bcontainer\b/);
 });

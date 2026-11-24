@@ -1,32 +1,52 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import type { CSSProperties } from "react";
-import { Zap, Star, Gem, Heart, Snowflake, type LucideIcon } from "lucide-react";
+import { Zap, Star, Gem, Heart, Snowflake, ChevronsUp, Award, Eye, Rocket, Flame, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GuideArt, type GuideName } from "@/components/mascot/GuideArt";
 import { trackEvent } from "@/lib/analytics";
 import type { SpinOutcome } from "@/lib/dailySpin";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
-import { SPIN_REWARDS as REWARDS, landingRotation, spinTravel, type SpinReward } from "@/lib/spinWheel";
+import { SPIN_REWARDS as REWARDS, SPIN_WEIGHTS, landingRotation, spinTravel, streakSpinMultiplier, type SpinReward } from "@/lib/spinWheel";
 
 // One look per wedge, in REWARDS order. Neighbours never share a hue; bright wedges carry dark ink.
 const INK = "hsl(var(--art-ink))";
 const WEDGES: { fill: string; ink: string; icon: LucideIcon; tone: string }[] = [
-  { fill: "hsl(var(--path-foundation-top))", ink: "#fff", icon: Zap, tone: "area" },
-  { fill: "hsl(var(--art-info))", ink: INK, icon: Zap, tone: "info" },
-  { fill: "hsl(var(--kit-discover-top))", ink: "#fff", icon: Zap, tone: "pink" },
-  { fill: "hsl(var(--art-correct))", ink: INK, icon: Star, tone: "correct" },
-  { fill: "hsl(var(--path-identity-top))", ink: "#fff", icon: Star, tone: "area" },
-  { fill: "hsl(var(--art-reward))", ink: INK, icon: Gem, tone: "reward" },
-  { fill: "hsl(245 70% 50%)", ink: "#fff", icon: Heart, tone: "pink" },
-  { fill: "hsl(195 95% 88%)", ink: INK, icon: Snowflake, tone: "info" },
+  { fill: "hsl(var(--path-foundation-top))", ink: "#fff", icon: Zap, tone: "area" },        // +5 XP
+  { fill: "hsl(var(--art-correct))", ink: INK, icon: ChevronsUp, tone: "correct" },         // Double XP
+  { fill: "hsl(var(--kit-chat-top))", ink: "#fff", icon: Zap, tone: "info" },               // +10 XP
+  { fill: "hsl(322 85% 62%)", ink: INK, icon: Heart, tone: "pink" },                        // +1 Thot
+  { fill: "hsl(var(--path-identity-top))", ink: "#fff", icon: Star, tone: "area" },         // +25 XP
+  { fill: "hsl(var(--art-reward))", ink: INK, icon: Award, tone: "reward" },                // Lucky Spin Frame
+  { fill: "hsl(245 70% 50%)", ink: "#fff", icon: Zap, tone: "info" },                       // +5 XP
+  { fill: "hsl(var(--art-highlight))", ink: INK, icon: Eye, tone: "highlight" },            // Mystery Match Reveal
+  { fill: "hsl(var(--kit-discover-top))", ink: "#fff", icon: Zap, tone: "pink" },           // +15 XP
+  { fill: "hsl(195 95% 88%)", ink: INK, icon: Snowflake, tone: "info" },                    // Streak Freeze
+  { fill: "hsl(var(--art-urgent))", ink: INK, icon: Gem, tone: "urgent" },                  // +50 XP
+  { fill: "hsl(var(--art-info))", ink: INK, icon: Rocket, tone: "info" },                   // Profile Boost
 ];
 
-/** What each kind of prize is good for, shown under it on the win card. */
-const PRIZE_NOTE: Partial<Record<SpinReward["type"], string>> = {
+/** What each kind of prize is good for, shown under it on the win card and in the prize list. */
+const PRIZE_NOTE: Record<SpinReward["type"], string> = {
+  xp: "XP moves you up levels, and levels unlock Thots, freezes and boosts.",
+  doubler: "Your next lesson pays double XP.",
   thot: "Yours to keep. Send it in Discover to stand out.",
+  reveal: "One extra Mystery Match reveal in Discover, on top of today's.",
   freeze: "It saves your streak the next time you miss a day.",
+  frame: "A gold frame for your photo that only the wheel gives. Choose it in Edit Profile.",
+  boost: "24 hours at the top of Discover. Start it from your Profile when you're ready.",
 };
+// One line per prize for the "What can I win?" list.
+const PRIZE_LINE: Record<SpinReward["type"], string> = {
+  xp: "",
+  doubler: "Your next lesson pays double XP.",
+  thot: "Send it in Discover to stand out.",
+  reveal: "One extra Mystery Match reveal in Discover.",
+  freeze: "Saves your streak if you miss a day.",
+  frame: "A gold photo frame only the wheel gives.",
+  boost: "24 hours at the top of Discover.",
+};
+const TIER_NAME: Record<SpinReward["rarity"], string> = { common: "Common", uncommon: "Uncommon", rare: "Rare", very_rare: "Very rare" };
 
 const WIN_COPY: Record<SpinReward["rarity"], { line: string; guide: GuideName }> = {
   common: { line: "Nice spin!", guide: "guide-high-five" },
@@ -61,9 +81,12 @@ interface DailySpinWheelProps {
   /** Runs today's spin on the server and says where the wheel must stop. */
   onSpin: () => Promise<SpinOutcome>;
   hasSpunToday: boolean;
+  /** The member's streak in days. A streak of 3 or more multiplies XP prizes. */
+  streak?: number;
 }
 
-export const DailySpinWheel = ({ onSpin, hasSpunToday }: DailySpinWheelProps) => {
+export const DailySpinWheel = ({ onSpin, hasSpunToday, streak = 0 }: DailySpinWheelProps) => {
+  const streakBonus = streakSpinMultiplier(streak);
   const [phase, setPhase] = useState<Phase>("ready");
   const [won, setWon] = useState<Extract<SpinOutcome, { status: "won" }> | null>(null);
   const [usedReason, setUsedReason] = useState<"spun" | "xp_limit">("spun");
@@ -252,14 +275,14 @@ export const DailySpinWheel = ({ onSpin, hasSpunToday }: DailySpinWheelProps) =>
             {REWARDS.map((reward, i) => {
               const look = WEDGES[i];
               const Icon = look.icon;
-              const [amount, unit] = reward.label.split(" ");
-              const words = reward.type !== "xp";
+              const [top, bottom] = reward.short.split(" ");
+              const number = /\d/.test(top);
               return (
                 <g key={i} className="spin-wedge" data-win={winIndex === i} transform={`rotate(${(i + 0.5) * SEG} ${C} ${C})`}>
                   <path d={WEDGE_PATH} fill={look.fill} stroke="hsl(var(--path-gold-dark))" strokeWidth="2" strokeLinejoin="round" />
-                  <text x={C} y={C - 92} textAnchor="middle" fontSize={words && amount.length > 2 ? 15 : 23} fontWeight="900" fill={look.ink}>{amount}</text>
-                  <text x={C} y={C - 76} textAnchor="middle" fontSize={words ? 15 : 13} fontWeight="900" fill={look.ink}>{unit}</text>
-                  <Icon x={C - 11} y={C - 68} width={22} height={22} color={look.ink} strokeWidth={2.6} aria-hidden="true" />
+                  <text x={C} y={C - 96} textAnchor="middle" fontSize={number ? 19 : 12.5} fontWeight="900" fill={look.ink}>{top}</text>
+                  <text x={C} y={C - 82} textAnchor="middle" fontSize="12.5" fontWeight="900" fill={look.ink}>{bottom}</text>
+                  <Icon x={C - 9} y={C - 74} width={18} height={18} color={look.ink} strokeWidth={2.6} aria-hidden="true" />
                 </g>
               );
             })}
@@ -301,7 +324,7 @@ export const DailySpinWheel = ({ onSpin, hasSpunToday }: DailySpinWheelProps) =>
               <span className="block text-sm font-bold kit-text">You won</span>
               <span className="block text-2xl font-black leading-tight tabular-nums">{won.label}</span>
               <span className="block text-sm text-muted-foreground [text-wrap:pretty]">
-                {PRIZE_NOTE[won.reward.type] ?? won.note ?? WIN_COPY[won.reward.rarity].line}
+                {won.note ?? PRIZE_NOTE[won.reward.type]}
               </span>
             </span>
             <span className="kit-coin kit-coin-lg" data-tone={winLook.tone}><winLook.icon aria-hidden="true" /></span>
@@ -314,9 +337,42 @@ export const DailySpinWheel = ({ onSpin, hasSpunToday }: DailySpinWheelProps) =>
             <p className="mt-3 text-center text-sm text-muted-foreground">
               {missed ? "That spin didn't go through. Try again." : "One free spin every day."}
             </p>
+            {streakBonus > 1 && (
+              <p className="mt-2 flex items-center justify-center gap-1.5 text-sm font-bold kit-text">
+                <Flame className="h-4 w-4" aria-hidden="true" />{streak}-day streak: XP prizes are worth {streakBonus}×
+              </p>
+            )}
           </>
         )}
       </div>
+
+      {phase === "ready" && (
+        <details className="spin-prizes w-full">
+          <summary>What can I win?</summary>
+          <ul>
+            {(["very_rare", "rare", "uncommon", "common"] as const).map(tier => {
+              const prizes = REWARDS.filter(r => r.rarity === tier);
+              const xp = [...new Set(prizes.filter(r => r.type === "xp").map(r => r.value))].sort((x, y) => x - y);
+              const xpLabel = xp.length > 1 ? `+${xp.slice(0, -1).join(", +")} or +${xp[xp.length - 1]} XP` : xp.length === 1 ? `+${xp[0]} XP` : null;
+              return (
+                <li key={tier}>
+                  <span className="spin-prizes-tier">
+                    <span className="kit-chip" data-tone={tier === "common" ? "quiet" : undefined}>{TIER_NAME[tier]}</span>
+                    <span className="text-sm text-muted-foreground tabular-nums">{SPIN_WEIGHTS[tier]}% chance</span>
+                  </span>
+                  {prizes.filter(r => r.type !== "xp").map(r => (
+                    <span key={r.type} className="block leading-snug [text-wrap:pretty]">
+                      <span className="font-bold">{r.label}.</span>{" "}
+                      <span className="text-sm text-muted-foreground">{PRIZE_LINE[r.type]}</span>
+                    </span>
+                  ))}
+                  {xpLabel && <span className="block font-bold leading-snug">{xpLabel}</span>}
+                </li>
+              );
+            })}
+          </ul>
+        </details>
+      )}
     </div>
   );
 };

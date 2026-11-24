@@ -332,10 +332,13 @@ const Learn = () => {
 
     const reward = SPIN_REWARDS[spin.index];
     if (spin.xp) await applyAward(spin.xp, "daily_spin");  // XP on screen, plus any level reward it unlocked
-    else void reloadStats();                                // a freeze changes the count in the header
+    else void reloadStats();                                // freezes, boosts and 2x XP tokens show in the header
+    const progress = spin.xp ? xpNote(spin.xp.new_xp, spin.xp.new_level) : undefined;
+    const streakLine = spin.bonus && spin.multiplier && spin.multiplier > 1
+      ? `${reward.value} XP × ${spin.multiplier} for your streak.` : undefined;
     return {
       status: "won", index: spin.index, reward, label: prizeLabel(reward, spin.awarded),
-      note: spin.xp ? xpNote(spin.xp.new_xp, spin.xp.new_level) : undefined,
+      note: [streakLine, progress].filter(Boolean).join(" ") || undefined,
     };
   };
 

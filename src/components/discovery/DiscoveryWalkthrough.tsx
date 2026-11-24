@@ -46,12 +46,3 @@ export const DiscoveryWalkthrough = ({ onComplete }: DiscoveryWalkthroughProps) 
     />
   );
 };
-
-/**
- * Check if walkthrough should show. Now relies on the tutorials_completed
- * field in the profiles table (via useTutorialState), so this function
- * just returns true — the actual gating is done by useTutorialState.seen.
- */
-export const shouldShowWalkthrough = (): boolean => {
-  return true; // Let useTutorialState handle the check
-};
