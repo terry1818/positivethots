@@ -302,30 +302,7 @@ export const useLearningStats = () => {
         .catch((err) => console.error("Streak reward error:", err));
     }
 
-    // Update daily challenge progress
-    const challengeTypeMap: Record<string, string> = {
-      section_complete: "sections",
-      quiz_pass: "xp",
-      quiz_perfect: "xp",
-    };
-    const challengeType = challengeTypeMap[source];
-    if (challengeType) {
-      const { data: challenge } = await supabase
-        .from("daily_challenges")
-        .select("*")
-        .eq("user_id", userId)
-        .eq("challenge_date", today)
-        .maybeSingle();
-
-      if (challenge && !challenge.completed && challenge.challenge_type === challengeType) {
-        const newProgress = challenge.current_progress + (challengeType === "xp" ? result.awarded : 1);
-        const completed = newProgress >= challenge.target_value;
-        await supabase.from("daily_challenges").update({
-          current_progress: newProgress,
-          completed,
-        }).eq("id", challenge.id);
-      }
-    }
+    // Today's challenge, the weekly sprint and the community goal are counted by the server from the XP it just recorded.
 
     if (source === "section_complete") {
       setSectionsToday(prev => prev + 1);

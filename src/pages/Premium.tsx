@@ -293,7 +293,7 @@ const Premium = () => {
                 style={{ "--i": idx } as CSSProperties}
                 aria-label={`${config.name} plan`}
               >
-                {config.highlight && <p className="mb-2"><span className="kit-chip" data-tone="area">Most popular</span></p>}
+                {config.highlight && <p className="mb-2"><span className="kit-chip" data-tone="area">Recommended</span></p>}
                 <div className="flex items-start gap-3">
                   <span className="kit-coin kit-coin-lg" data-tone={PLAN_TONE[config.tier as keyof typeof PLAN_TONE]}><Icon aria-hidden="true" /></span>
                   <div className="min-w-0 flex-1 self-center">

@@ -1381,3 +1381,7 @@ p.plan-soon { display: flex; width: 100%; }
 .event-meta li span { min-width: 0; overflow-wrap: anywhere; }
 .event-meta svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 3px; color: hsl(var(--kit-text, var(--kit-learn-text))); }
 @media (prefers-reduced-motion: reduce) { .kit-icon-btn { transition: none; } }
+
+/* ---- Learn: the Today checklist. A done line goes quiet so what is left stands out. ---- */
+.today-row[data-done="true"] { opacity: .78; }
+.today-row[data-done="true"] .font-bold { text-decoration: none; }

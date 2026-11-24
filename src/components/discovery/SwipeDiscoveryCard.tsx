@@ -34,6 +34,7 @@ interface EnhancedProfile {
   verified?: boolean;
   distance?: number | null;
   is_boosted?: boolean;
+  is_mentor?: boolean;
   photo_focal_points?: Record<string, number>;
 }
 
@@ -325,6 +326,9 @@ export const SwipeDiscoveryCard = memo(({
               )}
               {profile.is_boosted && (
                 <span className="kit-chip"><Zap className="h-3.5 w-3.5" aria-hidden="true" /> Boosted</span>
+              )}
+              {profile.is_mentor && (
+                <span className="kit-chip" data-tone="area"><GraduationCap className="h-3.5 w-3.5" aria-hidden="true" /> Mentor</span>
               )}
               {isTop && is_recycled && (
                 <span className="kit-chip" data-tone="glass" aria-label="Previously viewed profile">

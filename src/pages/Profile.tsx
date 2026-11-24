@@ -18,6 +18,7 @@ import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, Shie
 import { FetLifeBadge } from "@/components/FetLifeBadge";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
+import { PAYMENTS_OPEN } from "@/lib/payments";
 import { useLearningStats, getLevelName } from "@/hooks/useLearningStats";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -242,6 +243,8 @@ const Profile = () => {
         return;
       }
     }
+    // No Boost to use, and buying one is a checkout that is not open yet.
+    if (!PAYMENTS_OPEN) { toast("You don't have a Boost yet. Win one on the daily spin or in the weekly sprint."); return; }
     setBoostLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-boost-payment");
@@ -674,7 +677,7 @@ const Profile = () => {
                       ? `You have ${boostCredits} free boost${boostCredits === 1 ? "" : "s"} ready. Each one is 24 hours at the top of Discovery.`
                     : hasFeature("profile_boost")
                       ? "1 free boost/month with VIP"
-                      : "Get 24 hours at the top of Discovery — $2.99"}
+                      : PAYMENTS_OPEN ? "Get 24 hours at the top of Discover for $2.99" : "24 hours at the top of Discover. Win one on the daily spin or in the weekly sprint."}
                 </p>
                 <Button
                   variant="secondary"

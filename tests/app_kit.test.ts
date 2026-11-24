@@ -396,3 +396,54 @@ test("Events can fail honestly, says who each kind is for, and points its tour a
   expect(events).toContain("For VIP members who have finished the Advanced lessons.");
   expect(events).toContain("kit-area-discover");
 });
+
+// Perks, the Today checklist and the server-counted week.
+test("perks can be earned by learning or by plan", () => {
+  const { sectionsFinished, memberPerks, canUseAdvancedFilters } = require("../src/lib/perks") as typeof import("../src/lib/perks");
+  const modules = [{ id: "a", tier: "relationships" }, { id: "b", tier: "relationships" }, { id: "c", tier: "advanced" }];
+  expect([...sectionsFinished(modules, new Set(["a"]))]).toEqual([]);
+  const done = sectionsFinished(modules, new Set(["a", "b"]));
+  expect(memberPerks(undefined, done)).toEqual({ priority: true, mentor: false });
+  expect(memberPerks({ priority: true, mentor: true }, new Set())).toEqual({ priority: true, mentor: true });
+  expect(memberPerks(undefined, new Set())).toEqual({ priority: false, mentor: false });
+  expect(canUseAdvancedFilters("plus", new Set())).toBe(false);
+  expect(canUseAdvancedFilters("premium", new Set())).toBe(true);
+  expect(canUseAdvancedFilters("free", new Set(["identity"]))).toBe(true);
+});
+
+test("the Today checklist words every challenge and never scrolls sideways", () => {
+  const { challengeLabel, nextSprintMark, daysLeftLabel, SPRINT_MARKS } = require("../src/lib/learnWeek") as typeof import("../src/lib/learnWeek");
+  for (const type of ["sections", "xp", "practice", "reflection", "perfect_quiz", "badge", "mix", "quiz_correct"] as const)
+    expect(challengeLabel({ type, target: 2 }).length).toBeGreaterThan(8);
+  expect(challengeLabel({ type: "sections", target: 1 })).toBe("Finish a lesson");
+  expect(nextSprintMark(0)?.xp).toBe(100);
+  expect(nextSprintMark(250)?.name).toBe("Gold");
+  expect(nextSprintMark(500)).toBeNull();
+  expect(SPRINT_MARKS.map(m => m.xp)).toEqual([100, 250, 500]);
+  const now = Date.parse("2026-11-24T12:00:00Z");
+  expect(daysLeftLabel("2026-11-30T00:00:00Z", now)).toBe("5 days left");
+  expect(daysLeftLabel("2026-11-24T20:00:00Z", now)).toBe("Ends today");
+  const today = readFileSync("src/components/education/LearnToday.tsx", "utf8");
+  expect(today).not.toContain("overflow-x-auto");
+  expect(today).toContain("of 3 done");
+  // Progress is counted by the server, so the app never writes it.
+  expect(readFileSync("src/hooks/useLearningStats.ts", "utf8")).not.toContain('from("daily_challenges")');
+});
+
+test("the server counts the week from the XP ledger and members cannot mint coins or codes", () => {
+  const dir = "supabase/migrations";
+  const sql = readFileSync(`${dir}/${readdirSync(dir).filter(f => f.startsWith("20261124160000")).pop()}`, "utf8");
+  expect(sql).toContain("REVOKE EXECUTE ON FUNCTION public.credit_coins(uuid, integer, text, text, uuid) FROM PUBLIC, anon, authenticated;");
+  expect(sql).toContain('DROP POLICY IF EXISTS "Users can insert own codes" ON public.promo_codes;');
+  expect(sql).toContain('DROP POLICY IF EXISTS "Users can update own sprint data" ON public.sprint_participants;');
+  expect(sql).toContain("AFTER INSERT ON public.xp_transactions");
+  // The sprint marks the app shows are the marks the server pays at.
+  for (const xp of [100, 250, 500]) expect(sql).toContain(`_xp >= ${xp}`);
+  expect(sql).toContain("ENABLE ROW LEVEL SECURITY");
+});
+
+test("the landing page uses the branded words and the real pack prices", () => {
+  const html = readFileSync("public/landing.html", "utf8").split("\n").filter(l => l.length < 3000).join("\n");
+  expect(html.match(/Super Like|swipe right|for the ENM, polyamory/gi) ?? []).toEqual([]);
+  expect(html).toContain("$1.99 for 5, $3.99 for 10");
+});

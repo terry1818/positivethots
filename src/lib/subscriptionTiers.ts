@@ -59,8 +59,6 @@ export const SUBSCRIPTION_TIERS: TierConfig[] = [
       "profile_boost",
       "unlimited_super_likes",
       "mentor_badge",
-      "verified_educator",
-      "community_host",
     ],
   },
   // Annual (~20% discount)
@@ -101,8 +99,6 @@ export const SUBSCRIPTION_TIERS: TierConfig[] = [
       "profile_boost",
       "unlimited_super_likes",
       "mentor_badge",
-      "verified_educator",
-      "community_host",
     ],
   },
 ];
@@ -130,10 +126,10 @@ export const ALL_FEATURES: FeatureKey[] = [
   "profile_boost",
   "unlimited_super_likes",
   "mentor_badge",
-  "verified_educator",
-  "community_host",
 ];
 
+// "Verified Educator badge" and "Host community events" are not built and are not in the published
+// pricing, so no plan lists them. Add them back to a plan only when the feature exists.
 const PLAN_ORDER: SubscriptionTier[] = ["plus", "premium", "vip"];
 
 /** What a plan adds on top of the one below it, so each plan is a short list. */

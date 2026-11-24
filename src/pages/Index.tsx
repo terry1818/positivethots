@@ -34,6 +34,8 @@ import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useSubscription } from "@/hooks/useSubscription";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";
+import { PAYMENTS_OPEN } from "@/lib/payments";
+import { memberPerks, sectionsFinished } from "@/lib/perks";
 import { SEO } from "@/components/SEO";
 import type { Database } from "@/integrations/supabase/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -72,6 +74,8 @@ interface EnhancedProfile extends DiscoveryProfile {
   verified?: boolean;
   distance?: number | null;
   is_boosted?: boolean;
+  has_priority?: boolean;
+  is_mentor?: boolean;
   photo_focal_points?: Record<string, number>;
 }
 
@@ -338,6 +342,19 @@ const Index = () => {
       supabase.from("user_badges").select("user_id, module_id"),
       supabase.from("profile_boosts").select("user_id").gt("expires_at", new Date().toISOString()),
     ]);
+    // Perks other members can see the effect of. A failure here only means nobody is moved up or badged.
+    const [modulesResult, planPerksResult] = await Promise.all([
+      supabase.from("education_modules").select("id, tier"),
+      (supabase.rpc as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: { user_id: string; priority: boolean; mentor: boolean }[] | null }>)(
+        "get_plan_perks", { _ids: (profilesResult.data ?? []).map((p: { id: string }) => p.id) }).catch(() => ({ data: null })),
+    ]);
+    const planFlags = new Map<string, { priority: boolean; mentor: boolean }>((planPerksResult.data ?? []).map(r => [r.user_id, r]));
+    const earnedByUser = new Map<string, Set<string>>();
+    allBadgesResult.data?.forEach(badge => {
+      if (!earnedByUser.has(badge.user_id)) earnedByUser.set(badge.user_id, new Set());
+      earnedByUser.get(badge.user_id)!.add(badge.module_id);
+    });
+    const perksOf = (id: string) => memberPerks(planFlags.get(id), sectionsFinished(modulesResult.data ?? [], earnedByUser.get(id) ?? new Set()));
 
     if (profilesResult.error || !profilesResult.data) {
       setLoadError(true);
@@ -392,10 +409,15 @@ const Index = () => {
         verified: p.is_verified,
         distance: null,
         is_boosted: boostedUserIds.has(p.id),
+        has_priority: perksOf(p.id).priority,
+        is_mentor: perksOf(p.id).mentor,
       };})
       .sort((a, b) => {
         if (a.is_boosted && !b.is_boosted) return -1;
         if (!a.is_boosted && b.is_boosted) return 1;
+        // Priority visibility: after an active Boost, before everyone else.
+        if (a.has_priority && !b.has_priority) return -1;
+        if (!a.has_priority && b.has_priority) return 1;
         // Trust boost: verified +5, badges give up to +5 bonus
         const trustA = (a.verified ? 5 : 0) + Math.min(5, (a.badge_count || 0));
         const trustB = (b.verified ? 5 : 0) + Math.min(5, (b.badge_count || 0));
@@ -663,6 +685,8 @@ const Index = () => {
 
   const handleBoostClick = async () => {
     trackEvent('discovery_empty_boost_clicked', {});
+    // Buying a Boost is a checkout. While checkout is closed the button leads to Profile, where an earned Boost is used.
+    if (!PAYMENTS_OPEN) { navigate("/profile"); return; }
     try {
       const { data, error } = await supabase.functions.invoke("create-boost-payment");
       if (error) throw error;
@@ -867,7 +891,7 @@ const Index = () => {
               <span className="kit-coin kit-coin-lg" data-tone="reward"><Zap aria-hidden="true" /></span>
               <div className="min-w-0 flex-1 text-left">
                 <h2 className="font-bold leading-tight">Get seen by more people</h2>
-                <p className="text-sm text-muted-foreground [text-wrap:pretty]">A Profile Boost puts you at the top of Discover for 24 hours. $2.99</p>
+                <p className="text-sm text-muted-foreground [text-wrap:pretty]">{PAYMENTS_OPEN ? "A Profile Boost puts you at the top of Discover for 24 hours. $2.99." : "A Profile Boost puts you at the top of Discover for 24 hours. Win one on the daily spin or in the weekly sprint."}</p>
               </div>
               <Button variant="outline" className="min-h-[44px] shrink-0 px-4 font-bold" onClick={handleBoostClick}>Boost</Button>
             </div>

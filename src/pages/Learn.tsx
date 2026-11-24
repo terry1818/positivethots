@@ -95,7 +95,7 @@ const Learn = () => {
   const learnTourSteps: TourStep[] = [
     { target: "learn-xp-bar", title: "Your Learning Progress", description: "Complete modules to earn XP and level up for rewards!", position: "below" },
     { target: "learn-tier-active", title: "Tier Roadmap", description: "Work through each tier to unlock new features. Complete all modules in a tier to unlock the next one.", position: "below" },
-    { target: "learn-daily-challenge", title: "Daily Challenges", description: "Complete daily challenges for bonus XP. Keep your streak alive! 🔥", position: "below" },
+    { target: "learn-daily-challenge", title: "Today's checklist", description: "Three small things a day: keep your streak, finish the challenge, take your spin.", position: "below" },
   ];
 
   useEffect(() => { loadData(); }, []);
