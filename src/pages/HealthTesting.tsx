@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ExternalLink, HeartPulse, MapPin, Shield, Info } from "lucide-react";
-import { Logo } from "@/components/Logo";
 
 const services = [
   {
@@ -41,14 +40,13 @@ const HealthTesting = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="border-b border-border bg-card">
-        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/learn")} aria-label="Go back">
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-          <Logo size="md" showText={false} />
-          <h1 className="text-lg font-bold">Test From Home</h1>
+    <div className="kit-area-learn min-h-screen bg-background flex flex-col">
+      <header className="kit-header sticky top-0 z-30">
+        <div className="mx-auto flex w-full max-w-md items-center gap-1 px-2 py-1 md:max-w-2xl lg:max-w-4xl">
+          <button type="button" className="kit-icon-btn" onClick={() => navigate("/learn")} aria-label="Back">
+            <ChevronLeft aria-hidden="true" />
+          </button>
+          <h1 className="text-xl font-extrabold">Test From Home</h1>
         </div>
       </header>
 

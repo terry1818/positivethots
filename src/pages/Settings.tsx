@@ -14,7 +14,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Logo } from "@/components/Logo";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
@@ -63,7 +62,7 @@ const NotificationToggle = ({ label, description, prefKey, defaultOn = true }: {
     <div className="flex items-center justify-between gap-3">
       <div className="flex-1 min-w-0">
         <Label className="text-sm font-medium">{label}</Label>
-        <p className="text-xs text-muted-foreground">{description}</p>
+        <p className="text-sm text-muted-foreground [text-wrap:pretty]">{description}</p>
       </div>
       <Switch checked={enabled} onCheckedChange={toggle} />
     </div>
@@ -390,14 +389,13 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="border-b border-border bg-card">
-        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/profile")} aria-label="Go back">
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-          <Logo size="md" />
-          <h1 className="text-xl font-bold">Settings</h1>
+    <div className="kit-area-profile min-h-screen bg-background flex flex-col">
+      <header className="kit-header sticky top-0 z-30">
+        <div className="mx-auto flex w-full max-w-md items-center gap-1 px-2 py-1 md:max-w-2xl lg:max-w-4xl">
+          <button type="button" className="kit-icon-btn" onClick={() => navigate("/profile")} aria-label="Back">
+            <ChevronLeft aria-hidden="true" />
+          </button>
+          <h1 className="text-xl font-extrabold">Settings</h1>
         </div>
       </header>
 
@@ -1175,13 +1173,13 @@ const Settings = () => {
         </Card>
 
         <div className="text-center py-6 space-y-2">
-          <p className="text-xs text-[rgba(255,255,255,0.5)]" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+          <p className="text-sm text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
             Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup>
           </p>
-          <p className="text-xs text-[rgba(255,255,255,0.4)]">
+          <p className="text-sm text-muted-foreground">
             © 2026 Rhea &amp; Associates LLC
           </p>
-          <p className="text-[11px] text-[rgba(255,255,255,0.3)] leading-relaxed max-w-xs mx-auto">
+          <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto [text-wrap:pretty]">
             Positive Thots<sup style={{ fontSize: "60%" }}>TM</sup>, Send a Thot<sup style={{ fontSize: "60%" }}>TM</sup>, You Both Said Yes<sup style={{ fontSize: "60%" }}>TM</sup>, Connect<sup style={{ fontSize: "60%" }}>TM</sup>, Pass<sup style={{ fontSize: "60%" }}>TM</sup>, and Thot Pack<sup style={{ fontSize: "60%" }}>TM</sup> are trademarks of Rhea &amp; Associates LLC, pending USPTO registration.
           </p>
           <p className="text-xs text-muted-foreground">

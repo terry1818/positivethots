@@ -131,7 +131,7 @@ Until the files have loaded, each sound falls back to the simple version in `sou
 | 4 | Likes and Chat content | Done |
 | 5 | Onboarding and sign-in | Done |
 | 6 | Plans (Premium), Wallet, Events | Done |
-| 7 | Settings, Resources, health pages (colour and spacing only) | Not started |
+| 7 | Settings, Resources, health pages (colour and spacing only) | Done (light touch: kit header, area colour, readable footer text, neutral wording) |
 
 ## Discover
 
@@ -205,6 +205,14 @@ Connect. Two views: "Wants to connect" and "Your Connects".
 - **Events** (`src/pages/Events.tsx`, `kit-area-discover`): three `kit-tabs`, a line saying who that
   kind is for, then `event-card`s. Loading, could-not-load, nothing-yet and no-search-match are four
   separate states.
+
+## Learn: Today and This week
+
+`LearnToday.tsx` is a checklist, not a row to swipe. "Today" has three lines (streak, daily challenge,
+daily spin) with "N of 3 done"; "This week" has the sprint and the community goal. Each line shows
+where it stands, ticks when done (`today-row[data-done]`), and opens its sheet on tap. The line the
+member should do next carries `kit-row-next`. All numbers come from `get_daily_challenge` and
+`get_week_status`; the server counts them from the XP ledger.
 
 ## Sign-in and onboarding
 

@@ -236,26 +236,24 @@ const Resources = () => {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Recommended Resources",
-    description: "Curated books, games, and wellness tools for ENM, polyamory, and LGBTQ+ relationships.",
+    description: "Curated books, games, and wellness tools for every relationship style.",
     url: "https://positivethots.app/resources",
   };
 
   return (
     <>
     <SEO
-      title="Resources — Curated Tools for Your ENM Journey"
-      description="Hand-picked books, games, and wellness tools to strengthen ethical non-monogamy, polyamory, and LGBTQ+ relationships."
+      title="Resources — Tools for Your Relationships"
+      description="Hand-picked books, games, and wellness tools to strengthen your relationships, whatever their shape."
       path="/resources"
       jsonLd={collectionJsonLd}
     />
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="kit-area-learn min-h-screen bg-background flex flex-col">
       {/* Hero */}
       <div className="text-center pb-4 px-4" style={{ paddingTop: 'max(env(safe-area-inset-top, 0px) + 1rem, 2rem)' }}>
-        <div className="flex justify-center mb-4"><GuideArt name="guide-lesson-reading" size={150} /></div>
-        <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-          Curated Tools for Your ENM Journey
-        </h1>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto mt-2">
+        <div className="kit-panel mx-auto h-[150px] max-w-md"><div className="pb-1"><GuideArt name="guide-lesson-reading" size={130} /></div></div>
+        <h1 className="mt-4 text-2xl font-extrabold [text-wrap:balance]">Tools for your relationships</h1>
+        <p className="mx-auto mt-1 max-w-2xl text-muted-foreground [text-wrap:pretty]">
           Hand-picked books, games, and wellness tools to strengthen your relationships.
         </p>
       </div>
