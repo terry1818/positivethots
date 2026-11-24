@@ -234,6 +234,38 @@ export type Database = {
         }
         Relationships: []
       }
+      community_challenge_contributions: {
+        Row: {
+          amount: number
+          challenge_id: string
+          rewarded: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          challenge_id: string
+          rewarded?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          challenge_id?: string
+          rewarded?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_challenge_contributions_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "community_challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_challenges: {
         Row: {
           completed: boolean
@@ -293,6 +325,7 @@ export type Database = {
           created_at: string
           current_progress: number
           id: string
+          reward_kind: string | null
           target_value: number
           user_id: string
           xp_reward: number
@@ -304,6 +337,7 @@ export type Database = {
           created_at?: string
           current_progress?: number
           id?: string
+          reward_kind?: string | null
           target_value?: number
           user_id: string
           xp_reward?: number
@@ -315,6 +349,7 @@ export type Database = {
           created_at?: string
           current_progress?: number
           id?: string
+          reward_kind?: string | null
           target_value?: number
           user_id?: string
           xp_reward?: number
@@ -1979,6 +2014,7 @@ export type Database = {
           rank: number | null
           scenarios_completed: number
           sprint_id: string
+          tier_reached: number
           updated_at: string
           user_id: string
           xp_earned: number
@@ -1992,6 +2028,7 @@ export type Database = {
           rank?: number | null
           scenarios_completed?: number
           sprint_id: string
+          tier_reached?: number
           updated_at?: string
           user_id: string
           xp_earned?: number
@@ -2005,6 +2042,7 @@ export type Database = {
           rank?: number | null
           scenarios_completed?: number
           sprint_id?: string
+          tier_reached?: number
           updated_at?: string
           user_id?: string
           xp_earned?: number
@@ -3050,6 +3088,8 @@ export type Database = {
         }[]
       }
       decrement_super_like: { Args: { _user_id: string }; Returns: number }
+      ensure_community_goal: { Args: never; Returns: string }
+      ensure_weekly_sprint: { Args: never; Returns: string }
       get_admin_dashboard_stats: { Args: never; Returns: Json }
       get_admin_user_list: {
         Args: {
@@ -3060,6 +3100,7 @@ export type Database = {
         }
         Returns: Json
       }
+      get_daily_challenge: { Args: never; Returns: Json }
       get_discovery_profiles: {
         Args: { _exclude_ids: string[] }
         Returns: {
@@ -3144,6 +3185,14 @@ export type Database = {
         }[]
       }
       get_my_verification_code: { Args: { _platform: string }; Returns: string }
+      get_plan_perks: {
+        Args: { _ids: string[] }
+        Returns: {
+          mentor: boolean
+          priority: boolean
+          user_id: string
+        }[]
+      }
       get_practice_questions: {
         Args: { _limit?: number; _module_id: string }
         Returns: {
@@ -3233,6 +3282,7 @@ export type Database = {
       }
       get_success_metrics: { Args: never; Returns: Json }
       get_user_id_by_email: { Args: { _email: string }; Returns: string }
+      get_week_status: { Args: never; Returns: Json }
       get_weekly_leaderboard: {
         Args: never
         Returns: {
@@ -3241,6 +3291,10 @@ export type Database = {
           sections_completed: number
           user_id: string
         }[]
+      }
+      grant_learning_reward: {
+        Args: { _kind: string; _user: string }
+        Returns: undefined
       }
       grant_role: {
         Args: {

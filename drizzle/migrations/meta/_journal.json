@@ -113,6 +113,13 @@
       "when": 1795511172993,
       "tag": "0015_daily_spin_v2_xp_doublers",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1795536714610,
+      "tag": "0016_server_counted_challenges_and_coin_holes",
+      "breakpoints": true
     }
   ]
 }
