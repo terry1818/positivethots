@@ -1,13 +1,9 @@
 import { useState, useRef, useEffect, memo, useCallback } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { BlurImage } from "@/components/BlurImage";
-import { Heart, X, Star, Zap, Shield, ChevronDown, RefreshCw, Lock, CircleHelp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Heart, X, Star, Zap, Shield, ChevronUp, RefreshCw, Lock, CircleHelp, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
 import { EducationTierBadge } from "@/components/EducationTierBadge";
-import { FlairBadges } from "@/components/profile/FlairBadges";
 import { ProfileFrame } from "@/components/profile/ProfileFrame";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
@@ -56,6 +52,15 @@ interface SwipeDiscoveryCardProps {
   onAllImagesFailed?: () => void;
 }
 
+/** How long a card takes to leave, and how far up it must be pulled to send a Thot. */
+const EXIT_MS = 320;
+const THOT_PULL = 130;
+const exitTransforms = {
+  left: "translateX(-150%) rotate(-22deg)",
+  right: "translateX(150%) rotate(22deg)",
+  up: "translateY(-120%) scale(1.04)",
+} as const;
+
 export const SwipeDiscoveryCard = memo(({
   profile,
   isTop,
@@ -70,14 +75,17 @@ export const SwipeDiscoveryCard = memo(({
   onUpgradeSuperLike,
   onAllImagesFailed,
 }: SwipeDiscoveryCardProps) => {
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [animate, setAnimate] = useState<"left" | "right" | "up" | null>(null);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [failedPhotos, setFailedPhotos] = useState<Set<string>>(new Set());
   const cardRef = useRef<HTMLDivElement>(null);
+  // True once the pointer has travelled far enough to be a drag, so the release is not also a tap.
+  const draggedRef = useRef(false);
   const reducedMotion = useReducedMotion();
+  // "Can send Thots" (the plan allows it) is not the same as having one left right now.
+  const hasThot = !!canSuperLike && superLikeBalance > 0;
 
   const allPhotos = [profile.profile_image, ...(profile.photos || [])].filter(Boolean) as string[];
   const photos = allPhotos.filter(url => !failedPhotos.has(url));
@@ -107,39 +115,52 @@ export const SwipeDiscoveryCard = memo(({
     }
   }, [photos.length, photoIndex]);
 
-  // Drag handlers — wrapped in useCallback for stable references
+  // Drag handlers. The live position is kept in a ref so the release reads where the card really is,
+  // and so a pointer that is only hovering (not pressed) never counts as a drag.
+  const dragRef = useRef({ active: false, startX: 0, startY: 0, x: 0, y: 0 });
+
+  const leave = useCallback((direction: "left" | "right" | "up") => {
+    setAnimate(direction);
+    try { navigator?.vibrate?.([30]); } catch {}
+    setTimeout(() => {
+      if (direction === "right") onConnect(profile.id);
+      else if (direction === "left") onPass(profile.id);
+      else onSuperLike?.(profile.id);
+    }, EXIT_MS);
+  }, [onConnect, onPass, onSuperLike, profile.id]);
+
   const handleDragStart = useCallback((clientX: number, clientY: number) => {
     if (!isTop) return;
+    dragRef.current = { active: true, startX: clientX, startY: clientY, x: 0, y: 0 };
+    draggedRef.current = false;
+    setDragOffset({ x: 0, y: 0 });
     setIsDragging(true);
-    setDragStart({ x: clientX, y: clientY });
   }, [isTop]);
 
   const handleDragMove = useCallback((clientX: number, clientY: number) => {
-    if (!isTop) return;
-    setDragOffset(prev => {
-      const el = cardRef.current;
-      if (!el) return prev;
-      return { x: clientX - dragStart.x, y: clientY - dragStart.y };
-    });
-  }, [isTop, dragStart]);
+    const drag = dragRef.current;
+    if (!isTop || !drag.active) return;
+    drag.x = clientX - drag.startX;
+    drag.y = clientY - drag.startY;
+    if (Math.abs(drag.x) + Math.abs(drag.y) > 10) draggedRef.current = true;
+    setDragOffset({ x: drag.x, y: drag.y });
+  }, [isTop]);
 
   const handleDragEnd = useCallback(() => {
-    if (!isTop) return;
+    const drag = dragRef.current;
+    if (!isTop || !drag.active) return;
+    drag.active = false;
     setIsDragging(false);
-    setDragOffset(prev => {
-      const threshold = 100;
-      if (Math.abs(prev.x) > threshold) {
-        const direction = prev.x > 0 ? "right" : "left";
-        setAnimate(direction);
-        try { navigator?.vibrate?.([30]); } catch {}
-        setTimeout(() => {
-          if (direction === "right") onConnect(profile.id);
-          else onPass(profile.id);
-        }, 400);
-      }
-      return { x: 0, y: 0 };
-    });
-  }, [isTop, onConnect, onPass, profile.id]);
+    const threshold = 100;
+    if (hasThot && drag.y < -THOT_PULL && Math.abs(drag.x) < threshold) {
+      // Straight up, a long way: Send a Thot (only when there is one to send).
+      leave("up");
+    } else if (Math.abs(drag.x) > threshold) {
+      leave(drag.x > 0 ? "right" : "left");
+    } else {
+      setDragOffset({ x: 0, y: 0 });
+    }
+  }, [isTop, hasThot, leave]);
 
   // Passive touch listeners for smoother scrolling
   useEffect(() => {
@@ -159,330 +180,292 @@ export const SwipeDiscoveryCard = memo(({
   }, [isTop, handleDragStart, handleDragMove, handleDragEnd]);
 
   const handleButtonSwipe = (direction: "left" | "right") => {
-    if (!isTop) return;
-    setAnimate(direction);
-    setTimeout(() => {
-      if (direction === "right") onConnect(profile.id);
-      else onPass(profile.id);
-    }, 400);
+    if (!isTop || animate) return;
+    leave(direction);
   };
 
   const handleSuperLikeTap = () => {
-    if (!isTop) return;
-    setAnimate("up");
-    setTimeout(() => {
-      onSuperLike?.(profile.id);
-    }, 400);
+    if (!isTop || animate) return;
+    leave("up");
   };
 
   const rotation = isDragging && !reducedMotion ? dragOffset.x / 20 : 0;
-  const dragProgress = isDragging ? Math.min(Math.abs(dragOffset.x) / 100, 1) : 0;
-  const isRight = dragOffset.x > 0;
+  const dragX = isDragging ? dragOffset.x : 0;
+  const dragY = isDragging ? dragOffset.y : 0;
+  // Which way the card is being pulled, and how far (0 to 1), for the stamp that names the action.
+  const pullingUp = hasThot && dragY < -40 && Math.abs(dragX) < 100;
+  const connectPull = pullingUp ? 0 : Math.max(0, Math.min(dragX / 100, 1));
+  const passPull = pullingUp ? 0 : Math.max(0, Math.min(-dragX / 100, 1));
+  const thotPull = pullingUp ? Math.min(Math.abs(dragY) / THOT_PULL, 1) : 0;
 
   // Stack transforms
   const stackTransforms: Record<number, string> = {
     0: "",
-    1: "scale(0.94) translateY(12px)",
-    2: "scale(0.88) translateY(24px)",
+    1: "scale(0.95) translateY(10px)",
+    2: "scale(0.9) translateY(20px)",
   };
   const stackZ: Record<number, number> = { 0: 30, 1: 20, 2: 10 };
 
   const displayName = profile.display_name || profile.name;
+  const badges = profile.badge_count ?? 0;
+  const relationshipStyle = profile.relationship_style
+    ? profile.relationship_style.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())
+    : null;
+  const tap = (action: () => void) => (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (draggedRef.current) return;
+    action();
+  };
 
   return (
-    <div
-      ref={cardRef}
-      className={cn(
-        "absolute w-full max-w-sm md:max-w-md max-h-full select-none",
-        animate === "left" && "animate-swipe-left",
-        animate === "right" && "animate-swipe-right",
-        animate === "up" && "animate-swipe-fly-up",
-        !animate && stackIndex === 0 && "animate-card-enter",
-      )}
-      style={{
-        transform: isDragging
-          ? `translateX(${dragOffset.x}px) translateY(${dragOffset.y}px) rotate(${rotation}deg)`
-          : stackTransforms[stackIndex] || "",
-        transition: isDragging ? "none" : "transform 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-        cursor: isTop ? "grab" : "default",
-        zIndex: stackZ[stackIndex] || 1,
-        pointerEvents: isTop ? "auto" : "none",
-      }}
-      onMouseDown={(e) => handleDragStart(e.clientX, e.clientY)}
-      onMouseMove={(e) => handleDragMove(e.clientX, e.clientY)}
-      onMouseUp={handleDragEnd}
-      onMouseLeave={handleDragEnd}
-    >
-      <div className="rounded-3xl overflow-hidden shadow-xl border border-border bg-card">
-        {/* Photo area */}
-        <div className="relative h-[40vh] max-h-80 w-full overflow-hidden">
-          {photos.length > 0 ? (
-            <BlurImage
-              src={photos[photoIndex] || "/placeholder.svg"}
-              alt={displayName}
-              className="h-full w-full"
-              loading={isTop ? "eager" : "lazy"}
-              fetchPriority={isTop ? "high" : undefined}
-              objectPosition={`center ${profile.photo_focal_points?.[photos[photoIndex]] ?? 50}%`}
-              onError={() => handlePhotoError(photos[photoIndex])}
-            />
-          ) : (
-            <div className="h-full w-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <span className="text-6xl font-bold text-primary-foreground">{displayName?.[0] || "?"}</span>
-            </div>
-          )}
-
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-          {/* Dot indicators */}
-          {photos.length > 1 && (
-            <div className="absolute top-3 left-0 right-0 flex justify-center gap-1 z-10">
-              {photos.slice(0, 6).map((_, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "h-1 rounded-full transition-all",
-                    i === photoIndex ? "w-4 bg-white" : "w-2 bg-white/70 ring-1 ring-white/50"
-                  )}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* Tap zones for photo cycling */}
-          <button
-            className="absolute top-0 left-0 w-1/3 h-full z-10"
-            onClick={(e) => { e.stopPropagation(); setPhotoIndex(i => Math.max(0, i - 1)); }}
-            aria-label="Previous photo"
-          />
-          <button
-            className="absolute top-0 right-0 w-2/3 h-full z-10"
-            onClick={(e) => { e.stopPropagation(); setPhotoIndex(i => Math.min(photos.length - 1, i + 1)); }}
-            aria-label="Next photo"
-          />
-
-          {/* LIKE / NOPE overlays */}
-          {isDragging && (
-            <>
-              {/* Purple tint overlay for right swipe (Connect) */}
-              <div
-                className="absolute inset-0 z-15 pointer-events-none transition-opacity"
-                style={{
-                  opacity: isRight ? dragProgress * 0.5 : 0,
-                  background: "linear-gradient(135deg, hsl(270 60% 50% / 0.4), hsl(320 70% 55% / 0.3))",
-                }}
+    <>
+      <div
+        ref={cardRef}
+        className="discover-card-slot"
+        style={{
+          // Leaving: the card carries on from wherever it was let go. Under reduced motion it only fades.
+          transform: animate
+            ? (reducedMotion ? "" : exitTransforms[animate])
+            : isDragging
+              ? `translateX(${dragOffset.x}px) translateY(${dragOffset.y}px) rotate(${rotation}deg)`
+              : stackTransforms[stackIndex] || "",
+          opacity: animate ? 0 : 1,
+          transition: isDragging
+            ? "none"
+            : animate
+              ? `transform ${EXIT_MS}ms ease-in, opacity ${EXIT_MS}ms ease-in`
+              : "transform 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+          cursor: isTop ? "grab" : "default",
+          zIndex: stackZ[stackIndex] || 1,
+          pointerEvents: isTop && !animate ? "auto" : "none",
+        }}
+        aria-hidden={isTop ? undefined : true}
+        data-walkthrough={isTop ? "discovery-card" : undefined}
+        data-tour={isTop ? "discovery-card" : undefined}
+        onMouseDown={(e) => handleDragStart(e.clientX, e.clientY)}
+        onMouseMove={(e) => handleDragMove(e.clientX, e.clientY)}
+        onMouseUp={handleDragEnd}
+        onMouseLeave={handleDragEnd}
+      >
+        {/* The arrival animation is on the card, not the slot: a finished animation on the slot would
+            hold its transform and the card would no longer follow the finger. */}
+        <article className={cn("kit-card discover-card", !animate && stackIndex === 0 && "animate-card-enter")} aria-label={`${displayName}, ${profile.age}`}>
+          {/* Photo */}
+          <div className="discover-photo">
+            {photos.length > 0 ? (
+              <BlurImage
+                src={photos[photoIndex] || "/placeholder.svg"}
+                alt={displayName}
+                className="h-full w-full"
+                loading={isTop ? "eager" : "lazy"}
+                fetchPriority={isTop ? "high" : undefined}
+                objectPosition={`center ${profile.photo_focal_points?.[photos[photoIndex]] ?? 50}%`}
+                onError={() => handlePhotoError(photos[photoIndex])}
               />
-              {/* Grayscale overlay for left swipe (Pass) */}
-              <div
-                className="absolute inset-0 z-15 pointer-events-none transition-opacity"
-                style={{
-                  opacity: !isRight ? dragProgress * 0.6 : 0,
-                  background: "hsl(0 0% 30% / 0.5)",
-                  filter: "saturate(0.3)",
-                }}
-              />
-              {/* Pink/magenta overlay for up swipe (Send a Thot) */}
-              {dragOffset.y < -30 && (
-                <div
-                  className="absolute inset-0 z-15 pointer-events-none"
-                  style={{
-                    opacity: Math.min(Math.abs(dragOffset.y) / 150, 0.6),
-                    background: "linear-gradient(180deg, hsl(320 70% 55% / 0.5), hsl(280 80% 65% / 0.3))",
-                  }}
+            ) : (
+              <div className="h-full w-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <span className="text-6xl font-bold text-primary-foreground">{displayName?.[0] || "?"}</span>
+              </div>
+            )}
+            <div className="discover-photo-shade" />
+
+            {/* Which photo is showing */}
+            {photos.length > 1 && (
+              <div className="absolute top-2 left-3 right-3 flex gap-1 z-10" aria-hidden="true">
+                {photos.slice(0, 6).map((_, i) => (
+                  <div key={i} className={cn("h-1 flex-1 rounded-full", i === photoIndex ? "bg-white" : "bg-white/40")} />
+                ))}
+              </div>
+            )}
+
+            {/* Tapping the photo: step through the photos, or open the full profile when there is only one. */}
+            {photos.length > 1 ? (
+              <>
+                <button
+                  type="button"
+                  className="absolute top-0 left-0 w-1/3 h-full z-10"
+                  onClick={tap(() => setPhotoIndex(i => Math.max(0, i - 1)))}
+                  aria-label="Previous photo"
                 />
-              )}
-              {/* Connect label (right) */}
-              <div
-                className="absolute top-8 left-6 z-20 flex flex-col items-center bg-black/30 backdrop-blur-sm rounded-xl p-4 rotate-[-20deg]"
-                style={{ opacity: Math.max(0, Math.min(dragOffset.x / 100, 1)) }}
-              >
-                <Heart className="h-12 w-12 text-white drop-shadow-lg" fill="white" />
-                <span className="text-white font-bold text-lg drop-shadow-lg">Connect 💜</span>
-              </div>
-              {/* Pass label (left) */}
-              <div
-                className="absolute top-8 right-6 z-20 flex flex-col items-center bg-black/30 backdrop-blur-sm rounded-xl p-4 rotate-[20deg]"
-                style={{ opacity: Math.max(0, Math.min(-dragOffset.x / 100, 1)) }}
-              >
-                <X className="h-12 w-12 text-white drop-shadow-lg" />
-                <span className="text-white font-bold text-lg drop-shadow-lg">Pass</span>
-              </div>
-              {/* Send a Thot label (up) */}
-              {dragOffset.y < -30 && (
-                <div
-                  className="absolute top-1/3 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center bg-black/30 backdrop-blur-sm rounded-xl p-4"
-                  style={{ opacity: Math.min(Math.abs(dragOffset.y) / 100, 1) }}
-                >
-                  <Star className="h-12 w-12 text-white drop-shadow-lg" fill="white" />
-                  <span className="text-white font-bold text-lg drop-shadow-lg">Send a Thot 💜</span>
+                <button
+                  type="button"
+                  className="absolute top-0 right-0 w-2/3 h-full z-10"
+                  onClick={tap(() => setPhotoIndex(i => Math.min(photos.length - 1, i + 1)))}
+                  aria-label="Next photo"
+                />
+              </>
+            ) : (
+              <button
+                type="button"
+                className="absolute inset-0 z-10"
+                onClick={tap(onViewProfile)}
+                aria-label={`View full profile of ${displayName}`}
+              />
+            )}
+
+            {/* The action a pull will take, named before the card is let go. Shape and words, not colour alone. */}
+            {isDragging && (
+              <>
+                <div className="discover-stamp top-16 left-5 -rotate-12" style={{ opacity: connectPull, background: "hsl(var(--kit-discover-bottom))" }}>
+                  <Heart fill="currentColor" /> Connect
                 </div>
-              )}
-            </>
-          )}
+                <div className="discover-stamp top-16 right-5 rotate-12" style={{ opacity: passPull, background: "hsl(0 0% 28%)" }}>
+                  <X /> Pass
+                </div>
+                <div className="discover-stamp top-1/3 left-1/2 -translate-x-1/2 whitespace-nowrap" style={{ opacity: thotPull, background: "hsl(var(--path-gold-dark))" }}>
+                  <Star fill="currentColor" /> Send a Thot
+                </div>
+              </>
+            )}
 
-          {/* Top badges */}
-          <div className="absolute top-3 left-3 flex gap-1.5 z-10">
-            {isTop && is_recycled && (
-              <div
-                className="flex items-center gap-1.5 bg-background/80 backdrop-blur-sm rounded-full px-3 py-1"
-                aria-label="Previously viewed profile"
-              >
-                <RefreshCw className="h-3 w-3 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Second look</span>
+            {/* Trust signals, top left */}
+            <div className={cn("absolute left-3 flex flex-wrap gap-1.5 z-10 pointer-events-none max-w-[60%]", photos.length > 1 ? "top-5" : "top-3")}>
+              {profile.verified && (
+                <span className="kit-chip" data-tone="correct"><Shield className="h-3.5 w-3.5" aria-hidden="true" /> Verified</span>
+              )}
+              {profile.is_boosted && (
+                <span className="kit-chip"><Zap className="h-3.5 w-3.5" aria-hidden="true" /> Boosted</span>
+              )}
+              {isTop && is_recycled && (
+                <span className="kit-chip" data-tone="glass" aria-label="Previously viewed profile">
+                  <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" /> Second look
+                </span>
+              )}
+            </div>
+
+            {/* Compatibility, top right */}
+            {profile.compatibility_score != null && profile.compatibility_score > 0 && (
+              <div className={cn("absolute right-3 z-20", photos.length > 1 ? "top-5" : "top-3")} data-walkthrough="compatibility-score" data-tour="compatibility-score">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      className="kit-chip relative cursor-help after:absolute after:-inset-3 after:content-['']"
+                      data-tone="area"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {profile.compatibility_score}% Compatible
+                      <CircleHelp className="hidden h-3.5 w-3.5 min-[360px]:block" aria-hidden="true" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-[240px] text-center">
+                    Based on shared interests, relationship style, goals, badges, and location.
+                  </TooltipContent>
+                </Tooltip>
               </div>
             )}
-            {profile.is_boosted && (
-              <Badge className="bg-amber-500/90 text-white text-sm border-0">
-                <Zap className="h-3 w-3 mr-0.5" /> Boosted
-              </Badge>
-            )}
-            {profile.verified && (
-              <Badge className="bg-success/90 text-white text-sm border-0">
-                <Shield className="h-3 w-3 mr-0.5" /> Verified
-              </Badge>
-            )}
-          </div>
 
-          {/* Compatibility badge */}
-          {profile.compatibility_score != null && profile.compatibility_score > 0 && (
-            <div className="absolute top-3 right-3 z-10" data-walkthrough="compatibility-score" data-tour="compatibility-score">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge variant="secondary" className="bg-primary/90 text-primary-foreground text-sm font-bold cursor-help inline-flex items-center gap-1">
-                    {profile.compatibility_score}% Compatible
-                    <CircleHelp className="h-3 w-3 opacity-80" />
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="max-w-[240px] text-center">
-                  Based on shared interests, relationship style, goals, badges, and location.
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          )}
-
-          {/* Verified badge overlay on photo */}
-          {!!profile.verified && (
-            <div className="absolute bottom-16 right-4 z-20 drop-shadow-[0_1px_3px_rgba(255,255,255,0.4)]">
-              <VerifiedBadgeOverlay isVerified size="md" />
-            </div>
-          )}
-
-          {/* Info over photo */}
-          <div className="absolute bottom-0 left-0 right-0 p-5 text-white z-10">
-            <div className="flex items-center gap-3">
-              {/* Small framed avatar */}
-              <ProfileFrame frameId={(profile as any).selected_frame} size="sm">
-                {photos.length > 0 ? (
-                  <BlurImage
-                    src={photos[0]}
-                    alt={`Profile photo of ${displayName}`}
-                    className="h-full w-full rounded-full"
-                    onError={() => handlePhotoError(photos[0])}
-                  />
-                ) : (
-                  <div className="h-full w-full rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground text-sm font-bold">
-                    {displayName?.[0] || "?"}
-                  </div>
-                )}
-              </ProfileFrame>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-2xl font-bold truncate">
+            {/* Who this is */}
+            <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 text-white z-10 pointer-events-none">
+              <div className="flex items-center gap-3">
+                <ProfileFrame frameId={(profile as any).selected_frame} size="sm">
+                  {photos.length > 0 ? (
+                    <BlurImage
+                      src={photos[0]}
+                      alt=""
+                      className="h-full w-full rounded-full"
+                      onError={() => handlePhotoError(photos[0])}
+                    />
+                  ) : (
+                    <div className="h-full w-full rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground text-sm font-bold">
+                      {displayName?.[0] || "?"}
+                    </div>
+                  )}
+                </ProfileFrame>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-2xl font-extrabold leading-tight truncate">
                     {displayName}, {profile.age}
                   </h2>
-                  {profile.badge_count != null && profile.badge_count >= 5 && (
-                    <EducationTierBadge badgeCount={profile.badge_count} size="sm" />
-                  )}
+                  {profile.pronouns && <p className="text-sm text-white/85">{profile.pronouns}</p>}
                 </div>
-                {profile.pronouns && (
-                  <p className="text-sm opacity-80">{profile.pronouns}</p>
-                )}
               </div>
+              {(relationshipStyle || badges > 0) && (
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  {/* What they have learned shows on every card: the tier badge from 5 badges, a count before that. */}
+                  {badges >= 5 && <EducationTierBadge badgeCount={badges} size="sm" />}
+                  {badges > 0 && badges < 5 && (
+                    <span className="kit-chip" data-tone="glass"><GraduationCap className="h-3.5 w-3.5" aria-hidden="true" /> {badges} {badges === 1 ? "badge" : "badges"}</span>
+                  )}
+                  {relationshipStyle && <span className="kit-chip" data-tone="glass">{relationshipStyle}</span>}
+                </div>
+              )}
             </div>
-            {/* Flair badges */}
-            <FlairBadges
-              badgeCount={profile.badge_count}
-              className="mt-1.5"
-            />
-            {profile.relationship_style && (
-              <Badge variant="outline" className="mt-1 border-white/30 text-white/90 text-sm">
-                {profile.relationship_style.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
-              </Badge>
-            )}
           </div>
-        </div>
 
-        {/* Card body — tappable for detail */}
-        <button
-          className="w-full text-left p-3 space-y-1.5"
-          onClick={(e) => { e.stopPropagation(); onViewProfile(); }}
-          aria-label={`View full profile of ${displayName}`}
-        >
-          {profile.bio && (
-            <p className="text-sm text-muted-foreground line-clamp-1">{profile.bio}</p>
-          )}
-          {profile.compatibility_reasons && profile.compatibility_reasons.length > 0 && (
-            <div className="space-y-0.5">
-              {profile.compatibility_reasons.slice(0, 2).map((reason, i) => (
-                <p key={i} className="text-sm text-primary flex items-center gap-1">
-                  <Heart className="h-3 w-3 shrink-0" /> {reason}
-                </p>
-              ))}
-            </div>
-          )}
-          <p className="text-sm text-muted-foreground flex items-center gap-0.5 justify-center pt-1">
-            <ChevronDown className="h-3 w-3" /> Tap for full profile
-          </p>
-        </button>
+          {/* A few lines about them. Tapping opens the full profile. */}
+          <button
+            type="button"
+            className="w-full shrink-0 text-left px-4 pt-2.5 pb-2 space-y-1"
+            onClick={tap(onViewProfile)}
+            aria-label={`View full profile of ${displayName}`}
+          >
+            {profile.bio && <p className="discover-bio text-sm text-foreground/90 line-clamp-2 [text-wrap:pretty]">{profile.bio}</p>}
+            {profile.compatibility_reasons?.slice(0, 2).map((reason, i) => (
+              <p key={i} className="discover-reason kit-text text-sm font-semibold flex items-center gap-1.5">
+                <Heart className="h-3.5 w-3.5 shrink-0" aria-hidden="true" /> <span className="truncate">{reason}</span>
+              </p>
+            ))}
+            <span className="flex items-center justify-center gap-1 pt-0.5 text-xs font-bold text-muted-foreground">
+              <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" /> Full profile
+            </span>
+          </button>
+        </article>
       </div>
 
-      {/* Action buttons */}
+      {/* The three actions. They stay put while the card moves, under the card where a thumb reaches. */}
       {isTop && (
-        <div className="flex items-center justify-center gap-4 py-2" data-walkthrough="action-buttons" data-tour="action-buttons">
-          <Button
-            variant="outline"
-            className="h-14 w-14 rounded-full border-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
-            onClick={(e) => { e.stopPropagation(); handleButtonSwipe("left"); }}
-            aria-label={`Pass on ${displayName}`}
-          >
-            <X className="h-6 w-6" />
-          </Button>
+        <div className="discover-dock" data-walkthrough="action-buttons" data-tour="action-buttons">
+          <div className="discover-dock-item">
+            <button
+              type="button"
+              className="kit-action"
+              data-tone="quiet"
+              onClick={(e) => { e.stopPropagation(); handleButtonSwipe("left"); }}
+              aria-label={`Pass on ${displayName}`}
+            >
+              <X aria-hidden="true" />
+            </button>
+            <span aria-hidden="true">Pass</span>
+          </div>
 
-          <Button
-            variant="outline"
-            className={cn(
-              "h-12 w-12 rounded-full border-2 border-primary text-primary relative",
-              canSuperLike
-                ? "bg-gradient-to-br from-primary/10 to-secondary/10 hover:from-primary hover:to-secondary hover:text-primary-foreground active:scale-110"
-                : "opacity-60 grayscale"
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              if (canSuperLike) {
-                handleSuperLikeTap();
-              } else {
-                onUpgradeSuperLike?.();
-              }
-            }}
-            aria-label={canSuperLike ? `Send a Thot to ${displayName}` : "Get Thots — upgrade to send"}
-          >
-            <Star className="h-5 w-5" />
-            {!canSuperLike && (
-              <Lock className="h-3 w-3 absolute -bottom-0.5 -right-0.5 text-muted-foreground" />
-            )}
-          </Button>
+          <div className="discover-dock-item">
+            <button
+              type="button"
+              className="kit-action"
+              data-tone="reward"
+              data-locked={!hasThot}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (hasThot) handleSuperLikeTap();
+                else onUpgradeSuperLike?.();
+              }}
+              aria-label={hasThot ? `Send a Thot to ${displayName}` : "Get Thots: none left to send today"}
+            >
+              <Star fill="currentColor" aria-hidden="true" />
+              {hasThot && superLikeBalance < 999 && (
+                <span className="kit-action-count" aria-hidden="true">{superLikeBalance}</span>
+              )}
+              {!hasThot && (
+                <span className="kit-action-count" aria-hidden="true"><Lock className="!h-3 !w-3" /></span>
+              )}
+            </button>
+            <span aria-hidden="true">{hasThot ? "Send a Thot" : "Get Thots"}</span>
+          </div>
 
-          <Button
-            className="h-16 w-16 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground hover:scale-110 transition-transform shadow-lg"
-            onClick={(e) => { e.stopPropagation(); handleButtonSwipe("right"); }}
-            aria-label={`Connect with ${displayName}`}
-          >
-            <Heart className="h-7 w-7 fill-current" />
-          </Button>
+          <div className="discover-dock-item" data-main="true">
+            <button
+              type="button"
+              className="kit-action kit-action-lg"
+              onClick={(e) => { e.stopPropagation(); handleButtonSwipe("right"); }}
+              aria-label={`Connect with ${displayName}`}
+            >
+              <Heart fill="currentColor" aria-hidden="true" />
+            </button>
+            <span aria-hidden="true">Connect</span>
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 });
 

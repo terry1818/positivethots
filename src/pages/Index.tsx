@@ -1,14 +1,11 @@
-import { useEffect, useState, useCallback, useMemo, useRef, type CSSProperties } from "react";
+import { useEffect, useState, useCallback, useRef, type CSSProperties } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
 import { onDiscoveryRefresh } from "@/lib/discoveryEvents";
 import { useSessionStore } from "@/stores/sessionStore";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Heart, BookOpen, Settings, Eye, EyeOff, Star, Zap, Users, Copy, Sparkles, Share2, Undo2, RefreshCw } from "lucide-react";
+import { Heart, Settings, Zap, Share2, Undo2, RefreshCw, ChevronRight, CalendarDays } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -21,12 +18,10 @@ import { BottomNav } from "@/components/BottomNav";
 import { Logo } from "@/components/Logo";
 import { MatchModal } from "@/components/MatchModal";
 import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
-import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { NearbyUsers } from "@/components/NearbyUsers";
-import { DiscoveryCard } from "@/components/discovery/DiscoveryCard";
 import { SwipeDiscoveryCard } from "@/components/discovery/SwipeDiscoveryCard";
 import { ProfileDetailSheet } from "@/components/discovery/ProfileDetailSheet";
-import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
+import { CompactProgressBar, LearnProgressStrip } from "@/components/discovery/CompactProgressBar";
 import { MysteryMatchCard } from "@/components/discovery/MysteryMatchCard";
 import { DiscoveryWalkthrough } from "@/components/discovery/DiscoveryWalkthrough";
 import { useTutorialState } from "@/hooks/useTutorialState";
@@ -37,7 +32,6 @@ import { useSuperLikes } from "@/hooks/useSuperLikes";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useSubscription } from "@/hooks/useSubscription";
-import { Skeleton } from "@/components/ui/skeleton";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";
 import { SEO } from "@/components/SEO";
@@ -177,7 +171,6 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [matchedUser, setMatchedUser] = useState<EnhancedProfile | null>(null);
   const [showMatchModal, setShowMatchModal] = useState(false);
-  const [incognitoMode, setIncognitoMode] = useState(false);
   const [userBadgeCount, setUserBadgeCount] = useState(0);
   const [celebrationTrigger, setCelebrationTrigger] = useState(0);
   const [previewMode, setPreviewMode] = useState(false);
@@ -203,6 +196,9 @@ const Index = () => {
   const prefersReducedMotion = useReducedMotion();
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [resettingFeed, setResettingFeed] = useState(false);
+  // The list of people failed to load (as opposed to loading fine and being empty).
+  const [loadError, setLoadError] = useState(false);
+  const [retrying, setRetrying] = useState(false);
 
   // Handle super like purchase redirect
   useEffect(() => {
@@ -343,7 +339,11 @@ const Index = () => {
       supabase.from("profile_boosts").select("user_id").gt("expires_at", new Date().toISOString()),
     ]);
 
-    if (!profilesResult.data) return;
+    if (profilesResult.error || !profilesResult.data) {
+      setLoadError(true);
+      return;
+    }
+    setLoadError(false);
 
     // Enrich with actual approved photos from user_photos table
     const profileIds = profilesResult.data.map(p => p.id);
@@ -464,6 +464,15 @@ const Index = () => {
     return true;
   }, [currentUser, canRevealMystery, hasDailyReveal, bonusMysteryReveals, mysteryRevealsUsed]);
 
+  // Once revealed, the person is shown on the ordinary card, with Connect and Send a Thot.
+  const handleMysteryRevealed = useCallback((id: string) => {
+    setMysteryProfiles(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  }, []);
+
   const handleMysteryUpgrade = useCallback(() => {
     toast("Want to reveal more Mystery Matches?", {
       description: "Upgrade to Plus for 3 daily reveals! 💜",
@@ -521,8 +530,9 @@ const Index = () => {
     if (matchData) {
       trackEvent("match", { matched_user_id: otherUserId });
       playMatch();
+      // The celebration says it; a toast on top of it would only cover the buttons.
       if (removedProfile) { setMatchedUser(removedProfile); setShowMatchModal(true); }
-      toast.success("You Both Said Yes 💜", { description: "You can now start chatting!" });
+      else toast.success("You Both Said Yes 💜", { description: "You can now start chatting!" });
     } else {
       toast.success("Connection Sent", { description: "They'll be notified of your interest!" });
     }
@@ -609,7 +619,7 @@ const Index = () => {
       trackEvent("match", { matched_user_id: otherUserId });
       playMatch();
       if (removedProfile) { setMatchedUser(removedProfile); setShowMatchModal(true); }
-      toast.success("You Both Said Yes 💜", { description: "Your Thot worked!" });
+      else toast.success("You Both Said Yes 💜", { description: "Your Thot worked!" });
     } else {
       playThot();
       toast.success("Thot Sent! 💜", { description: "They'll see you stand out!" });
@@ -662,6 +672,18 @@ const Index = () => {
     }
   };
 
+  const handleRetryLoad = async () => {
+    if (!currentUser || retrying) return;
+    setRetrying(true);
+    try {
+      await loadSuggestions(currentUser.id, currentUser);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setRetrying(false);
+    }
+  };
+
   const handleReferralClick = async () => {
     trackEvent('discovery_empty_referral_clicked', {});
     if (!currentUser) return;
@@ -698,13 +720,12 @@ const Index = () => {
   }
 
   // Incomplete profile banner (Quick Start users)
-  const showProfileBanner = currentUser && userBadgeCount < requiredCount;
 
   return (
-    <div className="h-screen flex flex-col bg-background overflow-hidden">
+    <div className="kit-area-discover discover-screen">
       <SEO
         title="Positive Thots — Learn first. Connect better."
-        description="Education-first relationship wellness app for ethical non-monogamy, polyamory, and LGBTQ+ communities. Earn badges, then match."
+        description="Education-first relationship wellness platform for every relationship style. Learn first. Connect better."
         path="/"
         jsonLd={{
           "@context": "https://schema.org",
@@ -720,76 +741,40 @@ const Index = () => {
       <h1 className="sr-only">Positive Thots — Learn first. Connect better.</h1>
 
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-border bg-card">
-        <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-            <Logo size="md" showText={false} />
-            <div className="flex items-center gap-2">
-              {canSuperLike && (
-                <Badge variant="outline" className="text-primary border-primary/30" title="Thots remaining" aria-label="Thots remaining">
-                  <Heart className="h-3 w-3 mr-1 fill-current" />
-                  {isUnlimited ? "∞" : superLikeBalance}
-                </Badge>
-              )}
-              <Button
-                variant={incognitoMode ? "default" : "outline"} size="sm"
-                onClick={() => setIncognitoMode(!incognitoMode)}
-                className="h-9 w-9 p-0"
-                aria-label={incognitoMode ? "Incognito mode on" : "Visible mode"}
-              >
-                {incognitoMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-9 w-9 p-0 text-amber-500 border-amber-500/30 hover:bg-amber-500/10"
-                aria-label="Boost profile"
-                onClick={async () => {
-                  try {
-                    const { data, error } = await supabase.functions.invoke("create-boost-payment");
-                    if (error) throw error;
-                    if (data?.url) window.open(data.url, "_blank");
-                  } catch (err) {
-                    toast.error("Failed to start boost checkout");
-                  }
-                }}
-              >
-                <Zap className="h-4 w-4" />
-              </Button>
-              <IncognitoIndicator />
-              <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => navigate("/settings")} aria-label="Settings">
-                <Settings className="h-6 w-6" />
-              </Button>
-            </div>
+      {/* Header: kept short so the person on the card gets the room. */}
+      <header className="kit-header z-40 shrink-0">
+        <div className="mx-auto flex w-full max-w-md items-center justify-between gap-2 px-4 py-1 md:max-w-2xl lg:max-w-4xl">
+          <Logo size="md" showText={false} />
+          <div className="flex items-center gap-2">
+            <span
+              className="kit-chip"
+              data-tone="area"
+              aria-label={isUnlimited ? "Unlimited Thots" : `${superLikeBalance} ${superLikeBalance === 1 ? "Thot" : "Thots"} left to send`}
+            >
+              <Heart className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+              {isUnlimited ? "∞" : superLikeBalance}
+            </span>
+            <button type="button" className="discover-icon-btn" data-tone="reward" aria-label="Boost your profile" onClick={handleBoostClick}>
+              <Zap aria-hidden="true" />
+            </button>
+            <IncognitoIndicator />
+            <button type="button" className="discover-icon-btn" aria-label="Settings" onClick={() => navigate("/settings")}>
+              <Settings aria-hidden="true" />
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Profile completion banner for Quick Start users */}
-      {showProfileBanner && (
-        <div className="w-full max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-2">
-          <button
-            onClick={() => navigate("/learn")}
-            className="w-full flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3 py-2 text-sm"
-          >
-            <BookOpen className="h-4 w-4 text-primary shrink-0" />
-            <span className="text-left">
-              <span className="font-medium text-foreground">Complete your profile</span>
-              <span className="text-muted-foreground"> — earn badges to unlock more matches</span>
-            </span>
-          </button>
-        </div>
-      )}
-
-      {/* Compact Progress Strip */}
-      {tiers.length > 0 && (
-        <div className="w-full max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-3">
-          <CompactProgressBar tiers={tiers} badgeCount={userBadgeCount} connectionCount={matchCount} />
+      {/* Learning progress. With someone on the card it is one slim row; with no one to show it is the full card (below). */}
+      {suggestions.length > 0 && tiers.length > 0 && (
+        <div className="mx-auto w-full max-w-md shrink-0 px-4 pt-2 md:max-w-2xl lg:max-w-4xl">
+          <LearnProgressStrip tiers={tiers} />
         </div>
       )}
 
       {/* Nearby Users */}
       {isSharing && (
-        <div className="w-full max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 mb-4">
+        <div className="mx-auto w-full max-w-md shrink-0 px-4 pt-2 md:max-w-2xl lg:max-w-4xl">
           <NearbyUsers nearbyUsers={nearbyUsers} isSharing={isSharing} />
         </div>
       )}
@@ -799,36 +784,64 @@ const Index = () => {
         {announcedProfile}
       </div>
 
-      {/* Curated Matches Grid — flex-1 fills remaining space */}
-      <div className="flex-1 min-h-0 overflow-hidden max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 w-full">
-        {suggestions.length === 0 ? (
-          <div className="discovery-empty flex flex-col items-center justify-start h-full px-2 pt-4 pb-24 text-center overflow-y-auto">
-          <BrandedEmptyState
+      {/* The stage: someone to meet, or what to do while there is no one. */}
+      <div className="mx-auto flex min-h-0 w-full max-w-md flex-1 flex-col px-4 pt-2 md:max-w-2xl lg:max-w-4xl">
+        {loadError && suggestions.length === 0 ? (
+          <div className="flex h-full flex-col items-center overflow-y-auto pb-24 text-center">
+            <BrandedEmptyState
+              mascot="confused"
+              headline="We couldn't load Discover."
+              description="Check your connection and try again."
+              className="shrink-0 px-2 py-4"
+              ctaLabel={retrying ? "Trying again…" : "Try again"}
+              onCtaClick={handleRetryLoad}
+            />
+            <AppFooter inline />
+          </div>
+        ) : suggestions.length === 0 ? (
+          <div className="discovery-empty flex h-full flex-col items-stretch overflow-y-auto pb-24">
+            <BrandedEmptyState
               mascot="binoculars"
               headline="You've seen everyone nearby."
-              description="Expand your range or check back soon."
-              className="py-4 px-4 shrink-0"
+              description="Widen your range, or keep learning while new people join."
+              className="shrink-0 px-2 py-3"
               ctaLabel="Expand radius"
               onCtaClick={() => navigate("/settings")}
             />
-            <p className="text-xs text-[rgba(255,255,255,0.5)] mt-4" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-              Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup>
-            </p>
-            <div className="flex flex-wrap justify-center gap-3 mt-6">
-              <Button size="sm" className="bg-gradient-to-r from-primary to-secondary text-primary-foreground min-h-[44px]" onClick={handleReferralClick}>
-                <Share2 className="h-4 w-4 mr-1" /> Invite friends
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => navigate("/events")} className="min-h-[44px]" aria-label="Browse upcoming events">
-                🎪 Browse events
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="min-h-[44px]"
-                onClick={() => setShowResetDialog(true)}
-              >
-                <RefreshCw className="h-4 w-4 mr-1" /> Start Fresh
-              </Button>
+
+            {/* Learning is the best use of the wait: it also raises your place in Discover. */}
+            {tiers.length > 0 && (
+              <div className="kit-rise mt-2 shrink-0" style={{ "--i": 1 } as CSSProperties}>
+                <CompactProgressBar tiers={tiers} badgeCount={userBadgeCount} connectionCount={matchCount} />
+              </div>
+            )}
+
+            <h2 className="kit-eyebrow mt-6 px-1">While you wait</h2>
+            <div className="mt-2 grid shrink-0 gap-2.5">
+              <button type="button" className="kit-row kit-rise" style={{ "--i": 2 } as CSSProperties} onClick={handleReferralClick}>
+                <span className="kit-coin" data-tone="pink"><Share2 aria-hidden="true" /></span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-bold leading-tight">Invite friends</span>
+                  <span className="block text-sm text-muted-foreground">Share your link and grow who you can meet.</span>
+                </span>
+                <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              </button>
+              <button type="button" className="kit-row kit-rise" style={{ "--i": 3 } as CSSProperties} onClick={() => navigate("/events")}>
+                <span className="kit-coin" data-tone="info"><CalendarDays aria-hidden="true" /></span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-bold leading-tight">Browse events</span>
+                  <span className="block text-sm text-muted-foreground">Meet the community in person or online.</span>
+                </span>
+                <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              </button>
+              <button type="button" className="kit-row kit-rise" style={{ "--i": 4 } as CSSProperties} onClick={() => setShowResetDialog(true)}>
+                <span className="kit-coin" data-tone="quiet"><RefreshCw aria-hidden="true" /></span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-bold leading-tight">Start fresh</span>
+                  <span className="block text-sm text-muted-foreground">See people you passed on again. Once a week.</span>
+                </span>
+                <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              </button>
             </div>
 
             {/* Reset Feed Dialog */}
@@ -849,33 +862,33 @@ const Index = () => {
               </AlertDialogContent>
             </AlertDialog>
 
-            {/* Boost upsell card */}
-            <Card className="p-6 text-center max-w-sm mx-auto w-full mt-4">
-              <Zap className="h-12 w-12 text-amber-500 mx-auto mb-3" />
-              <h2 className="text-xl font-bold mb-1">Get Seen by More People</h2>
-              <p className="text-muted-foreground text-sm mb-1">
-                A Profile Boost puts you at the top of Discovery for 24 hours.
-              </p>
-              <p className="text-sm font-semibold text-primary mb-4">$2.99</p>
-              <Button className="w-full max-w-xs mx-auto" onClick={handleBoostClick}>
-                <Zap className="h-4 w-4 mr-2" />
-                Boost Now
-              </Button>
-            </Card>
+            {/* Boost */}
+            <div className="kit-card kit-rise mt-6 flex shrink-0 items-center gap-3 p-4" style={{ "--i": 5 } as CSSProperties}>
+              <span className="kit-coin kit-coin-lg" data-tone="reward"><Zap aria-hidden="true" /></span>
+              <div className="min-w-0 flex-1 text-left">
+                <h2 className="font-bold leading-tight">Get seen by more people</h2>
+                <p className="text-sm text-muted-foreground [text-wrap:pretty]">A Profile Boost puts you at the top of Discover for 24 hours. $2.99</p>
+              </div>
+              <Button variant="outline" className="min-h-[44px] shrink-0 px-4 font-bold" onClick={handleBoostClick}>Boost</Button>
+            </div>
+
+            <p className="mt-6 text-center text-xs text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+              Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup>
+            </p>
             {/* Discover does not scroll, so the policy links live at the end of this list. */}
             <AppFooter inline />
           </div>
         ) : (
           <>
-            <div className="relative flex justify-center items-start h-full pt-2" data-walkthrough="discovery-card" data-tour="discovery-card">
+            <div className="discover-stage">
               {/* Undo button */}
               {showUndoButton && lastPassedProfile && (
                 <button
                   onClick={handleUndo}
-                  className={`absolute top-4 left-4 z-30 bg-background/90 backdrop-blur-sm rounded-full p-3 shadow-md min-h-[44px] min-w-[44px] flex items-center gap-2 text-sm font-medium ${prefersReducedMotion ? '' : 'animate-fade-in'}`}
+                  className={`absolute top-12 left-3 z-40 flex min-h-[44px] items-center gap-2 rounded-full bg-background/90 px-4 text-sm font-bold shadow-md backdrop-blur-sm ${prefersReducedMotion ? '' : 'animate-fade-in'}`}
                   aria-label="Undo last pass"
                 >
-                  <Undo2 className="h-5 w-5" />
+                  <Undo2 className="h-5 w-5" aria-hidden="true" /> Undo
                 </button>
               )}
               {suggestions.slice(0, 3).map((profile, stackIdx) => {
@@ -887,11 +900,8 @@ const Index = () => {
                       profile={profile}
                       canReveal={canRevealMystery}
                       onReveal={handleMysteryReveal}
-                      onConnect={handleConnect}
+                      onRevealed={handleMysteryRevealed}
                       onPass={handlePass}
-                      onSuperLike={handleSuperLike}
-                      canSuperLike={canSuperLike}
-                      superLikeBalance={isUnlimited ? 999 : superLikeBalance}
                       onUpgrade={handleMysteryUpgrade}
                     />
                   );
@@ -974,7 +984,7 @@ const Index = () => {
         onConnect={(id) => { handleConnect(id); setDetailProfile(null); }}
         onPass={(id) => { handlePass(id); setDetailProfile(null); }}
         onSuperLike={handleSuperLike}
-        canSuperLike={canSuperLike}
+        canSuperLike={canSuperLike && (isUnlimited || superLikeBalance > 0)}
       />
 
       <div className="shrink-0">

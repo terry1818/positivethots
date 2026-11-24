@@ -45,4 +45,7 @@
 - A Profile Boost lasts 24 hours. Say 24 hours wherever it is described.
 - A tour or notice a member has already dealt with must not come back. Tours go through `useTutorialState` (do not open one until `seen` is known to be false); the cookie notice waits for sign-in to settle and checks the device and the account.
 - Pages built as a flex column give each centred section `w-full`, and the text side of a row gets `min-w-0`. Base text is 18.9px, so check layouts at 320 to 393 pixels wide.
+- Discover fits one phone screen and does not scroll (`discover-screen`). Pass, Send a Thot and Connect stay visible under the card with their names; do not put anything between the card and those three. A failed load shows its own error state, never the empty state.
+- Dragging a card: only a pressed pointer drags, and a drag is never also a tap. Do not move the card's arrival animation back onto the slot element; it would stop the card following the finger.
+- Tour tips (`SpotlightTour`) must stay on screen at 320 to 430 pixels wide; point a step at something smaller than the screen.
 - `tests/app_kit.test.ts` guards area-colour contrast, the wheel landing on its prize, and the profile completion steps. Keep it passing.

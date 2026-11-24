@@ -83,28 +83,37 @@ const LearnSkeleton = () => (
   </div>
 );
 
+// Same frame as the real screen (header, Learn row, card, three actions), so nothing jumps when it loads.
 const DiscoverySkeleton = () => (
-  <div className="kit-area-discover min-h-screen bg-background pb-20" aria-busy="true" aria-label="Loading discovery">
-    <div className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
-      <div className="container max-w-7xl mx-auto px-4 py-4">
+  <div className="kit-area-discover discover-screen" aria-busy="true" aria-label="Loading Discover">
+    <header className="kit-header z-40 shrink-0">
+      <div className="mx-auto flex w-full max-w-md items-center justify-between gap-2 px-4 py-1 md:max-w-2xl lg:max-w-4xl">
         <Logo size="md" showText={false} />
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-6 w-12 rounded-full" />
+          <Skeleton className="h-11 w-11 rounded-[14px]" />
+          <Skeleton className="h-11 w-11 rounded-[14px]" />
+        </div>
       </div>
+    </header>
+    <div className="mx-auto w-full max-w-md shrink-0 px-4 pt-2 md:max-w-2xl lg:max-w-4xl">
+      <Skeleton className="h-[56px] w-full rounded-2xl" />
     </div>
-    <div className="max-w-sm mx-auto px-4 pt-4">
-      <div className="rounded-3xl overflow-hidden border border-border">
-        <Skeleton className="w-full rounded-none" style={{ aspectRatio: "3/4" }} />
-        <div className="p-4 space-y-3">
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-6 w-32" />
-            <Skeleton className="h-5 w-12 rounded-full" />
+    <div className="mx-auto flex min-h-0 w-full max-w-md flex-1 flex-col px-4 pt-2 md:max-w-2xl lg:max-w-4xl">
+      <div className="discover-stage">
+        <div className="discover-card-slot">
+          <div className="discover-card border-2 border-border bg-card">
+            <Skeleton className="min-h-0 flex-1 rounded-none" />
+            <div className="shrink-0 space-y-2 px-4 py-3">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
           </div>
-          <Skeleton className="h-4 w-48" />
-          <Skeleton className="h-4 w-full" />
-          <div className="flex justify-center gap-4 pt-2">
-            <Skeleton className="h-14 w-14 rounded-full" />
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <Skeleton className="h-14 w-14 rounded-full" />
-          </div>
+        </div>
+        <div className="discover-dock">
+          <Skeleton className="mb-6 h-14 w-14 rounded-full" />
+          <Skeleton className="mb-6 h-14 w-14 rounded-full" />
+          <Skeleton className="mb-6 h-[68px] w-[68px] rounded-full" />
         </div>
       </div>
     </div>

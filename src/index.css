@@ -1253,3 +1253,53 @@ body:has(aside[aria-label="Continue learning"]) .app-footer { padding-bottom: ca
 .app-footer.app-footer-inline { padding: 24px 0 8px; }
 .app-footer-link { display: inline-block; padding: 6px 0; text-underline-offset: 3px; transition: color .15s ease-out; }
 .app-footer-link:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; border-radius: 4px; }
+
+/* ---- App kit: round action buttons (Discover's Pass / Send a Thot / Connect) ---- */
+.kit-action { position: relative; display: grid; place-items: center; flex-shrink: 0; width: 56px; height: 56px; padding: 0; border: 0; border-radius: 50%; color: hsl(var(--path-enamel)); background: linear-gradient(hsl(var(--path-top, var(--path-foundation-top))), hsl(var(--path-bottom, var(--path-foundation-bottom)))); box-shadow: 0 5px 0 hsl(var(--path-lip, var(--path-foundation-lip))), inset 0 2px 0 hsl(var(--path-enamel) / .3); transition: translate .08s ease-out, box-shadow .08s ease-out; }
+.kit-action:not(:disabled):active { translate: 0 4px; box-shadow: 0 1px 0 hsl(var(--path-lip, var(--path-foundation-lip))), inset 0 2px 0 hsl(var(--path-enamel) / .3); }
+.kit-action:focus-visible { outline: 3px solid hsl(var(--ring)); outline-offset: 3px; }
+.kit-action svg { width: 26px; height: 26px; }
+.kit-action-lg { width: 68px; height: 68px; }
+.kit-action-lg svg { width: 32px; height: 32px; }
+.kit-action[data-tone="quiet"] { color: hsl(var(--foreground)); background: hsl(var(--muted)); box-shadow: 0 5px 0 hsl(var(--border)), inset 0 0 0 2px hsl(var(--border)); }
+.kit-action[data-tone="quiet"]:not(:disabled):active { box-shadow: 0 1px 0 hsl(var(--border)), inset 0 0 0 2px hsl(var(--border)); }
+.kit-action[data-tone="reward"] { color: hsl(var(--art-ink)); background: linear-gradient(hsl(var(--art-reward)), hsl(var(--path-gold-light))); box-shadow: 0 5px 0 hsl(var(--path-gold-dark)), inset 0 2px 0 hsl(var(--path-enamel) / .45); }
+.kit-action[data-tone="reward"]:not(:disabled):active { box-shadow: 0 1px 0 hsl(var(--path-gold-dark)), inset 0 2px 0 hsl(var(--path-enamel) / .45); }
+.kit-action[data-locked="true"] { filter: saturate(.25); }
+.kit-action-count { position: absolute; top: -4px; right: -6px; display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; font-size: .75rem; font-weight: 900; font-variant-numeric: tabular-nums; color: hsl(var(--path-enamel)); background: hsl(var(--kit-discover-bottom)); box-shadow: 0 0 0 2px hsl(var(--background)); }
+.kit-chip[data-tone="correct"] { color: hsl(var(--art-ink)); background: hsl(var(--art-correct)); }
+/* A chip that sits on a photo: readable on any picture. */
+.kit-chip[data-tone="glass"] { color: #fff; background: rgb(0 0 0 / .55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+@media (prefers-reduced-motion: reduce) { .kit-action { transition: none; } .kit-action:not(:disabled):active { translate: none; } }
+
+/* ---- Discover ---- */
+/* The screen is exactly as tall as the phone and never scrolls: header, Learn strip, one card, the three actions, the tab bar. */
+/* The tab bar is fixed over the bottom of the screen, so the screen keeps that much clear for it. */
+.discover-screen { display: flex; flex-direction: column; height: 100vh; height: 100dvh; padding-bottom: calc(3.55rem + max(.5rem, env(safe-area-inset-bottom))); overflow: hidden; background: hsl(var(--background)); }
+.discover-icon-btn { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 14px; color: hsl(var(--muted-foreground)); background: hsl(var(--card)); border: 2px solid hsl(var(--border)); transition: color .15s ease-out, background-color .15s ease-out, border-color .15s ease-out; }
+.discover-icon-btn svg { width: 20px; height: 20px; }
+.discover-icon-btn:focus-visible { outline: 3px solid hsl(var(--ring)); outline-offset: 2px; }
+.discover-icon-btn[aria-pressed="true"] { color: hsl(var(--path-enamel)); background: hsl(var(--path-bottom, var(--path-foundation-bottom))); border-color: transparent; }
+.discover-icon-btn[data-tone="reward"] { color: hsl(var(--path-gold)); border-color: hsl(var(--path-gold) / .5); }
+.dark .discover-icon-btn[data-tone="reward"] { color: hsl(var(--art-reward)); border-color: hsl(var(--art-reward) / .45); }
+.discover-strip { min-height: 52px; padding: 6px 10px; }
+/* The card area: the card fills it and the three actions sit under the card, where a thumb reaches. */
+.discover-stage { position: relative; flex: 1 1 0; min-height: 0; width: 100%; max-width: 28rem; margin: 0 auto; }
+.discover-card-slot { position: absolute; inset: 0 0 var(--discover-dock, 104px) 0; touch-action: none; user-select: none; -webkit-user-select: none; }
+.discover-card { display: flex; flex-direction: column; height: 100%; overflow: hidden; border-radius: 26px; }
+.discover-photo { position: relative; flex: 1 1 0; min-height: 0; overflow: hidden; background: hsl(var(--muted)); }
+.discover-photo-shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, rgb(0 0 0 / .82), rgb(0 0 0 / .18) 46%, transparent 64%), linear-gradient(to bottom, rgb(0 0 0 / .35), transparent 22%); }
+.discover-stamp { position: absolute; z-index: 20; display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 16px; font-size: 1.15rem; font-weight: 900; color: #fff; border: 3px solid #fff; pointer-events: none; }
+.discover-stamp svg { width: 26px; height: 26px; }
+.discover-dock { position: absolute; inset: auto 0 0 0; height: var(--discover-dock, 104px); display: flex; align-items: flex-end; justify-content: center; gap: 22px; padding-bottom: 8px; }
+.discover-dock-item { display: flex; flex-direction: column; align-items: center; gap: 9px; min-width: 76px; font-size: .75rem; font-weight: 800; line-height: 1; color: hsl(var(--muted-foreground)); }
+.discover-dock-item[data-main="true"] { color: hsl(var(--kit-text, var(--kit-learn-text))); }
+/* Short phones: a smaller dock keeps the photo a useful size. */
+@media (max-height: 700px) {
+  .discover-stage { --discover-dock: 96px; }
+  .discover-dock { gap: 18px; padding-bottom: 6px; }
+  .discover-dock-item { gap: 7px; }
+  .discover-screen > header img { height: 3.25rem; }
+}
+/* Very short phones (under 620px tall): the bio and reasons give way so the photo and name keep their room. Both are in the full profile. */
+@media (max-height: 620px) { .discover-reason, .discover-bio { display: none; } .discover-strip { min-height: 48px; } }

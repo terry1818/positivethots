@@ -207,7 +207,7 @@ test("the cookie notice waits for sign-in and remembers the answer on the device
 test("Discover's sections fill the phone's width instead of growing to fit their content", () => {
   const discover = readFileSync("src/pages/Index.tsx", "utf8");
   // In the page's flex column, mx-auto without w-full lets a section grow as wide as its content.
-  const sections = discover.match(/className="[^"]*max-w-md md:max-w-2xl lg:max-w-4xl mx-auto[^"]*"/g) ?? [];
+  const sections = (discover.match(/className="[^"]*"/g) ?? []).filter(c => /\bmx-auto\b/.test(c) && /\bmax-w-md\b/.test(c));
   expect(sections.length).toBeGreaterThanOrEqual(4);
   for (const section of sections) expect(section).toMatch(/\bw-full\b|\bcontainer\b/);
 });
@@ -231,4 +231,50 @@ test("switches, checkboxes and radios answer a tap across 44px", () => {
     expect(source).toContain("after:h-[44px]");
     expect(source).toMatch(/after:w-\[44px\]|after:min-w-\[44px\]/);
   }
+});
+
+// Discover (step 2 of the rollout).
+test("Discover fits the phone and keeps its three named actions under the card", () => {
+  const page = readFileSync("src/pages/Index.tsx", "utf8");
+  expect(page).toContain('className="kit-area-discover discover-screen"');
+  expect(page).not.toMatch(/className="h-screen/);
+  expect(light).toMatch(/\.discover-screen \{[^}]*height: 100dvh/);
+  const card = readFileSync("src/components/discovery/SwipeDiscoveryCard.tsx", "utf8");
+  for (const label of ['<span aria-hidden="true">Pass</span>', '"Send a Thot" : "Get Thots"', '<span aria-hidden="true">Connect</span>']) {
+    expect(card).toContain(label);
+  }
+  expect(card).toContain('className="discover-dock"');
+});
+
+test("only a pressed pointer drags a card, and the arrival animation is not on the slot", () => {
+  const card = readFileSync("src/components/discovery/SwipeDiscoveryCard.tsx", "utf8");
+  expect(card).toMatch(/if \(!isTop \|\| !drag\.active\) return;/);
+  expect(card).toContain('className="discover-card-slot"');
+  expect(card).not.toMatch(/discover-card-slot[^\n]*animate-card-enter/);
+  // An upward swipe sends a Thot only when there is one to send.
+  expect(card).toMatch(/if \(hasThot && drag\.y < -THOT_PULL/);
+});
+
+test("Discover never uses another product's words, and describes the platform as for everyone", () => {
+  const files = ["src/pages/Index.tsx", "src/components/MatchModal.tsx", ...readdirSync("src/components/discovery").map(f => `src/components/discovery/${f}`)];
+  for (const file of files) {
+    const source = readFileSync(file, "utf8");
+    // Words a member would read (code names such as onSuperLike have no space and are not matched).
+    expect(source.match(/Super Like|It's a Match|Swipe Right|Swipe Left/g) ?? []).toEqual([]);
+  }
+  const page = readFileSync("src/pages/Index.tsx", "utf8");
+  // How the page describes the platform to search engines and link previews.
+  const descriptions = page.match(/description[=:]\s*"[^"]+"/g) ?? [];
+  expect(descriptions.length).toBeGreaterThanOrEqual(2);
+  for (const description of descriptions) expect(description).not.toMatch(/polyamory|non-monogamy|LGBTQ|dating/i);
+  expect(readFileSync("src/components/MatchModal.tsx", "utf8")).toContain('"You Both Said Yes"');
+});
+
+test("a failed load of Discover has its own state, and the celebration's safety link goes somewhere real", () => {
+  const page = readFileSync("src/pages/Index.tsx", "utf8");
+  expect(page).toContain("We couldn't load Discover.");
+  expect(page).toMatch(/if \(profilesResult\.error \|\| !profilesResult\.data\) \{\s+setLoadError\(true\)/);
+  const modal = readFileSync("src/components/MatchModal.tsx", "utf8");
+  expect(modal).not.toContain("/privacy-policy");
+  expect(readFileSync("src/App.tsx", "utf8")).toContain('path="/resources"');
 });

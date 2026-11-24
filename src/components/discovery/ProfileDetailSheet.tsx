@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Heart, X, Star, Shield, ChevronLeft, MapPin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { ProfilePromptsDisplay } from "@/components/profile/ProfilePrompts";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -167,8 +166,10 @@ export const ProfileDetailSheet = ({
 
             {/* Back button */}
             <button
+              type="button"
               onClick={onClose}
-              className="absolute top-3 left-3 z-20 h-8 w-8 rounded-full bg-black/40 flex items-center justify-center text-white"
+              aria-label="Back to Discover"
+              className="absolute top-2 left-2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-white"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -177,7 +178,7 @@ export const ProfileDetailSheet = ({
             {profile.compatibility_score != null && profile.compatibility_score > 0 && (
               <div className="absolute top-3 right-3 z-20">
                 <Badge className="bg-primary/90 text-primary-foreground text-sm font-bold">
-                  {profile.compatibility_score}% Match
+                  {profile.compatibility_score}% Compatible
                 </Badge>
               </div>
             )}
@@ -293,36 +294,34 @@ export const ProfileDetailSheet = ({
             )}
 
             {/* Extra spacing for sticky footer */}
-            <div className="h-20" />
+            <div className="h-8" />
           </div>
         </div>
 
-        {/* Sticky action bar */}
-        <div className="sticky bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur border-t flex items-center justify-center gap-4">
-          <Button
-            variant="outline"
-            className="h-12 w-12 rounded-full border-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
-            onClick={() => { onPass(profile.id); onClose(); }}
-          >
-            <X className="h-5 w-5" />
-          </Button>
+        {/* The same three actions as under the card, with their names. */}
+        <div className="kit-area-discover sticky bottom-0 left-0 right-0 flex items-end justify-center gap-[22px] border-t bg-background/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur">
+          <div className="discover-dock-item">
+            <button type="button" className="kit-action" data-tone="quiet" aria-label={`Pass on ${displayName}`} onClick={() => { onPass(profile.id); onClose(); }}>
+              <X aria-hidden="true" />
+            </button>
+            <span aria-hidden="true">Pass</span>
+          </div>
 
           {canSuperLike && (
-            <Button
-              variant="outline"
-              className="h-10 w-10 rounded-full border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white"
-              onClick={() => { onSuperLike?.(profile.id); onClose(); }}
-            >
-              <Star className="h-4 w-4" />
-            </Button>
+            <div className="discover-dock-item">
+              <button type="button" className="kit-action" data-tone="reward" aria-label={`Send a Thot to ${displayName}`} onClick={() => { onSuperLike?.(profile.id); onClose(); }}>
+                <Star fill="currentColor" aria-hidden="true" />
+              </button>
+              <span aria-hidden="true">Send a Thot</span>
+            </div>
           )}
 
-          <Button
-            className="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-secondary text-primary-foreground hover:scale-105 transition-transform shadow-lg"
-            onClick={() => { onConnect(profile.id); onClose(); }}
-          >
-            <Heart className="h-6 w-6 fill-current" />
-          </Button>
+          <div className="discover-dock-item" data-main="true">
+            <button type="button" className="kit-action kit-action-lg" aria-label={`Connect with ${displayName}`} onClick={() => { onConnect(profile.id); onClose(); }}>
+              <Heart fill="currentColor" aria-hidden="true" />
+            </button>
+            <span aria-hidden="true">Connect</span>
+          </div>
         </div>
       </DrawerContent>
     </Drawer>

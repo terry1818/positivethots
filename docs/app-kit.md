@@ -37,7 +37,8 @@ tint reaches 4.5:1 on cards in light and dark. Change a colour and that test tel
 | `kit-stat` + `kit-stat-value` + `kit-stat-label` | One number with one label. |
 | `kit-progress` | Filled track: `<span class="kit-progress"><span style="width: 40%"/></span>`. |
 | `kit-pips` | One pip per step: `<i data-done>` and `<i data-next>`. |
-| `kit-chip` | Small pill. `data-tone`: default gold, `area`, `quiet`. |
+| `kit-chip` | Small pill. `data-tone`: default gold, `area`, `quiet`, `correct` (green), `glass` (for on top of a photo). |
+| `kit-action` (`kit-action-lg`) | Round button with a lip, for a row of icon actions. `data-tone`: default area colour, `quiet`, `reward`. `kit-action-count` is the small number on its corner. Always put a text label under it. |
 | `kit-eyebrow`, `kit-text` | Small caps label, and text in the area tint. |
 | `kit-header` | Page header strip in the area colour. |
 | `kit-nav-item` + `kit-nav-pill` | Bottom navigation. Each tab carries its own area class. |
@@ -122,11 +123,41 @@ Until the files have loaded, each sound falls back to the simple version in `sou
 | 0 | Kit | Done |
 | 1 | Bottom nav, empty states, loading tint, welcome-back pop-up, daily spin, Likes and Chat headers | Done |
 | 3 | Profile | Done |
-| 2 | Discover | Not started |
+| 2 | Discover | Done |
 | 4 | Likes and Chat content | Not started |
 | 5 | Onboarding and sign-in | Not started |
 | 6 | Premium, Wallet, Events | Not started |
 | 7 | Settings, Resources, health pages (colour and spacing only) | Not started |
+
+## Discover
+
+`src/pages/Index.tsx`, `kit-area-discover`. The screen (`discover-screen`) is exactly as tall as the
+phone (`100dvh`) and never scrolls: header, one Learn row, the card, three actions, the tab bar.
+
+- **Header** is short on purpose. The Thots chip shows how many are left to send; Boost and Settings
+  are 44px buttons. Incognito is changed in Settings; the ghost appears here only while it is on.
+- **Learn row** (`LearnProgressStrip`): what the next badge unlocks, a pip per tier, how many to go.
+  With no one to show, the full learning card (`CompactProgressBar`) takes its place in the list.
+- **Card** (`SwipeDiscoveryCard`) fills the space left. On the photo: Verified and Boosted top left,
+  compatibility top right, name, pronouns, what they have learned (tier badge from 5 badges, a count
+  before that) and relationship style. Under it: two lines of bio, two reasons, "Full profile".
+  No character art on a member's card.
+- **Actions** (`discover-dock`): Pass, Send a Thot, Connect, each a `kit-action` with its name under
+  it. They sit under the card and do not move with it. Send a Thot shows how many are left, and
+  becomes "Get Thots" when there are none.
+- **Dragging**: right is Connect, left is Pass, straight up (130px) is Send a Thot when there is one
+  to send. A stamp names the action before the card is let go. The card leaves from where it was
+  released; under reduced motion it only fades. A pointer that is hovering, not pressed, is never a
+  drag (`dragRef.active`), and a drag is never also a tap (`draggedRef`).
+- **Mystery Match** (`MysteryMatchCard`) uses the same slot and dock, so Pass is always available.
+  Once revealed, the page shows the ordinary card for that person.
+- **Nobody to show**: the empty state, then the learning card, then "While you wait" rows, the Boost
+  card and the policy footer, all in one scrolling list.
+- **Could not load**: its own state with "Try again". A failed load must never read as "you've seen
+  everyone".
+- **You Both Said Yes** (`MatchModal`): the celebration. Guide art beside the other person's photo,
+  one `kit-cta` ("Say hi to …"), and the safety tips row on a first connection.
+- **Loading**: `PageSkeleton variant="discovery"` has the same frame, so nothing jumps.
 
 ## Thots
 

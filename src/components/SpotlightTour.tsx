@@ -1,5 +1,5 @@
 import { GuideArt } from "@/components/mascot/GuideArt";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
@@ -26,6 +26,8 @@ export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps
   const [transitioning, setTransitioning] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const tooltipRef = useRef<HTMLDivElement>(null);
+  // Measured height of the tip, so it can be kept on screen.
+  const [tipHeight, setTipHeight] = useState(170);
 
   const updateTargetRect = useCallback(() => {
     const step = steps[currentStep];
@@ -88,6 +90,11 @@ export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps
     tooltipRef.current?.focus();
   }, [currentStep]);
 
+  useLayoutEffect(() => {
+    const height = tooltipRef.current?.offsetHeight;
+    if (height && height !== tipHeight) setTipHeight(height);
+  }, [currentStep, targetRect, tipHeight]);
+
   // Auto-advance if user clicks on the spotlighted element
   useEffect(() => {
     const step = steps[currentStep];
@@ -116,6 +123,23 @@ export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps
 
   const isLast = currentStep === steps.length - 1;
   const pos = step.position || "below";
+
+  // Where the tip goes: on the asked-for side of the target if it fits there, else the other side,
+  // else over the bottom of the target. It is never allowed off the screen, so "Next" is always reachable.
+  // As wide as the phone allows, up to 320px, and always 16px clear of both edges.
+  const tipWidth = Math.min(320, window.innerWidth - 32);
+  const tipTop = (() => {
+    if (!targetRect) return 0;
+    const gap = PADDING + 12;
+    const edge = 16;
+    const below = targetRect.bottom + gap;
+    const above = targetRect.top - gap - tipHeight;
+    const fitsBelow = below + tipHeight <= window.innerHeight - edge;
+    const fitsAbove = above >= edge;
+    if (pos === "below" ? fitsBelow : fitsAbove) return pos === "below" ? below : above;
+    if (pos === "below" ? fitsAbove : fitsBelow) return pos === "below" ? above : below;
+    return Math.max(edge, window.innerHeight - edge - tipHeight);
+  })();
 
   return (
     <div
@@ -170,7 +194,7 @@ export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps
       {/* Skip button */}
       <button
         onClick={onComplete}
-        className="absolute top-4 right-4 text-sm text-white/70 hover:text-white z-[101]"
+        className="absolute top-2 right-2 z-[101] min-h-[44px] rounded-lg px-4 text-sm font-bold text-white/85 hover:text-white"
       >
         Skip
       </button>
@@ -183,21 +207,14 @@ export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps
           role="status"
           aria-live="polite"
           className={cn(
-            "absolute z-[101] w-72 bg-card rounded-xl shadow-xl p-4 border border-border transition-opacity duration-150",
+            "absolute z-[101] bg-card rounded-xl shadow-xl p-4 border border-border transition-opacity duration-150",
             transitioning ? "opacity-0" : "opacity-100",
             !prefersReducedMotion && !transitioning && "animate-fade-in"
           )}
           style={{
-            left: Math.max(
-              16,
-              Math.min(
-                targetRect.left + targetRect.width / 2 - 144,
-                window.innerWidth - 288 - 16
-              )
-            ),
-            ...(pos === "below"
-              ? { top: targetRect.bottom + PADDING + 12 }
-              : { bottom: window.innerHeight - targetRect.top + PADDING + 12 }),
+            width: tipWidth,
+            left: Math.max(16, Math.min(targetRect.left + targetRect.width / 2 - tipWidth / 2, window.innerWidth - tipWidth - 16)),
+            top: tipTop,
           }}
         >
           <div className="flex items-center gap-3 mb-2"><GuideArt name="guide-waving" size={48} /><h3 className="font-semibold text-sm">{step.title}</h3></div>
@@ -214,7 +231,7 @@ export const SpotlightTour = ({ steps, onComplete, tourKey }: SpotlightTourProps
                 />
               ))}
             </div>
-            <Button size="sm" onClick={handleNext} className="h-8 text-sm">
+            <Button size="sm" onClick={handleNext} className="min-h-[44px] px-5 text-sm font-bold">
               {isLast ? "Got it!" : "Next"}
             </Button>
           </div>

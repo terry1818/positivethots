@@ -1,15 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { BookOpen, ChevronRight, CheckCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { TierUnlock } from "@/hooks/useFeatureUnlocks";
-
-const tierColors: Record<string, string> = {
-  foundation: "bg-blue-500",
-  sexual_health: "bg-emerald-500",
-  identity: "bg-violet-500",
-  relationships: "bg-rose-500",
-  advanced: "bg-amber-500",
-};
 
 const tierLabels: Record<string, string> = {
   foundation: "Foundation",
@@ -19,93 +10,107 @@ const tierLabels: Record<string, string> = {
   advanced: "Advanced",
 };
 
+const nextStep = (tiers: TierUnlock[]) => {
+  const nextTier = tiers.find((t) => !t.isComplete);
+  const nextFeature = nextTier?.features.find((f) => !f.isUnlocked);
+  const remaining = nextTier ? nextTier.totalModules - nextTier.earnedModules : 0;
+  return { nextTier, nextFeature, remaining };
+};
+
+/** One pip per tier: gold when finished, pulsing in the Learn colour when it is the one in progress. */
+const TierPips = ({ tiers, className }: { tiers: TierUnlock[]; className?: string }) => {
+  const { nextTier } = nextStep(tiers);
+  const done = tiers.filter((t) => t.isComplete).length;
+  return (
+    <span className={`kit-pips ${className ?? ""}`} role="img" aria-label={`${done} of ${tiers.length} tiers complete`}>
+      {tiers.map((tier) => (
+        <i key={tier.tier} data-done={tier.isComplete} data-next={tier.tier === nextTier?.tier} />
+      ))}
+    </span>
+  );
+};
+
+/**
+ * Learning progress in one row, for Discover when someone is on the card. It says what the next
+ * badge unlocks and how many are left, and opens Learn.
+ */
+export const LearnProgressStrip = ({ tiers }: { tiers: TierUnlock[] }) => {
+  const navigate = useNavigate();
+  const { nextTier, nextFeature, remaining } = nextStep(tiers);
+  const title = nextTier && nextFeature ? `Next: ${nextFeature.label}` : nextTier ? `Next: ${tierLabels[nextTier.tier] || nextTier.label} tier` : "Every feature unlocked";
+
+  return (
+    <button
+      type="button"
+      onClick={() => navigate("/learn")}
+      className="kit-area-learn kit-row discover-strip"
+      aria-label={nextTier ? `${title}. ${remaining} ${remaining === 1 ? "badge" : "badges"} to go. Open Learn.` : "Every feature unlocked. Open Learn."}
+    >
+      <span className="kit-coin" data-tone={nextTier ? "area" : "correct"}>
+        {nextTier ? <BookOpen aria-hidden="true" /> : <CheckCircle aria-hidden="true" />}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-sm font-bold leading-tight">{title}</span>
+        <span className="mt-1.5 flex items-center gap-2">
+          <TierPips tiers={tiers} className="flex-1" />
+          {nextTier && <span className="kit-text text-xs font-extrabold leading-none tabular-nums">{remaining} to go</span>}
+        </span>
+      </span>
+      <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+    </button>
+  );
+};
+
 interface CompactProgressBarProps {
   tiers: TierUnlock[];
   badgeCount: number;
   connectionCount: number;
 }
 
+/** The full learning card: three numbers, the next unlock, and a pip per tier. Opens Learn. */
 export const CompactProgressBar = ({ tiers, badgeCount, connectionCount }: CompactProgressBarProps) => {
   const navigate = useNavigate();
-
   const completedTiers = tiers.filter((t) => t.isComplete).length;
-  const nextTier = tiers.find((t) => !t.isComplete);
-  const nextFeature = nextTier?.features.find((f) => !f.isUnlocked);
-  const remaining = nextTier ? nextTier.totalModules - nextTier.earnedModules : 0;
+  const { nextTier, nextFeature, remaining } = nextStep(tiers);
 
   return (
     <button
+      type="button"
       onClick={() => navigate("/learn")}
-      className="w-full rounded-xl border border-border bg-card p-3.5 text-left transition-colors hover:bg-accent/30 active:scale-[0.99]"
+      className="kit-area-learn kit-card block w-full p-3.5 text-left transition-[translate] duration-100 active:translate-y-[3px] motion-reduce:transition-none motion-reduce:active:translate-y-0"
     >
-      {/* Row 1: Stats + CTA */}
-      {/* The stats share the row evenly and the call to action shortens on narrow phones, so the row
-          always fits: "Keep Learning" from 420px, "Learn" from 360px, the icon alone below that. */}
-      <div className="flex items-center gap-2 mb-3">
-        <div className="flex items-center justify-between gap-2 flex-1 min-w-0">
-          <StatPill value={badgeCount} label="Badges" className="text-primary" />
-          <StatPill value={`${completedTiers}/${tiers.length}`} label="Tiers" className="text-muted-foreground" />
-          <StatPill value={connectionCount} label="Connects" className="text-emerald-500" />
-        </div>
-        <span className="flex items-center gap-1 bg-primary/15 text-primary rounded-full px-2.5 py-1.5 text-xs font-semibold shrink-0">
-          <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
-          <span className="hidden min-[420px]:inline">Keep Learning</span>
-          <span className="hidden min-[360px]:inline min-[420px]:hidden">Learn</span>
-          <span className="sr-only min-[360px]:hidden">Keep learning</span>
-          <ChevronRight className="h-3 w-3" aria-hidden="true" />
+      <div className="grid grid-cols-3 gap-2">
+        <Stat value={badgeCount} label="Badges" />
+        <Stat value={`${completedTiers}/${tiers.length}`} label="Tiers" />
+        <Stat value={connectionCount} label="Connects" />
+      </div>
+
+      <div className="mt-3 flex items-center gap-3">
+        <span className="kit-coin" data-tone={nextTier ? "area" : "correct"}>
+          {nextTier ? <BookOpen aria-hidden="true" /> : <CheckCircle aria-hidden="true" />}
         </span>
-      </div>
-
-      {/* Row 2: Next unlock */}
-      {nextTier && nextFeature ? (
-        <div className="flex items-center gap-2.5 bg-primary/5 border border-primary/15 rounded-lg px-3 py-2 mb-3">
-          <span className="text-base leading-none shrink-0">{nextFeature.icon}</span>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-foreground truncate">
-              Next: {nextFeature.label}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {tierLabels[nextTier.tier] || nextTier.label} tier
-            </p>
-          </div>
-          <span className="bg-primary text-primary-foreground rounded-full px-2.5 py-0.5 text-xs font-bold shrink-0">
-            {remaining} to go
+        <span className="min-w-0 flex-1">
+          <span className="block font-bold leading-tight [text-wrap:balance]">
+            {nextTier && nextFeature ? `Next: ${nextFeature.label}` : nextTier ? "Keep learning" : "Every feature unlocked"}
           </span>
-        </div>
-      ) : tiers.length > 0 ? (
-        <p className="text-xs text-emerald-500 flex items-center gap-1 mb-3">
-          <CheckCircle className="h-3.5 w-3.5" /> All features unlocked
-        </p>
-      ) : null}
-
-      {/* Row 3: Segmented tier progress */}
-      <div className="flex gap-1">
-        {tiers.map((tier) => {
-          const pct = tier.totalModules > 0 ? (tier.earnedModules / tier.totalModules) * 100 : 0;
-          return (
-            <div key={tier.tier} className="flex-1 min-w-0 flex flex-col items-center gap-1">
-              <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                <div
-                  className={cn("h-full rounded-full transition-[width] duration-700 motion-reduce:transition-none", tierColors[tier.tier] || "bg-primary")}
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
-              {/* Five names fit under the bars from 390px up. Narrower phones show the bars alone;
-                  the "Next" row above already names the tier in progress. */}
-              <span className="sr-only min-[390px]:not-sr-only min-[390px]:block text-xs text-muted-foreground leading-none whitespace-nowrap">
-                {tierLabels[tier.tier] || tier.label.split(" ")[0]}
-              </span>
-            </div>
-          );
-        })}
+          {nextTier && (
+            <span className="block text-sm text-muted-foreground">{tierLabels[nextTier.tier] || nextTier.label} tier</span>
+          )}
+        </span>
+        {nextTier && <span className="kit-chip" data-tone="area">{remaining} to go</span>}
       </div>
+
+      <TierPips tiers={tiers} className="mt-3" />
+      <span className="kit-text mt-3 flex items-center justify-center gap-1 text-sm font-extrabold">
+        Keep learning <ChevronRight className="h-4 w-4" aria-hidden="true" />
+      </span>
     </button>
   );
 };
 
-const StatPill = ({ value, label, className }: { value: string | number; label: string; className?: string }) => (
-  <div className="flex flex-col items-center min-w-0">
-    <span className={cn("text-base font-bold leading-none tabular-nums", className)}>{value}</span>
-    <span className="text-xs text-muted-foreground mt-1 leading-none">{label}</span>
-  </div>
+const Stat = ({ value, label }: { value: string | number; label: string }) => (
+  <span className="flex min-w-0 flex-col items-center rounded-2xl bg-muted/60 px-1 py-2">
+    <span className="kit-stat-value">{value}</span>
+    <span className="kit-stat-label">{label}</span>
+  </span>
 );

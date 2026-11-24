@@ -1,11 +1,8 @@
 import { useState, useCallback, memo } from "react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, X, Star, Sparkles, Lock } from "lucide-react";
+import { X, Sparkles, Lock, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
-import { VerifiedBadgeOverlay } from "@/components/VerifiedBadgeOverlay";
-import { EducationTierBadge } from "@/components/EducationTierBadge";
 
 interface MysteryProfile {
   id: string;
@@ -14,192 +11,94 @@ interface MysteryProfile {
   profile_image: string | null;
   photos: string[] | null;
   compatibility_score?: number;
-  badge_count?: number;
-  is_verified?: boolean;
-  bio: string | null;
-  interests: string[] | null;
-  location: string | null;
   [key: string]: any;
 }
 
 interface MysteryMatchCardProps {
   profile: MysteryProfile;
+  /** The member has a reveal left today (or a bonus reveal from the daily spin). */
   canReveal: boolean;
+  /** Spends a reveal. Resolves true when it was spent. */
   onReveal: () => Promise<boolean>;
-  onConnect: (id: string) => void;
+  /** Called once the photo has come into focus: the page then shows the ordinary card for this person. */
+  onRevealed: (id: string) => void;
   onPass: (id: string) => void;
-  onSuperLike: (id: string) => void;
-  canSuperLike: boolean;
-  superLikeBalance: number;
+  /** No reveal left: explain how to get more. */
   onUpgrade: () => void;
 }
 
-export const MysteryMatchCard = memo(({
-  profile,
-  canReveal,
-  onReveal,
-  onConnect,
-  onPass,
-  onSuperLike,
-  canSuperLike,
-  superLikeBalance,
-  onUpgrade,
-}: MysteryMatchCardProps) => {
-  const [revealed, setRevealed] = useState(false);
+/**
+ * A high-compatibility person shown blurred until the member spends a reveal. It sits in the same
+ * slot as an ordinary card and has the same dock under it, so Pass is always one tap away and a
+ * member with no reveals left is never stuck on it.
+ */
+export const MysteryMatchCard = memo(({ profile, canReveal, onReveal, onRevealed, onPass, onUpgrade }: MysteryMatchCardProps) => {
   const [revealing, setRevealing] = useState(false);
   const { playBadgeUnlock } = useSoundEffects();
 
-  const imageUrl = profile.profile_image || (profile.photos?.[0]) || "/placeholder.svg";
+  const imageUrl = profile.profile_image || profile.photos?.[0] || "/placeholder.svg";
   const compatibility = profile.compatibility_score || 0;
 
-  const handleTapReveal = useCallback(async () => {
-    if (revealed || revealing) return;
+  const handleReveal = useCallback(async () => {
+    if (revealing) return;
     if (!canReveal) {
       onUpgrade();
       return;
     }
     setRevealing(true);
-    const success = await onReveal();
-    if (success) {
-      playBadgeUnlock();
-      // Animate blur away
-      setTimeout(() => {
-        setRevealed(true);
-        setRevealing(false);
-      }, 800);
-    } else {
+    const spent = await onReveal();
+    if (!spent) {
       setRevealing(false);
+      return;
     }
-  }, [revealed, revealing, canReveal, onReveal, playBadgeUnlock, onUpgrade]);
+    playBadgeUnlock();
+    // Let the blur clear, then hand over to the ordinary card.
+    setTimeout(() => onRevealed(profile.id), 800);
+  }, [revealing, canReveal, onReveal, onRevealed, onUpgrade, playBadgeUnlock, profile.id]);
 
-  // Pre-reveal: mystery card
-  if (!revealed && !revealing) {
-    return (
-      <Card
-        className="absolute inset-0 overflow-hidden cursor-pointer border-2 border-transparent"
-        style={{
-          borderImage: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary))) 1",
-        }}
-        onClick={handleTapReveal}
-      >
-        <div className="relative h-full w-full">
-          {/* Blurred image */}
-          <img
-            src={imageUrl}
-            alt="Mystery Match"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ filter: "blur(20px)", transform: "scale(1.1)" }}
-            loading="lazy"
-            decoding="async"
-          />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-primary/20" />
+  return (
+    <>
+      <div className="discover-card-slot" style={{ zIndex: 30 }} data-walkthrough="discovery-card" data-tour="discovery-card">
+        <article className="kit-card discover-card" aria-label="Mystery Match">
+          <div className="discover-photo">
+            <img
+              src={imageUrl}
+              alt=""
+              className={cn("absolute inset-0 h-full w-full object-cover", "transition-[filter,transform] duration-700 ease-out motion-reduce:transition-none")}
+              style={revealing ? { filter: "blur(0px)", transform: "scale(1)" } : { filter: "blur(22px)", transform: "scale(1.15)" }}
+              decoding="async"
+            />
+            <div className="absolute inset-0 bg-black/45" style={{ opacity: revealing ? 0 : 1, transition: "opacity .7s ease-out" }} />
 
-          {/* Content */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-            <Sparkles className="h-12 w-12 text-primary mb-3 animate-pulse" />
-            <h3 className="text-2xl font-bold text-foreground mb-1">Mystery Match 💜</h3>
-            <div className="flex items-center gap-1.5 mb-4">
-              <span className="text-lg font-semibold text-primary">{compatibility}%</span>
-              <span className="text-sm text-muted-foreground">compatible</span>
-            </div>
-            {canReveal ? (
-              <Button variant="outline" className="gap-2 border-primary/50 text-primary hover:bg-primary/10">
-                <Sparkles className="h-4 w-4" /> Tap to Reveal
-              </Button>
-            ) : (
-              <Button variant="outline" className="gap-2 border-primary/50 text-primary hover:bg-primary/10">
-                <Lock className="h-4 w-4" /> Upgrade to Reveal
-              </Button>
+            {!revealing && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center text-white">
+                <span className="kit-coin kit-coin-lg kit-coin-round kit-pop" data-tone="reward"><Sparkles aria-hidden="true" /></span>
+                <h2 className="text-2xl font-extrabold leading-tight">Mystery Match</h2>
+                {compatibility > 0 && <span className="kit-chip" data-tone="area">{compatibility}% Compatible</span>}
+                <p className="max-w-[16rem] text-sm text-white/90 [text-wrap:balance]">
+                  {canReveal
+                    ? "Someone you have a lot in common with. Reveal them to see who it is."
+                    : "You've used today's reveals. Pass for now, or get more."}
+                </p>
+                <Button className="kit-cta mt-1 w-full max-w-[16rem] gap-2" onClick={handleReveal}>
+                  {canReveal ? <Eye className="h-5 w-5" aria-hidden="true" /> : <Lock className="h-5 w-5" aria-hidden="true" />}
+                  {canReveal ? "Reveal" : "Get more reveals"}
+                </Button>
+              </div>
             )}
           </div>
-        </div>
-      </Card>
-    );
-  }
+        </article>
+      </div>
 
-  // Revealing animation
-  if (revealing && !revealed) {
-    return (
-      <Card className="absolute inset-0 overflow-hidden border-2 border-primary/30">
-        <div className="relative h-full w-full">
-          <img
-            src={imageUrl}
-            alt="Revealing..."
-            className="absolute inset-0 w-full h-full object-cover transition-[filter] duration-[800ms] ease-out"
-            style={{ filter: "blur(0px)", transform: "scale(1.0)" }}
-            decoding="async"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-4 animate-fade-in" style={{ animationDelay: "400ms", animationFillMode: "both" }}>
-            <h3 className="text-xl font-bold text-foreground">{profile.name}, {profile.age}</h3>
-            {profile.location && <p className="text-sm text-muted-foreground">{profile.location}</p>}
-          </div>
-        </div>
-      </Card>
-    );
-  }
-
-  // Revealed: acts like a normal card
-  return (
-    <Card className="absolute inset-0 overflow-hidden border-2 border-primary/20">
-      <div className="relative h-full w-full">
-        <img
-          src={imageUrl}
-          alt={profile.name}
-          className="absolute inset-0 w-full h-full object-cover"
-          width={400}
-          height={500}
-          decoding="async"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
-
-        {/* Badges */}
-        <div className="absolute top-3 right-3 flex flex-col gap-1.5">
-          {profile.is_verified && <VerifiedBadgeOverlay isVerified={true} size="md" />}
-          {(profile.badge_count || 0) > 0 && <EducationTierBadge badgeCount={profile.badge_count || 0} size="sm" />}
-        </div>
-
-        {/* Info */}
-        <div className="absolute bottom-0 left-0 right-0 p-4">
-          <h3 className="text-xl font-bold text-foreground">{profile.name}, {profile.age}</h3>
-          {profile.bio && <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{profile.bio}</p>}
-          {compatibility >= 50 && (
-            <span className="inline-block mt-1.5 text-sm font-semibold text-primary bg-primary/10 rounded-full px-2 py-0.5">
-              {compatibility}% Match
-            </span>
-          )}
-
-          {/* Action buttons */}
-          <div className="flex justify-center gap-3 mt-3">
-            <Button
-              size="icon"
-              variant="outline"
-              className="h-12 w-12 rounded-full border-destructive/30 hover:bg-destructive/10"
-              onClick={() => onPass(profile.id)}
-            >
-              <X className="h-5 w-5 text-destructive" />
-            </Button>
-            <Button
-              size="icon"
-              variant="outline"
-              className="h-12 w-12 rounded-full border-primary/30 hover:bg-primary/10"
-              onClick={() => onSuperLike(profile.id)}
-              disabled={!canSuperLike && superLikeBalance <= 0}
-            >
-              <Star className="h-5 w-5 text-primary" />
-            </Button>
-            <Button
-              size="icon"
-              className="h-12 w-12 rounded-full"
-              onClick={() => onConnect(profile.id)}
-            >
-              <Heart className="h-5 w-5" />
-            </Button>
-          </div>
+      <div className="discover-dock" data-walkthrough="action-buttons" data-tour="action-buttons">
+        <div className="discover-dock-item">
+          <button type="button" className="kit-action" data-tone="quiet" onClick={() => onPass(profile.id)} aria-label="Pass on this Mystery Match" disabled={revealing}>
+            <X aria-hidden="true" />
+          </button>
+          <span aria-hidden="true">Pass</span>
         </div>
       </div>
-    </Card>
+    </>
   );
 }, (prev, next) => prev.profile.id === next.profile.id && prev.canReveal === next.canReveal);
 

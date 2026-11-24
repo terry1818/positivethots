@@ -1,11 +1,10 @@
 import { GuideArt } from "@/components/mascot/GuideArt";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Heart, Shield } from "lucide-react";
-import { useEffect, useState, useMemo, useRef } from "react";
+import { ChevronRight, MessageCircle, Shield } from "lucide-react";
+import { useEffect, useState, useMemo, useRef, type CSSProperties } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useNavigate } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { haptic } from "@/lib/haptics";
 
@@ -88,147 +87,96 @@ export const MatchModal = ({
     : "You Both Said Yes";
 
   const subText = celebrationType === 'milestone'
-    ? `Your ${matchCount}th match! 🎉`
+    ? `That's connection number ${matchCount}. You and ${firstName} both said yes.`
     : `You and ${firstName} want to connect. Say hi!`;
-
-  const gradientClass = celebrationType === 'thot_match'
-    ? "from-primary via-pink-500 to-secondary"
-    : celebrationType === 'high_compatibility'
-    ? "from-amber-500 via-primary to-secondary"
-    : celebrationType === 'milestone'
-    ? "from-primary via-secondary to-pink-500"
-    : "from-primary to-secondary";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className={cn("sm:max-w-md border-0 p-0 overflow-hidden bg-gradient-to-br", gradientClass)}
-        aria-live="assertive"
-        aria-label={`Match celebration: You and ${user.name} connected`}
+        className="kit-area-discover max-h-[92dvh] overflow-y-auto border-0 bg-card p-0 sm:max-w-md"
+        aria-describedby="match-modal-description"
       >
-        {/* Confetti or reduced-motion fallback */}
-        {!prefersReducedMotion ? (
+        {/* Confetti. Skipped entirely under reduced motion. */}
+        {!prefersReducedMotion && (
           <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden" aria-hidden="true">
             {confetti.map((p) => (
               <span
                 key={p.id}
                 className="absolute text-xl animate-confetti-heart"
-                style={{
-                  left: `${p.x}%`,
-                  top: "-20px",
-                  animationDelay: `${p.delay}s`,
-                  animationDuration: `${p.duration}s`,
-                }}
+                style={{ left: `${p.x}%`, top: "-20px", animationDelay: `${p.delay}s`, animationDuration: `${p.duration}s` }}
               >
                 {p.emoji}
               </span>
             ))}
           </div>
-        ) : null}
+        )}
 
-        <div className="relative p-8 text-center">
-          {/* Animated heart background */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-10" aria-hidden="true">
-            <Heart className={cn("h-64 w-64", !prefersReducedMotion && "animate-pulse")} />
+        {/* The moment: the guide celebrating beside the person who said yes. */}
+        <div className="kit-panel !rounded-b-none !rounded-t-lg !border-0 h-[200px]">
+          <div className="flex items-end justify-center gap-3 pb-3">
+            <GuideArt name="guide-high-five" size={132} />
+            <img
+              src={imageUrl}
+              alt={user.name}
+              className={cn("mb-3 h-28 w-28 rounded-full border-4 border-white object-cover shadow-xl", !prefersReducedMotion && "kit-pop")}
+            />
           </div>
+        </div>
 
-          <div className="relative z-10">
-            <div className="mb-6">
-<div className="flex justify-center mb-4"><GuideArt name="guide-high-five" size={150} /></div>
-              <h2
-                className={cn("text-3xl font-bold text-white mb-2", !prefersReducedMotion && "animate-fade-in")}
-                style={!prefersReducedMotion ? { animationDelay: "0.15s", animationFillMode: "both" } : undefined}
-              >
-                {headlineText}
-              </h2>
-              <p
-                className={cn("text-white/90 text-lg", !prefersReducedMotion && "animate-fade-in")}
-                style={!prefersReducedMotion ? { animationDelay: "0.3s", animationFillMode: "both" } : undefined}
-              >
-                {subText}
-              </p>
+        <div className="px-6 pb-6 pt-5 text-center">
+          <DialogTitle className={cn("text-3xl font-extrabold leading-tight [text-wrap:balance]", !prefersReducedMotion && "kit-rise")}>
+            {headlineText}
+          </DialogTitle>
+          <DialogDescription
+            id="match-modal-description"
+            className={cn("mt-2 text-base text-muted-foreground [text-wrap:pretty]", !prefersReducedMotion && "kit-rise")}
+            style={{ "--i": 1 } as CSSProperties}
+          >
+            {subText}
+          </DialogDescription>
 
-              {/* Compatibility badge for high_compatibility */}
-              {celebrationType === 'high_compatibility' && compatibilityScore > 0 && (
-                <Badge className="mt-3 bg-white/20 text-white border-white/30 text-sm px-3 py-1">
-                  ⭐ {compatibilityScore}% Compatible
-                </Badge>
-              )}
-
-              {/* Thot match extra flair */}
-              {celebrationType === 'thot_match' && (
-                <p
-                  className={cn("text-white/80 text-sm mt-2", !prefersReducedMotion && "animate-fade-in")}
-                  style={!prefersReducedMotion ? { animationDelay: "0.45s", animationFillMode: "both" } : undefined}
-                >
-                  You Both Said Yes 💜
-                </p>
-              )}
-
-              {/* Brand tagline */}
-              <p
-                className={cn("text-white/60 text-sm mt-3", !prefersReducedMotion && "animate-fade-in")}
-                style={{ fontFamily: "Inter, system-ui, sans-serif", ...(prefersReducedMotion ? {} : { animationDelay: "0.5s", animationFillMode: "both" }) }}
-              >
-                Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup> — you both said yes.
-              </p>
+          {(celebrationType === 'high_compatibility' && compatibilityScore > 0) || celebrationType === 'thot_match' ? (
+            <div className="mt-3 flex flex-wrap justify-center gap-2">
+              {celebrationType === 'high_compatibility' && <span className="kit-chip" data-tone="area">{compatibilityScore}% Compatible</span>}
+              {celebrationType === 'thot_match' && <span className="kit-chip">You Both Said Yes</span>}
             </div>
+          ) : null}
 
-            <div className="flex justify-center mb-6">
-              <div className={cn(!prefersReducedMotion && "animate-match-slide-right")}>
-                <img
-                  src={imageUrl}
-                  alt={user.name}
-                  className={cn("h-32 w-32 rounded-full object-cover border-4 border-white shadow-xl", !prefersReducedMotion && "animate-glow-ring")}
-                />
-              </div>
-            </div>
-
-            <div
-              className={cn("flex flex-col gap-3", !prefersReducedMotion && "animate-stagger-fade")}
-              style={!prefersReducedMotion ? { animationDelay: "0.4s", animationFillMode: "both" } : undefined}
+          <div className={cn("mt-6 flex flex-col gap-2", !prefersReducedMotion && "kit-rise")} style={{ "--i": 2 } as CSSProperties}>
+            <Button
+              ref={ctaRef}
+              className="kit-cta w-full gap-2"
+              onClick={() => {
+                onClose();
+                onSendMessage();
+              }}
             >
-              <Button
-                ref={ctaRef}
-                size="lg"
-                className="w-full h-12 bg-white text-primary hover:bg-white/90 font-semibold rounded-xl"
-                onClick={() => {
-                  onClose();
-                  onSendMessage();
-                }}
-              >
-                Send a Message
-              </Button>
-              <Button
-                size="lg"
-                variant="ghost"
-                className="w-full h-10 text-white hover:bg-white/20 text-sm"
-                onClick={onClose}
-              >
-                Keep Browsing
-              </Button>
-
-              {/* First-match safety prompt */}
-              {isFirstMatch && (
-                <div className="mt-3 bg-white/10 rounded-lg p-3 text-left">
-                  <div className="flex items-start gap-2">
-                    <Shield className="h-4 w-4 text-white mt-0.5 shrink-0" />
-                    <div>
-                      <p className="text-white/90 text-sm">
-                        Meeting someone new? Check out our safety tips before your first date.
-                      </p>
-                      <button
-                        className="text-white underline text-sm mt-1 hover:text-white/80"
-                        onClick={() => { onClose(); navigate("/privacy-policy"); }}
-                      >
-                        View Safety Tips →
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+              <MessageCircle className="h-5 w-5" aria-hidden="true" /> Say hi to {firstName}
+            </Button>
+            <Button variant="ghost" className="min-h-[44px] w-full font-bold text-muted-foreground" onClick={onClose}>
+              Keep browsing
+            </Button>
           </div>
+
+          {/* First connection: where the safety guidance lives. */}
+          {isFirstMatch && (
+            <button
+              type="button"
+              className="kit-row mt-4"
+              onClick={() => { onClose(); navigate("/resources?tab=advocacy"); }}
+            >
+              <span className="kit-coin" data-tone="urgent"><Shield aria-hidden="true" /></span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-bold leading-tight">Meeting someone new?</span>
+                <span className="block text-sm text-muted-foreground">Read the safety tips before you meet in person.</span>
+              </span>
+              <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+            </button>
+          )}
+
+          <p className="mt-5 text-xs text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+            Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup>
+          </p>
         </div>
       </DialogContent>
     </Dialog>

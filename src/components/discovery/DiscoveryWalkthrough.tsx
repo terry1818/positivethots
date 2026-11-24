@@ -4,8 +4,8 @@ import { useTutorialState } from "@/hooks/useTutorialState";
 const STEPS: TourStep[] = [
   {
     target: "discovery-card",
-    title: "Your first match suggestion!",
-    description: "Tap to see their full profile.",
+    title: "Here's someone to meet",
+    description: "Tap the card to see their full profile.",
     position: "below",
   },
   {
@@ -23,7 +23,7 @@ const STEPS: TourStep[] = [
   {
     target: "bottom-nav",
     title: "Explore the app",
-    description: "Check your Likes, Learn modules, Messages, and Profile here. Have fun! 💜",
+    description: "Likes, Learn, Chat and your Profile are down here. Have fun! 💜",
     position: "above",
   },
 ];
