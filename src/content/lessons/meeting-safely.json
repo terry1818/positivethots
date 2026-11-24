@@ -1,0 +1,226 @@
+{
+ "a17c16fd-6a1e-5259-9692-b6b167f63bc5": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Why a Little Checking Helps",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "Most people are who they say they are. A few quick checks protect you from the few who are not."
+   },
+   {
+    "heading": "Make Sure They Are Real",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "A short video call is the quickest way to know the person matches their photos."
+   },
+   {
+    "heading": "Warning Signs in Messages",
+    "art": "guide-thinking-b",
+    "alt": "",
+    "plain": "Rushing you, refusing video, or any talk of money are reasons to slow down or stop."
+   },
+   {
+    "heading": "Trust Your Gut",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "You do not need proof to say no. A bad feeling is enough of a reason."
+   }
+  ],
+  "checks": [
+   {
+    "id": "a17c16fd-1",
+    "after": "Warning Signs in Messages",
+    "prompt": "Your new connection won't video call but asks for a loan for a plane ticket to meet you. What fits best?",
+    "options": [
+     "Send a small amount to show good faith",
+     "Send it if they promise to pay you back",
+     "Stop and don't send money; this matches a common scam"
+    ],
+    "answer": 2,
+    "explanation": "Refusing video and then asking for money is the classic pattern of a romance scam. Do not send money to someone you have not met."
+   },
+   {
+    "id": "a17c16fd-2",
+    "after": "Trust Your Gut",
+    "prompt": "You feel uneasy about someone but can't say why. What does this lesson suggest?",
+    "options": [
+     "Treat the feeling as a reason to slow down or stop",
+     "Ignore it unless you can prove something is wrong",
+     "Meet anyway so you don't seem rude"
+    ],
+    "answer": 0,
+    "explanation": "Your unease is information. You can slow down or step away without proving anything."
+   }
+  ],
+  "takeaway": "A little checking before you meet keeps the fun part fun."
+ },
+ "5b12fe43-d858-52bc-80c5-13a7ddc657e9": {
+  "hero": {
+   "art": "guide-story-chat",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Pick a Public Place",
+    "art": "guide-waving",
+    "alt": "",
+    "plain": "Meet somewhere busy, like a café or a park in daytime, not at anyone's home."
+   },
+   {
+    "heading": "Get There and Back on Your Own",
+    "art": "guide-practice-dumbbell",
+    "alt": "",
+    "plain": "Use your own transport so you can leave whenever you want."
+   },
+   {
+    "heading": "Tell a Friend the Plan",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "Share who, where and when with someone you trust, and agree a time to check in."
+   },
+   {
+    "heading": "Keep Some Things Private for Now",
+    "art": "guide-thinking-c",
+    "alt": "",
+    "plain": "Your home address, workplace and money details can wait until trust is built."
+   }
+  ],
+  "checks": [
+   {
+    "id": "5b12fe43-1",
+    "after": "Tell a Friend the Plan",
+    "prompt": "Which plan keeps you most in control on a first meeting?",
+    "options": [
+     "They pick you up from home so you don't have to drive",
+     "You meet at their place because it's quieter",
+     "You meet at a café, travel there yourself, and a friend knows the plan"
+    ],
+    "answer": 2,
+    "explanation": "Your own transport, a public place and a friend who knows the plan mean you can leave at any time and someone knows where you are."
+   }
+  ],
+  "takeaway": "Public place, your own way there and back, and a friend who knows the plan."
+ },
+ "7eb432ff-8164-58ce-8f55-3b97abf0b789": {
+  "hero": {
+   "art": "guide-high-five",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Your Drink, Your Pace",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "Keep your drink in sight and drink at a pace that keeps you clear-headed."
+   },
+   {
+    "heading": "Check In With Yourself",
+    "art": "guide-meditate",
+    "alt": "",
+    "plain": "Notice how you feel during the meeting, not just how they feel about you."
+   },
+   {
+    "heading": "It Is OK to Leave",
+    "art": "guide-waving-b",
+    "alt": "",
+    "plain": "You never owe anyone more of your time. A short, polite line is enough."
+   },
+   {
+    "heading": "Signs of Pressure",
+    "art": "guide-thinking-b",
+    "alt": "",
+    "plain": "Pushing past a no, guilt trips and rushing you somewhere private are signs to leave."
+   }
+  ],
+  "checks": [
+   {
+    "id": "7eb432ff-1",
+    "after": "It Is OK to Leave",
+    "prompt": "Halfway through a coffee, Sam feels pressured and wants to go. What should Sam do?",
+    "options": [
+     "Say a short goodbye and leave; no big reason is needed",
+     "Stay until the end so it isn't awkward",
+     "Agree to go somewhere else to smooth things over"
+    ],
+    "answer": 0,
+    "explanation": "You never owe anyone more time. A short, polite goodbye is enough."
+   },
+   {
+    "id": "7eb432ff-2",
+    "after": "Signs of Pressure",
+    "prompt": "Your date says \"I came all this way\" when you say you'd like to end the evening. What is this?",
+    "options": [
+     "A fair reason to stay longer",
+     "A guilt trip, which is a sign of pressure",
+     "A normal part of flirting"
+    ],
+    "answer": 1,
+    "explanation": "Using guilt to get you to stay is a form of pressure. You can still leave."
+   }
+  ],
+  "takeaway": "You can leave at any point, for any reason."
+ },
+ "5a1c071d-b382-5f16-b6ef-d5e322e619b0": {
+  "hero": {
+   "art": "guide-encourage",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Check In With Your Friend",
+    "art": "guide-story-chat-c",
+    "alt": "",
+    "plain": "Message your friend as agreed so they know you are safe."
+   },
+   {
+    "heading": "Be Honest About What's Next",
+    "art": "guide-high-five",
+    "alt": "",
+    "plain": "Say whether you'd like to meet again. A kind, clear no is better than silence."
+   },
+   {
+    "heading": "Block and Report",
+    "art": "guide-encourage-c",
+    "alt": "",
+    "plain": "If someone makes you feel unsafe, block them and report them so we can protect others."
+   },
+   {
+    "heading": "If Something Happened",
+    "art": "guide-meditate-b",
+    "alt": "",
+    "plain": "What happened is not your fault. Free, private help is available any time."
+   }
+  ],
+  "checks": [
+   {
+    "id": "5a1c071d-1",
+    "after": "Be Honest About What's Next",
+    "prompt": "You don't want to see someone again. Which is the kindest clear option?",
+    "options": [
+     "Stop replying and hope they get the message",
+     "Keep chatting so they don't feel bad",
+     "Send a short, polite message saying you're not interested"
+    ],
+    "answer": 2,
+    "explanation": "A short, honest message is clearer and kinder than silence, and you do not owe a long explanation."
+   },
+   {
+    "id": "5a1c071d-2",
+    "after": "If Something Happened",
+    "prompt": "Someone pressured Priya on a date. What does this lesson say?",
+    "options": [
+     "It was partly her fault for meeting them",
+     "It is not her fault, and free, confidential help is available",
+     "She should wait to see if it happens again before telling anyone"
+    ],
+    "answer": 1,
+    "explanation": "Pressure or harm is the responsibility of the person who did it. Support is available any time."
+   }
+  ],
+  "takeaway": "Check in, be honest, and use Block and Report when you need them."
+ }
+}
