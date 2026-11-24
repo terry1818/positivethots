@@ -20,7 +20,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2, MapPin, Lock, Gift, Copy, Users, Check, Ticket, Send, UserCog, X, BookOpen, Volume2, Vibrate, RefreshCw, Compass } from "lucide-react";
+import { ChevronLeft, Sun, Moon, Monitor, KeyRound, Download, Trash2, FileText, Shield, ExternalLink, Crown, Loader2, MapPin, Lock, Gift, Copy, Users, Check, Ticket, Send, UserCog, X, BookOpen, Volume2, Vibrate, RefreshCw, Compass, MessageSquareHeart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
@@ -30,6 +30,7 @@ import { PartnerLinkManager } from "@/components/settings/PartnerLinkManager";
 import { IncognitoToggle } from "@/components/settings/IncognitoToggle";
 import { SpotifyConnect } from "@/components/spotify/SpotifyConnect";
 import { CrossAppLinksEditor } from "@/components/cross-app/CrossAppLinksEditor";
+import { NpsModal } from "@/components/NpsModal";
 
 const NotificationToggle = ({ label, description, prefKey, defaultOn = true }: { label: string; description: string; prefKey: string; defaultOn?: boolean }) => {
   const { user } = useAuth();
@@ -123,6 +124,7 @@ const Settings = () => {
   const { isUnlocked: locationUnlocked, isEventLocationUnlocked, isSharing, toggleSharing, error: locationError, loading: locationLoading } = useLocationSharing();
   const { isAdmin, userId: adminUserId } = useAdminRole();
   const [isOwner, setIsOwner] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   // Admin tools
   const [adminEmail, setAdminEmail] = useState("");
@@ -1069,6 +1071,25 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        {/* Feedback: answers land in nps_responses (Admin > NPS) tagged beta_feedback_settings. */}
+        <Card className="animate-fade-in" style={{ animationDelay: "180ms" }}>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <MessageSquareHeart className="h-5 w-5" /> Beta Feedback
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Tell us what felt great, what was confusing, or what broke. Every note is read.
+            </p>
+            <Button variant="outline" className="w-full justify-start gap-2" onClick={() => setFeedbackOpen(true)}>
+              <MessageSquareHeart className="h-4 w-4" />
+              Give Feedback
+            </Button>
+          </CardContent>
+        </Card>
+        {feedbackOpen && <NpsModal triggerEvent="beta_feedback_settings" onClose={() => setFeedbackOpen(false)} />}
+
         {/* Data & Privacy */}
         <Card className="animate-fade-in" style={{ animationDelay: "200ms" }}>
           <CardHeader>
@@ -1112,6 +1133,7 @@ const Settings = () => {
               { to: "/appeals", label: "Appeals Policy" },
               { to: "/cancellation", label: "Cancellation Policy" },
               { to: "/contact", label: "Contact Us" },
+              { to: "/privacy#do-not-sell", label: "Do Not Sell or Share My Personal Information" },
             ].map(policy => (
               <Button key={policy.to} variant="outline" className="w-full justify-start gap-2" onClick={() => navigate(policy.to)}>
                 <FileText className="h-4 w-4" />

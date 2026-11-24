@@ -3,6 +3,7 @@ import {
   Body, Container, Head, Heading, Html, Preview, Text, Button, Hr,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
+import { businessFooterLine } from '../business-info.ts'
 
 const SITE_NAME = "Positive Thots"
 
@@ -32,8 +33,9 @@ const OnboardingIncompleteEmail = ({ firstName }: OnboardingIncompleteProps) => 
         </Button>
         <Hr style={hr} />
         <Text style={footer}>
-          {SITE_NAME} — Education-first relationship wellness for the ENM, poly, and queer community.
+          {SITE_NAME} — Learn first. Connect better.
         </Text>
+        <Text style={footer}>{businessFooterLine()}</Text>
       </Container>
     </Body>
   </Html>

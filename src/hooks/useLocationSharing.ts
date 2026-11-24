@@ -148,13 +148,13 @@ export const useLocationSharing = () => {
 
     // Get initial position
     navigator.geolocation.getCurrentPosition(onPosition, onError, {
-      enableHighAccuracy: true,
+      enableHighAccuracy: false,
       timeout: 10_000,
     });
 
     // Watch for updates
     watchIdRef.current = navigator.geolocation.watchPosition(onPosition, onError, {
-      enableHighAccuracy: true,
+      enableHighAccuracy: false,
       maximumAge: UPDATE_INTERVAL_MS,
     });
 

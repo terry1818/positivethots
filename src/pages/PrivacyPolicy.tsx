@@ -24,7 +24,7 @@ const PrivacyPolicy = () => (
       path="/privacy"
     />
   <LegalPageShell title="Privacy Policy" toc={TOC}>
-    <p className="text-muted-foreground text-sm mb-6">Last updated: November 17, 2026</p>
+    <p className="text-muted-foreground text-sm mb-6">Last updated: November 24, 2026</p>
 
     <h2 id="intro" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">1. Introduction</h2>
     <p className="mb-4 leading-relaxed text-muted-foreground">
@@ -154,7 +154,7 @@ const PrivacyPolicy = () => (
           </tr>
           <tr className="border-b border-border/50">
             <td className="p-3">Messages & chat logs</td>
-            <td className="p-3">Retained until account deletion; deleted within 30 days of closure</td>
+            <td className="p-3">Deleted when either person unmatches or closes their account, and automatically once a conversation has had no new messages for 12 months. Messages under an open safety review are kept until the review closes.</td>
           </tr>
           <tr className="border-b border-border/50">
             <td className="p-3">Verification selfies</td>

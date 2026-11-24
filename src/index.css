@@ -1385,3 +1385,9 @@ p.plan-soon { display: flex; width: 100%; }
 /* ---- Learn: the Today checklist. A done line goes quiet so what is left stands out. ---- */
 .today-row[data-done="true"] { opacity: .78; }
 .today-row[data-done="true"] .font-bold { text-decoration: none; }
+
+/* Policy pages (LegalPageShell). WCAG 2.1 AA: links inside running text are underlined so they do
+   not rely on colour alone (1.4.1), and in dark mode primary-coloured text uses a lighter tint so it
+   reaches 4.5:1 on the page background (1.4.3). */
+.legal-page p a, .legal-page li a, .legal-page td a { text-decoration: underline; text-underline-offset: 2px; }
+.dark .legal-page .text-primary { color: hsl(270 75% 78%); }

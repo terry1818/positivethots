@@ -62,3 +62,6 @@
 - Never load a member's fallback picture from another service; show their initial.
 - Sign-up and onboarding are written for everyone: no question about one relationship style, no "Popular" label without data, no looping background animation.
 - `tests/app_kit.test.ts` guards area-colour contrast, the wheel landing on its prize, and the profile completion steps. Keep it passing.
+- Data retention: `purge_expired_data()` (daily cron `purge-expired-data`) deletes a conversation's messages after 12 months with no new message (except under an open safety review) and error logs after 90 days; unmatching and account deletion remove messages at once. Keep the Privacy Policy retention table in step with it.
+- Email footers carry `businessFooterLine()` from `supabase/functions/_shared/business-info.ts`; the CAN-SPAM mailing address goes in `BUSINESS_MAILING_ADDRESS` (business mailbox, never a home address).
+- Policy pages (`LegalPageShell`) underline links in running text and use a lighter primary tint in dark mode for AA contrast.
