@@ -361,7 +361,7 @@ const Index = () => {
     // Perks other members can see the effect of. A failure here only means nobody is moved up or badged.
     const [modulesResult, planPerksResult] = await Promise.all([
       supabase.from("education_modules").select("id, tier"),
-      (supabase.rpc as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: { user_id: string; priority: boolean; mentor: boolean }[] | null }>)(
+      (supabase.rpc.bind(supabase) as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: { user_id: string; priority: boolean; mentor: boolean }[] | null }>)(
         "get_plan_perks", { _ids: (profilesResult.data ?? []).map((p: { id: string }) => p.id) }).catch(() => ({ data: null })),
     ]);
     const planFlags = new Map<string, { priority: boolean; mentor: boolean }>((planPerksResult.data ?? []).map(r => [r.user_id, r]));

@@ -49,7 +49,7 @@ export const useSuperLikes = () => {
       if (!isUnlimited && balance <= 0) return false;
 
       // One server call spends the Thot and records it together.
-      const { data: left, error } = await (supabase.rpc as unknown as Rpc)("send_thot", { _receiver_id: receiverId });
+      const { data: left, error } = await (supabase.rpc.bind(supabase) as unknown as Rpc)("send_thot", { _receiver_id: receiverId });
       if (error && isMissingFunction(error)) {
         // The database is older than this app: send it the old way, in two steps.
         const { error: slError } = await supabase.from("super_likes").insert({

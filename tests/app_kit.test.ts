@@ -473,3 +473,12 @@ test("the screens between onboarding sections wait for the member and name the r
   expect(intro.match(/gold standard|therapists use with their clients|peer-reviewed/g) ?? []).toEqual([]);
   expect(readFileSync("src/components/education/LearnToday.tsx", "utf8")).toContain("sprintMembers >= LEADERBOARD_MIN");
 });
+
+test("database functions are never called through a detached reference", () => {
+  // supabase.rpc reads `this`. Casting it and calling the result directly throws in the real client,
+  // which is what stopped Discover loading. Every cast must go through .bind(supabase).
+  const files = new Bun.Glob("src/**/*.{ts,tsx}").scanSync(".");
+  const bad: string[] = [];
+  for (const f of files) if (/supabase\.rpc as unknown as/.test(readFileSync(f, "utf8"))) bad.push(f);
+  expect(bad).toEqual([]);
+});

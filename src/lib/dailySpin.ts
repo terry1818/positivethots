@@ -27,7 +27,7 @@ export function isMissingFunction(error: { code?: string; message?: string } | n
 export async function claimDailySpin(): Promise<ServerSpin | "missing" | null> {
   try {
     // The generated types do not know this function until Lovable regenerates them.
-    const { data, error } = await (supabase.rpc as unknown as (fn: string) => Promise<{ data: unknown; error: { code?: string; message?: string } | null }>)("claim_daily_spin_v2");
+    const { data, error } = await (supabase.rpc.bind(supabase) as unknown as (fn: string) => Promise<{ data: unknown; error: { code?: string; message?: string } | null }>)("claim_daily_spin_v2");
     if (error) return isMissingFunction(error) ? "missing" : null;
     const spin = data as ServerSpin | null;
     if (!spin || typeof spin !== "object") return null;

@@ -312,7 +312,7 @@ export const useLearningStats = () => {
     // whether one applies; this only asks when the member holds one.
     if (source === "section_complete" && sourceId && (stats?.xp_doublers ?? 0) > 0) {
       try {
-        const { data } = await (supabase.rpc as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }>)("use_xp_doubler", { _section_id: sourceId });
+        const { data } = await (supabase.rpc.bind(supabase) as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }>)("use_xp_doubler", { _section_id: sourceId });
         const doubled = data as { status: string; bonus: number; new_xp: number; new_level: number; doublers_left: number } | null;
         if (doubled?.status === "doubled") {
           setStats(prev => prev ? { ...prev, total_xp: doubled.new_xp, current_level: doubled.new_level, xp_doublers: doubled.doublers_left } : prev);

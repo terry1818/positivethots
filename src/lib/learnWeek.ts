@@ -9,7 +9,7 @@ export type WeekState = {
   goal: { title: string | null; description: string | null; kind: string | null; target: number | null; progress: number; completed: boolean; ends_at: string | null; mine: number };
 };
 
-const rpc = supabase.rpc as unknown as (fn: string) => Promise<{ data: unknown; error: { message: string } | null }>;
+const rpc = supabase.rpc.bind(supabase) as unknown as (fn: string) => Promise<{ data: unknown; error: { message: string } | null }>;
 
 export async function fetchDailyChallenge(): Promise<DailyChallengeState> {
   const { data, error } = await rpc("get_daily_challenge");

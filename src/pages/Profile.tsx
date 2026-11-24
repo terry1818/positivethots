@@ -206,7 +206,7 @@ const Profile = () => {
     // A boost earned by leveling up comes first: it costs nothing.
     if (boostCredits > 0) {
       setBoostLoading(true);
-      const { error } = await (supabase.rpc as unknown as (fn: string) => Promise<{ error: { code?: string; message?: string } | null }>)("use_boost_credit");
+      const { error } = await (supabase.rpc.bind(supabase) as unknown as (fn: string) => Promise<{ error: { code?: string; message?: string } | null }>)("use_boost_credit");
       setBoostLoading(false);
       if (!error) {
         setHasActiveBoost(true);
