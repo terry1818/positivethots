@@ -1,26 +1,56 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
-const policyLinkClass =
-  "font-['Inter'] text-muted-foreground hover:text-primary transition-colors";
+/**
+ * The policy links every page carries.
+ *
+ * It follows each page in the normal flow. Its bottom padding (`.app-footer` in index.css) clears
+ * whatever is fixed to the bottom of the screen: nothing, the tab bar, or the tab bar plus Learn's
+ * continue bar.
+ *
+ * A screen that fills the phone exactly and does not scroll (Discover) would gain a strip of page
+ * below it, so the whole screen could be dragged up. Such a screen is listed in OWN_FOOTER and
+ * places `<AppFooter inline />` inside its own scroll area instead.
+ */
+const OWN_FOOTER = ["/"];
 
-export const AppFooter = () => (
-  <footer className="w-full px-4 pb-20 pt-4 text-center">
-    <div className="mx-auto mb-3 flex max-w-2xl flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm">
-      <Link to="/complaints" className={policyLinkClass}>Complaints Policy</Link>
-      <span aria-hidden className="text-muted-foreground/40">|</span>
-      <Link to="/appeals" className={policyLinkClass}>Appeals Policy</Link>
-      <span aria-hidden className="text-muted-foreground/40">|</span>
-      <Link to="/cancellation" className={policyLinkClass}>Cancellation Policy</Link>
-      <span aria-hidden className="text-muted-foreground/40">|</span>
-      <Link to="/contact" className={policyLinkClass}>Contact Us</Link>
-      <span aria-hidden className="text-muted-foreground/40">|</span>
-      <Link to="/privacy#do-not-sell" className={policyLinkClass}>Do Not Sell or Share My Personal Information</Link>
-    </div>
-    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground/60">
-      <span>© 2026 Rhea &amp; Associates LLC</span>
-      <Link to="/terms" className="hover:text-muted-foreground transition-colors">Terms</Link>
-      <Link to="/privacy" className="hover:text-muted-foreground transition-colors">Privacy</Link>
-      <Link to="/community-guidelines" className="hover:text-muted-foreground transition-colors">Guidelines</Link>
-    </div>
-  </footer>
-);
+const policyLinks = [
+  { to: "/complaints", label: "Complaints Policy" },
+  { to: "/appeals", label: "Appeals Policy" },
+  { to: "/cancellation", label: "Cancellation Policy" },
+  { to: "/contact", label: "Contact Us" },
+  { to: "/privacy#do-not-sell", label: "Do Not Sell or Share My Personal Information" },
+];
+
+const siteLinks = [
+  { to: "/terms", label: "Terms" },
+  { to: "/privacy", label: "Privacy" },
+  { to: "/community-guidelines", label: "Guidelines" },
+];
+
+export const AppFooter = ({ inline = false }: { inline?: boolean }) => {
+  const { pathname } = useLocation();
+  if (!inline && OWN_FOOTER.includes(pathname)) return null;
+
+  return (
+    <footer className={cn("app-footer w-full text-center", inline && "app-footer-inline")}>
+      <nav aria-label="Policies">
+        <ul className="mx-auto flex max-w-2xl flex-wrap items-center justify-center gap-x-4 text-sm">
+          {policyLinks.map(link => (
+            <li key={link.to}>
+              <Link to={link.to} className="app-footer-link text-muted-foreground hover:text-primary">{link.label}</Link>
+            </li>
+          ))}
+        </ul>
+        <ul className="mx-auto mt-1 flex max-w-2xl flex-wrap items-center justify-center gap-x-4 text-xs text-muted-foreground">
+          <li>© 2026 Rhea &amp; Associates LLC</li>
+          {siteLinks.map(link => (
+            <li key={link.to}>
+              <Link to={link.to} className="app-footer-link hover:text-foreground">{link.label}</Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </footer>
+  );
+};

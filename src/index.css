@@ -1244,3 +1244,12 @@ button.lesson-chip:not(:disabled):active { translate: 0 3px; box-shadow: 0 1px 0
   .spin-burst { display: none; }
   .spin-pointer { transition: none; }
 }
+
+/* Policy footer (AppFooter). Its bottom padding clears whatever is fixed to the bottom of the screen.
+   The first rule assumes the tab bar is there, which is also the safe answer in a browser without :has. */
+.app-footer { padding: 16px 16px calc(4.75rem + env(safe-area-inset-bottom)); }
+body:not(:has(nav[aria-label="Main navigation"])) .app-footer { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+body:has(aside[aria-label="Continue learning"]) .app-footer { padding-bottom: calc(4.75rem + 68px + env(safe-area-inset-bottom)); }
+.app-footer.app-footer-inline { padding: 24px 0 8px; }
+.app-footer-link { display: inline-block; padding: 6px 0; text-underline-offset: 3px; transition: color .15s ease-out; }
+.app-footer-link:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; border-radius: 4px; }

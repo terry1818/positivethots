@@ -211,3 +211,24 @@ test("Discover's sections fill the phone's width instead of growing to fit their
   expect(sections.length).toBeGreaterThanOrEqual(4);
   for (const section of sections) expect(section).toMatch(/\bw-full\b|\bcontainer\b/);
 });
+
+test("every policy link stays in the footer, and Discover carries the footer inside its own scroll area", () => {
+  const footer = readFileSync("src/components/AppFooter.tsx", "utf8");
+  for (const to of ["/complaints", "/appeals", "/cancellation", "/contact", "/privacy#do-not-sell", "/terms", "/privacy", "/community-guidelines"]) {
+    expect(footer).toContain(`to: "${to}"`);
+  }
+  // Discover fills the screen and does not scroll, so the page-level footer is skipped there...
+  expect(footer).toContain('const OWN_FOOTER = ["/"]');
+  // ...and Discover shows the same footer at the end of its list.
+  expect(readFileSync("src/pages/Index.tsx", "utf8")).toContain("<AppFooter inline />");
+  // The footer clears the tab bar and Learn's continue bar.
+  expect(light).toMatch(/body:has\(aside\[aria-label="Continue learning"\]\) \.app-footer/);
+});
+
+test("switches, checkboxes and radios answer a tap across 44px", () => {
+  for (const file of ["switch", "checkbox", "radio-group"]) {
+    const source = readFileSync(`src/components/ui/${file}.tsx`, "utf8");
+    expect(source).toContain("after:h-[44px]");
+    expect(source).toMatch(/after:w-\[44px\]|after:min-w-\[44px\]/);
+  }
+});

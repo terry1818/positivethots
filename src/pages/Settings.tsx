@@ -1106,6 +1106,20 @@ const Settings = () => {
               <FileText className="h-4 w-4" />
               Terms of Service
             </Button>
+
+            {/* Every policy is reachable from here, whichever screen the member came from. */}
+            {[
+              { to: "/community-guidelines", label: "Community Guidelines" },
+              { to: "/complaints", label: "Complaints Policy" },
+              { to: "/appeals", label: "Appeals Policy" },
+              { to: "/cancellation", label: "Cancellation Policy" },
+              { to: "/contact", label: "Contact Us" },
+            ].map(policy => (
+              <Button key={policy.to} variant="outline" className="w-full justify-start gap-2" onClick={() => navigate(policy.to)}>
+                <FileText className="h-4 w-4" />
+                {policy.label}
+              </Button>
+            ))}
           </CardContent>
         </Card>
 

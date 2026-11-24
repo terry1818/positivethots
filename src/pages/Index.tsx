@@ -30,6 +30,7 @@ import { CompactProgressBar } from "@/components/discovery/CompactProgressBar";
 import { MysteryMatchCard } from "@/components/discovery/MysteryMatchCard";
 import { DiscoveryWalkthrough } from "@/components/discovery/DiscoveryWalkthrough";
 import { useTutorialState } from "@/hooks/useTutorialState";
+import { AppFooter } from "@/components/AppFooter";
 import { SwipeTutorial, shouldShowSwipeTutorial } from "@/components/discovery/SwipeTutorial";
 import { useLocationSharing } from "@/hooks/useLocationSharing";
 import { useSuperLikes } from "@/hooks/useSuperLikes";
@@ -861,6 +862,8 @@ const Index = () => {
                 Boost Now
               </Button>
             </Card>
+            {/* Discover does not scroll, so the policy links live at the end of this list. */}
+            <AppFooter inline />
           </div>
         ) : (
           <>
