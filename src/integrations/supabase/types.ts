@@ -321,6 +321,36 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_spins: {
+        Row: {
+          created_at: string
+          prize_index: number
+          prize_type: string
+          prize_value: number
+          spin_date: string
+          user_id: string
+          xp_awarded: number
+        }
+        Insert: {
+          created_at?: string
+          prize_index: number
+          prize_type: string
+          prize_value: number
+          spin_date: string
+          user_id: string
+          xp_awarded?: number
+        }
+        Update: {
+          created_at?: string
+          prize_index?: number
+          prize_type?: string
+          prize_value?: number
+          spin_date?: string
+          user_id?: string
+          xp_awarded?: number
+        }
+        Relationships: []
+      }
       desire_options: {
         Row: {
           category: string
@@ -2025,18 +2055,21 @@ export type Database = {
       super_like_balance: {
         Row: {
           balance: number
+          daily_remaining: number
           last_daily_refresh: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           balance?: number
+          daily_remaining?: number
           last_daily_refresh?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           balance?: number
+          daily_remaining?: number
           last_daily_refresh?: string | null
           updated_at?: string
           user_id?: string
@@ -2979,6 +3012,7 @@ export type Database = {
         }
         Returns: Json
       }
+      claim_daily_spin: { Args: never; Returns: Json }
       claim_path_chest: { Args: { _module_id: string }; Returns: Json }
       complete_module_mastery: {
         Args: { _module_id: string; _session_started_at: string }
@@ -3242,14 +3276,17 @@ export type Database = {
         }
         Returns: undefined
       }
+      send_thot: { Args: { _receiver_id: string }; Returns: number }
       submit_quiz: {
         Args: { _answers: Json; _module_id: string }
         Returns: Json
       }
+      thot_daily_limit: { Args: { _user_id: string }; Returns: number }
       track_photo_engagement: {
         Args: { _action: string; _photo_id: string; _photo_owner_id: string }
         Returns: undefined
       }
+      use_boost_credit: { Args: never; Returns: number }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "owner"

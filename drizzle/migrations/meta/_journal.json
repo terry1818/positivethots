@@ -99,6 +99,13 @@
       "when": 1795160537603,
       "tag": "0013_restrict_video_event_listing_to_discoverable_or_joined",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1795508601517,
+      "tag": "0014_thots_daily_spin_level_rewards",
+      "breakpoints": true
     }
   ]
 }
