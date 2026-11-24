@@ -1,13 +1,13 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import type { CSSProperties } from "react";
-import { Zap, Star, Gem, Crown, type LucideIcon } from "lucide-react";
+import { Zap, Star, Gem, Heart, Snowflake, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GuideArt, type GuideName } from "@/components/mascot/GuideArt";
-import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
+import type { SpinOutcome } from "@/lib/dailySpin";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
-import { SPIN_REWARDS as REWARDS, pickSpinReward, landingRotation, spinTravel, type SpinReward } from "@/lib/spinWheel";
+import { SPIN_REWARDS as REWARDS, landingRotation, spinTravel, type SpinReward } from "@/lib/spinWheel";
 
 // One look per wedge, in REWARDS order. Neighbours never share a hue; bright wedges carry dark ink.
 const INK = "hsl(var(--art-ink))";
@@ -17,16 +17,22 @@ const WEDGES: { fill: string; ink: string; icon: LucideIcon; tone: string }[] = 
   { fill: "hsl(var(--kit-discover-top))", ink: "#fff", icon: Zap, tone: "pink" },
   { fill: "hsl(var(--art-correct))", ink: INK, icon: Star, tone: "correct" },
   { fill: "hsl(var(--path-identity-top))", ink: "#fff", icon: Star, tone: "area" },
-  { fill: "hsl(var(--art-urgent))", ink: INK, icon: Gem, tone: "urgent" },
-  { fill: "hsl(245 70% 50%)", ink: "#fff", icon: Gem, tone: "info" },
-  { fill: "hsl(var(--art-reward))", ink: INK, icon: Crown, tone: "reward" },
+  { fill: "hsl(var(--art-reward))", ink: INK, icon: Gem, tone: "reward" },
+  { fill: "hsl(245 70% 50%)", ink: "#fff", icon: Heart, tone: "pink" },
+  { fill: "hsl(195 95% 88%)", ink: INK, icon: Snowflake, tone: "info" },
 ];
+
+/** What each kind of prize is good for, shown under it on the win card. */
+const PRIZE_NOTE: Partial<Record<SpinReward["type"], string>> = {
+  thot: "Yours to keep. Send it in Discover to stand out.",
+  freeze: "It saves your streak the next time you miss a day.",
+};
 
 const WIN_COPY: Record<SpinReward["rarity"], { line: string; guide: GuideName }> = {
   common: { line: "Nice spin!", guide: "guide-high-five" },
   uncommon: { line: "Good one!", guide: "guide-high-five" },
   rare: { line: "Lucky spin!", guide: "guide-chest-open" },
-  very_rare: { line: "The top prize on the wheel!", guide: "guide-trophy" },
+  very_rare: { line: "The rarest prize on the wheel!", guide: "guide-trophy" },
 };
 
 const SEG = 360 / REWARDS.length;
@@ -46,19 +52,23 @@ const WEDGE_PATH = `M${C},${C} L${wx1.toFixed(2)},${wy1.toFixed(2)} A${R},${R} 0
 
 type Phase = "ready" | "spinning" | "saving" | "won" | "used";
 
+/** Top speed of the wheel while it waits for the server's answer, in degrees per second. */
+const CRUISE = 1050;
+/** Braking curve: 1 - (1 - t)^BRAKE. 2.1 is close to steady braking, like a real wheel. */
+const BRAKE = 2.1;
+
 interface DailySpinWheelProps {
-  /** Saves the prize. Resolves to the XP actually added (or true) when it was saved, false when saving failed,
-   *  or "used" when the server says today's spin or today's XP limit is already used up. */
-  onReward: (reward: SpinReward) => Promise<boolean | number | "used">;
+  /** Runs today's spin on the server and says where the wheel must stop. */
+  onSpin: () => Promise<SpinOutcome>;
   hasSpunToday: boolean;
 }
 
-export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) => {
+export const DailySpinWheel = ({ onSpin, hasSpunToday }: DailySpinWheelProps) => {
   const [phase, setPhase] = useState<Phase>("ready");
-  const [result, setResult] = useState<SpinReward | null>(null);
+  const [won, setWon] = useState<Extract<SpinOutcome, { status: "won" }> | null>(null);
+  const [usedReason, setUsedReason] = useState<"spun" | "xp_limit">("spun");
   const [winIndex, setWinIndex] = useState<number | null>(null);
   const [missed, setMissed] = useState(false);
-  const [wonLabel, setWonLabel] = useState("");
   const reducedMotion = useReducedMotion();
   const { preloadSpin, playSpinStart, playSpinTick, playSpinWin } = useSoundEffects();
   const discRef = useRef<SVGGElement>(null);
@@ -67,8 +77,9 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
   const rotation = useRef(landingRotation(0, REWARDS.length));
   const frame = useRef(0);
   const flick = useRef(0);
+  const alive = useRef(true);
 
-  useEffect(() => () => { cancelAnimationFrame(frame.current); window.clearTimeout(flick.current); }, []);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; cancelAnimationFrame(frame.current); window.clearTimeout(flick.current); }; }, []);
   // Fetch the wheel's sounds as soon as it is on screen, so the first click is already the real one.
   useEffect(() => { preloadSpin(); }, [preloadSpin]);
 
@@ -80,94 +91,107 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
   const spin = useCallback(() => {
     if (phase !== "ready" || hasSpunToday) return;
     setPhase("spinning");
-    setResult(null);
+    setWon(null);
     setMissed(false);
     setWinIndex(null);
-
-    const { index, reward } = pickSpinReward();
-    // The pointer sits at the top. Land somewhere inside the winning wedge, not always dead centre.
-    const within = (Math.random() - 0.5) * (SEG - 16);
-    const start = rotation.current % 360;
-    const total = spinTravel(start, landingRotation(index, REWARDS.length, within));
-    const duration = reducedMotion ? 300 : SPIN_MS;
-
     playSpinStart();
-    if (reducedMotion) {
-      turnTo(start + total);
-    } else {
-      const t0 = performance.now();
-      let lastWedge = Math.floor(start / SEG);
-      const step = (now: number) => {
-        const t = Math.min(1, (now - t0) / duration);
-        const eased = 1 - Math.pow(1 - t, 2.1); // steady braking, like a real wheel: it keeps clicking until it stops
-        const angle = start + total * eased;
-        turnTo(angle);
-        const wedge = Math.floor(angle / SEG);
-        if (wedge !== lastWedge) {
-          lastWedge = wedge;
-          playSpinTick(t);
-          // The pointer is knocked aside by each peg and springs back.
-          const pointer = pointerRef.current;
-          if (pointer) {
-            pointer.dataset.flick = "true";
-            window.clearTimeout(flick.current);
-            flick.current = window.setTimeout(() => { pointer.dataset.flick = "false"; }, 40);
-          }
-        }
-        if (t < 1) frame.current = requestAnimationFrame(step);
-      };
-      frame.current = requestAnimationFrame(step);
-    }
 
-    // The prize is saved on a timer of its own, so it still lands if the sheet is closed mid-spin.
-    window.setTimeout(async () => {
-      setWinIndex(index);
-      setPhase("saving");
-      const awarded = await onReward(reward);
+    // The server decides the prize. The wheel spins freely until the answer arrives, then brakes
+    // onto that wedge; if nothing was saved it coasts to a stop wherever it is.
+    let outcome: SpinOutcome | null = null;
+    const answered = onSpin().then(o => { outcome = o; return o; }, () => { outcome = { status: "failed" }; return outcome; });
 
-      if (awarded === "used") {
-        setWinIndex(null);
-        setPhase("used");
-      } else if (awarded) {
-        setWonLabel(typeof awarded === "number" ? `+${awarded} XP` : reward.label);
-        setResult(reward);
+    const settle = (o: SpinOutcome) => {
+      if (!alive.current) return;
+      if (o.status === "won") {
+        setWinIndex(o.index);
+        setWon(o);
         setPhase("won");
-        playSpinWin(reward.rarity);
-        // Persist spin to DB
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
-            await supabase.from("profiles").update({
-              last_daily_spin: new Date().toISOString().split("T")[0],
-            } as any).eq("id", user.id);
-          }
-        } catch {}
+        playSpinWin(o.reward.rarity);
+      } else if (o.status === "used") {
+        setUsedReason(o.reason);
+        setPhase("used");
       } else {
-        // Nothing was saved, so the spin is handed back.
         setMissed(true);
-        setWinIndex(null);
         setPhase("ready");
       }
+      trackEvent("daily_spin_result", o.status === "won"
+        ? { reward_label: o.label, reward_type: o.reward.type, reward_rarity: o.reward.rarity, reward_value: o.reward.value }
+        : { reward_label: o.status, reward_type: "none", reward_rarity: "none", reward_value: 0 });
+    };
 
-      trackEvent("daily_spin_result", {
-        reward_label: reward.label,
-        reward_type: reward.type,
-        reward_rarity: reward.rarity,
-        reward_value: reward.value,
+    if (reducedMotion) {
+      // No spinning: wait for the answer, then show the wheel resting on the prize.
+      void answered.then(o => {
+        if (o.status === "won") turnTo(landingRotation(o.index, REWARDS.length));
+        settle(o);
       });
-    }, duration + (reducedMotion ? 0 : 250));
-  }, [phase, hasSpunToday, onReward, reducedMotion, playSpinStart, playSpinTick, playSpinWin]);
+      return;
+    }
+
+    const tick = (pace: number) => {
+      playSpinTick(pace);
+      // The pointer is knocked aside by each peg and springs back.
+      const pointer = pointerRef.current;
+      if (pointer) {
+        pointer.dataset.flick = "true";
+        window.clearTimeout(flick.current);
+        flick.current = window.setTimeout(() => { pointer.dataset.flick = "false"; }, 40);
+      }
+    };
+
+    const t0 = performance.now();
+    let last = t0;
+    let lastWedge = Math.floor(rotation.current / SEG);
+    let brake: { from: number; travel: number; start: number; duration: number } | null = null;
+
+    const step = (now: number) => {
+      let angle: number;
+      let pace = 0;
+      if (!brake) {
+        // Cruise: up to speed in a third of a second, then steady.
+        const speed = CRUISE * Math.min(1, (now - t0) / 320);
+        angle = rotation.current + speed * (now - last) / 1000;
+        if (outcome && now - t0 > 700) {
+          const from = angle;
+          const travel = outcome.status === "won"
+            ? spinTravel(from % 360, landingRotation(outcome.index, REWARDS.length, (Math.random() - 0.5) * (SEG - 16)), 4)
+            : 360 * 3;
+          // Pick the braking time so the wheel leaves cruise at the speed it is already turning.
+          brake = { from, travel, start: now, duration: (BRAKE * travel / CRUISE) * 1000 };
+        }
+      } else {
+        const t = Math.min(1, (now - brake.start) / brake.duration);
+        angle = brake.from + brake.travel * (1 - Math.pow(1 - t, BRAKE));
+        pace = t;
+        if (t >= 1) {
+          turnTo(angle);
+          const done = outcome as SpinOutcome;
+          if (done.status === "won") setWinIndex(done.index);
+          setPhase(p => (p === "spinning" ? "saving" : p));
+          window.setTimeout(() => settle(done), 250);
+          return;
+        }
+      }
+      last = now;
+      turnTo(angle);
+      const wedge = Math.floor(angle / SEG);
+      if (wedge !== lastWedge) { lastWedge = wedge; tick(pace); }
+      frame.current = requestAnimationFrame(step);
+    };
+    frame.current = requestAnimationFrame(step);
+  }, [phase, hasSpunToday, onSpin, reducedMotion, playSpinStart, playSpinTick, playSpinWin]);
 
   const burst = useMemo(() => {
-    if (!result) return [];
-    const count = result.rarity === "common" ? 14 : result.rarity === "uncommon" ? 18 : 28;
+    if (!won) return [];
+    const count = won.reward.rarity === "common" ? 14 : won.reward.rarity === "uncommon" ? 18 : 28;
     return Array.from({ length: count }, (_, i) => ({
       angle: (360 / count) * i + (i % 2 ? 9 : 0),
       distance: 120 + ((i * 37) % 60),
       color: BURST_COLORS[i % BURST_COLORS.length],
       delay: (i % 4) * 40,
     }));
-  }, [result]);
+  }, [won]);
 
   if (phase === "used" || (hasSpunToday && phase === "ready")) {
     return (
@@ -176,16 +200,16 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
           <GuideArt name="guide-sleepy" size={160} />
         </div>
         <p className="kit-rise mt-4 text-lg font-extrabold" style={{ "--i": 1 } as CSSProperties}>
-          {phase === "used" ? "Today's spin is already used" : "You've had today's spin"}
+          {phase === "used" && usedReason === "xp_limit" ? "You've hit today's XP limit" : phase === "used" ? "Today's spin is already used" : "You've had today's spin"}
         </p>
         <p className="kit-rise text-base text-muted-foreground" style={{ "--i": 2 } as CSSProperties}>
-          {phase === "used" ? "No XP was added this time. Come back tomorrow." : "Come back tomorrow for another one."}
+          {phase === "used" && usedReason === "xp_limit" ? "This spin landed on XP, and you can't earn more XP today. Come back tomorrow." : "Come back tomorrow for another one."}
         </p>
       </div>
     );
   }
 
-  const won = phase === "won" && result;
+  const showWin = phase === "won" && won;
   const winLook = winIndex !== null ? WEDGES[winIndex] : null;
 
   return (
@@ -229,11 +253,12 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
               const look = WEDGES[i];
               const Icon = look.icon;
               const [amount, unit] = reward.label.split(" ");
+              const words = reward.type !== "xp";
               return (
                 <g key={i} className="spin-wedge" data-win={winIndex === i} transform={`rotate(${(i + 0.5) * SEG} ${C} ${C})`}>
                   <path d={WEDGE_PATH} fill={look.fill} stroke="hsl(var(--path-gold-dark))" strokeWidth="2" strokeLinejoin="round" />
-                  <text x={C} y={C - 92} textAnchor="middle" fontSize="23" fontWeight="900" fill={look.ink}>{amount}</text>
-                  <text x={C} y={C - 76} textAnchor="middle" fontSize="13" fontWeight="900" fill={look.ink}>{unit}</text>
+                  <text x={C} y={C - 92} textAnchor="middle" fontSize={words && amount.length > 2 ? 15 : 23} fontWeight="900" fill={look.ink}>{amount}</text>
+                  <text x={C} y={C - 76} textAnchor="middle" fontSize={words ? 15 : 13} fontWeight="900" fill={look.ink}>{unit}</text>
                   <Icon x={C - 11} y={C - 68} width={22} height={22} color={look.ink} strokeWidth={2.6} aria-hidden="true" />
                 </g>
               );
@@ -259,7 +284,7 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
           </g>
         </svg>
 
-        {won && (
+        {showWin && (
           <div className="spin-burst" aria-hidden="true">
             {burst.map((b, i) => (
               <i key={i} style={{ "--a": `${b.angle}deg`, "--d": `${b.distance}px`, background: `hsl(${b.color})`, animationDelay: `${b.delay}ms` } as CSSProperties} />
@@ -269,23 +294,25 @@ export const DailySpinWheel = ({ onReward, hasSpunToday }: DailySpinWheelProps) 
       </div>
 
       <div className="w-full min-h-[92px]" role="status" aria-live="polite">
-        {won && winLook ? (
+        {showWin && winLook ? (
           <div className="kit-row kit-row-next kit-pop !min-h-[88px]">
-            <GuideArt name={WIN_COPY[result.rarity].guide} size={84} animate />
+            <GuideArt name={WIN_COPY[won.reward.rarity].guide} size={84} animate />
             <span className="flex-1 min-w-0">
               <span className="block text-sm font-bold kit-text">You won</span>
-              <span className="block text-2xl font-black leading-tight tabular-nums">{wonLabel}</span>
-              <span className="block text-sm text-muted-foreground">{WIN_COPY[result.rarity].line}</span>
+              <span className="block text-2xl font-black leading-tight tabular-nums">{won.label}</span>
+              <span className="block text-sm text-muted-foreground [text-wrap:pretty]">
+                {PRIZE_NOTE[won.reward.type] ?? won.note ?? WIN_COPY[won.reward.rarity].line}
+              </span>
             </span>
             <span className="kit-coin kit-coin-lg" data-tone={winLook.tone}><winLook.icon aria-hidden="true" /></span>
           </div>
         ) : (
           <>
             <Button onClick={spin} disabled={phase !== "ready"} className="kit-cta w-full">
-              {phase === "ready" ? "Spin to Win!" : phase === "spinning" ? "Spinning…" : "Saving your prize…"}
+              {phase === "ready" ? "Spin to Win!" : "Spinning…"}
             </Button>
             <p className="mt-3 text-center text-sm text-muted-foreground">
-              {missed ? "That prize didn't save. Spin again." : "One free spin every day."}
+              {missed ? "That spin didn't go through. Try again." : "One free spin every day."}
             </p>
           </>
         )}

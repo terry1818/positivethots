@@ -1,6 +1,6 @@
 import { Flame, Snowflake, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getStreakMultiplierLabel } from "@/hooks/useLearningStats";
+import { getNextStreakReward } from "@/hooks/useLearningStats";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useState, useEffect } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -41,6 +41,7 @@ export const StreakBadge = ({
   atRisk, hoursLeft, dailyComplete = false,
 }: StreakBadgeProps) => {
   const reducedMotion = useReducedMotion();
+  const nextReward = getNextStreakReward(streak);
   const [currentHour, setCurrentHour] = useState(() => new Date().getHours());
 
   useEffect(() => {
@@ -113,9 +114,10 @@ export const StreakBadge = ({
           <TooltipContent>Streak Freeze active — you're protected today</TooltipContent>
         </Tooltip>
       )}
-      {getStreakMultiplierLabel(streak) && (
-        <span className="text-sm font-bold text-primary ml-0.5">
-          {getStreakMultiplierLabel(streak)} XP
+      {/* What the streak is building toward: a reward that is really granted on that day. */}
+      {nextReward && streak > 0 && (
+        <span className="text-sm font-bold text-primary ml-0.5" title={`Day ${nextReward.day} of your streak earns ${nextReward.label}`}>
+          {nextReward.daysLeft}d to {nextReward.label}
         </span>
       )}
       {atRisk && hoursLeft !== undefined && hoursLeft < 8 && (

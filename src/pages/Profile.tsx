@@ -35,6 +35,7 @@ import { CrossAppLinksDisplay } from "@/components/cross-app/CrossAppLinksDispla
 import { useTotalBadgeCount } from "@/hooks/useTotalBadgeCount";
 import { hasEveryBadge } from "@/lib/badgeCompletion";
 import { shareApp } from "@/lib/shareApp";
+import { isMissingFunction } from "@/lib/dailySpin";
 
 interface UserBadge {
   module_id: string;
@@ -91,7 +92,8 @@ const Profile = () => {
   const [hasPendingPhotos, setHasPendingPhotos] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { stats } = useLearningStats();
+  const { stats, reload: reloadStats } = useLearningStats();
+  const boostCredits = stats?.boost_credits ?? 0;
   const { tiers } = useFeatureUnlocks();
   const { hasFeature, tier } = useSubscription();
   const { seen: profileTourSeen, markSeen: markProfileTourSeen } = useTutorialState("profile_tour");
@@ -200,6 +202,23 @@ const Profile = () => {
   };
 
   const handleBoostProfile = async () => {
+    // A boost earned by leveling up comes first: it costs nothing.
+    if (boostCredits > 0) {
+      setBoostLoading(true);
+      const { error } = await (supabase.rpc as unknown as (fn: string) => Promise<{ error: { code?: string; message?: string } | null }>)("use_boost_credit");
+      setBoostLoading(false);
+      if (!error) {
+        setHasActiveBoost(true);
+        void reloadStats();
+        toast.success("Your profile is boosted!", { description: "You used a boost you earned by leveling up." });
+        return;
+      }
+      if (!isMissingFunction(error)) {
+        toast.error(error.message?.includes("already active") ? "You already have a boost running" : "Couldn't start your boost. Please try again.");
+        return;
+      }
+      // The database is older than this app: carry on with the other ways to boost.
+    }
     if (hasFeature("profile_boost")) {
       setBoostLoading(true);
       try {
@@ -651,6 +670,8 @@ const Profile = () => {
                 <p className="text-sm text-muted-foreground mt-0.5 [text-wrap:pretty]">
                   {hasActiveBoost
                     ? "Your profile is currently boosted! 🔥"
+                    : boostCredits > 0
+                      ? `You have ${boostCredits} free boost${boostCredits === 1 ? "" : "s"} from leveling up.`
                     : hasFeature("profile_boost")
                       ? "1 free boost/month with VIP"
                       : "Get 30 minutes of priority visibility in Discovery — $2.99"}
@@ -661,7 +682,7 @@ const Profile = () => {
                   disabled={hasActiveBoost || boostLoading}
                   onClick={handleBoostProfile}
                 >
-                  {boostLoading ? "..." : hasActiveBoost ? "Active" : "Boost My Profile"}
+                  {boostLoading ? "..." : hasActiveBoost ? "Active" : boostCredits > 0 ? "Use Free Boost" : "Boost My Profile"}
                 </Button>
               </div>
             </div>

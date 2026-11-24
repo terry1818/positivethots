@@ -16,9 +16,9 @@ const WeeklySprintBanner = lazy(() => import("./sprints/WeeklySprintBanner").the
 const CommunityChallengeCard = lazy(() => import("./CommunityChallengeCard").then(m => ({ default: m.CommunityChallengeCard })));
 type Activity = "streak" | "challenge" | "spin" | "sprint" | "community";
 
-export function LearnToday({ streak, lastActivityDate, freezes, atRisk, hoursLeft, hasSpunToday, onReward, bonusReady, openBonus }: {
+export function LearnToday({ streak, lastActivityDate, freezes, atRisk, hoursLeft, hasSpunToday, onSpin, bonusReady, openBonus }: {
   streak: number; lastActivityDate: string | null; freezes: number; atRisk: boolean; hoursLeft: number;
-  hasSpunToday: boolean; onReward: React.ComponentProps<typeof DailySpinWheel>["onReward"];
+  hasSpunToday: boolean; onSpin: React.ComponentProps<typeof DailySpinWheel>["onSpin"];
   bonusReady: boolean; openBonus: () => void;
 }) {
   const [sheet, setSheet] = useState<Activity | null>(null);
@@ -90,7 +90,7 @@ export function LearnToday({ streak, lastActivityDate, freezes, atRisk, hoursLef
         <Suspense fallback={<Skeleton className="h-40 w-full" />}>
           {sheet === "streak" && <StreakCalendar streak={streak} lastActivityDate={lastActivityDate} freezeCount={freezes} />}
           {sheet === "challenge" && <DailyChallenge />}
-          {sheet === "spin" && <DailySpinWheel hasSpunToday={hasSpunToday} onReward={onReward} />}
+          {sheet === "spin" && <DailySpinWheel hasSpunToday={hasSpunToday} onSpin={onSpin} />}
           {sheet === "sprint" && <WeeklySprintBanner />}
           {sheet === "community" && <CommunityChallengeCard />}
           {(sheet === "sprint" || sheet === "community") && activityAvailable[sheet] === false &&

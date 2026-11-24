@@ -49,6 +49,19 @@ Deno.serve(async (req) => {
     const admin = createClient(supabaseUrl, serviceKey);
     const rewards: string[] = [];
 
+    // The level comes from the member's own record, not from what the app says it is.
+    const { data: learning } = await admin
+      .from("user_learning_stats")
+      .select("current_level, streak_freezes")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (!learning || level > (learning.current_level ?? 1)) {
+      return new Response(JSON.stringify({ error: "Level not reached" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Define level rewards
     const levelRewards: Record<number, () => Promise<void>> = {
       3: async () => {
@@ -72,12 +85,20 @@ Deno.serve(async (req) => {
         rewards.push("+1 Thot");
       },
       5: async () => {
-        // Streak freeze
+        // +1 streak freeze, the kind award_xp spends when a day is missed (at most 3 held).
+        // level_reward_5_freeze marks it as given, so the catch-up in the migration never doubles it.
         await admin
           .from("user_learning_stats")
-          .update({ streak_freeze_available: true, updated_at: new Date().toISOString() })
+          .update({
+            streak_freezes: Math.min((learning.streak_freezes ?? 0) + 1, 3),
+            streak_freeze_available: true,
+            updated_at: new Date().toISOString(),
+          })
           .eq("user_id", user.id);
-        rewards.push("Streak Freeze unlocked");
+        await admin.from("xp_transactions").insert({
+          user_id: user.id, xp_amount: 0, source: "level_reward_5_freeze", source_id: "level_5",
+        });
+        rewards.push("+1 Streak Freeze");
       },
       7: async () => {
         // +2 Super Likes

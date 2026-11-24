@@ -63,10 +63,27 @@ transition) so each wedge can click past the pointer, and it brakes steadily lik
 `src/lib/spinWheel.ts` holds the prize list and the geometry; the tests prove the wheel stops on the
 prize it awards and that every prize is one the server grants.
 
-**Prizes.** Every wedge is XP, between 5 and 50. The server (`award_xp`, source `daily_spin`) grants
-at most 50 XP for a spin and only one spin per UTC day, so the wheel cannot promise more than that.
-The win card shows the XP the server actually added. If the server says today's spin is already used,
-the wheel says so and no prize is shown; if saving fails, the spin is handed back.
+**Prizes.** The server runs the spin. `claim_daily_spin()` (in
+`supabase/migrations/20261124090000_*.sql`) picks the prize, grants it and answers with the wedge to
+stop on; the app only animates to it (`src/lib/dailySpin.ts`, `runDailySpin` in `src/pages/Learn.tsx`).
+The wheel spins freely until the answer arrives, then brakes onto that wedge.
+
+| Wedge | Prize | Tier | Chance of the tier |
+|-------|-------|------|--------------------|
+| 0, 1, 2 | +5, +10, +5 XP | common | 60% |
+| 3, 4 | +25, +15 XP | uncommon | 25% |
+| 5, 6 | +50 XP, +1 Thot | rare | 12% |
+| 7 | Streak Freeze | very rare | 3% |
+
+`SPIN_REWARDS` in `src/lib/spinWheel.ts` must list the same prizes in the same order as the SQL;
+`tests/app_kit.test.ts` reads the migration and fails if they drift. One spin per UTC day. A member
+who already holds 3 freezes, or a VIP member (unlimited Thots), is given +50 XP instead of a prize
+that would be worth nothing to them. An XP prize shows the next level and the reward waiting there.
+If today's XP limit is already reached the spin still counts and the wheel says so. If the call fails
+the spin is handed back. An app newer than its database falls back to an XP-only spin.
+
+To add a prize: add the wedge to the SQL function and to `SPIN_REWARDS`, give it a look in `WEDGES`
+and a line in `PRIZE_NOTE` (`DailySpinWheel.tsx`), and make sure the SQL really grants it.
 
 **Sounds.** Recorded files in `src/assets/sounds/spin/`, played by `src/lib/spinSounds.ts`: three
 wooden clicks for the pointer (never the same one twice in a row; lower and fuller as the wheel
@@ -88,9 +105,25 @@ Until the files have loaded, each sound falls back to the simple version in `sou
 | 6 | Premium, Wallet, Events | Not started |
 | 7 | Settings, Resources, health pages (colour and spacing only) | Not started |
 
+## Thots
+
+`super_like_balance.daily_remaining` is today's free Thots (reset each day); `balance` is the bank of
+earned or bought Thots, which nothing resets. The daily allowance is decided on the server from the
+member's plan: free 1, Plus and Premium 5, VIP unlimited (`thot_daily_limit`). Sending a Thot is one
+call, `send_thot`, which spends one (daily first, then the bank) and records it together. Members
+cannot insert a balance or a Thot directly.
+
+## Rewards that are real
+
+Streaks: day 7 gives +1 Thot, day 30 a Profile Boost, day 100 +3 Thots (`grant-streak-reward`). The
+Learn header shows the next one ("4d to +1 Thot").
+Levels: 3 gives +1 Thot, 5 a streak freeze, 7 +2 Thots, 10 a Profile Boost credit
+(`grant-level-reward`, which checks the member's real level). A boost credit is spent from Profile
+("Use Free Boost", `use_boost_credit`).
+
 ## Open items
 
-- Other prize types on the wheel (a Thot, a streak freeze) need a server function that picks and
-  grants the prize. Thots also need `refresh_daily_super_likes` changed first: on a new day it sets
-  the balance to the daily limit, which wipes any bonus Thots, and free members never see a balance.
-- The Learn header shows a streak multiplier ("1.5× XP") but XP is not multiplied anywhere.
+- Boosts last 24 hours in the database (`profile_boosts.expires_at`) but the copy says 30 minutes.
+- Subscription plans are read from Stripe by `check-subscription`, and Stripe is closed, so the app
+  treats everyone as free. The server reads the `subscriptions` table instead. These need to become
+  one source when the new payment processor is wired in.

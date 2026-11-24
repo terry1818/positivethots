@@ -39,5 +39,7 @@
 - No character art on another member's card or inside a message thread. One `kit-cta` per screen.
 - Outside Learn, animate with CSS. `motion/react` components only animate inside the Learn layout.
 - Sounds go through `useSoundEffects`. Never show a reward the app does not grant, and never quote a figure in app copy ("3× more Connects") without a source.
-- Daily spin: every prize is XP within what `award_xp` grants for `daily_spin` (at most 50, once per UTC day). Its sounds are recorded files rendered by `scripts/make_spin_sounds.py`; change the script, not the files.
+- Daily spin: the server picks and grants the prize (`claim_daily_spin`); the app animates to the wedge it is told. `SPIN_REWARDS` in `src/lib/spinWheel.ts` must match the SQL, and a test checks it. Its sounds are recorded files rendered by `scripts/make_spin_sounds.py`; change the script, not the files.
+- Thots: today's free ones live in `super_like_balance.daily_remaining`, earned or bought ones in `balance` (never reset). The allowance comes from the plan on the server (free 1, Plus and Premium 5, VIP unlimited). Send one only through `send_thot`. Never write these tables from the app.
+- A streak or level reward shown in the app must be one `grant-streak-reward` or `grant-level-reward` really grants.
 - `tests/app_kit.test.ts` guards area-colour contrast, the wheel landing on its prize, and the profile completion steps. Keep it passing.

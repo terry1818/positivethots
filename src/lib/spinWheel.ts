@@ -8,38 +8,34 @@ export interface SpinReward {
   rarity: "common" | "uncommon" | "rare" | "very_rare";
 }
 
-/** The most XP the server grants for one spin (award_xp, source "daily_spin"). */
-export const SPIN_XP_CEILING = 50;
-
-// Every prize is XP, because XP is what the server grants for a spin, once per UTC day.
-// Do not add a prize here unless something actually grants it.
+// The wheel's wedges, in the order the wheel draws them. The server picks and grants the prize
+// (claim_daily_spin in supabase/migrations/20261124090000_*.sql) and answers with a wedge number,
+// so this list must stay in step with that function: same order, same prizes.
 export const SPIN_REWARDS: SpinReward[] = [
   { label: "+5 XP", emoji: "⚡", type: "xp", value: 5, rarity: "common" },
   { label: "+10 XP", emoji: "⚡", type: "xp", value: 10, rarity: "common" },
   { label: "+5 XP", emoji: "⚡", type: "xp", value: 5, rarity: "common" },
   { label: "+25 XP", emoji: "🌟", type: "xp", value: 25, rarity: "uncommon" },
   { label: "+15 XP", emoji: "🌟", type: "xp", value: 15, rarity: "uncommon" },
-  { label: "+40 XP", emoji: "💎", type: "xp", value: 40, rarity: "rare" },
-  { label: "+30 XP", emoji: "💎", type: "xp", value: 30, rarity: "rare" },
-  { label: "+50 XP", emoji: "👑", type: "xp", value: 50, rarity: "very_rare" },
+  { label: "+50 XP", emoji: "💎", type: "xp", value: 50, rarity: "rare" },
+  { label: "+1 Thot", emoji: "💜", type: "thot", value: 1, rarity: "rare" },
+  { label: "Streak Freeze", emoji: "❄️", type: "freeze", value: 1, rarity: "very_rare" },
 ];
 
-/** Chance of each tier, in percent: common 60, uncommon 25, rare 12, very rare 3. */
+/** Chance of each tier, in percent: common 60, uncommon 25, rare 12, very rare 3. The server uses the same numbers. */
 export const SPIN_WEIGHTS: Record<SpinReward["rarity"], number> = { common: 60, uncommon: 25, rare: 12, very_rare: 3 };
 
-/** Pick a prize: first the tier by its weight, then one wedge of that tier at random. */
-export function pickSpinReward(random: () => number = Math.random): { index: number; reward: SpinReward } {
-  const roll = random() * 100;
-  let cumulative = 0;
-  for (const rarity of ["common", "uncommon", "rare", "very_rare"] as const) {
-    cumulative += SPIN_WEIGHTS[rarity];
-    const wedges = SPIN_REWARDS.map((r, i) => (r.rarity === rarity ? i : -1)).filter(i => i >= 0);
-    if (roll < cumulative && wedges.length) {
-      const index = wedges[Math.floor(random() * wedges.length)];
-      return { index, reward: SPIN_REWARDS[index] };
-    }
+/** Only for an app that is newer than its database (claim_daily_spin missing): pick an XP wedge here,
+ *  the old way. XP is the one prize the older server path can grant. */
+export function pickLegacyXpReward(random: () => number = Math.random): { index: number; reward: SpinReward } {
+  const xp = SPIN_REWARDS.map((reward, index) => ({ reward, index })).filter(w => w.reward.type === "xp");
+  const total = xp.reduce((sum, w) => sum + SPIN_WEIGHTS[w.reward.rarity] / xp.filter(o => o.reward.rarity === w.reward.rarity).length, 0);
+  let roll = random() * total;
+  for (const w of xp) {
+    roll -= SPIN_WEIGHTS[w.reward.rarity] / xp.filter(o => o.reward.rarity === w.reward.rarity).length;
+    if (roll < 0) return w;
   }
-  return { index: 0, reward: SPIN_REWARDS[0] };
+  return xp[0];
 }
 
 /** Degrees the wheel must be turned (clockwise, 0–360) so the pointer rests inside wedge `index`.

@@ -15,6 +15,8 @@ export interface LearningStats {
   streak_recovered_at: string | null;
   streak_freezes: number;
   streak_freeze_used_at: string | null;
+  /** Profile Boosts earned by leveling up, not yet used. */
+  boost_credits?: number | null;
 }
 
 const LEVEL_THRESHOLDS = [0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500];
@@ -43,18 +45,13 @@ export const calculateLevel = (totalXP: number): number => {
 const STREAK_MILESTONES = [3, 7, 14, 30, 100];
 export const isStreakMilestone = (streak: number) => STREAK_MILESTONES.includes(streak);
 
-/** Calculate XP multiplier based on streak length */
-export const getStreakMultiplier = (streak: number): number => {
-  if (streak >= 30) return 3;
-  if (streak >= 14) return 2.5;
-  if (streak >= 7) return 2;
-  if (streak >= 3) return 1.5;
-  return 1;
-};
+/** What a streak really earns: the rewards grant-streak-reward hands out. */
+export const STREAK_REWARDS: Record<number, string> = { 7: "+1 Thot", 30: "Profile Boost", 100: "+3 Thots" };
 
-export const getStreakMultiplierLabel = (streak: number): string | null => {
-  const m = getStreakMultiplier(streak);
-  return m > 1 ? `${m}×` : null;
+/** The next streak reward still ahead of this streak, or null once every one is earned. */
+export const getNextStreakReward = (streak: number): { day: number; label: string; daysLeft: number } | null => {
+  const day = Object.keys(STREAK_REWARDS).map(Number).sort((a, b) => a - b).find(d => d > streak);
+  return day ? { day, label: STREAK_REWARDS[day], daysLeft: day - streak } : null;
 };
 
 // Streak milestone XP bonuses
@@ -210,6 +207,98 @@ export const useLearningStats = () => {
     loadStats();
   }, [loadStats]);
 
+  /** Everything that follows an XP award the server has already made: update what is on screen, and
+   *  hand out the level and streak rewards it unlocked. Used by awardXP and by the daily spin. */
+  const applyAward = useCallback(async (result: XPAwardResult, source: string) => {
+    const feedback = xpAwardFeedback(result, stats?.current_level ?? result.new_level);
+    const today = new Date().toISOString().split("T")[0];
+    if (result.awarded === 0) {
+      setStats(prev => prev ? { ...prev, total_xp: result.new_xp, current_level: result.new_level, current_streak: result.new_streak, streak_freezes: result.freezes_remaining } : prev);
+      return { ...feedback, totalXP: result.new_xp, streakMilestone: false };
+    }
+    const { leveledUp, freezeUsed } = feedback;
+    const streakMilestone = isStreakMilestone(result.new_streak);
+
+    // Show freeze toast
+    if (freezeUsed) {
+      toast("Streak Freeze used! 🧊", {
+        description: `You still have ${result.freezes_remaining} freeze${result.freezes_remaining !== 1 ? 's' : ''} left.`,
+      });
+    }
+
+    // Streak milestone bonus XP is handled server-side by award_xp RPC
+    // and the grant-streak-reward Edge Function — no duplicate call needed
+
+    setStats(prev => prev ? {
+      ...prev,
+      total_xp: result.new_xp,
+      current_level: result.new_level,
+      current_streak: result.new_streak,
+      longest_streak: Math.max(prev.longest_streak, result.new_streak),
+      last_activity_date: today,
+      streak_freezes: result.freezes_remaining,
+    } : prev);
+
+    setIsStreakAtRisk(false);
+    setShowStreakRestore(false);
+
+    // Handle level-up
+    if (leveledUp) {
+      supabase
+        .from("profiles")
+        .update({ learning_level: result.new_level } as any)
+        .eq("id", userId)
+        .then(() => {});
+
+      if (REWARD_LEVELS.includes(result.new_level)) {
+        supabase.functions
+          .invoke("grant-level-reward", { body: { level: result.new_level } })
+          .then(({ data: rewardData }) => {
+            if (rewardData?.rewards?.length > 0) console.log("Level reward granted:", rewardData.rewards);
+          })
+          .catch((err) => console.error("Level reward error:", err));
+      }
+    }
+
+    // Grant streak rewards at milestones
+    if (streakMilestone && [7, 30, 100].includes(result.new_streak)) {
+      supabase.functions
+        .invoke("grant-streak-reward", { body: { streak: result.new_streak } })
+        .catch((err) => console.error("Streak reward error:", err));
+    }
+
+    // Update daily challenge progress
+    const challengeTypeMap: Record<string, string> = {
+      section_complete: "sections",
+      quiz_pass: "xp",
+      quiz_perfect: "xp",
+    };
+    const challengeType = challengeTypeMap[source];
+    if (challengeType) {
+      const { data: challenge } = await supabase
+        .from("daily_challenges")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("challenge_date", today)
+        .maybeSingle();
+
+      if (challenge && !challenge.completed && challenge.challenge_type === challengeType) {
+        const newProgress = challenge.current_progress + (challengeType === "xp" ? result.awarded : 1);
+        const completed = newProgress >= challenge.target_value;
+        await supabase.from("daily_challenges").update({
+          current_progress: newProgress,
+          completed,
+        }).eq("id", challenge.id);
+      }
+    }
+
+    if (source === "section_complete") {
+      setSectionsToday(prev => prev + 1);
+    }
+
+    return { ...feedback, totalXP: result.new_xp, streakMilestone };
+  }, [stats?.current_level, userId]);
+
   const awardXP = useCallback(async (amount: number, source: string, sourceId?: string, quietRetry = false): Promise<{ newXP: number; newLevel: number; leveledUp: boolean; newStreak: number; streakMilestone: boolean; freezeUsed: boolean; totalXP?: number }> => {
     if (!stats || !userId) {
       if (quietRetry) throw new Error("Learning stats not ready");
@@ -228,93 +317,7 @@ export const useLearningStats = () => {
 
       if (error) throw error;
 
-      const result = data as unknown as XPAwardResult;
-      const feedback = xpAwardFeedback(result, stats.current_level);
-      if (result.awarded === 0) {
-        setStats(prev => prev ? { ...prev, total_xp: result.new_xp, current_level: result.new_level, current_streak: result.new_streak, streak_freezes: result.freezes_remaining } : prev);
-        return { ...feedback, totalXP: result.new_xp, streakMilestone: false };
-      }
-      const { leveledUp, freezeUsed } = feedback;
-      const streakMilestone = isStreakMilestone(result.new_streak);
-
-      // Show freeze toast
-      if (freezeUsed) {
-        toast("Streak Freeze used! 🧊", {
-          description: `You still have ${result.freezes_remaining} freeze${result.freezes_remaining !== 1 ? 's' : ''} left.`,
-        });
-      }
-
-      // Streak milestone bonus XP is handled server-side by award_xp RPC
-      // and the grant-streak-reward Edge Function — no duplicate call needed
-
-      setStats(prev => prev ? {
-        ...prev,
-        total_xp: result.new_xp,
-        current_level: result.new_level,
-        current_streak: result.new_streak,
-        longest_streak: Math.max(prev.longest_streak, result.new_streak),
-        last_activity_date: today,
-        streak_freezes: result.freezes_remaining,
-      } : prev);
-
-      setIsStreakAtRisk(false);
-      setShowStreakRestore(false);
-
-      // Handle level-up
-      if (leveledUp) {
-        supabase
-          .from("profiles")
-          .update({ learning_level: result.new_level } as any)
-          .eq("id", userId)
-          .then(() => {});
-
-        if (REWARD_LEVELS.includes(result.new_level)) {
-          supabase.functions
-            .invoke("grant-level-reward", { body: { level: result.new_level } })
-            .then(({ data: rewardData }) => {
-              if (rewardData?.rewards?.length > 0) console.log("Level reward granted:", rewardData.rewards);
-            })
-            .catch((err) => console.error("Level reward error:", err));
-        }
-      }
-
-      // Grant streak rewards at milestones
-      if (streakMilestone && [7, 30, 100].includes(result.new_streak)) {
-        supabase.functions
-          .invoke("grant-streak-reward", { body: { streak: result.new_streak } })
-          .catch((err) => console.error("Streak reward error:", err));
-      }
-
-      // Update daily challenge progress
-      const challengeTypeMap: Record<string, string> = {
-        section_complete: "sections",
-        quiz_pass: "xp",
-        quiz_perfect: "xp",
-      };
-      const challengeType = challengeTypeMap[source];
-      if (challengeType) {
-        const { data: challenge } = await supabase
-          .from("daily_challenges")
-          .select("*")
-          .eq("user_id", userId)
-          .eq("challenge_date", today)
-          .maybeSingle();
-
-        if (challenge && !challenge.completed && challenge.challenge_type === challengeType) {
-          const newProgress = challenge.current_progress + (challengeType === "xp" ? result.awarded : 1);
-          const completed = newProgress >= challenge.target_value;
-          await supabase.from("daily_challenges").update({
-            current_progress: newProgress,
-            completed,
-          }).eq("id", challenge.id);
-        }
-      }
-
-      if (source === "section_complete") {
-        setSectionsToday(prev => prev + 1);
-      }
-
-      return { ...feedback, totalXP: result.new_xp, streakMilestone };
+      return await applyAward(data as unknown as XPAwardResult, source);
     } catch (err) {
       console.error("Error awarding XP:", err);
       void reportError(err instanceof Error ? err : new Error("Error awarding XP"));
@@ -322,10 +325,10 @@ export const useLearningStats = () => {
       toast.error("Could not save your XP. Please try again.");
       return { newXP: 0, newLevel: stats.current_level, leveledUp: false, newStreak: stats.current_streak, streakMilestone: false, freezeUsed: false };
     }
-  }, [stats, userId]);
+  }, [stats, userId, applyAward]);
 
   return {
-    stats, loading, awardXP, reload: loadStats,
+    stats, loading, awardXP, applyAward, reload: loadStats,
     sectionsToday, isStreakAtRisk, streakHoursLeft,
     showStreakRestore, brokenStreakCount, restoreStreak,
   };

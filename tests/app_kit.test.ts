@@ -1,6 +1,8 @@
 import { test, expect } from "bun:test";
 import { readFileSync } from "node:fs";
-import { landingRotation, pickSpinReward, SPIN_REWARDS, SPIN_WEIGHTS, SPIN_XP_CEILING, spinTravel, wedgeUnderPointer } from "../src/lib/spinWheel";
+import { readdirSync } from "node:fs";
+import { landingRotation, pickLegacyXpReward, SPIN_REWARDS, SPIN_WEIGHTS, spinTravel, wedgeUnderPointer } from "../src/lib/spinWheel";
+import { getNextStreakReward } from "../src/hooks/useLearningStats";
 import { tickShape } from "../src/lib/spinSounds";
 import { computeProfileCompletion } from "../src/hooks/useProfileCompletion";
 import { spinWinNotes } from "../src/lib/soundGenerator";
@@ -95,31 +97,50 @@ test("profile steps match the checks behind the percentage", () => {
   expect(one.steps.filter(s => s.done).map(s => s.key)).toEqual(["photo"]);
 });
 
-test("every wheel prize is XP the server will actually grant", () => {
-  for (const reward of SPIN_REWARDS) {
-    expect(reward.type).toBe("xp");
-    expect(reward.value).toBeGreaterThan(0);
-    expect(reward.value).toBeLessThanOrEqual(SPIN_XP_CEILING);
+// The server picks and grants the prize, so the wheel's list must match the server's exactly.
+const spinSql = (() => {
+  const dir = "supabase/migrations";
+  const file = readdirSync(dir).filter(f => readFileSync(`${dir}/${f}`, "utf8").includes("FUNCTION public.claim_daily_spin")).sort().pop();
+  if (!file) throw new Error("no migration defines claim_daily_spin");
+  return readFileSync(`${dir}/${file}`, "utf8");
+})();
+
+test("the wheel shows exactly the prizes the server grants, in the same order", () => {
+  const values = spinSql.match(/_value := \(ARRAY\[([\d, ]+)\]\)/)![1].split(",").map(Number);
+  expect(values).toEqual(SPIN_REWARDS.map(r => r.value));
+  const typeOf = (i: number) => (i === 6 ? "thot" : i === 7 ? "freeze" : "xp");
+  expect(spinSql).toContain("CASE _index WHEN 6 THEN 'thot' WHEN 7 THEN 'freeze' ELSE 'xp' END");
+  SPIN_REWARDS.forEach((reward, i) => expect(reward.type).toBe(typeOf(i)));
+  for (const reward of SPIN_REWARDS.filter(r => r.type === "xp")) {
     expect(reward.label).toBe(`+${reward.value} XP`);
+    expect(reward.value).toBeLessThanOrEqual(50); // award_xp grants at most 50 for a spin
   }
-  expect(Object.values(SPIN_WEIGHTS).reduce((a, b) => a + b, 0)).toBe(100);
-  // rarer tiers pay more than commoner ones
-  const best = (rarity: string) => Math.max(...SPIN_REWARDS.filter(r => r.rarity === rarity).map(r => r.value));
-  const worst = (rarity: string) => Math.min(...SPIN_REWARDS.filter(r => r.rarity === rarity).map(r => r.value));
-  expect(worst("uncommon")).toBeGreaterThan(best("common"));
-  expect(worst("rare")).toBeGreaterThan(best("uncommon"));
-  expect(worst("very_rare")).toBeGreaterThan(best("rare"));
 });
 
-test("the prize picker follows the tier weights", () => {
-  const fixed = (...values: number[]) => () => values.shift() ?? 0;
-  expect(pickSpinReward(fixed(0.0, 0)).reward.rarity).toBe("common");
-  expect(pickSpinReward(fixed(0.599, 0)).reward.rarity).toBe("common");
-  expect(pickSpinReward(fixed(0.6, 0)).reward.rarity).toBe("uncommon");
-  expect(pickSpinReward(fixed(0.85, 0)).reward.rarity).toBe("rare");
-  expect(pickSpinReward(fixed(0.97, 0)).reward.rarity).toBe("very_rare");
-  const picked = pickSpinReward(fixed(0.7, 0.99));
-  expect(SPIN_REWARDS[picked.index]).toBe(picked.reward);
+test("the wheel's tiers and chances match the server's", () => {
+  const tiers = [...spinSql.matchAll(/_roll < (\d+) THEN\s+_index := \(ARRAY\[([\d, ]+)\]\)/g)].map(m => ({ upTo: Number(m[1]), wedges: m[2].split(",").map(Number) }));
+  expect(tiers.map(t => t.upTo)).toEqual([60, 85, 97]);
+  const byRarity = (rarity: string) => SPIN_REWARDS.map((r, i) => (r.rarity === rarity ? i : -1)).filter(i => i >= 0);
+  expect(tiers[0].wedges).toEqual(byRarity("common"));
+  expect(tiers[1].wedges).toEqual(byRarity("uncommon"));
+  expect(tiers[2].wedges).toEqual(byRarity("rare"));
+  expect(byRarity("very_rare")).toEqual([7]);
+  expect(SPIN_WEIGHTS).toEqual({ common: 60, uncommon: 25, rare: 12, very_rare: 3 });
+});
+
+test("the fallback for an older database only ever picks XP", () => {
+  for (let i = 0; i < 200; i++) {
+    const picked = pickLegacyXpReward(() => i / 200);
+    expect(picked.reward.type).toBe("xp");
+    expect(SPIN_REWARDS[picked.index]).toBe(picked.reward);
+  }
+});
+
+test("the streak label points at the next reward a streak really earns", () => {
+  expect(getNextStreakReward(3)).toEqual({ day: 7, label: "+1 Thot", daysLeft: 4 });
+  expect(getNextStreakReward(7)).toEqual({ day: 30, label: "Profile Boost", daysLeft: 23 });
+  expect(getNextStreakReward(99)?.daysLeft).toBe(1);
+  expect(getNextStreakReward(100)).toBeNull();
 });
 
 test("the wheel's recorded sounds exist and its clicks get lower and fuller as it slows", () => {

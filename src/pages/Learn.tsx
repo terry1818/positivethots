@@ -18,7 +18,9 @@ import { StreakInterstitial } from "@/components/education/StreakInterstitial";
 
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { useLearningStats, getLevelName, calculateLevel } from "@/hooks/useLearningStats";
+import { useLearningStats, getLevelName, calculateLevel, getNextReward, getXPForNextLevel } from "@/hooks/useLearningStats";
+import { claimDailySpin, prizeLabel, type SpinOutcome } from "@/lib/dailySpin";
+import { SPIN_REWARDS, pickLegacyXpReward } from "@/lib/spinWheel";
 import { StreakRestoreModal } from "@/components/education/StreakRestoreModal";
 import { useFeatureUnlocks } from "@/hooks/useFeatureUnlocks";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -84,7 +86,7 @@ const Learn = () => {
     }
   }, [loading, justCompleted, navigate, location.pathname]);
   const handleModuleSearch = useCallback((q: string) => setModuleSearchQuery(q.toLowerCase()), []);
-  const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak, awardXP } = useLearningStats();
+  const { stats, loading: statsLoading, sectionsToday, isStreakAtRisk, streakHoursLeft, showStreakRestore, brokenStreakCount, restoreStreak, awardXP, applyAward, reload: reloadStats } = useLearningStats();
   const { tiers, loading: tiersLoading } = useFeatureUnlocks();
   const { tier: subscriptionTier } = useSubscription();
   const { seen: learnTourSeen, markSeen: markLearnTourSeen } = useTutorialState("learn_tour");
@@ -293,6 +295,50 @@ const Learn = () => {
     navigate(`/learn/${nextTarget.module.slug}${nextTarget.review ? "?section=1" : next ? `?section=${next.section_number}` : "?quiz=1"}`);
   };
 
+  /** What an XP prize moves the member toward: the next level, and the reward waiting there if there is one. */
+  const xpNote = (totalXp: number, level: number): string | undefined => {
+    if (level >= 10) return undefined;
+    const left = getXPForNextLevel(level) - totalXp;
+    if (left <= 0) return undefined;
+    const reward = getNextReward(level);
+    return reward && reward.level === level + 1
+      ? `${left} XP to Level ${level + 1}, which unlocks ${reward.label}.`
+      : `${left} XP to Level ${level + 1}.`;
+  };
+
+  /** Today's spin. The server picks and grants the prize; the wheel is told which wedge to stop on. */
+  const runDailySpin = async (): Promise<SpinOutcome> => {
+    const spin = await claimDailySpin();
+    if (spin === null) return { status: "failed" };
+
+    if (spin === "missing") {
+      // The database is older than this app: fall back to the XP-only spin the older server path grants.
+      if (!awardXP) return { status: "failed" };
+      const { index, reward } = pickLegacyXpReward();
+      const result = await awardXP(reward.value, "daily_spin");
+      if (result.newXP > 0) {
+        setHasSpunToday(true);
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) void supabase.from("profiles").update({ last_daily_spin: new Date().toISOString().split("T")[0] } as any).eq("id", session.user.id).then(() => {});
+        return { status: "won", index, reward, label: prizeLabel(reward, result.newXP), note: result.totalXP !== undefined ? xpNote(result.totalXP, result.newLevel) : undefined };
+      }
+      if (result.totalXP !== undefined) { setHasSpunToday(true); return { status: "used", reason: "spun" }; }
+      return { status: "failed" };
+    }
+
+    setHasSpunToday(true);
+    if (spin.status === "used") return { status: "used", reason: "spun" };
+    if (spin.status === "capped") return { status: "used", reason: "xp_limit" };
+
+    const reward = SPIN_REWARDS[spin.index];
+    if (spin.xp) await applyAward(spin.xp, "daily_spin");  // XP on screen, plus any level reward it unlocked
+    else void reloadStats();                                // a freeze changes the count in the header
+    return {
+      status: "won", index: spin.index, reward, label: prizeLabel(reward, spin.awarded),
+      note: spin.xp ? xpNote(spin.xp.new_xp, spin.xp.new_level) : undefined,
+    };
+  };
+
   if (loading) {
     return <PageSkeleton variant="learn" />;
   }
@@ -375,15 +421,7 @@ const Learn = () => {
           streak={stats?.current_streak || 0} lastActivityDate={stats?.last_activity_date || null}
           freezes={stats?.streak_freezes || 0} atRisk={isStreakAtRisk} hoursLeft={streakHoursLeft}
           hasSpunToday={hasSpunToday} bonusReady={dailyBonusReady} openBonus={() => setDailyBonusTrigger(n => n + 1)}
-          onReward={async reward => {
-            // The wheel shows the prize itself, so there is no toast here. Every prize is XP.
-            if (reward.type !== "xp" || !awardXP) return false;
-            const result = await awardXP(reward.value, "daily_spin");
-            if (result.newXP > 0) { setHasSpunToday(true); return result.newXP; }
-            // The server answered but added nothing: today's spin or today's XP limit is already used.
-            if (result.totalXP !== undefined) { setHasSpunToday(true); return "used" as const; }
-            return false;
-          }}
+          onSpin={runDailySpin}
         />
 
         <div className="mx-auto w-full max-w-[480px]">
