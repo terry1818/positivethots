@@ -50,10 +50,6 @@ const relationshipStyleLabels: Record<string, string> = {
   "hierarchical-poly": "Hierarchical Poly", "solo-poly": "Solo Poly",
 };
 
-const TIER_AREA: Record<string, string> = {
-  foundation: "learn-tier-foundation", sexual_health: "learn-tier-sexual_health", identity: "learn-tier-identity",
-  relationships: "learn-tier-relationships", advanced: "learn-tier-advanced",
-};
 
 const ProfileNavRow = ({ icon: Icon, tone = "quiet", label, onClick, href, external }: {
   icon: LucideIcon; tone?: string; label: string; onClick?: () => void; href?: string; external?: boolean;
@@ -600,7 +596,7 @@ const Profile = () => {
             <section className="space-y-2.5" aria-label="What your badges unlock">
               <h2 className="kit-eyebrow px-1">What your badges unlock</h2>
               {shown.map((t) => (
-                <div key={t.tier} className={cn("kit-card p-3.5", TIER_AREA[t.tier])}>
+                <div key={t.tier} className={cn("kit-card p-3.5", `learn-tier-${t.tier}`)}>
                   <div className="flex items-center gap-3">
                     <span className="kit-coin" data-tone={t.isComplete ? "reward" : "area"}>
                       {t.isComplete ? <CheckCircle aria-hidden="true" /> : <Lock aria-hidden="true" />}

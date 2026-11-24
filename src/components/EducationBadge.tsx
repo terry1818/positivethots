@@ -1,5 +1,6 @@
 import { Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { learnSection } from "@/lib/learnSections";
 
 interface EducationBadgeProps {
   moduleSlug: string;
@@ -9,15 +10,6 @@ interface EducationBadgeProps {
   size?: "sm" | "md" | "lg";
   showLabel?: boolean;
 }
-
-// Tier-based colors — purple family
-const tierColors: Record<string, string> = {
-  foundation: "bg-primary",
-  sexual_health: "bg-success",
-  identity: "bg-[hsl(285_55%_45%)]",
-  relationships: "bg-[hsl(340_65%_55%)]",
-  advanced: "bg-accent",
-};
 
 // Legacy slug-based colors as fallback
 const badgeColors: Record<string, string> = {
@@ -74,7 +66,7 @@ export const EducationBadge = ({
     lg: "h-14 w-14 text-xl"
   };
 
-  const color = badgeColors[moduleSlug] || tierColors[tier] || "bg-muted";
+  const color = badgeColors[moduleSlug] || learnSection(tier).badgeBg || "bg-muted";
   const icon = badgeIcons[moduleSlug] || "★";
 
   return (

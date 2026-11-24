@@ -324,5 +324,95 @@
    }
   ],
   "takeaway": "Write your agreement down, check in on a schedule, and get help early instead of waiting years."
+ },
+ "d4deda34-2719-43fa-9007-dc46c58777bf": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Mono-Normativity and Its Effects",
+    "art": "relationship-orientations/l4-0.webp",
+    "alt": "A guide standing under a big signpost that points only one way, looking sceptical",
+    "size": [
+     441,
+     438
+    ],
+    "plain": "Many people assume one partner is the only normal way. That hurts everyone else."
+   },
+   {
+    "heading": "Respecting Monogamy",
+    "art": "relationship-orientations/l4-1.webp",
+    "alt": "A happy couple holding hands under one shared umbrella",
+    "size": [
+     423,
+     512
+    ],
+    "plain": "Choosing one partner is just as valid. Do not look down on it."
+   },
+   {
+    "heading": "Navigating Transitions Between Structures",
+    "art": "relationship-orientations/l4-2.webp",
+    "alt": "A guide crossing a small bridge between two differently coloured lands",
+    "size": [
+     512,
+     499
+    ],
+    "plain": "People change. Moving between setups takes time and honest talk."
+   },
+   {
+    "heading": "Discussing Relationship Orientation",
+    "art": "relationship-orientations/l4-3.webp",
+    "alt": "A guide opening a door a little and peeking out with a letter in her hand",
+    "size": [
+     369,
+     469
+    ],
+    "plain": "Telling others how you do relationships is your call, at your pace."
+   },
+   {
+    "heading": "When Conflicts Arise",
+    "art": "relationship-orientations/l4-4.webp",
+    "alt": "Two guides sitting at a table with two different maps, talking calmly",
+    "size": [
+     512,
+     384
+    ],
+    "plain": "If you and a partner want different setups, be honest. Sometimes it cannot be solved."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "d4deda34-1",
+    "after": "Mono-Normativity and Its Effects",
+    "prompt": "The assumption that monogamy is the natural, default and superior way to relate is called…",
+    "options": [
+     "Hierarchy",
+     "Compersion",
+     "Mono-normativity"
+    ],
+    "answer": 2,
+    "explanation": "Mono-normativity. Mono-normativity — the cultural assumption that monogamy is the natural, default, and superior way to structure relationships — affects everyone, regardless of their relationship orientation."
+   },
+   {
+    "id": "d4deda34-2",
+    "after": "Respecting Monogamy",
+    "prompt": "Within CNM communities, how should monogamy be treated?",
+    "options": [
+     "With respect, not as inferior",
+     "As a phase",
+     "As outdated"
+    ],
+    "answer": 0,
+    "explanation": "With respect, not as inferior. Within CNM communities, it's important to guard against the opposite form of judgment — treating monogamy as inferior, unenlightened, or evidence of insecurity."
+   }
+  ],
+  "takeaway": "No consensual relationship style is better than another, including monogamy."
  }
 }

@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CheckCircle, AlertTriangle, XCircle, Crown, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { learnSection, LEARN_SECTIONS, SECTION_IDS } from "@/lib/learnSections";
 
 interface CourseHealth {
   id: string;
@@ -22,16 +23,8 @@ const getStatus = (c: CourseHealth): Status => {
   return "needs_fix";
 };
 
-const TIER_ORDER: Record<string, number> = {
-  foundation: 1, sexual_health: 2, identity_diversity: 3, healthy_relationships: 4, advanced: 5,
-};
-
-const TIER_LABELS: Record<string, string> = {
-  foundation: "Foundation", sexual_health: "Sexual Health", identity_diversity: "Identity & Diversity",
-  healthy_relationships: "Healthy Relationships", advanced: "Advanced",
-};
-
-const ALL_TIERS = ["all", "foundation", "sexual_health", "identity_diversity", "healthy_relationships", "advanced"] as const;
+const ALL_TIERS = ["all", ...SECTION_IDS] as const;
+const tierRank = (t: string | null) => { const i = SECTION_IDS.indexOf(t ?? ""); return i < 0 ? 99 : i; };
 const STATUS_FILTERS = ["all", "ok", "needs_fix"] as const;
 
 export const EducationConsistencyDashboard = () => {
@@ -84,7 +77,7 @@ export const EducationConsistencyDashboard = () => {
           quiz_count: quizMap.get(m.id) || 0,
           min_section_chars: sec.count > 0 ? sec.minChars : 0,
         };
-      }).sort((a, b) => (TIER_ORDER[a.tier || ""] || 6) - (TIER_ORDER[b.tier || ""] || 6));
+      }).sort((a, b) => tierRank(a.tier) - tierRank(b.tier));
     },
     staleTime: 30_000,
   });
@@ -135,7 +128,7 @@ export const EducationConsistencyDashboard = () => {
                 ? "bg-primary text-primary-foreground"
                 : "bg-white/5 text-muted-foreground hover:bg-white/10"
             )}>
-            {t === "all" ? "All Tiers" : TIER_LABELS[t] || t}
+            {t === "all" ? "All sections" : learnSection(t).name}
           </button>
         ))}
         <div className="w-px bg-white/10 mx-1" />
@@ -177,7 +170,7 @@ export const EducationConsistencyDashboard = () => {
                   </td>
                   <td className="p-3">
                     <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs">
-                      {TIER_LABELS[c.tier || ""] || c.tier || "—"}
+                      {c.tier ? learnSection(c.tier).name : "—"}
                     </span>
                   </td>
                   <td className={cn("p-3 text-center", c.section_count !== 4 && "text-amber-400 font-bold")}>

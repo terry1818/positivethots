@@ -329,5 +329,165 @@
    }
   ],
   "takeaway": "Do not fight a bad habit. Replace it, and attach new habits to ones you already have."
+ },
+ "3dc6aea5-0bd4-4984-89b1-86214b6561a5": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Self-Image Formation: How Your Thermostat Gets Set",
+    "art": "self-image-inner-blueprint/l2-0.webp",
+    "alt": "A guide looking at a wall of sticky notes and peeling one off",
+    "size": [
+     472,
+     460
+    ],
+    "plain": "Your self-image was built from what you were told and what happened to you."
+   },
+   {
+    "heading": "The Success Mechanism vs. Failure Mechanism",
+    "art": "self-image-inner-blueprint/l2-1.webp",
+    "alt": "At a railway switch lever, choosing between two tracks",
+    "size": [
+     512,
+     459
+    ],
+    "plain": "Your mind runs in success mode or failure mode, depending on what you believe about yourself."
+   },
+   {
+    "heading": "Self-Acceptance and Physical Health",
+    "art": "self-image-inner-blueprint/l2-2.webp",
+    "alt": "A guide hugging herself with a calm smile",
+    "size": [
+     282,
+     482
+    ],
+    "plain": "Accepting yourself is linked to better well-being."
+   },
+   {
+    "heading": "The Mirror Exercise",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "Cultural Programming and Self-Image",
+    "art": "self-image-inner-blueprint/l2-4.webp",
+    "alt": "A guide walking away from a billboard that shows a perfect glowing silhouette",
+    "size": [
+     470,
+     487
+    ],
+    "plain": "Family, culture and media all shaped how you see yourself."
+   }
+  ],
+  "checks": [
+   {
+    "id": "3dc6aea5-1",
+    "after": "Self-Image Formation: How Your Thermostat Gets Set",
+    "prompt": "Where does self-image come from?",
+    "options": [
+     "Your genes alone",
+     "Random chance",
+     "Things like childhood messages"
+    ],
+    "answer": 2,
+    "explanation": "Things like childhood messages. Self-image is built from things like childhood messaging."
+   },
+   {
+    "id": "3dc6aea5-2",
+    "after": "Self-Acceptance and Physical Health",
+    "prompt": "What did Carol Ryff's research study?",
+    "options": [
+     "The best age to marry",
+     "The link between self-acceptance and well-being",
+     "How to win arguments"
+    ],
+    "answer": 1,
+    "explanation": "The link between self-acceptance and well-being. Carol Ryff's psychological well-being research looked at self-acceptance."
+   }
+  ],
+  "takeaway": "Your self-image was learned from early messages and experiences, so it can be relearned."
+ },
+ "ee3be82c-2548-4f47-b255-1e61f221f8a9": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Power of Self-Affirmation Under Stress",
+    "art": "self-image-inner-blueprint/l3-0.webp",
+    "alt": "A guide holding a shield decorated with a heart and a star while light rain falls",
+    "size": [
+     416,
+     477
+    ],
+    "plain": "Reminding yourself of what you value helps you stay steady under stress."
+   },
+   {
+    "heading": "Releasing Protective Beliefs",
+    "art": "self-image-inner-blueprint/l3-1.webp",
+    "alt": "A guide taking off a heavy suit of armour and setting it down gently",
+    "size": [
+     493,
+     499
+    ],
+    "plain": "Most limiting beliefs began as protection. You can let them go when they are no longer needed."
+   },
+   {
+    "heading": "Identity Reframes: From Scarcity to Abundance",
+    "art": "self-image-inner-blueprint/l3-2.webp",
+    "alt": "A guide turning a card over from a grey side to a bright colourful side",
+    "size": [
+     453,
+     463
+    ],
+    "plain": "Rewrite the old story about yourself into one that is fair and true."
+   },
+   {
+    "heading": "Practical Reframe Exercises",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "From Scarcity to Abundance in Relationships",
+    "art": "self-image-inner-blueprint/l3-4.webp",
+    "alt": "A guide holding an overflowing basket of hearts and offering some",
+    "size": [
+     474,
+     481
+    ],
+    "plain": "Love is not a pie that runs out. There is enough."
+   }
+  ],
+  "checks": [
+   {
+    "id": "ee3be82c-1",
+    "after": "Releasing Protective Beliefs",
+    "prompt": "Why did most limiting self-images form?",
+    "options": [
+     "By accident",
+     "As protection",
+     "As punishment"
+    ],
+    "answer": 1,
+    "explanation": "As protection. Most limiting self-images formed as protection. If a parent was emotionally unavailable, you learned \"seeking connection is futile.\""
+   },
+   {
+    "id": "ee3be82c-2",
+    "after": "From Scarcity to Abundance in Relationships",
+    "prompt": "A scarcity mindset in relationships says…",
+    "options": [
+     "Everyone is secure",
+     "There isn't enough to go around",
+     "Love grows when shared"
+    ],
+    "answer": 1,
+    "explanation": "There isn't enough to go around. Many people discover that a scarcity mindset, the fear that there isn't enough, is holding them back."
+   }
+  ],
+  "takeaway": "Old beliefs once protected you. Thank them, then replace them with ones that are true now."
  }
 }

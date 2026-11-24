@@ -27,7 +27,7 @@ const PLAN_LINE: Record<string, string> = {
   premium: "Be seen sooner and filter more",
   vip: "Everything, and a way to give back",
 };
-const FREE_FEATURES = ["Every lesson and badge", "Discover and Connect", "1 Thot a day", "Chat with your connections"];
+const FREE_FEATURES = ["Lessons and badges, except Advanced and Personal Growth", "Discover and Connect", "1 Thot a day", "Chat with your connections"];
 
 const PageHeader = ({ title, onBack }: { title: string; onBack: () => void }) => (
   <header className="kit-header sticky top-0 z-30">
@@ -216,7 +216,7 @@ const Premium = () => {
         </div>
         <div className="text-center">
           <h2 className="text-2xl font-extrabold [text-wrap:balance]">A plan adds more ways to connect</h2>
-          <p className="mt-1 text-muted-foreground [text-wrap:pretty]">Every lesson and badge stays free.</p>
+          <p className="mt-1 text-muted-foreground [text-wrap:pretty]">Most lessons stay free. Any plan opens Advanced and Personal Growth.</p>
         </div>
 
         {!PAYMENTS_OPEN && (

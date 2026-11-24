@@ -21,6 +21,7 @@ import { PathIcon, TierEmblem } from "./pathIcons";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { usePathAnimation } from "@/hooks/usePathAnimation";
 import { Button } from "@/components/ui/button";
+import { learnSection, SECTION_IDS } from "@/lib/learnSections";
 
 const PathChest = lazy(() => import("./PathChest"));
 
@@ -59,10 +60,6 @@ export interface BadgePathMapProps {
   justCompleted?: { moduleId: string; node: string };
 }
 
-const tierLabels: Record<string, string> = {
-  foundation: "Foundation (Required)", sexual_health: "Sexual Health", identity: "Identity & Diversity",
-  relationships: "Healthy Relationships", advanced: "Advanced Topics",
-};
 
 const badgeIcons: Record<string, string> = {
   "consent-fundamentals": "✓", "enm-principles": "♡", "boundaries-communication": "⬡",
@@ -77,7 +74,7 @@ const badgeIcons: Record<string, string> = {
   "financial-intimacy": "💰", "grief-relationship-transitions": "🕊",
 };
 
-const TIER_ORDER = ["foundation", "sexual_health", "identity", "relationships", "advanced"];
+const TIER_ORDER = SECTION_IDS;
 
 export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked, isAdvancedPremiumLocked,
   isPremium, moduleProgress, onModuleClick, tierFeatures, currentModuleId, currentStarted = false,
@@ -183,8 +180,8 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
   const foundationDone = (modulesByTier.foundation || []).every(m => earnedModuleIds.has(m.id));
   const tierHint = (tier: string, modules: Module[]) => {
     if (tier === "foundation") return "";
-    if (!foundationDone) return tier === "advanced" && !isPremium ? "Complete Foundation and get Premium" : "Complete Foundation to unlock";
-    if (tier === "advanced" && !isPremium) return "Get Premium to unlock";
+    if (!foundationDone) return learnSection(tier).plan && !isPremium ? "Complete Foundation and get Premium" : "Complete Foundation to unlock";
+    if (learnSection(tier).plan && !isPremium) return "Get Premium to unlock";
     return modules.some(m => !earnedModuleIds.has(m.id) && isModuleUnlocked(m)) ? "" : "Earn the badges these levels build on to unlock";
   };
   return <div ref={pathRef} role="list" aria-label="Learning path" className={cn("space-y-4", running ? "path-running" : "path-paused")} style={{ "--learn-header-height": `${headerHeight}px` } as React.CSSProperties}>
@@ -197,7 +194,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
       return <div key={tier} role="listitem" className={`learn-tier learn-tier-${tier}`}>
         <Button variant="ghost" className="path-tier-banner min-h-[44px] h-auto w-full whitespace-normal" onClick={() => toggle(tier, true)}
           aria-expanded={tierOpen} data-tour={tier === currentTier ? "learn-tier-active" : undefined} data-walkthrough={tier === currentTier ? "learn-tier-active" : undefined}>
-          <span className="flex-1 min-w-0 text-left"><span className="block text-lg font-bold">{tierLabels[tier]}</span><span className="block text-sm">{earned} of {modules.length} levels complete</span><span className="path-tier-progress"><span style={{ width: `${earned / modules.length * 100}%` }}/></span></span><GuideArt name={tierGuide(tier)} size={96}/><ChevronDown className={cn("h-4 w-4", tierOpen && "rotate-180")} />
+          <span className="flex-1 min-w-0 text-left"><span className="block text-lg font-bold">{learnSection(tier).roadmapName}</span><span className="block text-sm">{earned} of {modules.length} levels complete</span><span className="path-tier-progress"><span style={{ width: `${earned / modules.length * 100}%` }}/></span></span><GuideArt name={tierGuide(tier)} size={96}/><ChevronDown className={cn("h-4 w-4", tierOpen && "rotate-180")} />
         </Button>
         {!tierOpen && earned < modules.length && tierHint(tier, modules) && <p className="text-center text-sm text-muted-foreground">{tierHint(tier, modules)}</p>}
         {tierOpen && <div className="space-y-4">
@@ -221,7 +218,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
             return <section key={module.id} aria-label={module.title} className="learn-level-block">
               {expanded ? <header className={cn("learn-level-band sticky z-20 flex items-center gap-2 px-3 py-4", justCompleted?.moduleId === module.id && justCompleted.node === "badge" && finishPhase < 3 && "path-level-celebrating")} style={{ top: headerHeight }}>
                 <span className="path-level-number">{levelIndex + 1}</span>
-                <div className="min-w-0 flex-1"><p className="text-xs">{tierLabels[tier].replace(" (Required)", "")} - Level {levelIndex + 1} of {modules.length}</p><h3 className="text-base font-bold leading-snug mt-1">{module.title}</h3><div className="path-level-pips" aria-label={`${done} of ${mandatory} lessons and badge completed`}>{nodes.map(n => <i key={n.id} className={n.done ? "path-pip-done" : ""}/>)}</div></div>
+                <div className="min-w-0 flex-1"><p className="text-xs">{learnSection(tier).roadmapName.replace(" (Required)", "")} - Level {levelIndex + 1} of {modules.length}</p><h3 className="text-base font-bold leading-snug mt-1">{module.title}</h3><div className="path-level-pips" aria-label={`${done} of ${mandatory} lessons and badge completed`}>{nodes.map(n => <i key={n.id} className={n.done ? "path-pip-done" : ""}/>)}</div></div>
                 <Button variant="outline" className="path-guide-button" onClick={() => setGuideId(module.id)}><PathIcon kind="lesson"/>Guide</Button>
                 {module.id !== currentModuleId && <Button variant="ghost" size="icon" aria-label={`Collapse ${module.title}`} onClick={() => toggle(module.id)}><ChevronDown /></Button>}
               </header> : <div className={cn("path-level-row flex min-h-[80px] items-center gap-2 py-3", earnedBadge && "path-completed-row")}>
@@ -259,7 +256,7 @@ export const BadgePathMap = ({ modulesByTier, earnedModuleIds, isModuleUnlocked,
               </div>
             </section>;
           })}
-          <div className="flex justify-center items-center gap-8 py-8"><GuideArt name="guide-trophy" size={112}/><PathNode id={`review-${tier}`} tier={tier} kind="review" label={`${tierLabels[tier]} Review, ${earned >= 2 ? "available" : "locked, earn 2 badges in this tier to unlock"}`} title={`${tierLabels[tier]} Review`} subtitle="+30 XP" state={earned >= 2 ? "available" : "locked"} reason="Earn 2 badges in this tier to unlock" open={openNode === `review-${tier}`} onOpenChange={value => setOpenNode(value ? `review-${tier}` : null)} onGo={() => navigate(`/learn/review/${tier}`)}/></div>
+          <div className="flex justify-center items-center gap-8 py-8"><GuideArt name="guide-trophy" size={112}/><PathNode id={`review-${tier}`} tier={tier} kind="review" label={`${learnSection(tier).roadmapName} Review, ${earned >= 2 ? "available" : "locked, earn 2 badges in this tier to unlock"}`} title={`${learnSection(tier).roadmapName} Review`} subtitle="+30 XP" state={earned >= 2 ? "available" : "locked"} reason="Earn 2 badges in this tier to unlock" open={openNode === `review-${tier}`} onOpenChange={value => setOpenNode(value ? `review-${tier}` : null)} onGo={() => navigate(`/learn/review/${tier}`)}/></div>
         </div>}
       </div>;
     })}

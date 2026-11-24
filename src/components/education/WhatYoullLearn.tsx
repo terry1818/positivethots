@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Clock, BarChart3 } from "lucide-react";
+import { learnSection, LEARN_SECTIONS, SECTION_IDS } from "@/lib/learnSections";
 
 const MODULE_OBJECTIVES: Record<string, string[]> = {
   "consent-fundamentals": [
@@ -35,30 +36,6 @@ const MODULE_OBJECTIVES: Record<string, string[]> = {
   ],
 };
 
-const TIER_FRAMEWORKS: Record<string, string> = {
-  foundation: "AASECT & Sexual Health Alliance",
-  sexual_health: "Sexual Health Alliance",
-  identity: "AASECT & SHA Frameworks",
-  relationships: "Gottman Method & NVC",
-  advanced: "SHA Kink-Informed Care",
-};
-
-const TIER_COLORS: Record<string, string> = {
-  foundation: "bg-primary/10 text-primary border-primary/30",
-  sexual_health: "bg-green-500/10 text-green-500 border-green-500/30",
-  identity: "bg-purple-500/10 text-purple-500 border-purple-500/30",
-  relationships: "bg-pink-500/10 text-pink-500 border-pink-500/30",
-  advanced: "bg-accent/10 text-accent border-accent/30",
-};
-
-const TIER_LABELS: Record<string, string> = {
-  foundation: "Foundation",
-  sexual_health: "Intermediate",
-  identity: "Intermediate",
-  relationships: "Intermediate",
-  advanced: "Advanced",
-};
-
 interface WhatYoullLearnProps {
   moduleSlug: string;
   tier: string;
@@ -69,9 +46,9 @@ export const WhatYoullLearn = ({ moduleSlug, tier, estimatedMinutes }: WhatYoull
   const objectives = MODULE_OBJECTIVES[moduleSlug];
   if (!objectives) return null;
 
-  const framework = TIER_FRAMEWORKS[tier] || TIER_FRAMEWORKS.foundation;
-  const tierColor = TIER_COLORS[tier] || TIER_COLORS.foundation;
-  const difficulty = TIER_LABELS[tier] || "Foundation";
+  const framework = learnSection(tier).sources;
+  const tierColor = learnSection(tier).chip;
+  const difficulty = learnSection(tier).level;
 
   return (
     <Card className="mb-6 border-border/50">

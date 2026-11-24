@@ -538,6 +538,8 @@ button, [role="button"] {
 .learn-tier-identity { --learn-tier-color: var(--badge-boundaries); }
 .learn-tier-relationships { --learn-tier-color: var(--badge-safer-sex); }
 .learn-tier-advanced { --learn-tier-color: var(--accent); }
+.learn-tier-dating_safety { --learn-tier-color: var(--path-dating-top); }
+.learn-tier-growth { --learn-tier-color: var(--path-growth-top); }
 .learn-tier-color { color: hsl(var(--learn-tier-color)); }
 .learn-node-open { border-color: hsl(var(--learn-tier-color)); }
 .learn-path-node svg.absolute { width: 100%; height: 100%; }
@@ -583,12 +585,16 @@ button, [role="button"] {
   --path-identity-top: 285 65% 46%; --path-identity-bottom: 285 65% 35%; --path-identity-lip: 285 65% 23%;
   --path-relationships-top: 340 78% 45%; --path-relationships-bottom: 340 78% 34%; --path-relationships-lip: 340 78% 23%;
   --path-advanced-top: 280 80% 48%; --path-advanced-bottom: 280 80% 36%; --path-advanced-lip: 280 80% 24%;
+  --path-dating-top: 214 80% 44%; --path-dating-bottom: 214 80% 34%; --path-dating-lip: 214 80% 22%;
+  --path-growth-top: 186 80% 30%; --path-growth-bottom: 186 80% 23%; --path-growth-lip: 186 80% 15%;
 }
 .learn-tier, .learn-tier-foundation { --path-top: var(--path-foundation-top); --path-bottom: var(--path-foundation-bottom); --path-lip: var(--path-foundation-lip); }
 .learn-tier-sexual_health { --path-top: var(--path-health-top); --path-bottom: var(--path-health-bottom); --path-lip: var(--path-health-lip); }
 .learn-tier-identity { --path-top: var(--path-identity-top); --path-bottom: var(--path-identity-bottom); --path-lip: var(--path-identity-lip); }
 .learn-tier-relationships { --path-top: var(--path-relationships-top); --path-bottom: var(--path-relationships-bottom); --path-lip: var(--path-relationships-lip); }
 .learn-tier-advanced { --path-top: var(--path-advanced-top); --path-bottom: var(--path-advanced-bottom); --path-lip: var(--path-advanced-lip); }
+.learn-tier-dating_safety { --path-top: var(--path-dating-top); --path-bottom: var(--path-dating-bottom); --path-lip: var(--path-dating-lip); }
+.learn-tier-growth { --path-top: var(--path-growth-top); --path-bottom: var(--path-growth-bottom); --path-lip: var(--path-growth-lip); }
 .path-tier-banner, .learn-level-band, .path-node-card {
   background: linear-gradient(165deg, hsl(var(--path-top)), hsl(var(--path-bottom)));
   color: hsl(var(--path-enamel)); border: 0; border-radius: 16px;

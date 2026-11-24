@@ -89,214 +89,6 @@
   ],
   "takeaway": "Write down what you value in relationships and let it change as you grow."
  },
- "2ba78fc0-3133-405a-b3dc-98854a5cf09d": {
-  "hero": {
-   "art": "guide-lesson-reading",
-   "alt": ""
-  },
-  "concepts": [
-   {
-    "heading": "Continuing Education & SHA Resources",
-    "art": "relationship-vision/l2-0.webp",
-    "alt": "A guide stepping through a doorway wearing a backpack, a path stretching ahead",
-    "size": [
-     336,
-     476
-    ],
-    "plain": "This course is a starting point, not the finish."
-   },
-   {
-    "heading": "Recommended Books",
-    "art": "relationship-vision/l2-1.webp",
-    "alt": "A guide carrying a stack of books with a heart-shaped bookmark",
-    "size": [
-     387,
-     475
-    ],
-    "plain": "A few well-respected books are a good next step."
-   },
-   {
-    "heading": "Podcasts and Online Communities",
-    "art": "relationship-vision/l2-2.webp",
-    "alt": "A guide wearing headphones and smiling, a small microphone beside him",
-    "size": [
-     506,
-     460
-    ],
-    "plain": "Podcasts and online groups keep you learning in an easy way."
-   },
-   {
-    "heading": "The Importance of Diverse Perspectives",
-    "art": "relationship-vision/l2-3.webp",
-    "alt": "Four guides sitting in a listening circle, each with a differently coloured empty speech bubble",
-    "size": [
-     504,
-     427
-    ],
-    "plain": "Learn from people whose lives are different from yours."
-   },
-   {
-    "heading": "Workshops and Conferences",
-    "art": "relationship-vision/l2-4.webp",
-    "alt": "A guide raising her hand in a workshop circle",
-    "size": [
-     511,
-     441
-    ],
-    "plain": "Workshops let you practise, which books cannot do."
-   },
-   {
-    "heading": "Evaluating Quality",
-    "art": "relationship-vision/l2-5.webp",
-    "alt": "A guide inspecting a certificate with a magnifying glass",
-    "size": [
-     509,
-     486
-    ],
-    "plain": "Not all sex ed is good. Check who is teaching it."
-   },
-   {
-    "heading": "Education vs Therapy",
-    "art": "",
-    "alt": "",
-    "plain": "Education gives you knowledge. Therapy gives you personal healing. They are different."
-   },
-   {
-    "heading": "Try It Tonight",
-    "art": "guide-practice-dumbbell",
-    "alt": ""
-   }
-  ],
-  "checks": [
-   {
-    "id": "2ba78fc0-1",
-    "after": "Continuing Education & SHA Resources",
-    "prompt": "The curriculum is described as…",
-    "options": [
-     "The last word",
-     "A test",
-     "A foundation, not a finish line"
-    ],
-    "answer": 2,
-    "explanation": "A foundation, not a finish line. This curriculum is a foundation — not a finish line. The most skilled, ethical and fulfilled people in any kind of relationship are lifelong learners who continuously seek new perspectives, challenge their assumptions, and deepen their understanding."
-   },
-   {
-    "id": "2ba78fc0-2",
-    "after": "Education vs Therapy",
-    "prompt": "What is the difference between education and therapy?",
-    "options": [
-     "Therapy is only for emergencies",
-     "Education gives knowledge and skills; therapy gives personalized healing",
-     "They are the same"
-    ],
-    "answer": 1,
-    "explanation": "Education gives knowledge and skills; therapy gives personalized healing. An important distinction: education provides knowledge and skills; therapy provides personalized healing and growth."
-   }
-  ],
-  "takeaway": "Keep learning from good books, podcasts and workshops, and know when you need a therapist instead."
- },
- "47da48b3-d4e2-4681-b989-e6b373432fcc": {
-  "hero": {
-   "art": "guide-study-together",
-   "alt": ""
-  },
-  "concepts": [
-   {
-    "heading": "Finding Professional Support",
-    "art": "relationship-vision/l3-0.webp",
-    "alt": "A guide opening a door that has a heart-shaped window",
-    "size": [
-     437,
-     496
-    ],
-    "plain": "Getting professional help is a way of looking after yourself and your relationships."
-   },
-   {
-    "heading": "Types of Providers",
-    "art": "relationship-vision/l3-1.webp",
-    "alt": "A guide looking at three doors marked with a heart, a brain and a stethoscope",
-    "size": [
-     512,
-     429
-    ],
-    "plain": "Different professionals have different training. Sex therapists have extra training in sexuality."
-   },
-   {
-    "heading": "Finding the Right Provider",
-    "art": "relationship-vision/l3-2.webp",
-    "alt": "A guide searching on a tablet that shows a map pin",
-    "size": [
-     476,
-     465
-    ],
-    "plain": "Online directories let you search for certified people near you."
-   },
-   {
-    "heading": "What to Look For",
-    "art": "relationship-vision/l3-3.webp",
-    "alt": "A guide holding a badge that shows a heart and a tick mark",
-    "size": [
-     512,
-     433
-    ],
-    "plain": "Look for someone who understands open relationships and kink and will not judge."
-   },
-   {
-    "heading": "Advocating for Yourself",
-    "art": "relationship-vision/l3-4.webp",
-    "alt": "A guide sitting across from a silhouette holding a clipboard, asking a question confidently",
-    "size": [
-     512,
-     469
-    ],
-    "plain": "You are allowed to ask a provider questions before you commit."
-   },
-   {
-    "heading": "Cost and Access",
-    "art": "",
-    "alt": "",
-    "plain": "Help can cost a lot. Ask about lower-cost options."
-   },
-   {
-    "heading": "Normalizing Help-Seeking",
-    "art": "",
-    "alt": "",
-    "plain": "Going to therapy does not mean something is wrong with you."
-   },
-   {
-    "heading": "Try It Tonight",
-    "art": "guide-practice-dumbbell",
-    "alt": ""
-   }
-  ],
-  "checks": [
-   {
-    "id": "47da48b3-1",
-    "after": "Types of Providers",
-    "prompt": "What sets AASECT-certified sex therapists apart?",
-    "options": [
-     "Specialized training in human sexuality",
-     "No license needed",
-     "Lower prices"
-    ],
-    "answer": 0,
-    "explanation": "Specialized training in human sexuality. AASECT-certified sex therapists have completed specialized training in human sexuality beyond their general therapy license."
-   },
-   {
-    "id": "47da48b3-2",
-    "after": "Normalizing Help-Seeking",
-    "prompt": "Therapy is…",
-    "options": [
-     "Not a sign that something is wrong with you",
-     "A last resort",
-     "Only for crises"
-    ],
-    "answer": 0,
-    "explanation": "Not a sign that something is wrong with you. Therapy is not a sign that something is wrong with you. It's an investment in your wellbeing and your relationships."
-   }
-  ],
-  "takeaway": "Getting professional help is self-care. Look for someone who respects your relationship style."
- },
  "ba522c3f-975e-4e68-afea-5e84176b3d1a": {
   "hero": {
    "art": "guide-thinking",
@@ -392,5 +184,170 @@
    }
   ],
   "takeaway": "Pick the one area you most want to grow in, set a direction, find support and be kind to yourself."
+ },
+ "5439ca64-c711-4ed1-acb0-ad1cbfc17cf2": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Power of Modeling Over Telling",
+    "art": "embodied-leadership-be-the-change/l2-1.webp",
+    "alt": "B picking up litter while C behind him starts doing the same",
+    "size": [
+     512,
+     449
+    ],
+    "plain": "People follow what you do, not what you say."
+   },
+   {
+    "heading": "The Nervous System as Leadership Instrument",
+    "art": "embodied-leadership-be-the-change/l2-2.webp",
+    "alt": "A guide conducting calmly with a baton, a smooth wave line flowing from her chest",
+    "size": [
+     481,
+     488
+    ],
+    "plain": "Your own calm body is your main tool for leading."
+   },
+   {
+    "heading": "Self-Regulation Practices for Leaders",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   },
+   {
+    "heading": "Emotional Intelligence in Practice",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "5439ca64-1",
+    "after": "The Power of Modeling Over Telling",
+    "prompt": "What do people follow?",
+    "options": [
+     "What you do, not what you say",
+     "Whoever speaks loudest",
+     "Written rules only"
+    ],
+    "answer": 0,
+    "explanation": "What you do, not what you say. People don't follow what you say. They follow what you model."
+   },
+   {
+    "id": "5439ca64-2",
+    "after": "The Nervous System as Leadership Instrument",
+    "prompt": "What is your primary leadership tool?",
+    "options": [
+     "Your job title",
+     "Your nervous system",
+     "Your phone"
+    ],
+    "answer": 1,
+    "explanation": "Your nervous system. Your nervous system is your primary leadership tool."
+   }
+  ],
+  "takeaway": "Your calm is contagious. Regulate yourself first and show people instead of telling them."
+ },
+ "43d57759-13a2-4b7b-95c0-1a6bfb79dc62": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Creating Psychological Safety in Relationships",
+    "art": "embodied-leadership-be-the-change/l3-0.webp",
+    "alt": "A sharing something from the heart while B listens with an open, relaxed posture",
+    "size": [
+     512,
+     367
+    ],
+    "plain": "Safety in love means you can say a need without your partner getting defensive."
+   },
+   {
+    "heading": "Leadership During Conflict",
+    "art": "embodied-leadership-be-the-change/l3-3.webp",
+    "alt": "A guide standing steady like a tree in a strong wind",
+    "size": [
+     404,
+     484
+    ],
+    "plain": "Conflict is the real test of how you lead."
+   },
+   {
+    "heading": "Creating Containers for Difficult Conversations",
+    "art": "embodied-leadership-be-the-change/l3-4.webp",
+    "alt": "Two guides sitting and talking inside a circle of small candles",
+    "size": [
+     512,
+     380
+    ],
+    "plain": "Set up a safe time and place for the hard conversations."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [],
+  "takeaway": "Make it safe to be honest, stay steady in conflict, and repair after a rupture."
+ },
+ "6e7f49b2-31b6-42bb-9eb9-fd09e1a1c30c": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "The Paradox of Change: You Don't Change Others",
+    "art": "embodied-leadership-be-the-change/l4-0.webp",
+    "alt": "A guide lighting her own lantern while others nearby notice and light theirs",
+    "size": [
+     512,
+     477
+    ],
+    "plain": "You cannot change another person by force."
+   },
+   {
+    "heading": "Extending Leadership to Your Community",
+    "art": "embodied-leadership-be-the-change/l4-3.webp",
+    "alt": "Four guides walking out of a house into a neighbourhood, waving to neighbours",
+    "size": [
+     512,
+     457
+    ],
+    "plain": "The way you lead spreads from your relationships into your community."
+   }
+  ],
+  "checks": [
+   {
+    "id": "6e7f49b2-1",
+    "after": "The Paradox of Change: You Don't Change Others",
+    "prompt": "What is the paradox of change?",
+    "options": [
+     "Others must change first",
+     "Change is always easy",
+     "You cannot change another person through willpower, persuasion or force"
+    ],
+    "answer": 2,
+    "explanation": "You cannot change another person through willpower, persuasion or force. Here's the paradox: You cannot change another person through willpower, persuasion, or force."
+   },
+   {
+    "id": "6e7f49b2-2",
+    "after": "Extending Leadership to Your Community",
+    "prompt": "Where does embodied leadership naturally extend?",
+    "options": [
+     "Only to your workplace",
+     "Into your broader community",
+     "Nowhere"
+    ],
+    "answer": 1,
+    "explanation": "Into your broader community. Embodied leadership naturally extends beyond your immediate relationships into your broader community."
+   }
+  ],
+  "takeaway": "You cannot force anyone to change. Change yourself, and others often follow."
  }
 }

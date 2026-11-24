@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { LEARN_SECTIONS } from "@/lib/learnSections";
 
 export interface TierUnlock {
   tier: string;
@@ -19,41 +20,7 @@ export interface FeatureUnlock {
   requiredTier: string;
 }
 
-const TIER_FEATURES: Record<string, { key: string; label: string; description: string; icon: string }[]> = {
-  foundation: [
-    { key: "discovery", label: "Discovery", description: "Browse and match with other members", icon: "💜" },
-    { key: "distance_radar", label: "Distance Radar", description: "Find members near you in Discovery", icon: "📡" },
-    { key: "basic_matching", label: "Basic Matching", description: "Connect with compatible people", icon: "💕" },
-  ],
-  sexual_health: [
-    { key: "sti_sharing", label: "STI Status Sharing", description: "Display verified STI testing info on your profile", icon: "🛡️" },
-    { key: "safer_sex_badge", label: "Safer Sex Badge", description: "Show a Safer Sex awareness badge on your profile", icon: "✅" },
-  ],
-  identity: [
-    { key: "advanced_filters", label: "Advanced Filters", description: "Filter by relationship orientation, gender & pronouns", icon: "🔍" },
-    { key: "profile_linking", label: "Profile Linking", description: "Link your profile publicly with partners", icon: "🔗" },
-  ],
-  relationships: [
-    { key: "priority_matching", label: "Priority Matching", description: "Appear higher in other members' Discovery feeds", icon: "⭐" },
-    { key: "chat_tools", label: "Conversation Tools", description: "Guided conversation starters & conflict prompts", icon: "💬" },
-  ],
-  advanced: [
-    { key: "events_access", label: "Events & Workshops", description: "Access and purchase tickets to community events", icon: "🎉" },
-    { key: "event_location_sharing", label: "Event Location Sharing", description: "Share live GPS at events to find nearby attendees", icon: "📍" },
-    { key: "mentor_badge", label: "Mentor Badge", description: "Display a Mentor role badge on your profile", icon: "🎓" },
-    { key: "premium_content", label: "Premium Content", description: "Access exclusive content without a subscription", icon: "👑" },
-  ],
-};
-
-const TIER_LABELS: Record<string, string> = {
-  foundation: "Foundation",
-  sexual_health: "Sexual Health",
-  identity: "Identity & Diversity",
-  relationships: "Healthy Relationships",
-  advanced: "Advanced Topics",
-};
-
-const TIER_ORDER = ["foundation", "sexual_health", "identity", "relationships", "advanced"];
+// Which features each section unlocks, its name and the order all live in src/lib/learnSections.ts.
 
 export const useFeatureUnlocks = () => {
   const [tiers, setTiers] = useState<TierUnlock[]>([]);
@@ -74,12 +41,13 @@ export const useFeatureUnlocks = () => {
       const earnedIds = new Set((badgesResult.data || []).map((b) => b.module_id));
 
       const featureMap: Record<string, boolean> = {};
-      const tierResults: TierUnlock[] = TIER_ORDER.map((tier) => {
+      // A section with no modules yet is left out: it cannot be finished and has nothing to show.
+      const tierResults: TierUnlock[] = LEARN_SECTIONS.filter((sec) => modules.some((m) => m.tier === sec.id)).map(({ id: tier, name, features: sectionFeatures }) => {
         const tierModules = modules.filter((m) => m.tier === tier);
         const earned = tierModules.filter((m) => earnedIds.has(m.id)).length;
         const isComplete = tierModules.length > 0 && earned === tierModules.length;
 
-        const features: FeatureUnlock[] = (TIER_FEATURES[tier] || []).map((f) => {
+        const features: FeatureUnlock[] = sectionFeatures.map((f) => {
           const unlocked = isComplete;
           featureMap[f.key] = unlocked;
           return { ...f, isUnlocked: unlocked, requiredTier: tier };
@@ -87,7 +55,7 @@ export const useFeatureUnlocks = () => {
 
         return {
           tier,
-          label: TIER_LABELS[tier] || tier,
+          label: name,
           totalModules: tierModules.length,
           earnedModules: earned,
           isComplete,

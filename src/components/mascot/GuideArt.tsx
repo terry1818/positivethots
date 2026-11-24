@@ -8,11 +8,11 @@ import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { usePathAnimation } from "@/hooks/usePathAnimation";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { spring } from "@/lib/motionTokens";
+import { learnSection } from "@/lib/learnSections";
 
 export type { GuideName } from "@/lib/guideRotation";
 export function tierGuide(tier: string | null): GuideName {
-  const names: Record<string, GuideName> = { foundation: "guide-tier-foundation", sexual_health: "guide-tier-sexual-health", identity: "guide-tier-identity", relationships: "guide-tier-relationships", advanced: "guide-tier-advanced" };
-  return names[tier || "foundation"] || "guide-tier-foundation";
+  return learnSection(tier).guide;
 }
 const firstLoads = new Map<string, HTMLSpanElement>();
 const releasedPages = new Set<string>();

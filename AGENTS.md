@@ -65,3 +65,6 @@
 - Data retention: `purge_expired_data()` (daily cron `purge-expired-data`) deletes a conversation's messages after 12 months with no new message (except under an open safety review) and error logs after 90 days; unmatching and account deletion remove messages at once. Keep the Privacy Policy retention table in step with it.
 - Email footers carry `businessFooterLine()` from `supabase/functions/_shared/business-info.ts`; the CAN-SPAM mailing address goes in `BUSINESS_MAILING_ADDRESS` (business mailbox, never a home address).
 - Policy pages (`LegalPageShell`) underline links in running text and use a lighter primary tint in dark mode for AA contrast.
+- Learn sections live in ONE registry, `src/lib/learnSections.ts` (order, names, colours, guide art, `plan` lock, unlock features). Never hard-code a list of tiers in a page. A section with no modules is hidden. Personal Growth (`growth`) and Advanced need a plan.
+- Each topic has one home lesson (`docs/curriculum-map.md`). Check it before writing a lesson; elsewhere, point to the home instead of teaching it again.
+- Lesson pictures stay at their original path (`src/assets/lessons/<original-slug>/…`) when a lesson moves module; `tests/learn_sections.test.ts` checks every path exists and every lesson lives in one file.

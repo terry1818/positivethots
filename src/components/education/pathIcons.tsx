@@ -1,5 +1,6 @@
 import { m } from "motion/react";
 import { chestOpenDuration } from "@/lib/motionTokens";
+import { learnSection } from "@/lib/learnSections";
 
 export type PathIconKind = "lesson" | "story" | "practice" | "listen" | "badge" | "review" | "lock" | "check" | "star" | "crown" | "heart";
 const shapes: Record<PathIconKind, React.ReactNode> = {
@@ -19,7 +20,7 @@ export function PathIcon({ kind, className = "" }: { kind: PathIconKind; classNa
   return <svg viewBox="0 0 32 32" aria-hidden="true" className={`path-filled-icon ${className}`} fill="currentColor">{shapes[kind]}</svg>;
 }
 export function TierEmblem({ tier }: { tier: string }) {
-  const kind: PathIconKind = tier === "foundation" ? "badge" : tier === "sexual_health" ? "heart" : tier === "identity" ? "star" : tier === "relationships" ? "story" : "crown";
+  const kind: PathIconKind = learnSection(tier).emblem;
   return <div className="path-tier-emblem" aria-hidden="true"><PathIcon kind={kind}/></div>;
 }
 export function ChestArt({ open = false, reduced = false }: { open?: boolean; reduced?: boolean }) {

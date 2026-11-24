@@ -342,5 +342,65 @@
    }
   ],
   "takeaway": "Fifteen minutes each morning adds up, and your body can calm big feelings fast."
+ },
+ "4055c558-eb0d-429b-b657-18df57b7a0f2": {
+  "hero": {
+   "art": "guide-waving",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Mirror Neurons: The Biological Basis of Connection",
+    "art": "divine-matrix-science-of-intention/l1-1.webp",
+    "alt": "A smiling and B mirroring the same smile back",
+    "size": [
+     512,
+     440
+    ],
+    "plain": "Some brain cells fire when you watch someone act, as if you did it too. Their role in empathy is debated."
+   },
+   {
+    "heading": "Emotional Contagion: How Feelings Spread",
+    "art": "divine-matrix-science-of-intention/l1-2.webp",
+    "alt": "C laughing and D starting to laugh too, sparkles passing between them",
+    "size": [
+     512,
+     420
+    ],
+    "plain": "Feelings spread from person to person, like yawns."
+   },
+   {
+    "heading": "Practical Implications for Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "So the mood you bring into a room affects your relationships."
+   },
+   {
+    "heading": "Your Mood in Your Relationships",
+    "art": "",
+    "alt": "",
+    "plain": "Your mood affects everyone you are close to."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "4055c558-2",
+    "after": "Emotional Contagion: How Feelings Spread",
+    "prompt": "Emotional contagion means…",
+    "options": [
+     "Catching a cold",
+     "Feelings spreading from person to person",
+     "Hiding your emotions"
+    ],
+    "answer": 1,
+    "explanation": "Feelings spreading from person to person. Elaine Hatfield and colleagues studied emotional contagion: how feelings spread between people."
+   }
+  ],
+  "takeaway": "People affect each other more than we notice. Your mood and attention spread to those around you."
  }
 }

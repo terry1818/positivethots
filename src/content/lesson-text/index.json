@@ -14,12 +14,6 @@
  "3fb85402-a554-4c70-a03c-d57008224d5b": {
   "m": "relationship-vision"
  },
- "2ba78fc0-3133-405a-b3dc-98854a5cf09d": {
-  "m": "relationship-vision"
- },
- "47da48b3-d4e2-4681-b989-e6b373432fcc": {
-  "m": "relationship-vision"
- },
  "ba522c3f-975e-4e68-afea-5e84176b3d1a": {
   "m": "relationship-vision"
  },
@@ -60,9 +54,7 @@
   "m": "jealousy-insecurity"
  },
  "0f63e2fa-4582-4082-9fe6-0e1729fd974e": {
-  "m": "jealousy-insecurity",
-  "t": "Attachment Patterns in Relationships",
-  "wt": "Attachment Patterns in ENM"
+  "m": "jealousy-insecurity"
  },
  "ee7c8f7f-bbaf-46be-96d3-4ee04adec296": {
   "m": "jealousy-insecurity"
@@ -165,19 +157,13 @@
   "m": "rewiring-your-habits"
  },
  "adf192f6-9ccd-4ab9-93a4-c48be9967a09": {
-  "m": "rewiring-your-habits",
-  "t": "Small Steps and Spotting Your Patterns",
-  "wt": "Identifying Your Patterns"
+  "m": "rewiring-your-habits"
  },
  "daea0e4c-0fff-41bf-9727-7bd6bb6c79a0": {
-  "m": "rewiring-your-habits",
-  "t": "If-Then Plans and the Four Laws",
-  "wt": "Rewiring Techniques"
+  "m": "rewiring-your-habits"
  },
  "05c0c270-21ca-428f-8439-92f00472d416": {
-  "m": "rewiring-your-habits",
-  "t": "Replacing Old Patterns and Making Them Stick",
-  "wt": "Sustaining New Patterns"
+  "m": "rewiring-your-habits"
  },
  "e6192f83-055a-4885-b753-d8d5e98ccfe6": {
   "m": "digital-consent-boundaries"
@@ -230,19 +216,10 @@
   "m": "inner-practice-toolkit"
  },
  "cddfeb62-344d-4776-9eba-e1568ab5865c": {
-  "m": "inner-practice-toolkit",
-  "t": "How Practice Changes Your Brain",
-  "wt": "Meditation & Breathwork"
- },
- "e6b5139c-df20-40d7-9681-2af5d783ea03": {
-  "m": "inner-practice-toolkit",
-  "t": "Affirmations, Meditation & Visualization",
-  "wt": "Journaling & Reflection"
+  "m": "inner-practice-toolkit"
  },
  "b7ab469e-018b-416c-9365-e6741a721fc1": {
-  "m": "inner-practice-toolkit",
-  "t": "Your 15-Minute Daily Practice",
-  "wt": "Somatic & Body-Based Practices"
+  "m": "inner-practice-toolkit"
  },
  "2f611ea6-a996-4b55-a0ec-6ca2372172df": {
   "m": "sexual-wellness-basics"
@@ -265,13 +242,13 @@
   "wt": "Grief in Non-Monogamous Structures"
  },
  "b0e9c4d6-18fe-4b84-b957-85883e9debae": {
-  "m": "relationship-orientations"
+  "m": "enm-principles"
  },
  "b3108975-1ad5-4e7b-b0ee-f9ad1ec5a8a9": {
-  "m": "relationship-orientations"
+  "m": "enm-principles"
  },
  "d4deda34-2719-43fa-9007-dc46c58777bf": {
-  "m": "relationship-orientations"
+  "m": "new-monogamy-redesigning-relationships"
  },
  "2bbeb7b9-984f-488e-a367-f29b14496fc4": {
   "m": "kink-bdsm-basics"
@@ -296,17 +273,14 @@
  "52aa2645-e6ef-42b5-a58a-aceff9398ed2": {
   "m": "boundaries-communication"
  },
- "6eb89178-c9c4-4824-a2df-01d37ecfb97c": {
-  "m": "embodied-leadership-be-the-change"
- },
  "5439ca64-c711-4ed1-acb0-ad1cbfc17cf2": {
-  "m": "embodied-leadership-be-the-change"
+  "m": "relationship-vision"
  },
  "43d57759-13a2-4b7b-95c0-1a6bfb79dc62": {
-  "m": "embodied-leadership-be-the-change"
+  "m": "relationship-vision"
  },
  "6e7f49b2-31b6-42bb-9eb9-fd09e1a1c30c": {
-  "m": "embodied-leadership-be-the-change"
+  "m": "relationship-vision"
  },
  "88ca1eaf-69f5-4efe-9264-7f05c918cc51": {
   "m": "relationship-skills-foundation"
@@ -344,43 +318,23 @@
  "f68fa226-1d2b-411c-b6c4-d0a1df5c1f85": {
   "m": "enm-principles"
  },
- "83bd54a1-3422-4c24-a601-1ffdcf75fe5c": {
+ "828eaaa3-3922-4828-ad48-d46dc4194e52": {
   "m": "enm-principles"
+ },
+ "83bd54a1-3422-4c24-a601-1ffdcf75fe5c": {
+  "m": "jealousy-insecurity"
  },
  "9c9d1cfb-4fec-4b13-8e23-9f7434d82d5c": {
   "m": "enm-principles"
  },
  "4055c558-eb0d-429b-b657-18df57b7a0f2": {
-  "m": "divine-matrix-science-of-intention",
-  "t": "How We Affect Each Other",
-  "wt": "The Science of Intention"
- },
- "44e0d1c8-1f03-43e6-985e-62057cf4735f": {
-  "m": "divine-matrix-science-of-intention",
-  "t": "Heart Coherence and Feeling Your Intentions",
-  "wt": "Setting Clear Intentions"
- },
- "9bfa2217-7ca7-4f8e-9ef6-cc8bb94d96a6": {
-  "m": "divine-matrix-science-of-intention",
-  "t": "Feeling \"As If\": Belief and Metaphor",
-  "wt": "Intention in Relationships"
- },
- "372846af-5a71-447b-9ca2-26186e804ca1": {
-  "m": "divine-matrix-science-of-intention"
- },
- "a18e092a-2ff6-49ff-b388-9eaf2f3882d6": {
-  "m": "self-image-inner-blueprint"
+  "m": "inner-practice-toolkit"
  },
  "3dc6aea5-0bd4-4984-89b1-86214b6561a5": {
-  "m": "self-image-inner-blueprint",
-  "t": "How Your Self-Image Got Set",
-  "wt": "Uncovering Limiting Beliefs"
+  "m": "rewiring-your-habits"
  },
  "ee3be82c-2548-4f47-b255-1e61f221f8a9": {
-  "m": "self-image-inner-blueprint"
- },
- "85ced374-d20a-4765-93f9-d2fcdf398046": {
-  "m": "self-image-inner-blueprint"
+  "m": "rewiring-your-habits"
  },
  "5647f015-f763-4944-b50f-288dcc38dd2a": {
   "m": "common-sexual-concerns"

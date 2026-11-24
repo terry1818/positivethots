@@ -2,6 +2,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Badge } from "@/components/ui/badge";
 import { Shield, CheckCircle, Info } from "lucide-react";
 import { EducationBadge } from "@/components/EducationBadge";
+import { learnSection, LEARN_SECTIONS, SECTION_IDS } from "@/lib/learnSections";
 
 const BADGE_DESCRIPTIONS: Record<string, string> = {
   "consent-fundamentals": "Understands enthusiastic consent, boundaries, and ongoing negotiation",
@@ -26,22 +27,6 @@ const BADGE_DESCRIPTIONS: Record<string, string> = {
   "relationship-vision": "Building intentional relationship vision and goals",
 };
 
-const TIER_LABELS: Record<string, string> = {
-  foundation: "Foundation",
-  sexual_health: "Sexual Health",
-  identity: "Identity & Diversity",
-  relationships: "Healthy Relationships",
-  advanced: "Advanced Topics",
-};
-
-const TIER_COLORS: Record<string, string> = {
-  foundation: "bg-primary/10 text-primary border-primary/30",
-  sexual_health: "bg-green-500/10 text-green-500 border-green-500/30",
-  identity: "bg-purple-500/10 text-purple-500 border-purple-500/30",
-  relationships: "bg-pink-500/10 text-pink-500 border-pink-500/30",
-  advanced: "bg-accent/10 text-accent border-accent/30",
-};
-
 interface BadgeCredibilitySheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -58,8 +43,8 @@ export const BadgeCredibilitySheet = ({
   tier = "foundation",
 }: BadgeCredibilitySheetProps) => {
   const description = BADGE_DESCRIPTIONS[moduleSlug] || "Demonstrates knowledge in this topic area";
-  const tierLabel = TIER_LABELS[tier] || "Foundation";
-  const tierColor = TIER_COLORS[tier] || TIER_COLORS.foundation;
+  const tierLabel = learnSection(tier).roadmapName;
+  const tierColor = learnSection(tier).chip;
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>

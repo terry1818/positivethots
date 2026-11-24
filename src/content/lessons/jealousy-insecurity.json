@@ -232,6 +232,16 @@
     "plain": "How you learned to feel safe as a child shows up in adult relationships."
    },
    {
+    "heading": "Attachment Theory Basics",
+    "art": "enm-principles/l3-1.webp",
+    "alt": "A guide cradling a small glowing heart protectively, a tiny house icon above it",
+    "size": [
+     434,
+     460
+    ],
+    "plain": "People tend to get close in one of a few usual ways. These are learned early."
+   },
+   {
     "heading": "Anxious Attachment",
     "art": "jealousy-insecurity/l3-1.webp",
     "alt": "Anxiously checking his phone",
@@ -406,5 +416,87 @@
    }
   ],
   "takeaway": "Feeling glad for your partner's joy can grow with time, and it is fine if it does not."
+ },
+ "83bd54a1-3422-4c24-a601-1ffdcf75fe5c": {
+  "hero": {
+   "art": "guide-study-together",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Polysecure: Attachment Theory in CNM",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "How safe you felt with people growing up shapes how you love now."
+   },
+   {
+    "heading": "Attachment in Polyamorous Contexts",
+    "art": "enm-principles/l3-2.webp",
+    "alt": "A guide holding a heart-rate style gauge whose needle swings high, looking surprised",
+    "size": [
+     441,
+     461
+    ],
+    "plain": "Having more partners can stir up old fears faster, not slower."
+   },
+   {
+    "heading": "The Concept of Nested Security",
+    "art": "enm-principles/l3-3.webp",
+    "alt": "Two guides standing inside three nested rings of light, like layers of shelter",
+    "size": [
+     510,
+     490
+    ],
+    "plain": "You need to feel safe in yourself, with each partner, and in the group."
+   },
+   {
+    "heading": "Building Security Across a Polycule",
+    "art": "enm-principles/l3-4.webp",
+    "alt": "Three guides passing a glowing heart between them in a triangle",
+    "size": [
+     506,
+     480
+    ],
+    "plain": "Feeling safe takes practice. Small, steady actions build it."
+   },
+   {
+    "heading": "Normalizing Attachment Struggles",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "Struggling with this is normal. It does not mean you are broken."
+   },
+   {
+    "heading": "Try It Tonight",
+    "art": "guide-practice-dumbbell",
+    "alt": ""
+   }
+  ],
+  "checks": [
+   {
+    "id": "83bd54a1-1",
+    "after": "The Concept of Nested Security",
+    "prompt": "Fern says security in multi-partner relationships needs several layers of safety. What is that idea called?",
+    "options": [
+     "New relationship energy",
+     "Couple privilege",
+     "Nested security"
+    ],
+    "answer": 2,
+    "explanation": "Nested security. Fern introduces the concept of \"nested security\" — the idea that secure attachment in CNM requires multiple layers of safety."
+   },
+   {
+    "id": "83bd54a1-2",
+    "after": "Building Security Across a Polycule",
+    "prompt": "In consensual non-monogamy, what tends to happen to attachment patterns?",
+    "options": [
+     "They disappear",
+     "They stop mattering",
+     "They become more activated"
+    ],
+    "answer": 2,
+    "explanation": "They become more activated. Fern argues that attachment styles become more activated in CNM contexts, not less."
+   }
+  ],
+  "takeaway": "Feeling safe with several partners is built on purpose, one steady action at a time."
  }
 }

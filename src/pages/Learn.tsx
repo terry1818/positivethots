@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
+import { learnSection, SECTION_IDS } from "@/lib/learnSections";
 
 import { XPBar } from "@/components/education/XPBar";
 import { DailyRewardModal } from "@/components/rewards/DailyRewardModal";
@@ -51,7 +52,7 @@ interface Module {
 
 interface UserBadge { module_id: string; earned_at: string; }
 
-const tierOrder = ["foundation", "sexual_health", "identity", "relationships", "advanced"];
+const tierOrder = SECTION_IDS;
 
 const Learn = () => {
   const [moduleSearchQuery, setModuleSearchQuery] = useState("");
@@ -263,13 +264,13 @@ const Learn = () => {
       return idx === 0 || earnedModuleIds.has(foundationModules[idx - 1]?.id);
     }
     if (requiredEarned < requiredModules.length) return false;
-    if (module.tier === 'advanced' && !isPremium) return false;
+    if (learnSection(module.tier).plan && !isPremium) return false;
     if (!module.prerequisite_badges || module.prerequisite_badges.length === 0) return true;
     return module.prerequisite_badges.every(slug => earnedSlugs.has(slug));
   }, [modules, earnedModuleIds, earnedSlugs, requiredEarned, requiredModules, isPremium]);
 
   const isAdvancedPremiumLocked = useCallback((module: Module) => {
-    if (module.tier !== 'advanced' || isPremium) return false;
+    if (!learnSection(module.tier).plan || isPremium) return false;
     if (requiredEarned < requiredModules.length) return false;
     if (module.prerequisite_badges && module.prerequisite_badges.length > 0) {
       return module.prerequisite_badges.every(slug => earnedSlugs.has(slug));

@@ -1,17 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { BookOpen, ChevronRight, CheckCircle } from "lucide-react";
 import type { TierUnlock } from "@/hooks/useFeatureUnlocks";
+import { learnSection, LEARN_SECTIONS, SECTION_IDS } from "@/lib/learnSections";
 
-const tierLabels: Record<string, string> = {
-  foundation: "Foundation",
-  sexual_health: "Sexual",
-  identity: "Identity",
-  relationships: "Healthy",
-  advanced: "Advanced",
-};
+
 
 const nextStep = (tiers: TierUnlock[]) => {
-  const nextTier = tiers.find((t) => !t.isComplete);
+  // An optional section with nothing to unlock is not the "next" step.
+  const nextTier = tiers.find((t) => !t.isComplete && t.features.length > 0) ?? tiers.find((t) => !t.isComplete);
   const nextFeature = nextTier?.features.find((f) => !f.isUnlocked);
   const remaining = nextTier ? nextTier.totalModules - nextTier.earnedModules : 0;
   return { nextTier, nextFeature, remaining };
@@ -37,7 +33,7 @@ const TierPips = ({ tiers, className }: { tiers: TierUnlock[]; className?: strin
 export const LearnProgressStrip = ({ tiers }: { tiers: TierUnlock[] }) => {
   const navigate = useNavigate();
   const { nextTier, nextFeature, remaining } = nextStep(tiers);
-  const title = nextTier && nextFeature ? `Next: ${nextFeature.label}` : nextTier ? `Next: ${tierLabels[nextTier.tier] || nextTier.label} tier` : "Every feature unlocked";
+  const title = nextTier && nextFeature ? `Next: ${nextFeature.label}` : nextTier ? `Next: ${learnSection(nextTier.tier).shortName} tier` : "Every feature unlocked";
 
   return (
     <button
@@ -94,7 +90,7 @@ export const CompactProgressBar = ({ tiers, badgeCount, connectionCount }: Compa
             {nextTier && nextFeature ? `Next: ${nextFeature.label}` : nextTier ? "Keep learning" : "Every feature unlocked"}
           </span>
           {nextTier && (
-            <span className="block text-sm text-muted-foreground">{tierLabels[nextTier.tier] || nextTier.label} tier</span>
+            <span className="block text-sm text-muted-foreground">{learnSection(nextTier.tier).shortName} tier</span>
           )}
         </span>
         {nextTier && <span className="kit-chip" data-tone="area">{remaining} to go</span>}
