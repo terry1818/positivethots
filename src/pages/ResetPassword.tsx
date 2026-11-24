@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 
@@ -85,57 +84,60 @@ const ResetPassword = () => {
 
   if (checkingLink) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6 text-center">
-            <Logo size="lg" />
-            <p className="mt-4 text-muted-foreground">Checking your reset link...</p>
-          </CardContent>
-        </Card>
+      <div className="kit-area-learn kit-entry" aria-busy="true">
+        <div className="kit-entry-column kit-card p-6 text-center">
+          <div className="flex justify-center"><Logo size="md" /></div>
+          <p className="mt-3 text-muted-foreground">Checking your reset link…</p>
+        </div>
       </div>
     );
   }
 
   if (!isRecovery) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6 text-center">
-            <Logo size="lg" />
-            <div className="mt-4"><GuideArt name="guide-encourage" size={72} /></div><p className="mt-4 text-muted-foreground">Invalid or expired reset link. Please request a new one.</p>
-            <Button className="mt-4" onClick={() => navigate("/auth")}>Back to Sign In</Button>
-          </CardContent>
-        </Card>
+      <div className="kit-area-learn kit-entry">
+        <div className="kit-entry-column kit-card overflow-hidden text-center">
+          <div className="kit-panel !rounded-b-none !rounded-t-[18px] !border-0 h-[150px]">
+            <GuideArt name="guide-encourage" size={130} />
+          </div>
+          <div className="p-5">
+            <h1 className="text-xl font-extrabold [text-wrap:balance]">This reset link has expired</h1>
+            <p className="mt-2 text-muted-foreground [text-wrap:pretty]">Links work once and for a short time. Ask for a new one from the sign-in screen.</p>
+            <Button className="kit-cta mt-5 w-full" onClick={() => navigate("/auth")}>Back to sign in</Button>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md animate-fade-in">
-        <CardHeader className="text-center">
-          <div className="mb-4 flex justify-center"><Logo size="lg" /></div>
-          <div className="flex justify-center"><GuideArt name="guide-encourage" size={72} /></div><CardTitle className="text-2xl">Set New Password</CardTitle>
-          <CardDescription>Enter your new password below</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleReset} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
-              <Input id="password" type="password" placeholder="••••••••" value={password}
-                onChange={(e) => setPassword(e.target.value)} required minLength={6} maxLength={100} />
+    <div className="kit-area-learn kit-entry">
+      <div className="kit-entry-column kit-card kit-rise overflow-hidden">
+        <div className="kit-panel !rounded-b-none !rounded-t-[18px] !border-0 h-[132px]">
+          <GuideArt name="guide-encourage" size={120} />
+        </div>
+        <div className="p-5">
+          <div className="text-center">
+            <h1 className="text-2xl font-extrabold">Set a new password</h1>
+            <p className="mt-1 text-sm text-muted-foreground">At least 6 characters. Enter it twice so we know it's right.</p>
+          </div>
+          <form onSubmit={handleReset} className="mt-5 space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="password">New password</Label>
+              <Input id="password" type="password" autoComplete="new-password" placeholder="At least 6 characters" value={password}
+                onChange={(e) => setPassword(e.target.value)} required minLength={6} maxLength={100} className="kit-field" />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm">Confirm Password</Label>
-              <Input id="confirm" type="password" placeholder="••••••••" value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)} required minLength={6} maxLength={100} />
+            <div className="space-y-1.5">
+              <Label htmlFor="confirm">Confirm password</Label>
+              <Input id="confirm" type="password" autoComplete="new-password" placeholder="Same password again" value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)} required minLength={6} maxLength={100} className="kit-field" />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Updating..." : "Update Password"}
+            <Button type="submit" className="kit-cta w-full" disabled={loading}>
+              {loading ? "Updating…" : "Update password"}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

@@ -278,3 +278,65 @@ test("a failed load of Discover has its own state, and the celebration's safety 
   expect(modal).not.toContain("/privacy-policy");
   expect(readFileSync("src/App.tsx", "utf8")).toContain('path="/resources"');
 });
+
+// Likes and Chat (step 4 of the rollout).
+test("Likes speaks in Connects, celebrates a mutual yes and has its own error states", () => {
+  const likes = readFileSync("src/pages/LikesYou.tsx", "utf8");
+  // Words a member reads. "Likes" stays as the name of the tab; the action is always Connect.
+  expect(likes.match(/liked you|\bUnlike\b|Your Likes|Likes You|likes sent/g) ?? []).toEqual([]);
+  expect(likes).toContain(">Wants to connect<");
+  expect(likes).toContain(">Your Connects<");
+  expect(likes).toContain("<MatchModal");
+  expect(likes).toContain("We couldn't load your Likes.");
+  expect(likes).toContain("We couldn't load your Connects.");
+  // Pass and Connect are named, not bare icons.
+  expect(likes).toMatch(/aria-label=\{`Pass on \$\{liker\.name\}`\}/);
+  expect(likes).toMatch(/aria-label=\{`Connect with \$\{liker\.name\}`\}/);
+});
+
+test("the Chat list marks what is unread, never fetches a picture from another service, and can fail honestly", () => {
+  const list = readFileSync("src/pages/Messages.tsx", "utf8");
+  expect(list).not.toMatch(/dicebear|https?:\/\/api\./);
+  expect(list).toContain("message_read_receipts");
+  expect(list).toContain("We couldn't load your conversations.");
+  expect(list).toContain("const isUnread");
+});
+
+test("a conversation fits the phone, has no controls that do nothing, and keeps report and block close", () => {
+  const chat = readFileSync("src/pages/Chat.tsx", "utf8");
+  expect(chat).toContain('className="kit-area-chat chat-screen"');
+  expect(light).toMatch(/\.chat-screen \{[^}]*height: 100dvh/);
+  for (const dead of ["Voice Call", "Video Call", "Attach image", "Send gift", "Emoji picker", "Voice message"]) {
+    expect(chat).not.toContain(dead);
+  }
+  expect(chat).toMatch(/aria-label=\{`Report \$\{otherUser\.name\}`\}/);
+  expect(chat).toMatch(/aria-label=\{`Block \$\{otherUser\.name\}`\}/);
+  // The scroll stays inside the message list.
+  expect(chat).toContain('block: "nearest"');
+  // No footer under the composer; the menu links the policy that matters in a conversation.
+  expect(readFileSync("src/components/AppFooter.tsx", "utf8")).toContain('const NO_FOOTER_PREFIX = ["/chat/"]');
+  expect(chat).toContain('navigate("/complaints")');
+});
+
+// Sign-in and onboarding (step 5 of the rollout).
+test("sign-in and onboarding are for everyone and make no unsourced claims", () => {
+  const onboarding = readFileSync("src/pages/Onboarding.tsx", "utf8");
+  // What a new member is asked: nothing that assumes one relationship style.
+  const asked = [...onboarding.matchAll(/(?:title|subtitle|label|description)[=:]\s*"([^"]+)"/g)].map(m => m[1]);
+  expect(asked.length).toBeGreaterThan(20);
+  expect(asked.filter(text => /\bENM\b|ethical non-monogamy/.test(text) && !/^ENM$/.test(text))).toEqual([]);
+  // No option is called "Popular" without data behind it.
+  expect(onboarding).not.toMatch(/>Popular</);
+  expect(readFileSync("src/components/onboarding/ChipSelector.tsx", "utf8")).not.toMatch(/>Popular</);
+  const auth = readFileSync("src/pages/Auth.tsx", "utf8");
+  expect(auth).toContain('className="kit-area-learn kit-entry"');
+  for (const hint of ['autoComplete="email"', '"new-password" : "current-password"', 'autoComplete="bday"']) expect(auth).toContain(hint);
+  expect(auth).not.toMatch(/animate-blob-float/);
+  expect(onboarding).not.toMatch(/animate-blob-float/);
+});
+
+test("the kit's tabs and choices exist, and choices stand still under reduced motion", () => {
+  expect(light).toMatch(/\.kit-tabs \.kit-tab\[data-state="active"\]/);
+  expect(light).toMatch(/\.kit-option\[data-selected="true"\]/);
+  expect(light).toMatch(/prefers-reduced-motion: reduce\) \{ \.kit-option \{ transition: none; \}/);
+});

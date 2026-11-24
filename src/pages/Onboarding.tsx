@@ -7,9 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
 import { Logo } from "@/components/Logo";
-import { ChevronRight, ChevronLeft, SkipForward, Check, Sparkles, ArrowRight, ShieldCheck } from "lucide-react";
+import { ChevronRight, ChevronLeft, ArrowRight, ShieldCheck } from "lucide-react";
 
 // Small inline consent notice for sensitive-data steps (CCPA/GDPR transparency)
 const ConsentNotice = ({ children }: { children: React.ReactNode }) => (
@@ -27,7 +26,6 @@ import { ProfilePreview } from "@/components/onboarding/ProfilePreview";
 import { PhotoUploadGrid } from "@/components/PhotoUploadGrid";
 import { MicroCelebration } from "@/components/onboarding/MicroCelebration";
 import { PhaseInterstitial } from "@/components/onboarding/PhaseInterstitial";
-import { ProgressRing } from "@/components/onboarding/ProgressRing";
 import { MiniProfilePreview } from "@/components/onboarding/MiniProfilePreview";
 import { StepHeader } from "@/components/onboarding/StepHeader";
 import { PromptPicker } from "@/components/onboarding/PromptPicker";
@@ -37,9 +35,9 @@ import { BrandTagline } from "@/components/BrandTagline";
 // ── Option Data ──
 
 const ENM_EXPERIENCE_OPTIONS = [
-  { value: "beginner", label: "I'm brand new to ENM 🌱", description: "Just starting to learn about ethical non-monogamy" },
+  { value: "beginner", label: "I'm brand new 🌱", description: "Just starting to learn about relationship styles and communication" },
   { value: "intermediate", label: "I know the basics 📚", description: "Familiar with core concepts and communication styles" },
-  { value: "experienced", label: "I'm experienced 🎓", description: "Practiced ENM for a while and understand the dynamics" },
+  { value: "experienced", label: "I'm experienced 🎓", description: "I've put this into practice for a while" },
 ];
 
 const GENDER_OPTIONS = [
@@ -72,7 +70,7 @@ const RELATIONSHIP_STYLE_OPTIONS = [
   { value: "monogamish", label: "Monogamish", description: "Mostly monogamous with flexibility" },
   { value: "hierarchical-poly", label: "Hierarchical Poly", description: "Primary + secondary structure" },
   { value: "solo-poly", label: "Solo Poly", description: "Your own primary partner" },
-  { value: "exploring", label: "Exploring ENM", description: "New to this, learning what fits" },
+  { value: "exploring", label: "Exploring", description: "Still learning what fits me" },
 ];
 
 const RELATIONSHIP_STATUS_OPTIONS = [
@@ -139,14 +137,6 @@ const PHASES = [
 const STEP_EMOJIS: Record<number, string> = {
   1: "👋", 2: "🧭", 3: "🌈", 4: "💬", 5: "📸", 6: "🔥", 7: "⭐",
   8: "🔗", 9: "💜", 10: "📏", 11: "🌿", 12: "🎨", 13: "✍️", 14: "✨",
-};
-
-const PHASE_GRADIENTS: Record<number, string> = {
-  0: "from-primary/10 via-background to-accent/10",
-  1: "from-secondary/10 via-background to-primary/10",
-  2: "from-accent/10 via-background to-secondary/10",
-  3: "from-primary/10 via-accent/5 to-secondary/10",
-  4: "from-secondary/10 via-primary/5 to-accent/10",
 };
 
 const PHASE_INTERSTITIALS = [
@@ -504,14 +494,7 @@ const Onboarding = () => {
   ];
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${PHASE_GRADIENTS[phaseIndex] || PHASE_GRADIENTS[0]} transition-all duration-700 flex flex-col items-center justify-center p-4 relative overflow-hidden`}>
-      {/* Background orbs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-primary/5 blur-3xl animate-blob-float" />
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/5 blur-3xl animate-blob-float" style={{ animationDelay: "-6s" }} />
-        <div className="absolute top-1/3 right-0 w-56 h-56 rounded-full bg-accent/5 blur-3xl animate-blob-float" style={{ animationDelay: "-12s" }} />
-      </div>
-
+    <div className="kit-area-learn kit-entry relative">
       {showValueProp && (
         <ValuePropositionScreen onBegin={() => navigate("/learn")} />
       )}
@@ -529,87 +512,56 @@ const Onboarding = () => {
       {/* Quick Start Modal */}
       {showQuickStart && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-          <Card className="max-w-sm w-full shadow-2xl border-primary/20 overflow-hidden">
-            <div className="bg-gradient-to-br from-primary/20 to-accent/20 p-6 text-center">
-              <Sparkles className="h-12 w-12 text-primary mx-auto mb-3" />
-              <h2 className="text-2xl font-bold">You're ready to explore!</h2>
-              <p className="text-muted-foreground mt-2 text-sm">
-                Start browsing profiles now, or continue personalizing your profile for better matches.
-              </p>
+          <div className="kit-card w-full max-w-sm overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="quick-start-title">
+            <div className="kit-panel !rounded-b-none !rounded-t-[18px] !border-0 h-[150px]">
+              <GuideArt name="guide-celebrate-all" size={130} />
             </div>
-            <CardContent className="p-6 space-y-3">
-              <Button onClick={handleQuickStart} className="w-full text-lg h-12" size="lg">
-                Start Exploring <ArrowRight className="h-5 w-5 ml-2" />
+            <div className="space-y-3 p-5 text-center">
+              <h2 id="quick-start-title" className="text-2xl font-extrabold [text-wrap:balance]">You're ready to explore!</h2>
+              <p className="text-sm text-muted-foreground [text-wrap:pretty]">
+                Start now, or keep going so people can get to know you better.
+              </p>
+              <Button onClick={handleQuickStart} className="kit-cta w-full">
+                Start exploring <ArrowRight className="h-5 w-5 ml-2" aria-hidden="true" />
               </Button>
               <Button
                 onClick={() => { setShowQuickStart(false); advanceStep(); }}
                 variant="outline"
-                className="w-full"
+                className="min-h-[48px] w-full font-bold"
               >
-                Keep Going — More to share
+                Keep going
               </Button>
-              <p className="text-sm text-muted-foreground text-center">
-                You can always complete your profile later from Settings
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      <div className="w-full max-w-md relative z-10">
-        {/* Progress ring + phase label */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <ProgressRing
-              progress={progress}
-              phaseEmoji={currentPhase?.emoji || "👋"}
-            />
-            <div>
-              <p className="text-sm font-semibold text-primary uppercase tracking-wider">
-                {currentPhase?.label || "Welcome"}
-              </p>
               <p className="text-sm text-muted-foreground">
-                Step {step} of {TOTAL_STEPS}
+                You can finish your profile later from Profile.
               </p>
             </div>
           </div>
-          <div className="flex gap-1.5">
-            {PHASES.map((phase, i) => (
-              <div
-                key={phase.label}
-                className={`h-2 rounded-full transition-all duration-500 ${
-                  i === phaseIndex
-                    ? "w-6 bg-primary"
-                    : i < phaseIndex
-                    ? "w-2 bg-primary/40"
-                    : "w-2 bg-muted"
-                }`}
-              />
-            ))}
+        </div>
+      )}
+
+      <div className="kit-entry-column relative z-10">
+        {/* Where you are: the part of the profile, the step, and a bar that fills. */}
+        <div className="mb-3">
+          <div className="flex items-baseline justify-between gap-3 px-1">
+            <p className="kit-eyebrow">{currentPhase?.label || "Welcome"}</p>
+            <p className="text-sm font-bold tabular-nums text-muted-foreground">Step {step} of {TOTAL_STEPS}</p>
           </div>
+          <span className="kit-progress mt-1.5" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} aria-label={`Profile setup, ${progress}% done`}>
+            <span style={{ width: `${progress}%` }} />
+          </span>
         </div>
 
-        <Card className="shadow-[var(--shadow-elevated)] overflow-hidden border-border/50 backdrop-blur-sm bg-card/95">
-          <CardContent className="p-6 relative">
+        <div className="kit-card overflow-hidden">
+          <div className="relative p-5">
             <div className="flex justify-center"><GuideArt key={step} name={step === 1 ? "guide-waving" : step === TOTAL_STEPS ? "guide-celebrate-all" : step === 2 ? "guide-tier-foundation" : [6,7,8,9].includes(step) ? "guide-tier-relationships" : "guide-tier-identity"} size={96} /></div>
-            {/* Skip button for optional steps */}
-            {isOptionalStep && step > 1 && step < TOTAL_STEPS && (
-              <button
-                onClick={() => { trackEvent('onboarding_skipped', { step }); goNext(); }}
-                className="absolute top-2 right-2 text-sm text-muted-foreground hover:text-foreground transition-colors z-10"
-                aria-label="Skip this step"
-              >
-                Skip for now →
-              </button>
-            )}
             <StepTransition stepKey={step} direction={direction}>
               {/* Step 1: Welcome */}
                {step === 1 && (
                 <div className="text-center space-y-6 py-4">
-                  <Logo size="lg" />
+                  <div className="flex justify-center"><Logo size="md" /></div>
                   <BrandTagline variant="secondary" className="mt-3" />
                   <div className="space-y-2 animate-stagger-1">
-                    <h1 className="text-3xl font-bold text-foreground">
+                    <h1 className="text-3xl font-extrabold text-foreground [text-wrap:balance]">
                       Hey, {userName}!
                     </h1>
                     <p className="text-muted-foreground text-lg">
@@ -619,8 +571,8 @@ const Onboarding = () => {
                   <p className="text-sm text-muted-foreground animate-stagger-2">
                     ⏱ Takes about 3-5 minutes
                   </p>
-                  <Button onClick={goNext} className="w-full text-lg h-12 animate-stagger-3">
-                    Let's Go <ChevronRight className="h-5 w-5 ml-1" />
+                  <Button onClick={goNext} className="kit-cta w-full animate-stagger-3">
+                    Let's go <ChevronRight className="h-5 w-5 ml-1" aria-hidden="true" />
                   </Button>
                 </div>
               )}
@@ -628,23 +580,19 @@ const Onboarding = () => {
               {/* Step 2: ENM Familiarity (NEW) */}
               {step === 2 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="🧭" title="How familiar are you with ethical non-monogamy?" subtitle="This helps us personalize your experience · Required" />
+                  <StepHeader emoji="🧭" title="How much have you learned about relationships so far?" subtitle="This sets where your lessons start · Required" />
                   <div className="space-y-2 animate-stagger-2">
                     {ENM_EXPERIENCE_OPTIONS.map(opt => (
                       <button
                         key={opt.value}
                         type="button"
                         onClick={() => updateField("enmExperienceLevel", opt.value)}
-                        className={`relative w-full text-left rounded-xl px-4 py-3 border transition-all duration-200
-                          ${formData.enmExperienceLevel === opt.value
-                            ? "bg-primary text-primary-foreground border-primary shadow-md"
-                            : "bg-card text-foreground border-border hover:border-primary/50 active:scale-[0.98]"
-                          }`}
+                        className="kit-option"
+                        data-selected={formData.enmExperienceLevel === opt.value}
+                        aria-pressed={formData.enmExperienceLevel === opt.value}
                       >
-                        <span className="font-medium">{opt.label}</span>
-                        <span className={`block text-sm mt-0.5 ${formData.enmExperienceLevel === opt.value ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-                          {opt.description}
-                        </span>
+                        {opt.label}
+                        <span className="kit-option-note">{opt.description}</span>
                       </button>
                     ))}
                   </div>
@@ -654,7 +602,7 @@ const Onboarding = () => {
               {/* Step 3: Gender */}
               {step === 3 && (
                 <div className="space-y-4">
-                  <StepHeader emoji="🌈" title="How do you identify?" subtitle="Choose as many as feel right. This helps us personalize your experience." />
+                  <StepHeader emoji="🌈" title="How do you identify?" subtitle="Choose the one that fits best. You can change it any time." />
                   <div className="animate-stagger-2">
                     <ChipSelector
                       options={GENDER_OPTIONS}
@@ -776,25 +724,17 @@ const Onboarding = () => {
                   </div>
                   <div className="space-y-2 animate-stagger-2">
                     {RELATIONSHIP_STYLE_OPTIONS.map(opt => {
-                      const isPopular = ["polyamory", "open-relationship", "monogamous"].includes(opt.value);
                       return (
                         <button
                           key={opt.value}
                           type="button"
                           onClick={() => updateField("relationshipStyle", opt.value)}
-                          className={`relative w-full text-left rounded-xl px-4 py-3 border transition-all duration-200
-                            ${formData.relationshipStyle === opt.value
-                              ? "bg-primary text-primary-foreground border-primary shadow-md"
-                              : "bg-card text-foreground border-border hover:border-primary/50 active:scale-[0.98]"
-                            }`}
+                          className="kit-option"
+                          data-selected={formData.relationshipStyle === opt.value}
+                          aria-pressed={formData.relationshipStyle === opt.value}
                         >
-                          <span className="font-medium">{opt.label}</span>
-                          <span className={`block text-sm mt-0.5 ${formData.relationshipStyle === opt.value ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-                            {opt.description}
-                          </span>
-                          {isPopular && formData.relationshipStyle !== opt.value && (
-                            <span className="absolute top-2.5 right-3 text-sm text-primary/60 font-medium">Popular</span>
-                          )}
+                          {opt.label}
+                          <span className="kit-option-note">{opt.description}</span>
                         </button>
                       );
                     })}
@@ -1035,35 +975,35 @@ const Onboarding = () => {
 
             {/* Navigation buttons */}
             {step > 1 && (
-              <div className="mt-6 pb-16 relative z-50 space-y-2">
+              <div className={`mt-6 relative z-50 space-y-2 ${showMiniPreview ? "pb-16" : ""}`}>
                 {stepError && (
                   <p role="alert" className="text-sm text-destructive text-center animate-fade-in">{stepError}</p>
                 )}
-                <div className="flex gap-2">
-                  <Button onClick={() => { setStepError(""); goBack(); }} variant="outline" className="flex-1">
-                    <ChevronLeft className="h-4 w-4 mr-1" /> Back
+                <div className="flex items-stretch gap-2">
+                  <Button onClick={() => { setStepError(""); goBack(); }} variant="outline" className="min-h-[48px] px-4 font-bold" aria-label="Back to the previous step">
+                    <ChevronLeft className="h-5 w-5" aria-hidden="true" /> Back
                   </Button>
                   {step < TOTAL_STEPS ? (
                     <>
                       {isOptionalStep && (
-                        <Button onClick={() => { setStepError(""); trackEvent('onboarding_skipped', { step }); goNext(); }} variant="ghost" className="px-3" title="Skip this step">
-                          <SkipForward className="h-4 w-4" />
+                        <Button onClick={() => { setStepError(""); trackEvent('onboarding_skipped', { step }); goNext(); }} variant="ghost" className="min-h-[48px] px-3 font-bold text-muted-foreground">
+                          Skip
                         </Button>
                       )}
-                      <Button onClick={() => { setStepError(""); goNext(); }} className="flex-1">
-                        Continue <ChevronRight className="h-4 w-4 ml-1" />
+                      <Button onClick={() => { setStepError(""); goNext(); }} className="kit-cta flex-1">
+                        Continue <ChevronRight className="h-5 w-5 ml-1" aria-hidden="true" />
                       </Button>
                     </>
                   ) : (
-                    <Button onClick={handleComplete} className="flex-1" disabled={loading}>
-                      {loading ? "Setting up..." : "Complete Profile"}
+                    <Button onClick={handleComplete} className="kit-cta flex-1" disabled={loading}>
+                      {loading ? "Setting up..." : "Finish profile"}
                     </Button>
                   )}
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       <MiniProfilePreview

@@ -3,14 +3,13 @@ import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
-import { getLevelName, getLevelEmoji } from "@/hooks/useLearningStats";
+import { getLevelName } from "@/hooks/useLearningStats";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Send, ArrowLeft, Phone, Video, MoreVertical,
-  Image as ImageIcon, Mic, Smile, Gift, Shield, Flag, UserX, Clock, Check, CheckCheck, MessageCircle, Heart, BadgeCheck, AlertCircle, UserMinus
+import { BrandedEmptyState } from "@/components/BrandedEmptyState";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import {
+  Send, ArrowLeft, MoreVertical, Shield, Flag, UserX, Check, CheckCheck, Heart, BadgeCheck, AlertCircle, UserMinus, FileText, X,
 } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -76,7 +75,7 @@ function generateIcebreakers(currentUser: Profile | null, otherUser: PublicProfi
   const fallbacks = [
     "What brought you to Positive Thots?",
     "What's your favourite module so far?",
-    "What does ethical non-monogamy mean to you personally?",
+    "What does a good connection look like to you?",
     "How do you prefer to communicate boundaries in new connections?",
   ];
   for (const f of fallbacks) {
@@ -91,6 +90,7 @@ const Chat = () => {
   const { matchId } = useParams();
   const navigate = useNavigate();
   const { playMessage } = useSoundEffects();
+  const prefersReducedMotion = useReducedMotion();
   const [messages, setMessages] = useState<EnhancedMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
@@ -126,7 +126,8 @@ const Chat = () => {
 
   useEffect(() => { scrollToBottom(); }, [messages]);
 
-  const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); };
+  // "nearest" keeps the scroll inside the message list; it never moves the page itself.
+  const scrollToBottom = () => { messagesEndRef.current?.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "nearest" }); };
 
   const loadChatData = async () => {
     if (!matchId) return;
@@ -480,215 +481,194 @@ const Chat = () => {
 
   if (!otherUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">User not found</p>
+      <div className="kit-area-chat flex min-h-screen flex-col items-center justify-center px-4">
+        <BrandedEmptyState
+          mascot="confused"
+          headline="We couldn't open this conversation."
+          description="It may have been removed. Your other conversations are still here."
+          ctaLabel="Back to Chat"
+          onCtaClick={() => navigate("/messages")}
+        />
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Header */}
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-        <div className="container max-w-4xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/messages")} aria-label="Go back">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className="relative">
-                  <ProfileFrame frameId={(otherUser as any).selected_frame} size="sm">
-                    <div className="w-full h-full rounded-full bg-muted flex items-center justify-center overflow-hidden">
-                      {otherUser.profile_image ? (
-                        <img src={otherUser.profile_image} alt={otherUser.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-lg font-semibold">{otherUser.name?.[0] || "?"}</span>
-                      )}
-                    </div>
-                  </ProfileFrame>
-                  {onlineStatus === "online" && (
-                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-success rounded-full border-2 border-background animate-pulse"></div>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold truncate flex items-center gap-1">
-                    <span className="truncate">{otherUser.name}</span>
-                    {(otherUser as any).is_verified && (
-                      <BadgeCheck className="h-4 w-4 text-primary shrink-0" aria-label="Verified" />
-                    )}
-                    {compatBreakdown?.totalScore != null && compatBreakdown.totalScore > 0 && (
-                      <span className="text-sm font-normal text-muted-foreground shrink-0">
-                        · {compatBreakdown.totalScore}% Compatible
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {otherUser.learning_level && otherUser.learning_level > 1 && (
-                      <span>{getLevelName(otherUser.learning_level)} {getLevelEmoji(otherUser.learning_level)}</span>
-                    )}
-                    {otherUser.learning_level && otherUser.learning_level > 1 && otherUser.pronouns && <span> · </span>}
-                    {otherUser.pronouns && <span>{otherUser.pronouns}</span>}
-                    {!otherUser.learning_level || otherUser.learning_level <= 1 ? (
-                      onlineStatus === "online" ? <span className="text-success">Active now</span> : <span>{formatLastSeen(lastSeen)}</span>
-                    ) : (
-                      <span className="ml-1">· {onlineStatus === "online" ? <span className="text-success">Active now</span> : formatLastSeen(lastSeen)}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" onClick={handleViewCompatibility} aria-label="View compatibility" title="View Compatibility">
-                <Heart className="h-5 w-5 text-primary" />
-              </Button>
-              <Button variant="ghost" size="icon" onClick={() => setShowReportDialog(true)} className="h-9 w-9 text-muted-foreground" aria-label="Report user">
-                <Flag className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" onClick={() => setShowBlockDialog(true)} className="h-9 w-9 text-muted-foreground" aria-label="Block user">
-                <UserX className="h-4 w-4" />
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" aria-label="More options"><MoreVertical className="h-5 w-5" /></Button></DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem className="sm:hidden"><Phone className="h-4 w-4 mr-2" />Voice Call</DropdownMenuItem>
-                  <DropdownMenuItem className="sm:hidden"><Video className="h-4 w-4 mr-2" />Video Call</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setShowSafetyTips(true)}>
-                    <Shield className="h-4 w-4 mr-2" />Safety Tips
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setShowUnmatchDialog(true)} className="text-destructive focus:text-destructive">
-                    <UserMinus className="h-4 w-4 mr-2" />Unmatch {otherUser?.name}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
-      </div>
+  const level = otherUser.learning_level && otherUser.learning_level > 1 ? getLevelName(otherUser.learning_level) : null;
+  const presence = onlineStatus === "online" ? "Active now" : formatLastSeen(lastSeen);
+  const score = compatBreakdown?.totalScore;
+  const compatKey = `compat_banner_${matchId}`;
+  const showCompatBanner = !!score && score > 80 && !(compatBannerDismissed || useSessionStore.getState().isBannerDismissed(compatKey));
 
-      {/* Safety Notice — shown when fewer than 3 messages */}
-      {messages.length < 3 && (
-        <div className="container max-w-4xl mx-auto px-4 py-4 space-y-3">
-          {messages.length === 0 && (
-            <Card className="p-4 bg-primary/5 border-primary/20 animate-fade-in">
-              <div className="flex items-start gap-3">
-                <Shield className="h-5 w-5 text-primary mt-0.5" />
-                <div className="flex-1">
-                  <h3 className="font-semibold text-sm">Stay Safe</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Never share personal information like your address or financial details. Report any concerning behavior immediately.
-                  </p>
+  return (
+    <div className="kit-area-chat chat-screen">
+      {/* Header: who this is, and report and block one tap away. */}
+      <header className="kit-header z-30 shrink-0">
+        <div className="mx-auto flex w-full max-w-4xl items-center gap-1 px-2 py-1.5">
+          <button type="button" className="chat-icon-btn" onClick={() => navigate("/messages")} aria-label="Back to Chat">
+            <ArrowLeft aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="flex min-h-[44px] min-w-0 flex-1 items-center gap-2.5 rounded-xl px-1 text-left"
+            onClick={handleViewCompatibility}
+            aria-label={`${otherUser.name}. ${presence}. View compatibility`}
+          >
+            <span className="relative shrink-0">
+              <ProfileFrame frameId={(otherUser as any).selected_frame} size="sm">
+                <span className="grid h-full w-full place-items-center overflow-hidden rounded-full bg-muted">
+                  {otherUser.profile_image ? (
+                    <img src={otherUser.profile_image} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-lg font-bold">{otherUser.name?.[0] || "?"}</span>
+                  )}
+                </span>
+              </ProfileFrame>
+              {onlineStatus === "online" && <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-card bg-success" />}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="flex items-center gap-1">
+                <span className="truncate font-bold leading-tight">{otherUser.name}</span>
+                {(otherUser as any).is_verified && <BadgeCheck className="kit-text h-4 w-4 shrink-0" aria-label="Verified" />}
+              </span>
+              <span className="block truncate text-sm leading-tight text-muted-foreground">
+                {onlineStatus === "online" ? <span className="font-semibold text-success">Active now</span> : presence}
+                {level ? ` · ${level}` : ""}
+              </span>
+            </span>
+          </button>
+          <button type="button" className="chat-icon-btn" onClick={() => setShowReportDialog(true)} aria-label={`Report ${otherUser.name}`}>
+            <Flag aria-hidden="true" />
+          </button>
+          {/* On the narrowest phones Block moves into the menu so the name keeps some room. */}
+          <button type="button" className="chat-icon-btn !hidden min-[360px]:!grid" onClick={() => setShowBlockDialog(true)} aria-label={`Block ${otherUser.name}`}>
+            <UserX aria-hidden="true" />
+          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button type="button" className="chat-icon-btn" aria-label="More options"><MoreVertical aria-hidden="true" /></button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-60">
+              <DropdownMenuItem className="min-h-[44px] min-[360px]:hidden" onClick={() => setShowBlockDialog(true)}>
+                <UserX className="mr-2 h-4 w-4" />Block {otherUser.name}
+              </DropdownMenuItem>
+              <DropdownMenuItem className="min-h-[44px]" onClick={handleViewCompatibility}>
+                <Heart className="mr-2 h-4 w-4" />View compatibility
+              </DropdownMenuItem>
+              <DropdownMenuItem className="min-h-[44px]" onClick={() => setShowSafetyTips(true)}>
+                <Shield className="mr-2 h-4 w-4" />Safety tips
+              </DropdownMenuItem>
+              <DropdownMenuItem className="min-h-[44px]" onClick={() => navigate("/complaints")}>
+                <FileText className="mr-2 h-4 w-4" />Complaints Policy
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="min-h-[44px] text-destructive focus:text-destructive" onClick={() => setShowUnmatchDialog(true)}>
+                <UserMinus className="mr-2 h-4 w-4" />Remove connection
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </header>
+
+      {/* Messages: the only part of the screen that scrolls. */}
+      <div className="chat-scroll">
+        <div className="mx-auto w-full max-w-4xl px-3 py-4">
+          {/* Before the conversation gets going: a safety note and a few ways to start. */}
+          {messages.length < 3 && (
+            <div className="mb-4 space-y-3">
+              {messages.length === 0 && (
+                <>
+                  <div className="flex justify-center"><GuideArt name="guide-story-chat" size={110} /></div>
+                  <p className="text-center text-lg font-extrabold [text-wrap:balance]">You and {otherUser.name} both said yes</p>
+                  <div className="kit-card flex items-start gap-3 p-3">
+                    <span className="kit-coin" data-tone="urgent"><Shield aria-hidden="true" /></span>
+                    <div className="min-w-0 flex-1">
+                      <h2 className="font-bold leading-tight">Stay safe</h2>
+                      <p className="text-sm text-muted-foreground [text-wrap:pretty]">
+                        Never share your address or financial details. Report anything that worries you.
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
+              <div>
+                <h2 className="kit-eyebrow px-1">{messages.length === 0 ? "Start the conversation" : "Conversation starters"}</h2>
+                <div className="mt-2 grid gap-2">
+                  {icebreakers.map((text, i) => (
+                    <button key={i} type="button" className="chat-starter" onClick={() => handleIcebreakerTap(text, i)}>
+                      {text}
+                    </button>
+                  ))}
                 </div>
               </div>
-            </Card>
+            </div>
           )}
 
-          {/* Icebreaker suggestions — available for first 3 messages */}
+          {showCompatBanner && (
+            <div className="kit-card mb-4 flex items-center gap-2 p-2.5 pl-3.5 text-sm">
+              <span className="min-w-0 flex-1">
+                You're {score}% compatible.{" "}
+                <button type="button" onClick={() => navigate("/events")} className="kit-text font-bold underline underline-offset-2">Find an event to meet at</button>
+              </span>
+              <button
+                type="button"
+                className="chat-icon-btn"
+                onClick={() => { setCompatBannerDismissed(true); useSessionStore.getState().dismissBanner(compatKey); }}
+                aria-label="Dismiss"
+              >
+                <X aria-hidden="true" />
+              </button>
+            </div>
+          )}
+
           <div className="space-y-2">
-            {messages.length === 0 && <div className="flex justify-center"><GuideArt name="guide-story-chat" size={96} /></div>}
-            <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-              <MessageCircle className="h-3 w-3" />
-              {messages.length === 0 ? "Start the conversation" : "Conversation starters"}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {icebreakers.map((text, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleIcebreakerTap(text, i)}
-                  className="text-sm px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 text-foreground transition-colors border border-border"
-                >
-                  {text}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Compatibility event banner */}
-      {(() => {
-        const score = compatBreakdown?.totalScore;
-        const storageKey = `compat_banner_${matchId}`;
-        const alreadyDismissed = compatBannerDismissed || useSessionStore.getState().isBannerDismissed(storageKey);
-        if (score && score > 80 && !alreadyDismissed) {
-          return (
-            <div className="container max-w-4xl mx-auto px-4 pt-2">
-              <div className="bg-primary/10 rounded-lg p-2 flex items-center gap-2 text-sm animate-fade-in">
-                <span className="flex-1">You're {score}% compatible! Meet in person →{' '}
-                  <button onClick={() => navigate("/events")} className="text-primary font-medium hover:underline">Browse Events</button>
-                </span>
-                <button
-                  onClick={() => { setCompatBannerDismissed(true); useSessionStore.getState().dismissBanner(storageKey); }}
-                  className="text-muted-foreground hover:text-foreground shrink-0 p-1"
-                  aria-label="Dismiss"
-                >✕</button>
-              </div>
-            </div>
-          );
-        }
-        return null;
-      })()}
-
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="container max-w-4xl mx-auto px-4 py-6">
-          <div className="space-y-4">
             {messages.map((message, idx) => {
               const isOwn = message.sender_id === currentUser?.id;
-              const showTimestamp = idx === 0 || 
-                new Date(message.created_at).getTime() - new Date(messages[idx - 1].created_at).getTime() > 300000;
+              const previous = messages[idx - 1];
+              const showTimestamp = idx === 0 ||
+                new Date(message.created_at).getTime() - new Date(previous.created_at).getTime() > 300000;
+              // Their photo sits beside the last bubble of each run of their messages.
+              const next = messages[idx + 1];
+              const endsRun = !next || next.sender_id !== message.sender_id;
+              const failed = isOwn && message.id.startsWith("failed-");
+              const sending = isOwn && message.id.startsWith("optimistic-");
 
               return (
                 <div key={message.id}>
                   {showTimestamp && (
-                    <div className="flex justify-center my-4">
-                      <Badge variant="secondary" className="text-sm"><Clock className="h-3 w-3 mr-1" />{formatTime(message.created_at)}</Badge>
-                    </div>
+                    <div className="chat-day"><span className="kit-chip" data-tone="quiet">{formatTime(message.created_at)}</span></div>
                   )}
-                  <div className={cn("flex", isOwn ? "justify-end" : "justify-start", isOwn ? "animate-slide-in-right-msg" : "animate-slide-in-left")}>
-                    <div className={cn("flex items-end gap-2 max-w-[75%]", isOwn ? "flex-row-reverse" : "flex-row")}>
-                      {!isOwn && (
-                        <div className="w-8 h-8 rounded-full bg-muted flex-shrink-0 overflow-hidden">
-                          {otherUser.profile_image ? (
-                            <img src={otherUser.profile_image} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-sm">{otherUser.name?.[0]}</div>
-                          )}
-                        </div>
-                      )}
-                      <div className={cn("relative px-4 py-2.5 rounded-2xl",
-                        isOwn ? "bg-gradient-primary text-primary-foreground rounded-br-none" : "bg-muted rounded-bl-none",
-                        isOwn && message.id.startsWith("optimistic-") && "opacity-80",
-                        isOwn && message.id.startsWith("failed-") && "opacity-60"
-                      )}>
-                        <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
-                        {isOwn && message.id.startsWith("failed-") ? (
-                          <div className="mt-1 flex items-center justify-end gap-2 text-sm">
-                            <AlertCircle className="h-3.5 w-3.5 text-destructive" />
-                            <span className="text-destructive">Not sent</span>
-                            <button
-                              className="underline hover:no-underline text-destructive"
-                              onClick={(e) => { e.stopPropagation(); setNewMessage(message.content); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
-                            >Retry</button>
-                            <button
-                              className="underline hover:no-underline text-muted-foreground"
-                              onClick={(e) => { e.stopPropagation(); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
-                            >Delete</button>
-                          </div>
-                        ) : isOwn && (
-                          <div className="flex justify-end items-center gap-1 mt-1">
-                            <span className="text-sm opacity-70">{formatTime(message.created_at)}</span>
-                            {message.read ? (
-                              <CheckCheck className="h-3 w-3 text-primary-foreground/90" />
-                            ) : message.delivered ? (
-                              <CheckCheck className="h-3 w-3 opacity-50" />
-                            ) : (
-                              <Check className="h-3 w-3 opacity-50" />
-                            )}
-                          </div>
+                  <div className={cn("flex items-end gap-2", isOwn ? "justify-end" : "justify-start", !prefersReducedMotion && (isOwn ? "animate-slide-in-right-msg" : "animate-slide-in-left"))}>
+                    {!isOwn && (
+                      <span className={cn("h-8 w-8 shrink-0 overflow-hidden rounded-full bg-muted", !endsRun && "invisible")} aria-hidden="true">
+                        {otherUser.profile_image ? (
+                          <img src={otherUser.profile_image} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <span className="grid h-full w-full place-items-center text-sm font-bold">{otherUser.name?.[0]}</span>
                         )}
-                      </div>
+                      </span>
+                    )}
+                    <div className={cn("chat-bubble max-w-[78%]", (sending || failed) && "opacity-75")} data-own={isOwn}>
+                      <p>{message.content}</p>
+                      {failed ? (
+                        <div className="mt-1.5 flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-sm font-bold">
+                          <span className="flex items-center gap-1"><AlertCircle className="h-4 w-4" aria-hidden="true" /> Not sent</span>
+                          <button
+                            type="button"
+                            className="min-h-[32px] underline underline-offset-2"
+                            onClick={() => { setNewMessage(message.content); setMessages(prev => prev.filter(m => m.id !== message.id)); }}
+                          >Try again</button>
+                          <button
+                            type="button"
+                            className="min-h-[32px] underline underline-offset-2"
+                            onClick={() => setMessages(prev => prev.filter(m => m.id !== message.id))}
+                          >Delete</button>
+                        </div>
+                      ) : isOwn && endsRun ? (
+                        <div className="chat-bubble-meta">
+                          <span>{sending ? "Sending" : message.read ? "Read" : "Sent"}</span>
+                          {message.read ? <CheckCheck aria-hidden="true" /> : <Check aria-hidden="true" />}
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -697,7 +677,7 @@ const Chat = () => {
 
             {/* Game Cards */}
             {chatGames.map((game) => (
-              <div key={game.id} className="my-4 animate-fade-in">
+              <div key={game.id} className={cn("my-4", !prefersReducedMotion && "animate-fade-in")}>
                 <ChatGameCard
                   game={game}
                   currentUserId={currentUser?.id || ""}
@@ -707,26 +687,23 @@ const Chat = () => {
               </div>
             ))}
 
-            {/* Typing Indicator with aria-live */}
+            {/* Typing indicator */}
             <div aria-live="polite" aria-atomic="true">
               {isTyping && <span className="sr-only">{otherUser.name} is typing</span>}
               {isTyping && (
-                <div className="flex items-end gap-2 animate-slide-in-left">
-                  <div className="w-8 h-8 rounded-full bg-muted flex-shrink-0 overflow-hidden">
+                <div className="flex items-end gap-2">
+                  <span className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-muted" aria-hidden="true">
                     {otherUser.profile_image ? (
-                      <img src={otherUser.profile_image} alt="" className="w-full h-full object-cover" />
+                      <img src={otherUser.profile_image} alt="" className="h-full w-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-sm">{otherUser.name?.[0]}</div>
+                      <span className="grid h-full w-full place-items-center text-sm font-bold">{otherUser.name?.[0]}</span>
                     )}
-                  </div>
-                  <div className="bg-muted px-4 py-2.5 rounded-2xl rounded-bl-none">
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-1.5">
-                        <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" />
-                        <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.2s" }} />
-                        <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-typing-wave" style={{ animationDelay: "0.4s" }} />
-                      </div>
-                      <span className="text-sm text-muted-foreground">{otherUser.name} is typing</span>
+                  </span>
+                  <div className="chat-bubble" data-own="false" aria-hidden="true">
+                    <div className="flex gap-1.5 py-1.5">
+                      <span className="h-2 w-2 rounded-full bg-muted-foreground/50 motion-safe:animate-typing-wave" />
+                      <span className="h-2 w-2 rounded-full bg-muted-foreground/50 motion-safe:animate-typing-wave" style={{ animationDelay: "0.2s" }} />
+                      <span className="h-2 w-2 rounded-full bg-muted-foreground/50 motion-safe:animate-typing-wave" style={{ animationDelay: "0.4s" }} />
                     </div>
                   </div>
                 </div>
@@ -745,53 +722,36 @@ const Chat = () => {
         </div>
       </div>
 
-      {/* Input Area */}
-      <div className="sticky bottom-0 bg-background border-t">
-        <div className="container max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-end gap-2">
-            <div className="flex gap-1">
-              <GameMenu
-                matchId={matchId || ""}
-                currentUserId={currentUser?.id || ""}
-                otherUserId={otherUser?.id || ""}
-              />
-              <Button variant="ghost" size="icon" className="h-10 w-10" aria-label="Attach image"><ImageIcon className="h-5 w-5" /></Button>
-              <Button variant="ghost" size="icon" className="h-10 w-10 hidden sm:flex" aria-label="Send gift"><Gift className="h-5 w-5" /></Button>
-            </div>
-            <div className="flex-1 relative">
-              <Input
-                value={newMessage}
-                onChange={(e) => handleTyping(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }
-                }}
-                placeholder="Type a message..."
-                className="pr-10 focus-glow"
-                maxLength={1000}
-              />
-              <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-11 w-11 min-h-[44px] min-w-[44px]" aria-label="Emoji picker">
-                <Smile className="h-4 w-4" />
-              </Button>
-            </div>
-            {newMessage.trim() ? (
-              <Button
-                size="icon" aria-label="Send message"
-                onClick={handleSendMessage}
-                className={cn("h-11 w-11 min-h-[44px] min-w-[44px] bg-gradient-primary text-primary-foreground transition-all", newMessage.trim() && "animate-pulse-glow")}
-              >
-                <Send className="h-5 w-5" />
-              </Button>
-            ) : (
-              <Button variant="ghost" size="icon" className="h-11 w-11 min-h-[44px] min-w-[44px]" aria-label="Voice message"><Mic className="h-5 w-5" /></Button>
+      {/* Composer: a game, the message, send. Nothing here that does not work. */}
+      <div className="chat-composer">
+        <form
+          className="mx-auto flex w-full max-w-4xl items-end gap-2"
+          onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
+        >
+          <GameMenu
+            matchId={matchId || ""}
+            currentUserId={currentUser?.id || ""}
+            otherUserId={otherUser?.id || ""}
+          />
+          <div className="min-w-0 flex-1">
+            <Input
+              value={newMessage}
+              onChange={(e) => handleTyping(e.target.value)}
+              placeholder={`Message ${otherUser.name}`}
+              aria-label={`Message ${otherUser.name}`}
+              className="chat-input"
+              maxLength={1000}
+              enterKeyHint="send"
+              autoComplete="off"
+            />
+            {newMessage.length > 800 && (
+              <div className="mt-1 px-3 text-right text-xs text-muted-foreground tabular-nums">{newMessage.length}/1000</div>
             )}
           </div>
-          {newMessage.length > 800 && (
-            <div className="text-sm text-muted-foreground text-right mt-1">{newMessage.length}/1000</div>
-          )}
-        </div>
+          <button type="submit" className="kit-action chat-send" aria-label="Send message" disabled={!newMessage.trim()}>
+            <Send aria-hidden="true" />
+          </button>
+        </form>
       </div>
 
       {/* Report Dialog */}
@@ -853,7 +813,7 @@ const Chat = () => {
       <AlertDialog open={showUnmatchDialog} onOpenChange={setShowUnmatchDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Unmatch with {otherUser?.name}?</AlertDialogTitle>
+            <AlertDialogTitle>Remove your connection with {otherUser?.name}?</AlertDialogTitle>
             <AlertDialogDescription>
               This removes the connection and deletes the conversation for both of you. This can't be undone.
             </AlertDialogDescription>
@@ -864,7 +824,7 @@ const Chat = () => {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => { setShowUnmatchDialog(false); handleUnmatch(); }}
             >
-              Unmatch
+              Remove connection
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -886,7 +846,7 @@ const Chat = () => {
             </div>
             <div className="flex items-start gap-3">
               <span className="text-primary font-bold">•</span>
-              <p>Meet in public places for first dates.</p>
+              <p>Meet in a public place the first time.</p>
             </div>
             <div className="flex items-start gap-3">
               <span className="text-primary font-bold">•</span>

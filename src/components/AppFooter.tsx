@@ -8,11 +8,14 @@ import { cn } from "@/lib/utils";
  * whatever is fixed to the bottom of the screen: nothing, the tab bar, or the tab bar plus Learn's
  * continue bar.
  *
- * A screen that fills the phone exactly and does not scroll (Discover) would gain a strip of page
- * below it, so the whole screen could be dragged up. Such a screen is listed in OWN_FOOTER and
- * places `<AppFooter inline />` inside its own scroll area instead.
+ * A screen that fills the phone exactly and does not scroll (Discover, a conversation) would gain a
+ * strip of page below it, so the whole screen could be dragged up. Discover is listed in OWN_FOOTER
+ * and places `<AppFooter inline />` inside its own scroll area instead; a conversation has no room
+ * for one and links the policy that matters there from its menu.
  */
 const OWN_FOOTER = ["/"];
+/** A conversation is the same kind of screen: header, messages, composer. Its menu links the Complaints Policy. */
+const NO_FOOTER_PREFIX = ["/chat/"];
 
 const policyLinks = [
   { to: "/complaints", label: "Complaints Policy" },
@@ -30,7 +33,7 @@ const siteLinks = [
 
 export const AppFooter = ({ inline = false }: { inline?: boolean }) => {
   const { pathname } = useLocation();
-  if (!inline && OWN_FOOTER.includes(pathname)) return null;
+  if (!inline && (OWN_FOOTER.includes(pathname) || NO_FOOTER_PREFIX.some(prefix => pathname.startsWith(prefix)))) return null;
 
   return (
     <footer className={cn("app-footer w-full text-center", inline && "app-footer-inline")}>

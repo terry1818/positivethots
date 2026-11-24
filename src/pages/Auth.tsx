@@ -6,15 +6,14 @@ import { useSessionStore } from "@/stores/sessionStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ShimmerButton } from "@/components/ShimmerButton";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Logo } from "@/components/Logo";
 import { ForgotPasswordModal } from "@/components/ForgotPasswordModal";
 import { buildAuthRedirectUrl } from "@/lib/authRedirect";
 import { toast } from "sonner";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
-import { Check, Circle, GraduationCap, ShieldCheck, Heart } from "lucide-react";
+import { Check, Circle, GraduationCap, ShieldCheck, Heart, Eye, EyeOff } from "lucide-react";
 import { BrandTagline } from "@/components/BrandTagline";
 
 const signUpSchema = z.object({
@@ -47,6 +46,7 @@ const Auth = () => {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [loading, setLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -207,169 +207,177 @@ const Auth = () => {
     }
   };
 
+  const field = (hasError?: string) => cn("kit-field focus-glow", hasError && "border-destructive/60 focus-visible:ring-destructive/30");
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="kit-area-learn kit-entry">
       <h1 className="sr-only">{isSignUp ? "Create your Positive Thots account" : "Sign in to Positive Thots"}</h1>
-      <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-primary/15 blur-3xl animate-blob-float" aria-hidden="true" />
-      <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-secondary/20 blur-3xl animate-blob-float [animation-delay:5s]" aria-hidden="true" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-accent/10 blur-3xl animate-blob-float [animation-delay:10s]" aria-hidden="true" />
-      <div className="absolute top-1/4 right-1/4 w-64 h-64 rounded-full bg-secondary/10 blur-3xl animate-blob-float [animation-delay:15s]" aria-hidden="true" />
 
-      <div className="auth-guide-layout relative z-10">
-        <aside className="auth-guide-welcome"><GuideArt name="guide-celebrate-all" size={150} /><p className="hidden lg:block text-xl font-medium text-foreground mt-6">Learn first. Connect better.</p></aside>
-        <Card className="w-full max-w-md shadow-[var(--shadow-elevated)] relative z-10 animate-fade-in">
-        <CardHeader className="space-y-1 text-center">
-          <div className="mb-4 flex justify-center"><Logo size="lg" /></div>
-          <CardTitle className="text-2xl">{isSignUp ? "Create your account" : "Welcome back"}</CardTitle>
-          <BrandTagline variant="secondary" className="mt-1" />
-          <p className="text-sm text-muted-foreground/50 mt-1">
-            {isSignUp ? "The relationship wellness app that teaches you to be a better partner" : "Ready to meet like-minded people?"}
-          </p>
+      <div className="auth-guide-layout my-auto">
+        {/* Wide screens: the welcome sits beside the form. On a phone it is the strip at the top of the card. */}
+        <aside className="auth-guide-welcome !hidden lg:!flex">
+          <GuideArt name="guide-celebrate-all" size={150} />
+          <p className="mt-6 text-xl font-bold text-foreground">Learn first. Connect better.</p>
+        </aside>
 
-          {/* Value proposition icons */}
-          {isSignUp && (
-            <div className="pt-3 space-y-2">
-              <div className="flex items-center justify-center gap-3 flex-wrap">
-                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <GraduationCap className="h-4 w-4 text-primary shrink-0" />Evidence-based courses
-                </span>
-                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <ShieldCheck className="h-4 w-4 text-primary shrink-0" />Education-verified community
-                </span>
-                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Heart className="h-4 w-4 text-primary shrink-0" />Welcoming every relationship style
-                </span>
-              </div>
-            </div>
-          )}
-        </CardHeader>
-        <CardContent>
-          <form ref={formRef} onSubmit={handleAuth} className="space-y-4" noValidate>
-            {isSignUp && (
-              <>
-                <div className="space-y-1 animate-stagger-fade" style={{ animationDelay: "0ms" }}>
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Your name"
-                    value={name}
-                    onChange={(e) => { setName(e.target.value); clearFieldError('name'); }}
-                    maxLength={100}
-                    className={cn("focus-glow min-h-[48px]", fieldErrors.name && "border-destructive/50 focus-visible:ring-destructive/30")}
-                    aria-describedby={fieldErrors.name ? "name-error" : undefined}
-                    aria-invalid={!!fieldErrors.name}
-                  />
-                  <FieldError message={fieldErrors.name} id="name-error" />
-                </div>
-                <div className="space-y-1 animate-stagger-fade" style={{ animationDelay: "80ms" }}>
-                  <Label htmlFor="dateOfBirth">Date of Birth (18+)</Label>
-                  <Input
-                    id="dateOfBirth"
-                    type="date"
-                    value={dateOfBirth}
-                    onChange={(e) => { setDateOfBirth(e.target.value); clearFieldError('dateOfBirth'); }}
-                    max={new Date(new Date().getFullYear() - 18, new Date().getMonth(), new Date().getDate()).toISOString().split('T')[0]}
-                    min="1920-01-01"
-                    className={cn("focus-glow min-h-[48px]", fieldErrors.dateOfBirth && "border-destructive/50 focus-visible:ring-destructive/30")}
-                    aria-describedby={fieldErrors.dateOfBirth ? "dob-error" : undefined}
-                    aria-invalid={!!fieldErrors.dateOfBirth}
-                  />
-                  <FieldError message={fieldErrors.dateOfBirth} id="dob-error" />
-                </div>
-              </>
-            )}
-            {isSignUp && (
-              <div className="space-y-1 animate-stagger-fade" style={{ animationDelay: "160ms" }}>
-                <div className="flex items-start space-x-2">
-                  <input
-                    type="checkbox"
-                    id="agreedToTerms"
-                    checked={agreedToTerms}
-                    onChange={(e) => { setAgreedToTerms(e.target.checked); clearFieldError('agreedToTerms'); }}
-                    className={cn("mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary", fieldErrors.agreedToTerms && "border-destructive")}
-                    aria-describedby={fieldErrors.agreedToTerms ? "terms-error" : undefined}
-                    aria-invalid={!!fieldErrors.agreedToTerms}
-                  />
-                  <Label htmlFor="agreedToTerms" className="text-sm text-muted-foreground leading-snug cursor-pointer">
-                    I am at least 18 years old and agree to the{" "}
-                    <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Terms of Service</a>{" "}
-                    and{" "}
-                    <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Privacy Policy</a>
-                  </Label>
-                </div>
-                <FieldError message={fieldErrors.agreedToTerms} id="terms-error" />
-              </div>
-            )}
-            <div className="space-y-1">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); clearFieldError('email'); }}
-                maxLength={255}
-                className={cn("focus-glow min-h-[48px]", fieldErrors.email && "border-destructive/50 focus-visible:ring-destructive/30")}
-                aria-describedby={fieldErrors.email ? "email-error" : undefined}
-                aria-invalid={!!fieldErrors.email}
-              />
-              <FieldError message={fieldErrors.email} id="email-error" />
-            </div>
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                {!isSignUp && <ForgotPasswordModal />}
-              </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => { setPassword(e.target.value); clearFieldError('password'); }}
-                maxLength={100}
-                className={cn("focus-glow min-h-[48px]", fieldErrors.password && "border-destructive/50 focus-visible:ring-destructive/30")}
-                aria-describedby={fieldErrors.password ? "password-error" : undefined}
-                aria-invalid={!!fieldErrors.password}
-              />
-              <FieldError message={fieldErrors.password} id="password-error" />
+        <div className="kit-card kit-rise w-full max-w-md overflow-hidden">
+          <div className="kit-panel !rounded-b-none !rounded-t-[18px] !border-0 h-[132px] lg:hidden">
+            <GuideArt name="guide-celebrate-all" size={124} />
+          </div>
 
-              {/* Password requirements — visible during sign-up */}
-              {isSignUp && password.length > 0 && (
-                <div className="space-y-1 mt-2 animate-fade-in">
-                  <div className={cn("flex items-center gap-1.5 text-sm transition-colors",
-                    password.length >= 6 ? "text-success" : "text-muted-foreground"
-                  )}>
-                    {password.length >= 6
-                      ? <Check className="h-3 w-3" />
-                      : <Circle className="h-3 w-3" />
-                    }
-                    At least 6 characters
-                  </div>
-                </div>
+          <div className="p-5">
+            <div className="text-center">
+              <div className="flex justify-center"><Logo size="md" /></div>
+              <h2 className="mt-1 text-2xl font-extrabold [text-wrap:balance]">{isSignUp ? "Create your account" : "Welcome back"}</h2>
+              <BrandTagline className="mt-1 text-sm text-muted-foreground" />
+              <p className="mt-1 text-sm text-muted-foreground [text-wrap:pretty]">
+                {isSignUp ? "The relationship wellness platform where learning comes first." : "Learn first. Connect better."}
+              </p>
+
+              {isSignUp && (
+                <ul className="mt-3 flex flex-wrap justify-center gap-1.5">
+                  <li className="kit-chip" data-tone="quiet"><GraduationCap className="h-3.5 w-3.5" aria-hidden="true" /> Evidence-based courses</li>
+                  <li className="kit-chip" data-tone="quiet"><ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" /> Education-verified community</li>
+                  <li className="kit-chip" data-tone="quiet"><Heart className="h-3.5 w-3.5" aria-hidden="true" /> Every relationship style welcome</li>
+                </ul>
               )}
             </div>
-            <ShimmerButton
-              type="submit"
-              className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 min-h-[48px]"
-              disabled={loading}
-            >
-              {loading ? "Loading..." : isSignUp ? "Sign Up" : "Sign In"}
-            </ShimmerButton>
 
-            {isSignUp && (
-              <p className="text-sm text-muted-foreground text-center mt-1">
-                Next: A quick profile setup, then start your learning journey ✨
-              </p>
-            )}
+            <form ref={formRef} onSubmit={handleAuth} className="mt-5 space-y-4" noValidate>
+              {isSignUp && (
+                <>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      autoComplete="given-name"
+                      placeholder="Your name"
+                      value={name}
+                      onChange={(e) => { setName(e.target.value); clearFieldError('name'); }}
+                      maxLength={100}
+                      className={field(fieldErrors.name)}
+                      aria-describedby={fieldErrors.name ? "name-error" : undefined}
+                      aria-invalid={!!fieldErrors.name}
+                    />
+                    <FieldError message={fieldErrors.name} id="name-error" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="dateOfBirth">Date of birth (you must be 18 or older)</Label>
+                    <Input
+                      id="dateOfBirth"
+                      type="date"
+                      autoComplete="bday"
+                      value={dateOfBirth}
+                      onChange={(e) => { setDateOfBirth(e.target.value); clearFieldError('dateOfBirth'); }}
+                      max={new Date(new Date().getFullYear() - 18, new Date().getMonth(), new Date().getDate()).toISOString().split('T')[0]}
+                      min="1920-01-01"
+                      className={field(fieldErrors.dateOfBirth)}
+                      aria-describedby={fieldErrors.dateOfBirth ? "dob-error" : undefined}
+                      aria-invalid={!!fieldErrors.dateOfBirth}
+                    />
+                    <FieldError message={fieldErrors.dateOfBirth} id="dob-error" />
+                  </div>
+                </>
+              )}
 
-            <Button type="button" variant="ghost" className="w-full" onClick={() => setIsSignUp(!isSignUp)}>
-              {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
-            </Button>
-          </form>
+              <div className="space-y-1.5">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); clearFieldError('email'); }}
+                  maxLength={255}
+                  className={field(fieldErrors.email)}
+                  aria-describedby={fieldErrors.email ? "email-error" : undefined}
+                  aria-invalid={!!fieldErrors.email}
+                />
+                <FieldError message={fieldErrors.email} id="email-error" />
+              </div>
 
-        </CardContent>
-      </Card>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  {!isSignUp && <ForgotPasswordModal />}
+                </div>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete={isSignUp ? "new-password" : "current-password"}
+                    placeholder={isSignUp ? "At least 6 characters" : "Your password"}
+                    value={password}
+                    onChange={(e) => { setPassword(e.target.value); clearFieldError('password'); }}
+                    maxLength={100}
+                    className={cn(field(fieldErrors.password), "pr-12")}
+                    aria-describedby={fieldErrors.password ? "password-error" : undefined}
+                    aria-invalid={!!fieldErrors.password}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-0.5 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-xl text-muted-foreground hover:text-foreground"
+                    onClick={() => setShowPassword(v => !v)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-pressed={showPassword}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" aria-hidden="true" /> : <Eye className="h-5 w-5" aria-hidden="true" />}
+                  </button>
+                </div>
+                <FieldError message={fieldErrors.password} id="password-error" />
+
+                {isSignUp && password.length > 0 && (
+                  <p className={cn("flex items-center gap-1.5 text-sm font-semibold", password.length >= 6 ? "text-success" : "text-muted-foreground")}>
+                    {password.length >= 6 ? <Check className="h-4 w-4" aria-hidden="true" /> : <Circle className="h-4 w-4" aria-hidden="true" />}
+                    At least 6 characters
+                  </p>
+                )}
+              </div>
+
+              {isSignUp && (
+                <div className="space-y-1">
+                  <div className="flex items-start gap-1">
+                    <label htmlFor="agreedToTerms" className="grid h-11 w-11 shrink-0 cursor-pointer place-items-center">
+                      <Checkbox
+                        id="agreedToTerms"
+                        checked={agreedToTerms}
+                        onCheckedChange={(checked) => { setAgreedToTerms(checked === true); clearFieldError('agreedToTerms'); }}
+                        className={cn(fieldErrors.agreedToTerms && "border-destructive")}
+                        aria-describedby={fieldErrors.agreedToTerms ? "terms-error" : undefined}
+                        aria-invalid={!!fieldErrors.agreedToTerms}
+                      />
+                    </label>
+                    <Label htmlFor="agreedToTerms" className="cursor-pointer py-2.5 text-sm leading-snug text-muted-foreground">
+                      I am at least 18 years old and agree to the{" "}
+                      <a href="/terms" target="_blank" rel="noopener noreferrer" className="kit-text font-bold underline underline-offset-2">Terms of Service</a>{" "}
+                      and{" "}
+                      <a href="/privacy" target="_blank" rel="noopener noreferrer" className="kit-text font-bold underline underline-offset-2">Privacy Policy</a>
+                    </Label>
+                  </div>
+                  <FieldError message={fieldErrors.agreedToTerms} id="terms-error" />
+                </div>
+              )}
+
+              <Button type="submit" className="kit-cta w-full" disabled={loading}>
+                {loading ? "One moment…" : isSignUp ? "Create account" : "Sign in"}
+              </Button>
+
+              {isSignUp && (
+                <p className="text-center text-sm text-muted-foreground">
+                  Next: a quick profile setup, then your first lesson.
+                </p>
+              )}
+
+              <Button type="button" variant="ghost" className="min-h-[44px] w-full font-bold" onClick={() => { setIsSignUp(!isSignUp); setFieldErrors({}); }}>
+                {isSignUp ? "Already have an account? Sign in" : "New here? Create an account"}
+              </Button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   );

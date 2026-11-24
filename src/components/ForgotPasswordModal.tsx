@@ -60,7 +60,7 @@ export const ForgotPasswordModal = () => {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <button type="button" className="text-sm text-primary hover:underline">
+        <button type="button" className="kit-text -my-2 min-h-[44px] px-1 text-sm font-bold underline-offset-2 hover:underline">
           Forgot password?
         </button>
       </DialogTrigger>

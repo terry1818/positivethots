@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { Check } from "lucide-react";
 import { useState } from "react";
 
 interface ChipOption {
@@ -35,37 +35,23 @@ export const ChipSelector = ({ options, selected, onToggle, max, columns = 3, po
 
   const renderChip = (option: ChipOption, index: number) => {
     const isSelected = selected.includes(option.value);
-    const disabled = !isSelected && isMaxed;
+    // With room for one answer, tapping another simply swaps it; only a multi-choice list locks when full.
+    const disabled = !isSelected && isMaxed && max !== 1;
     const isBouncing = justSelected === option.value;
-    const isPopular = popularSet.has(option.value.toLowerCase()) || popularSet.has(option.label.toLowerCase());
 
     return (
       <button
         key={option.value}
         type="button"
         onClick={() => handleToggle(option.value, disabled)}
-        className={`relative rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 border text-left
-          ${isBouncing ? "animate-chip-select" : ""}
-          ${isSelected
-            ? "bg-primary text-primary-foreground border-primary shadow-md scale-[1.02]"
-            : disabled
-            ? "bg-muted/50 text-muted-foreground border-border opacity-50 cursor-not-allowed"
-            : "bg-card text-foreground border-border hover:border-primary/50 hover:bg-primary/5 active:scale-95"
-          }`}
-        style={{ animationDelay: `${index * 0.02}s` }}
+        className={`kit-option kit-option-sm ${isBouncing ? "animate-chip-select" : ""}`}
+        data-selected={isSelected}
+        aria-pressed={isSelected}
+        disabled={disabled}
       >
-        <span className="block truncate">{option.label}</span>
-        {option.description && (
-          <span className={`block text-sm mt-0.5 truncate ${isSelected ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-            {option.description}
-          </span>
-        )}
-        {isPopular && !isSelected && (
-          <span className="absolute top-1 right-1.5 text-sm text-primary/60 font-medium">Popular</span>
-        )}
-        {isSelected && (
-          <X className="absolute top-1.5 right-1.5 h-3 w-3" />
-        )}
+        <span className="block truncate pr-4">{option.label}</span>
+        {option.description && <span className="kit-option-note truncate">{option.description}</span>}
+        {isSelected && <Check className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2" aria-hidden="true" />}
       </button>
     );
   };
@@ -85,7 +71,7 @@ export const ChipSelector = ({ options, selected, onToggle, max, columns = 3, po
           <button
             type="button"
             onClick={() => setShowAll(!showAll)}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="min-h-[44px] px-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors"
           >
             {showAll ? "Show less" : `More options (${otherItems.length})`}
           </button>

@@ -48,4 +48,8 @@
 - Discover fits one phone screen and does not scroll (`discover-screen`). Pass, Send a Thot and Connect stay visible under the card with their names; do not put anything between the card and those three. A failed load shows its own error state, never the empty state.
 - Dragging a card: only a pressed pointer drags, and a drag is never also a tap. Do not move the card's arrival animation back onto the slot element; it would stop the card following the finger.
 - Tour tips (`SpotlightTour`) must stay on screen at 320 to 430 pixels wide; point a step at something smaller than the screen.
+- Likes: the tab is named "Likes", the action is always Connect. A Connect made from Likes is mutual, so it opens "You Both Said Yes".
+- Chat: a conversation is `chat-screen` (phone height, only the messages scroll). No control without a working feature behind it. Report stays one tap from the header. No policy footer under the composer.
+- Never load a member's fallback picture from another service; show their initial.
+- Sign-up and onboarding are written for everyone: no question about one relationship style, no "Popular" label without data, no looping background animation.
 - `tests/app_kit.test.ts` guards area-colour contrast, the wheel landing on its prize, and the profile completion steps. Keep it passing.

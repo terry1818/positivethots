@@ -1,16 +1,16 @@
 interface StepHeaderProps {
-  emoji: string;
+  /** Kept for callers; the step's guide art above the header carries the picture now. */
+  emoji?: string;
   title: string;
   subtitle?: string;
 }
 
-export const StepHeader = ({ emoji, title, subtitle }: StepHeaderProps) => {
+export const StepHeader = ({ title, subtitle }: StepHeaderProps) => {
   return (
-    <div className="text-center space-y-2 mb-4">
-      <span className="text-4xl block animate-bounce-in">{emoji}</span>
-      <h2 className="text-xl font-bold text-foreground animate-stagger-1">{title}</h2>
+    <div className="mb-4 space-y-1.5 text-center">
+      <h2 className="text-xl font-extrabold leading-tight text-foreground animate-stagger-1 [text-wrap:balance]">{title}</h2>
       {subtitle && (
-        <p className="text-sm text-muted-foreground animate-stagger-2">{subtitle}</p>
+        <p className="text-sm text-muted-foreground animate-stagger-2 [text-wrap:pretty]">{subtitle}</p>
       )}
     </div>
   );

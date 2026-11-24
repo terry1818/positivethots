@@ -38,6 +38,9 @@ tint reaches 4.5:1 on cards in light and dark. Change a colour and that test tel
 | `kit-progress` | Filled track: `<span class="kit-progress"><span style="width: 40%"/></span>`. |
 | `kit-pips` | One pip per step: `<i data-done>` and `<i data-next>`. |
 | `kit-chip` | Small pill. `data-tone`: default gold, `area`, `quiet`, `correct` (green), `glass` (for on top of a photo). |
+| `kit-tabs` + `kit-tab` | Switch between two or three views. Put them on a shadcn `TabsList` and each `TabsTrigger`. |
+| `kit-option` (`kit-option-sm`) + `kit-option-note` | A choice in a list or grid. `data-selected="true"` marks the chosen one. |
+| `kit-entry` + `kit-entry-column`, `kit-field` | The calm single column for sign-in, reset and onboarding, and its 48px inputs. |
 | `kit-action` (`kit-action-lg`) | Round button with a lip, for a row of icon actions. `data-tone`: default area colour, `quiet`, `reward`. `kit-action-count` is the small number on its corner. Always put a text label under it. |
 | `kit-eyebrow`, `kit-text` | Small caps label, and text in the area tint. |
 | `kit-header` | Page header strip in the area colour. |
@@ -124,8 +127,8 @@ Until the files have loaded, each sound falls back to the simple version in `sou
 | 1 | Bottom nav, empty states, loading tint, welcome-back pop-up, daily spin, Likes and Chat headers | Done |
 | 3 | Profile | Done |
 | 2 | Discover | Done |
-| 4 | Likes and Chat content | Not started |
-| 5 | Onboarding and sign-in | Not started |
+| 4 | Likes and Chat content | Done |
+| 5 | Onboarding and sign-in | Done |
 | 6 | Premium, Wallet, Events | Not started |
 | 7 | Settings, Resources, health pages (colour and spacing only) | Not started |
 
@@ -158,6 +161,37 @@ phone (`100dvh`) and never scrolls: header, one Learn row, the card, three actio
 - **You Both Said Yes** (`MatchModal`): the celebration. Guide art beside the other person's photo,
   one `kit-cta` ("Say hi to …"), and the safety tips row on a first connection.
 - **Loading**: `PageSkeleton variant="discovery"` has the same frame, so nothing jumps.
+
+## Likes
+
+`src/pages/LikesYou.tsx`, `kit-area-likes`. "Likes" is the name of the tab; the action is always
+Connect. Two views: "Wants to connect" and "Your Connects".
+
+- A person is a `likes-card`: photo, name, then Pass and Connect with their names.
+- They already said yes, so a Connect here is always mutual: it opens "You Both Said Yes" and
+  "Say hi" goes straight to the conversation.
+- Without a plan that includes it, the screen shows how many people are waiting, never who.
+- Loading, empty and could-not-load are separate states on both views.
+
+## Chat
+
+- **List** (`src/pages/Messages.tsx`, `kit-area-chat`): "Say hi" is a row of people who said yes and
+  have no message yet; "Conversations" follows, unread first (from `message_read_receipts`), marked
+  "New". A member with no profile shows an initial; nothing is fetched from another service.
+- **Conversation** (`src/pages/Chat.tsx`): `chat-screen` is exactly as tall as the phone. Header,
+  the messages (`chat-scroll`, the only part that scrolls), the composer. Report is one tap from the
+  header; Block is too from 360px wide and in the menu below that.
+- Every control does something. Do not add a button for a feature that does not exist yet.
+- No character art between messages. The guide appears only on an empty conversation.
+- The policy footer is not shown under the composer; the menu links the Complaints Policy.
+
+## Sign-in and onboarding
+
+`kit-entry` screens: Auth, ResetPassword, Onboarding. Brand purple (`kit-area-learn`), no drifting
+background. The form fits one phone screen for sign-in. Inputs carry `autoComplete` so password
+managers work. Onboarding shows the part of the profile, the step and a `kit-progress` bar; choices
+are `kit-option`. Questions are written for everyone: do not ask about one relationship style, and
+do not mark an option "Popular" without data.
 
 ## Thots
 
