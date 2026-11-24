@@ -1551,6 +1551,7 @@ export type Database = {
           birth_lat: number | null
           birth_lng: number | null
           birth_time: string | null
+          bonus_mystery_reveals: number
           boundaries: string | null
           churn_status: string
           created_at: string
@@ -1616,6 +1617,7 @@ export type Database = {
           birth_lat?: number | null
           birth_lng?: number | null
           birth_time?: string | null
+          bonus_mystery_reveals?: number
           boundaries?: string | null
           churn_status?: string
           created_at?: string
@@ -1681,6 +1683,7 @@ export type Database = {
           birth_lat?: number | null
           birth_lng?: number | null
           birth_time?: string | null
+          bonus_mystery_reveals?: number
           boundaries?: string | null
           churn_status?: string
           created_at?: string
@@ -2367,6 +2370,7 @@ export type Database = {
           total_xp: number
           updated_at: string
           user_id: string
+          xp_doublers: number
         }
         Insert: {
           boost_credits?: number | null
@@ -2381,6 +2385,7 @@ export type Database = {
           total_xp?: number
           updated_at?: string
           user_id: string
+          xp_doublers?: number
         }
         Update: {
           boost_credits?: number | null
@@ -2395,6 +2400,7 @@ export type Database = {
           total_xp?: number
           updated_at?: string
           user_id?: string
+          xp_doublers?: number
         }
         Relationships: []
       }
@@ -3013,6 +3019,7 @@ export type Database = {
         Returns: Json
       }
       claim_daily_spin: { Args: never; Returns: Json }
+      claim_daily_spin_v2: { Args: never; Returns: Json }
       claim_path_chest: { Args: { _module_id: string }; Returns: Json }
       complete_module_mastery: {
         Args: { _module_id: string; _session_started_at: string }
@@ -3287,6 +3294,7 @@ export type Database = {
         Returns: undefined
       }
       use_boost_credit: { Args: never; Returns: number }
+      use_xp_doubler: { Args: { _section_id: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "owner"
