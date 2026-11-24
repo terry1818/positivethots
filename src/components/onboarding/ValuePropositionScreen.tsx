@@ -6,27 +6,20 @@ import { EducationBadge } from "@/components/EducationBadge";
 import { X, BookOpen, Shield, Heart } from "lucide-react";
 import { BrandTagline } from "@/components/BrandTagline";
 
+// The five Foundation lessons, in the order the path teaches them.
 const FOUNDATION_BADGES = [
   { slug: "consent-fundamentals", title: "Consent" },
-  { slug: "boundaries-communication", title: "Communication" },
+  { slug: "boundaries-communication", title: "Boundaries" },
+  { slug: "digital-consent-boundaries", title: "Digital" },
   { slug: "safer-sex", title: "Health" },
-  { slug: "understanding-desire", title: "Desire" },
-  { slug: "emotional-responsibility", title: "Emotional IQ" },
+  { slug: "emotional-responsibility", title: "Emotions" },
 ];
 
+// What the lessons draw on. These are sources, not endorsements: none of these bodies has reviewed or approved the app.
 const FRAMEWORK_INFO = [
-  {
-    name: "AASECT",
-    description: "American Association of Sexuality Educators, Counselors, and Therapists — the gold standard in sex education accreditation.",
-  },
-  {
-    name: "Sexual Health Alliance",
-    description: "Evidence-based sexual health training used by licensed therapists and counselors worldwide.",
-  },
-  {
-    name: "Gottman Method",
-    description: "Dr. John Gottman's 40+ years of relationship research — the most data-backed framework for healthy relationships.",
-  },
+  { name: "Sexuality education standards", description: "Topics follow what professional sexuality educators are trained to teach, such as the AASECT core knowledge areas." },
+  { name: "Published relationship research", description: "Skills like repair, turning toward, and handling conflict come from decades of research, including John Gottman's." },
+  { name: "Consent and communication models", description: "Plain tools you can use the same day, such as FRIES for consent and Nonviolent Communication." },
 ];
 
 interface ValuePropositionScreenProps {
@@ -37,53 +30,28 @@ export const ValuePropositionScreen = ({ onBegin }: ValuePropositionScreenProps)
   const [showFrameworks, setShowFrameworks] = useState(false);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background p-4 overflow-y-auto">
-      <div className="w-full max-w-md space-y-8 py-8">
-        {/* Headline */}
-        <div className="text-center space-y-4">
-          <GuideArt name="guide-tier-foundation" size={150} />
-          <h1 className="text-2xl font-bold text-foreground leading-tight">
-            You're in!
-          </h1>
-          <BrandTagline variant="secondary" className="mt-2" />
-          <p className="text-muted-foreground leading-relaxed">
-            Before you meet anyone, you'll learn what most people never do — consent, communication, and emotional intelligence. Built on the same frameworks therapists use with their clients. This is what makes every match on Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> different.
+    <div className="kit-area-learn kit-entry fixed inset-0 z-50 overflow-y-auto bg-background">
+      <div className="kit-entry-column">
+        <div className="kit-panel h-[190px]"><div className="pb-2"><GuideArt name="guide-tier-foundation" size={160} /></div></div>
+        <div className="mt-5 text-center">
+          <h1 className="text-2xl font-extrabold [text-wrap:balance]">You're in!</h1>
+          <BrandTagline variant="secondary" className="mt-1" />
+          <p className="mt-2 text-muted-foreground [text-wrap:pretty]">
+            Before you meet anyone, you'll learn what most of us were never taught: consent, boundaries, and handling big feelings. Five short lessons, then Discover opens.
           </p>
         </div>
 
-        {/* Foundation badge icons */}
-        <div className="flex justify-center gap-4">
+        <div className="mt-5 flex flex-wrap justify-center gap-x-3 gap-y-2">
           {FOUNDATION_BADGES.map((badge) => (
-            <EducationBadge
-              key={badge.slug}
-              moduleSlug={badge.slug}
-              title={badge.title}
-              isEarned={false}
-              tier="foundation"
-              size="md"
-              showLabel
-            />
+            <EducationBadge key={badge.slug} moduleSlug={badge.slug} title={badge.title} isEarned={false} tier="foundation" size="md" showLabel />
           ))}
         </div>
 
-        {/* Tagline */}
-        <p className="text-center text-sm font-semibold text-primary tracking-wide">
-          5 courses. 100% required. 0% optional.
-        </p>
-
-        {/* CTA */}
-        <div className="space-y-3">
-          <Button onClick={onBegin} className="w-full text-lg h-12" size="lg">
-            Let's Begin
-          </Button>
-          <button
-            type="button"
-            onClick={() => setShowFrameworks(true)}
-            className="w-full text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-4"
-          >
-            Learn more about our curriculum
-          </button>
-        </div>
+        <Button onClick={onBegin} className="kit-cta mt-6 w-full">Start the first lesson</Button>
+        <button type="button" onClick={() => setShowFrameworks(true)}
+          className="mt-1 min-h-[44px] w-full text-sm font-semibold text-muted-foreground underline underline-offset-4 hover:text-primary">
+          Where the lessons come from
+        </button>
       </div>
 
       {/* Framework info modal */}
@@ -94,15 +62,13 @@ export const ValuePropositionScreen = ({ onBegin }: ValuePropositionScreenProps)
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold flex items-center gap-2">
                   <Shield className="h-5 w-5 text-primary" />
-                  Evidence-Based Curriculum
+                  Where the lessons come from
                 </h2>
-                <Button variant="ghost" size="icon" onClick={() => setShowFrameworks(false)}>
+                <Button variant="ghost" size="icon" className="h-11 w-11" aria-label="Close" onClick={() => setShowFrameworks(false)}>
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Every module in Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> is built on peer-reviewed research and professional frameworks:
-              </p>
+              <p className="text-sm text-muted-foreground [text-wrap:pretty]">The lessons are written for everyday people and draw on:</p>
               <div className="space-y-3">
                 {FRAMEWORK_INFO.map((fw) => (
                   <div key={fw.name} className="rounded-lg border border-border p-3">

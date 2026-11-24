@@ -447,3 +447,29 @@ test("the landing page uses the branded words and the real pack prices", () => {
   expect(html.match(/Super Like|swipe right|for the ENM, polyamory/gi) ?? []).toEqual([]);
   expect(html).toContain("$1.99 for 5, $3.99 for 10");
 });
+
+test("advanced filters: an empty group means anyone, and options are only values people have stated", () => {
+  const { passesFilters, filterOptions, filtersActive, filterLabel, NO_FILTERS } = require("../src/lib/discoverFilters") as typeof import("../src/lib/discoverFilters");
+  const people = [{ gender: "woman", relationship_style: "monogamous" }, { gender: "man", relationship_style: null }, { gender: "woman", relationship_style: "open" }, { gender: null, relationship_style: "open" }];
+  expect(people.every(p => passesFilters(p, NO_FILTERS))).toBe(true);
+  expect(people.filter(p => passesFilters(p, { genders: ["woman"], styles: [] })).length).toBe(2);
+  expect(people.filter(p => passesFilters(p, { genders: ["woman"], styles: ["open"] })).length).toBe(1);
+  expect(people.filter(p => passesFilters(p, { genders: [], styles: ["open"] })).length).toBe(2);
+  expect(filterOptions(people)).toEqual({ genders: ["woman", "man"], styles: ["open", "monogamous"] });
+  expect(filtersActive(NO_FILTERS)).toBe(false);
+  expect(filterLabel("relationship-anarchy")).toBe("Relationship Anarchy");
+  const page = readFileSync("src/pages/Index.tsx", "utf8");
+  // Filters only apply for a member who has unlocked them.
+  expect(page).toContain("if (canFilterRef.current && !passesFilters(p, filtersRef.current)) return false;");
+});
+
+test("the screens between onboarding sections wait for the member and name the real Foundation lessons", () => {
+  const pause = readFileSync("src/components/onboarding/PhaseInterstitial.tsx", "utf8");
+  expect(pause).not.toContain("setTimeout");
+  expect(pause).toContain("kit-cta");
+  const intro = readFileSync("src/components/onboarding/ValuePropositionScreen.tsx", "utf8");
+  expect(intro).toContain("digital-consent-boundaries");
+  expect(intro).not.toContain("understanding-desire");
+  expect(intro.match(/gold standard|therapists use with their clients|peer-reviewed/g) ?? []).toEqual([]);
+  expect(readFileSync("src/components/education/LearnToday.tsx", "utf8")).toContain("sprintMembers >= LEADERBOARD_MIN");
+});

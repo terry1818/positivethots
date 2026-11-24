@@ -4,6 +4,7 @@ import { Check, ChevronRight, Flame, Gift, Sparkles, Target, Trophy, Users, type
 import { Skeleton } from "@/components/ui/skeleton";
 import { BottomSheet } from "@/components/motion/BottomSheet";
 import { highlightedTodayChip } from "@/lib/learnHome";
+import { supabase } from "@/integrations/supabase/client";
 import {
   challengeHint, challengeLabel, daysLeftLabel, fetchDailyChallenge, fetchWeek, nextSprintMark, rewardLabel, SPRINT_MARKS,
   type DailyChallengeState, type WeekState,
@@ -12,6 +13,7 @@ import {
 const StreakCalendar = lazy(() => import("./StreakCalendar").then(m => ({ default: m.StreakCalendar })));
 const DailySpinWheel = lazy(() => import("./DailySpinWheel").then(m => ({ default: m.DailySpinWheel })));
 type Activity = "streak" | "challenge" | "spin" | "sprint" | "community";
+export const LEADERBOARD_MIN = 5;
 type Loadable<T> = { state: "loading" } | { state: "error" } | { state: "ready"; value: T };
 
 const pct = (done: number, of: number) => Math.max(0, Math.min(100, of > 0 ? Math.round((done / of) * 100) : 0));
@@ -61,6 +63,18 @@ export function LearnToday({ streak, lastActivityDate, freezes, atRisk, hoursLef
     document.addEventListener("visibilitychange", onShow);
     return () => document.removeEventListener("visibilitychange", onShow);
   }, [load]);
+
+  // The week's leaderboard appears once five members are in the sprint. With fewer it would be a list of one or two.
+  const [leaders, setLeaders] = useState<{ rank: number; display_name: string; sections_completed: number }[]>([]);
+  const sprintMembers = week.state === "ready" ? week.value.sprint.members : 0;
+  useEffect(() => {
+    if (sheet !== "sprint" || sprintMembers < LEADERBOARD_MIN) return;
+    let active = true;
+    void supabase.rpc("get_weekly_leaderboard").then(({ data, error }) => {
+      if (active && !error && data) setLeaders(data.slice(0, 5).map(r => ({ rank: Number(r.rank), display_name: r.display_name, sections_completed: Number(r.sections_completed) })));
+    });
+    return () => { active = false; };
+  }, [sheet, sprintMembers]);
 
   const ch = challenge.state === "ready" ? challenge.value : null;
   const wk = week.state === "ready" ? week.value : null;
@@ -146,6 +160,20 @@ export function LearnToday({ streak, lastActivityDate, freezes, atRisk, hoursLef
                 );
               })}
             </ul>
+            {sprintMembers >= LEADERBOARD_MIN && leaders.length > 0 && (
+              <div className="space-y-2 pt-2">
+                <h3 className="text-base font-extrabold">Most lessons this week</h3>
+                <ol className="space-y-1.5">
+                  {leaders.map((l) => (
+                    <li key={l.rank} className="flex items-center gap-3 rounded-xl bg-muted px-3 py-2">
+                      <span className="w-6 text-center font-black tabular-nums">{l.rank}</span>
+                      <span className="min-w-0 flex-1 truncate font-bold">{l.display_name}</span>
+                      <span className="text-sm text-muted-foreground tabular-nums">{l.sections_completed} {l.sections_completed === 1 ? "lesson" : "lessons"}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
           </div>
         )}
 

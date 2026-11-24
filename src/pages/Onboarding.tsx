@@ -787,7 +787,7 @@ const Onboarding = () => {
                     {formData.birthTimeUnknown ? (
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-muted-foreground">I don't know my birth time</span>
-                        <Button variant="ghost" size="sm" onClick={() => { updateField("birthTimeUnknown", false); }}>Change</Button>
+                        <Button variant="ghost" size="sm" className="min-h-[44px]" onClick={() => { updateField("birthTimeUnknown", false); }}>Change</Button>
                       </div>
                     ) : (
                       <div className="flex gap-2 items-center">
@@ -801,7 +801,7 @@ const Onboarding = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => { updateField("birthTimeUnknown", true); updateField("birthTime", ""); }}
-                          className="whitespace-nowrap text-xs"
+                          className="whitespace-nowrap text-sm min-h-[44px]"
                         >
                           I don't know
                         </Button>
@@ -828,7 +828,7 @@ const Onboarding = () => {
                         className="min-h-[48px]"
                       />
                     </div>
-                    <p className="text-xs text-muted-foreground">Used for astrology compatibility. Not shown on your profile.</p>
+                    <p className="text-sm text-muted-foreground">Used for astrology compatibility. Not shown on your profile.</p>
                   </div>
 
                   <div className="space-y-2 animate-stagger-3">

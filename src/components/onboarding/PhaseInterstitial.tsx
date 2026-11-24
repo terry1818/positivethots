@@ -1,50 +1,32 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { GuideArt } from "@/components/mascot/GuideArt";
+import { Button } from "@/components/ui/button";
 
 interface PhaseInterstitialProps {
   show: boolean;
-  emoji: string;
+  /** Kept so callers do not change; the guide art takes its place on screen. */
+  emoji?: string;
   message: string;
   nextPhase: string;
   nextUp?: string;
   onComplete: () => void;
 }
 
-export const PhaseInterstitial = ({ show, emoji, message, nextPhase, nextUp, onComplete }: PhaseInterstitialProps) => {
-  const [visible, setVisible] = useState(false);
-  const innerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (show) {
-      setVisible(true);
-      const outerTimer = setTimeout(() => {
-        setVisible(false);
-        innerTimerRef.current = setTimeout(onComplete, 300);
-      }, 2200);
-      return () => {
-        clearTimeout(outerTimer);
-        if (innerTimerRef.current) clearTimeout(innerTimerRef.current);
-      };
-    }
-  }, [show, onComplete]);
-
-  if (!show && !visible) return null;
+/** The pause between two sections of onboarding. It waits for the member: nothing moves on by itself. */
+export const PhaseInterstitial = ({ show, message, nextPhase, nextUp, onComplete }: PhaseInterstitialProps) => {
+  const button = useRef<HTMLButtonElement>(null);
+  useEffect(() => { if (show) button.current?.focus(); }, [show]);
+  if (!show) return null;
 
   return (
-    <div
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-sm transition-opacity duration-300 ${
-        visible ? "opacity-100" : "opacity-0"
-      }`}
-      onClick={() => { setVisible(false); setTimeout(onComplete, 100); }}
-    >
-      <span className="text-7xl animate-bounce-in mb-6">{emoji}</span>
-      <p className="text-lg text-muted-foreground mb-2 animate-stagger-1">{message}</p>
-      <p className="text-2xl font-bold text-foreground animate-stagger-2">
-        {nextPhase}
-      </p>
-      {nextUp && (
-        <p className="text-sm text-muted-foreground mt-2 animate-stagger-3">{nextUp}</p>
-      )}
-      <p className="text-sm text-muted-foreground mt-6 animate-stagger-3">Tap to continue</p>
+    <div className="kit-area-learn kit-entry fixed inset-0 z-50 bg-background" role="dialog" aria-modal="true" aria-labelledby="phase-next">
+      <div className="kit-entry-column kit-pop text-center">
+        <div className="kit-panel h-[190px]"><div className="pb-2"><GuideArt name="guide-high-five" size={160} /></div></div>
+        <p className="mt-5 text-muted-foreground [text-wrap:pretty]">{message}</p>
+        <h2 id="phase-next" className="mt-1 text-2xl font-extrabold [text-wrap:balance]">{nextPhase}</h2>
+        {nextUp && <p className="mt-1 text-sm text-muted-foreground [text-wrap:pretty]">{nextUp}</p>}
+        <Button ref={button} className="kit-cta mt-6 w-full" onClick={onComplete}>Continue</Button>
+      </div>
     </div>
   );
 };

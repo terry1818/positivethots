@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/analytics";
 import { onDiscoveryRefresh } from "@/lib/discoveryEvents";
 import { useSessionStore } from "@/stores/sessionStore";
 import { Button } from "@/components/ui/button";
-import { Heart, Settings, Zap, Share2, Undo2, RefreshCw, ChevronRight, CalendarDays } from "lucide-react";
+import { Heart, Settings, Zap, Share2, Undo2, RefreshCw, ChevronRight, CalendarDays, SlidersHorizontal } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -35,7 +35,9 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { PageSkeleton } from "@/components/PageSkeleton";
 import { toast } from "sonner";
 import { PAYMENTS_OPEN } from "@/lib/payments";
-import { memberPerks, sectionsFinished } from "@/lib/perks";
+import { canUseAdvancedFilters, memberPerks, sectionsFinished } from "@/lib/perks";
+import { filterOptions, filtersActive, loadFilters, passesFilters, saveFilters, NO_FILTERS, type DiscoverFilters } from "@/lib/discoverFilters";
+import { DiscoverFilterSheet } from "@/components/discovery/DiscoverFilterSheet";
 import { SEO } from "@/components/SEO";
 import type { Database } from "@/integrations/supabase/types";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -202,6 +204,20 @@ const Index = () => {
   const [resettingFeed, setResettingFeed] = useState(false);
   // The list of people failed to load (as opposed to loading fine and being empty).
   const [loadError, setLoadError] = useState(false);
+  // Advanced filters: earned by finishing the Identity lessons, or included with Premium and VIP.
+  const [filters, setFilters] = useState<DiscoverFilters>(() => loadFilters());
+  const filtersRef = useRef(filters);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filterChoices, setFilterChoices] = useState<{ genders: string[]; styles: string[] }>({ genders: [], styles: [] });
+  const canFilter = canUseAdvancedFilters(subTier, new Set(tiers.filter(t => t.isComplete).map(t => t.tier)));
+  const canFilterRef = useRef(canFilter);
+  canFilterRef.current = canFilter;
+  const applyFilters = (next: DiscoverFilters) => {
+    filtersRef.current = next;
+    setFilters(next);
+    saveFilters(next);
+    if (currentUser) { setLoading(true); void loadSuggestions(currentUser.id, currentUser); }
+  };
   const [retrying, setRetrying] = useState(false);
 
   // Handle super like purchase redirect
@@ -386,12 +402,14 @@ const Index = () => {
 
     const boostedUserIds = new Set(boostsResult.data?.map(b => b.user_id) || []);
 
+    setFilterChoices(filterOptions(profilesResult.data ?? []));
     const enhancedProfiles: EnhancedProfile[] = profilesResult.data
       .filter(p => {
         // Only include profiles that have at least one approved public photo and are not suspended
         const approvedPhotos = photosByUser.get(p.id);
         if (!approvedPhotos || approvedPhotos.length === 0) return false;
         if ((p as any).is_suspended) return false;
+        if (canFilterRef.current && !passesFilters(p, filtersRef.current)) return false;
         return true;
       })
       .map(p => {
@@ -782,6 +800,10 @@ const Index = () => {
               <Zap aria-hidden="true" />
             </button>
             <IncognitoIndicator />
+            <button type="button" className="discover-icon-btn relative" aria-label={canFilter && filtersActive(filters) ? "Filters, on" : "Filters"} onClick={() => setShowFilters(true)}>
+              <SlidersHorizontal aria-hidden="true" />
+              {canFilter && filtersActive(filters) && <span className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-background" aria-hidden="true" />}
+            </button>
             <button type="button" className="discover-icon-btn" aria-label="Settings" onClick={() => navigate("/settings")}>
               <Settings aria-hidden="true" />
             </button>
@@ -840,6 +862,15 @@ const Index = () => {
               </div>
             )}
 
+            {canFilter && filtersActive(filters) && (
+              <button type="button" className="kit-row kit-row-next mt-4" onClick={() => applyFilters(NO_FILTERS)}>
+                <span className="kit-coin" data-tone="area"><SlidersHorizontal aria-hidden="true" /></span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-bold leading-tight">Your filters are on</span>
+                  <span className="block text-sm text-muted-foreground">Clear them to see everyone.</span>
+                </span>
+              </button>
+            )}
             <h2 className="kit-eyebrow mt-6 px-1">While you wait</h2>
             <div className="mt-2 grid shrink-0 gap-2.5">
               <button type="button" className="kit-row kit-rise" style={{ "--i": 2 } as CSSProperties} onClick={handleReferralClick}>
@@ -953,6 +984,9 @@ const Index = () => {
           </>
         )}
       </div>
+
+      <DiscoverFilterSheet open={showFilters} onOpenChange={setShowFilters} unlocked={canFilter} value={filters} options={filterChoices}
+        onApply={applyFilters} onLearn={() => navigate("/learn")} onPlans={() => navigate("/premium")} />
 
       {matchedUser && (
         <MatchModal
