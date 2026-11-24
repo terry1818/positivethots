@@ -1,0 +1,196 @@
+{
+ "0fe5c755-6d72-513c-8df7-420713cca15b": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Betrayal Takes Many Forms",
+    "art": "guide-thinking-b",
+    "alt": "",
+    "plain": "Any broken agreement that one partner relied on can feel like betrayal."
+   },
+   {
+    "heading": "Strong Reactions Are Normal",
+    "art": "guide-meditate",
+    "alt": "",
+    "plain": "Shock, obsessive thoughts and constant checking are common after a betrayal."
+   },
+   {
+    "heading": "Both People Can Hurt",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "The partner who broke trust often feels shame. That does not cancel the other person's pain."
+   },
+   {
+    "heading": "Repair Is a Choice",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "You are not obligated to stay. Rebuilding only works if both people choose it."
+   }
+  ],
+  "checks": [
+   {
+    "id": "0fe5c755-1",
+    "after": "Strong Reactions Are Normal",
+    "prompt": "Since finding out, Dana keeps replaying the discovery and can't sleep. What fits best?",
+    "options": [
+     "Dana is overreacting",
+     "These are common reactions to betrayal and usually ease with support",
+     "Dana should pretend nothing happened"
+    ],
+    "answer": 1,
+    "explanation": "Intrusive thoughts and poor sleep are common after betrayal. They tend to ease with time and support."
+   }
+  ],
+  "takeaway": "Betrayal hurts deeply, the reactions are normal, and repair is a choice, not a duty."
+ },
+ "086b543b-50a7-5003-939c-42342e094d9b": {
+  "hero": {
+   "art": "guide-lesson-reading",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "End It and Own It",
+    "art": "guide-thinking-c",
+    "alt": "",
+    "plain": "The betrayal has to stop, and the person who caused it takes full responsibility."
+   },
+   {
+    "heading": "Answer Questions Honestly",
+    "art": "guide-story-chat",
+    "alt": "",
+    "plain": "The hurt partner will have questions. Honest, patient answers rebuild trust."
+   },
+   {
+    "heading": "Offer Openness",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "Offering openness, like sharing where you are, shows you have nothing left to hide."
+   },
+   {
+    "heading": "A Real Apology",
+    "art": "guide-high-five",
+    "alt": "",
+    "plain": "A real apology names what you did, how it hurt, and what you will do differently."
+   }
+  ],
+  "checks": [
+   {
+    "id": "086b543b-1",
+    "after": "End It and Own It",
+    "prompt": "Chris says, \"I'm sorry, but you were so distant, what did you expect?\" What is wrong with this?",
+    "options": [
+     "Nothing, it explains the context",
+     "It's too short",
+     "It shifts blame to the hurt partner instead of taking responsibility"
+    ],
+    "answer": 2,
+    "explanation": "An apology with \"but you…\" blames the hurt partner. Full responsibility comes first."
+   },
+   {
+    "id": "086b543b-2",
+    "after": "A Real Apology",
+    "prompt": "Which apology best supports repair?",
+    "options": [
+     "\"I lied to you about where I was, and I can see how much that hurt. I'll answer any question you have.\"",
+     "\"I'm sorry you feel that way.\"",
+     "\"I said sorry already, so can we move on?\""
+    ],
+    "answer": 0,
+    "explanation": "A real apology names the action, recognizes the hurt and commits to change, without rushing forgiveness."
+   }
+  ],
+  "takeaway": "Repair starts with ending the betrayal and owning it fully, without excuses."
+ },
+ "d87a0890-e22c-5c98-9886-701fe8ebc18c": {
+  "hero": {
+   "art": "guide-story-chat-c",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Understand Without Excusing",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "Looking at what led to the betrayal helps prevent it happening again. It is not an excuse."
+   },
+   {
+    "heading": "Expect Triggers",
+    "art": "guide-meditate-b",
+    "alt": "",
+    "plain": "Places, dates and songs can bring the pain back. Plan together how to handle them."
+   },
+   {
+    "heading": "Rebuild Closeness Slowly",
+    "art": "guide-high-five",
+    "alt": "",
+    "plain": "Small, reliable acts of care rebuild trust better than grand gestures."
+   }
+  ],
+  "checks": [
+   {
+    "id": "d87a0890-1",
+    "after": "Expect Triggers",
+    "prompt": "Weeks later, a late text sends Priya into panic. What is the most helpful response from her partner?",
+    "options": [
+     "\"You need to get over this.\"",
+     "Comfort her and answer her questions calmly",
+     "Stop texting altogether"
+    ],
+    "answer": 1,
+    "explanation": "Triggers are normal in repair. Calm comfort and honest answers rebuild safety."
+   }
+  ],
+  "takeaway": "Understanding what led to the betrayal explains it without excusing it."
+ },
+ "7e9548bb-4f80-5783-a3d8-0f89750b7971": {
+  "hero": {
+   "art": "guide-encourage",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Make New Agreements",
+    "art": "guide-lesson-reading-c",
+    "alt": "",
+    "plain": "Write new agreements together that you both believe in, and review them."
+   },
+   {
+    "heading": "It Takes Time",
+    "art": "guide-daily-spin",
+    "alt": "",
+    "plain": "Rebuilding trust often takes many months or longer, with good and bad days."
+   },
+   {
+    "heading": "Get Outside Help",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "A couples therapist experienced with betrayal can guide both of you."
+   },
+   {
+    "heading": "Ending Is Also Valid",
+    "art": "guide-waving",
+    "alt": "",
+    "plain": "Choosing to end the relationship can be a healthy outcome too."
+   }
+  ],
+  "checks": [
+   {
+    "id": "7e9548bb-1",
+    "after": "It Takes Time",
+    "prompt": "Six months in, the couple has a hard week. What does this mean?",
+    "options": [
+     "Repair has failed",
+     "They should end it immediately",
+     "Setbacks are a normal part of a long process"
+    ],
+    "answer": 2,
+    "explanation": "Healing is not a straight line. Hard weeks are normal during repair."
+   }
+  ],
+  "takeaway": "Rebuilt trust rests on new agreements, time and, often, outside help."
+ }
+}

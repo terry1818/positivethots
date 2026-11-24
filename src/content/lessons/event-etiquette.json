@@ -1,0 +1,202 @@
+{
+ "4c105af6-8f28-547c-b2c1-5781ced4e878": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Read the Event's Rules",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "Every event has its own rules. Read them before you go and follow them there."
+   },
+   {
+    "heading": "Talk With Partners First",
+    "art": "guide-story-chat",
+    "alt": "",
+    "plain": "Agree beforehand what each of you is and isn't open to, and how you'll check in."
+   },
+   {
+    "heading": "Plan Your Night",
+    "art": "guide-practice-dumbbell",
+    "alt": "",
+    "plain": "Arrange your way home, bring what you need, and keep alcohol low or none."
+   }
+  ],
+  "checks": [
+   {
+    "id": "4c105af6-1",
+    "after": "Talk With Partners First",
+    "prompt": "Two partners disagree in the middle of a party about what's OK. What would have helped most?",
+    "options": [
+     "Deciding on the spot without the other partner",
+     "Avoiding parties entirely",
+     "Agreeing on limits and check-ins before going"
+    ],
+    "answer": 2,
+    "explanation": "Talking about limits and check-ins beforehand prevents hard negotiations in a busy, distracting place."
+   }
+  ],
+  "takeaway": "Read the rules, make your plans and agreements ahead of time, and arrive clear-headed."
+ },
+ "209cd450-fbc3-52c2-88b6-69d7b7a95cf8": {
+  "hero": {
+   "art": "guide-high-five",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Ask Before Any Touch",
+    "art": "guide-thinking-b",
+    "alt": "",
+    "plain": "Always ask before touching anyone, even a hug, and even if you've touched before."
+   },
+   {
+    "heading": "Ask Each Person Separately",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "When approaching a couple or group, every person decides for themselves."
+   },
+   {
+    "heading": "No Means No, and Maybe Means No",
+    "art": "guide-thinking-c",
+    "alt": "",
+    "plain": "Accept a no, a maybe or silence the first time, without arguing or asking again later."
+   },
+   {
+    "heading": "Watching Needs Consent Too",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "Ask before joining or watching a scene, and follow the event's rules about watching."
+   }
+  ],
+  "checks": [
+   {
+    "id": "209cd450-1",
+    "after": "Ask Each Person Separately",
+    "prompt": "Taylor asks a couple to join them, and one partner says \"Sure, we're both in.\" What should Taylor do?",
+    "options": [
+     "Ask the other partner directly",
+     "Go ahead, since one partner agreed for both",
+     "Leave without saying anything"
+    ],
+    "answer": 0,
+    "explanation": "Each person consents for themselves. Taylor should hear a yes from the other partner too."
+   },
+   {
+    "id": "209cd450-2",
+    "after": "Watching Needs Consent Too",
+    "prompt": "You see a scene you'd like to join. What is the right move?",
+    "options": [
+     "Join in quietly so you don't interrupt",
+     "Stand very close to get noticed",
+     "Wait for a natural pause and ask, or don't join at all"
+    ],
+    "answer": 2,
+    "explanation": "Joining without asking breaks consent. Ask at an appropriate moment, and accept the answer."
+   }
+  ],
+  "takeaway": "Ask every person, every time, and take any no or hesitation as a no."
+ },
+ "d329801e-7722-5fec-b69f-e107eb362fd2": {
+  "hero": {
+   "art": "guide-meditate",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "No Photos Without Permission",
+    "art": "guide-lesson-reading-b",
+    "alt": "",
+    "plain": "Never take or share photos or videos of people without their clear permission."
+   },
+   {
+    "heading": "Don't Out Anyone",
+    "art": "guide-meditate-b",
+    "alt": "",
+    "plain": "Who you saw and what they did stays private. Seeing someone there doesn't give you the right to share it."
+   },
+   {
+    "heading": "Respect Everyone's Space",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "Use the names people give, don't hover, and welcome newcomers."
+   }
+  ],
+  "checks": [
+   {
+    "id": "d329801e-1",
+    "after": "Don't Out Anyone",
+    "prompt": "Sam sees a coworker at an event. What should Sam do?",
+    "options": [
+     "Mention it at work so things aren't awkward",
+     "Keep it private and follow the coworker's lead",
+     "Tell a few trusted friends"
+    ],
+    "answer": 1,
+    "explanation": "Who attends an event is private. Sam should keep it to themselves."
+   }
+  ],
+  "takeaway": "No photos, no outing anyone, and treat everyone as you'd want to be treated."
+ },
+ "125d74a8-af58-5555-a078-e68f7d38ce70": {
+  "hero": {
+   "art": "guide-encourage-c",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Tell the Hosts",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "If someone breaks consent or makes you uneasy, tell a host or the consent team."
+   },
+   {
+    "heading": "Look Out for Each Other",
+    "art": "guide-high-five",
+    "alt": "",
+    "plain": "Check on friends who seem unwell or overwhelmed, and get help if needed."
+   },
+   {
+    "heading": "Leaving Early Is Fine",
+    "art": "guide-waving-b",
+    "alt": "",
+    "plain": "You can leave at any time, for any reason, and you don't owe an explanation."
+   },
+   {
+    "heading": "Check In Afterward",
+    "art": "guide-story-chat-c",
+    "alt": "",
+    "plain": "Talk with partners the next day about what went well and what to change."
+   }
+  ],
+  "checks": [
+   {
+    "id": "125d74a8-1",
+    "after": "Tell the Hosts",
+    "prompt": "You notice someone ignoring another guest's no. What should you do?",
+    "options": [
+     "Mind your own business",
+     "Tell a host or the consent team",
+     "Post about it online later"
+    ],
+    "answer": 1,
+    "explanation": "Hosts and consent teams can act straight away. Telling them protects everyone."
+   },
+   {
+    "id": "125d74a8-2",
+    "after": "Check In Afterward",
+    "prompt": "After a party, one partner feels unsettled. What helps most?",
+    "options": [
+     "Ignore it, since the party is over",
+     "Blame the other partner for going",
+     "Talk it through with care and decide what to change next time"
+    ],
+    "answer": 2,
+    "explanation": "A caring check-in after an event helps partners process feelings and improve next time."
+   }
+  ],
+  "takeaway": "Speak up to the hosts, look out for each other, and check in after."
+ }
+}

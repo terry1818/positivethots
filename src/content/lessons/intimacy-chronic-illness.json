@@ -1,0 +1,184 @@
+{
+ "fe4905b6-6c57-52c5-ab66-13a7856f5d49": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "You Are Not Broken",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "Many people with long-term conditions have satisfying sex lives, often in new ways."
+   },
+   {
+    "heading": "Grief Is Normal",
+    "art": "guide-meditate",
+    "alt": "",
+    "plain": "It is OK to miss what sex used to be like before you build something new."
+   },
+   {
+    "heading": "Look Beyond One Kind of Sex",
+    "art": "guide-thinking-c",
+    "alt": "",
+    "plain": "Intimacy can include touch, massage, oral sex, toys, kissing and closeness."
+   }
+  ],
+  "checks": [
+   {
+    "id": "fe4905b6-1",
+    "after": "Grief Is Normal",
+    "prompt": "Since her diagnosis, Lee feels sad that sex isn't what it was. What does this lesson suggest?",
+    "options": [
+     "She should stop thinking about sex",
+     "Missing how things were is normal, and naming it can help her adapt",
+     "She should hide it from her partner"
+    ],
+    "answer": 1,
+    "explanation": "Grief over what has changed is natural. Naming it is often the first step to finding new ways to be close."
+   }
+  ],
+  "takeaway": "Health changes call for adapting intimacy, not giving it up."
+ },
+ "fd70080b-2864-5c28-adf8-923f64cf41f1": {
+  "hero": {
+   "art": "guide-practice-dumbbell",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Budget Your Energy",
+    "art": "guide-daily-spin",
+    "alt": "",
+    "plain": "Plan intimacy for times you have energy, not the end of a draining day."
+   },
+   {
+    "heading": "Time It With Your Treatment",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "Some people feel best at certain times after medicine or treatment."
+   },
+   {
+    "heading": "Set Up for Comfort",
+    "art": "guide-meditate-b",
+    "alt": "",
+    "plain": "Pillows, wedges, warmth and positions that need less effort can make a big difference."
+   },
+   {
+    "heading": "Pace Yourself",
+    "art": "guide-thinking-b",
+    "alt": "",
+    "plain": "Shorter sessions and breaks are fine. Stop before pain builds."
+   }
+  ],
+  "checks": [
+   {
+    "id": "fd70080b-1",
+    "after": "Time It With Your Treatment",
+    "prompt": "Ravi's pain is lowest mid-morning. How could he use that?",
+    "options": [
+     "Change his medicine timing without telling his doctor",
+     "Only have sex late at night when he's exhausted",
+     "Plan intimate time for mornings when he feels better"
+    ],
+    "answer": 2,
+    "explanation": "Planning around the times you feel best is a simple, effective adjustment. Talk to a clinician before changing medicine timing."
+   }
+  ],
+  "takeaway": "Plan around your good times, set yourself up for comfort, and pace yourself."
+ },
+ "00113e66-bfce-5b4c-bea5-05986eab0619": {
+  "hero": {
+   "art": "guide-high-five",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "When Care Crowds Out Romance",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "Helping with medical care can make it hard to see each other as lovers."
+   },
+   {
+    "heading": "Keep Some Time Just for You Two",
+    "art": "guide-high-five",
+    "alt": "",
+    "plain": "Set aside time that is about connection, not care tasks."
+   },
+   {
+    "heading": "Look After the Caregiver Too",
+    "art": "guide-meditate-c",
+    "alt": "",
+    "plain": "Caregivers burn out. Their rest and support matter too."
+   },
+   {
+    "heading": "Many Partners, Shared Care",
+    "art": "guide-story-chat",
+    "alt": "",
+    "plain": "In larger families or networks, care and intimacy can be shared out openly."
+   }
+  ],
+  "checks": [
+   {
+    "id": "00113e66-1",
+    "after": "Keep Some Time Just for You Two",
+    "prompt": "Kim helps her partner with daily care and no longer feels romantic. What might help?",
+    "options": [
+     "Doing even more care tasks to show love",
+     "Setting aside time for connection that has no care tasks in it",
+     "Avoiding the subject altogether"
+    ],
+    "answer": 1,
+    "explanation": "Separating care time from partner time helps both people feel like partners again."
+   }
+  ],
+  "takeaway": "Keep caregiving and partnership separate, and look after both people."
+ },
+ "1b9f050b-ddcd-594a-b541-ef5b436dffa6": {
+  "hero": {
+   "art": "guide-story-chat-c",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Sex Is a Health Topic",
+    "art": "guide-lesson-reading-b",
+    "alt": "",
+    "plain": "Your sexual health deserves the same care as any other part of your health."
+   },
+   {
+    "heading": "Ask About Side Effects",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "Many medicines affect desire, arousal or orgasm. There are often alternatives."
+   },
+   {
+    "heading": "Bring Questions",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "Writing questions down makes awkward topics easier to raise."
+   },
+   {
+    "heading": "Keep Asking",
+    "art": "guide-encourage-c",
+    "alt": "",
+    "plain": "If one clinician brushes you off, it is fine to ask someone else."
+   }
+  ],
+  "checks": [
+   {
+    "id": "1b9f050b-1",
+    "after": "Ask About Side Effects",
+    "prompt": "Jordan's new medicine has lowered his desire. What should he do?",
+    "options": [
+     "Stop taking it right away",
+     "Tell his clinician and ask about other options",
+     "Accept it and say nothing"
+    ],
+    "answer": 1,
+    "explanation": "Stopping some medicines suddenly is dangerous. Talking to a clinician opens up safe options."
+   }
+  ],
+  "takeaway": "Sex is a health topic. Ask, and keep asking until you get help."
+ }
+}

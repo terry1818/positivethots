@@ -34,6 +34,11 @@ Sections are defined in `src/lib/learnSections.ts` (order, colours, guide art, p
 | Getting professional help | Mental Health First Aid 4 (general); Common Sexual Concerns 4 (sex therapy) |
 | Habits and self-image | Changing Your Patterns |
 | Intentions | Your Relationship Vision 5 "Your Growth Edge" |
+| First-meeting safety, scams, leaving a date | Meeting Someone Safely (Dating & Safety) |
+| Sex and intimacy after a child arrives | Intimacy After Becoming a Parent (Sexual Health) |
+| Practical intimacy with chronic illness or pain, caregiving vs partnership | Intimacy With Chronic Illness or Pain (Sexual Health); body changes over life and medicine basics stay in Common Sexual Concerns 2-3 |
+| Repairing trust after a broken agreement or affair | Rebuilding Trust After a Betrayal (Relationships); building agreements stays in Advanced ENM 2 |
+| Consent, privacy and etiquette at events and parties | Event and Party Etiquette (Advanced); scene negotiation stays in Kink & BDSM 3 |
 
 ## Removed on 2026-11-24 (and why)
 

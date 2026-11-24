@@ -1,0 +1,190 @@
+{
+ "655c79d9-437d-5935-8dcc-8652345b810f": {
+  "hero": {
+   "art": "guide-thinking",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Every Path to Parenthood",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "Birth, adoption, fostering, surrogacy or joining a family with kids all change intimacy."
+   },
+   {
+    "heading": "Why Desire Often Drops",
+    "art": "guide-sleepy",
+    "alt": "",
+    "plain": "Exhaustion, being touched all day and a new identity can all quiet desire for a while."
+   },
+   {
+    "heading": "Desire Can Come Back Differently",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "For many parents, desire shows up after closeness starts rather than before."
+   }
+  ],
+  "checks": [
+   {
+    "id": "655c79d9-1",
+    "after": "Why Desire Often Drops",
+    "prompt": "Alex has held the baby all day and doesn't want to be touched in the evening. What fits best?",
+    "options": [
+     "Feeling \"touched out\" is common and doesn't mean the relationship is failing",
+     "Alex has lost interest in their partner",
+     "Alex should push through it to keep the relationship healthy"
+    ],
+    "answer": 0,
+    "explanation": "Many parents feel \"touched out\" after a day of caregiving. It is a normal response, not a sign of a failing relationship."
+   }
+  ],
+  "takeaway": "Lower desire after a child arrives is common, has real causes, and usually shifts again with time and care."
+ },
+ "6dc893ed-61be-503a-bdbc-9bfe1272512b": {
+  "hero": {
+   "art": "guide-meditate",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Wait for the Okay",
+    "art": "guide-lesson-reading",
+    "alt": "",
+    "plain": "Ask your clinician when it is safe to have sex again. There is no deadline after that."
+   },
+   {
+    "heading": "Go Slowly and Use Lube",
+    "art": "guide-thinking-b",
+    "alt": "",
+    "plain": "Start gently, use plenty of lubricant, and stop if anything hurts."
+   },
+   {
+    "heading": "Plan for Contraception",
+    "art": "guide-thinking-c",
+    "alt": "",
+    "plain": "You can get pregnant again before your period returns."
+   },
+   {
+    "heading": "Mental Health Matters Too",
+    "art": "guide-encourage-c",
+    "alt": "",
+    "plain": "Depression and anxiety after a new child are common in any parent and very treatable."
+   }
+  ],
+  "checks": [
+   {
+    "id": "6dc893ed-1",
+    "after": "Go Slowly and Use Lube",
+    "prompt": "Sex after birth is painful for Jo. What does the lesson suggest?",
+    "options": [
+     "Keep going so it gets easier",
+     "Avoid mentioning it so the partner doesn't worry",
+     "Stop, and talk to a clinician or pelvic floor physical therapist"
+    ],
+    "answer": 2,
+    "explanation": "Pain is a signal to stop. Clinicians and pelvic floor physical therapists can help."
+   },
+   {
+    "id": "6dc893ed-2",
+    "after": "Mental Health Matters Too",
+    "prompt": "Sam, a new adoptive parent, has felt numb and hopeless for weeks. What fits best?",
+    "options": [
+     "Only birth parents get depression after a new child",
+     "Any new parent can, and help is available, so Sam should reach out",
+     "It will pass on its own, so there's no need to say anything"
+    ],
+    "answer": 1,
+    "explanation": "Depression after a new child can affect any parent, and it is very treatable. Reaching out is the right step."
+   }
+  ],
+  "takeaway": "Wait for your clinician's OK, go slowly, and never push through pain."
+ },
+ "a4114dc2-ad6d-5719-b935-e1ccf27088b2": {
+  "hero": {
+   "art": "guide-high-five",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Share the Load Fairly",
+    "art": "guide-study-together",
+    "alt": "",
+    "plain": "Unfair division of chores and planning is one of the biggest desire killers."
+   },
+   {
+    "heading": "Small, Daily Connection",
+    "art": "guide-high-five",
+    "alt": "",
+    "plain": "Short moments of attention each day matter more than one big date."
+   },
+   {
+    "heading": "Touch Without Pressure",
+    "art": "guide-meditate-b",
+    "alt": "",
+    "plain": "Cuddling and affection that don't have to lead to sex rebuild closeness."
+   },
+   {
+    "heading": "Planning Isn't Unromantic",
+    "art": "guide-daily-spin",
+    "alt": "",
+    "plain": "With a child at home, planned time together is often the only time there is."
+   }
+  ],
+  "checks": [
+   {
+    "id": "a4114dc2-1",
+    "after": "Share the Load Fairly",
+    "prompt": "Maya does most of the night feeds and all the planning, and her desire has dropped. What might help most?",
+    "options": [
+     "Scheduling more date nights while keeping the work the same",
+     "Sharing the work, including the planning, more fairly",
+     "Waiting until the baby is older"
+    ],
+    "answer": 1,
+    "explanation": "When one partner carries most of the load, desire often drops. Sharing the work, including the planning, tends to help."
+   }
+  ],
+  "takeaway": "Fair sharing of the work and small daily moments of connection protect intimacy."
+ },
+ "64ae7874-bb4b-5ff7-8a50-a543a572f29c": {
+  "hero": {
+   "art": "guide-story-chat",
+   "alt": ""
+  },
+  "concepts": [
+   {
+    "heading": "Talk About It Without Blame",
+    "art": "guide-story-chat-c",
+    "alt": "",
+    "plain": "Share what you feel and need, and ask about your partner's experience too."
+   },
+   {
+    "heading": "Different Levels of Desire",
+    "art": "guide-thinking",
+    "alt": "",
+    "plain": "Differences in desire are normal and can be worked through together."
+   },
+   {
+    "heading": "When to Get Help",
+    "art": "guide-encourage",
+    "alt": "",
+    "plain": "If you feel stuck or resentful for months, a therapist can help."
+   }
+  ],
+  "checks": [
+   {
+    "id": "64ae7874-1",
+    "after": "Talk About It Without Blame",
+    "prompt": "Which opening is most likely to help?",
+    "options": [
+     "\"You never want sex anymore.\"",
+     "\"Is something wrong with you?\"",
+     "\"I miss feeling close to you. How are you feeling about us lately?\""
+    ],
+    "answer": 2,
+    "explanation": "Sharing your own feeling and asking about theirs invites a conversation instead of a defense."
+   }
+  ],
+  "takeaway": "Talk with curiosity, not blame, and get help if you feel stuck."
+ }
+}
