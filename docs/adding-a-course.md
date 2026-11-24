@@ -61,7 +61,11 @@ Preview it: add the module and its lessons to the preview fixtures and open `/le
 
 ## 4. Put it live
 
-1. Run `supabase/courses/<slug>.sql` against the database (Lovable `query_database`, or the SQL editor). It is safe to run again after edits.
+1. Push first, then run `supabase/courses/<slug>.sql` against the database. It is safe to run again after edits.
+   Quickest from Lovable `query_database` (no pasting): fetch it from GitHub with pg_net, check the md5 against
+   the local file, then run it:
+   `SELECT net.http_get('https://raw.githubusercontent.com/terry1818/positivethots/<commit>/supabase/courses/<slug>.sql');`
+   then `DO $$ ... EXECUTE replace(replace(content, E'\nBEGIN;\n', E'\n'), E'\nCOMMIT;\n', E'\n') ... $$` over `net._http_response`.
 2. `node scripts/course.mjs <slug> --migration` saves a timestamped copy under `supabase/migrations/` for the record.
 3. Commit, push, then Publish → Update in Lovable.
 
