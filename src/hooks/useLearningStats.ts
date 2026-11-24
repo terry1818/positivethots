@@ -78,6 +78,33 @@ export const getNextReward = (currentLevel: number): { level: number; label: str
   return { level: next, ...LEVEL_REWARDS[next] };
 };
 
+/** Level rewards are handed out at the moment of a level-up. If that call ever failed, or the member
+ *  leveled up before rewards existed, they were simply missed. This asks once per session for any
+ *  reward the member's level has already earned; the server checks the level and never grants twice. */
+let levelRewardsChecked = false;
+async function claimMissedLevelRewards(userId: string, level: number): Promise<boolean> {
+  if (levelRewardsChecked) return false;
+  levelRewardsChecked = true;
+  const owed = REWARD_LEVELS.filter(l => l <= level);
+  if (owed.length === 0) return false;
+  try {
+    const { data: given } = await supabase
+      .from("xp_transactions")
+      .select("source")
+      .eq("user_id", userId)
+      .in("source", owed.map(l => `level_reward_${l}`));
+    const have = new Set((given ?? []).map(row => row.source));
+    let granted = false;
+    for (const l of owed.filter(l => !have.has(`level_reward_${l}`))) {
+      const { data } = await supabase.functions.invoke("grant-level-reward", { body: { level: l } });
+      if (data?.rewards?.length > 0) granted = true;
+    }
+    return granted;
+  } catch {
+    return false; // it is tried again next session
+  }
+}
+
 export const useLearningStats = () => {
   const [stats, setStats] = useState<LearningStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -107,6 +134,12 @@ export const useLearningStats = () => {
         setStats(s);
         checkStreakRisk(s);
         checkStreakRestore(s);
+        // A reward granted late changes freezes or boost credits, so read the row once more.
+        void claimMissedLevelRewards(session.user.id, s.current_level).then(async granted => {
+          if (!granted) return;
+          const { data: fresh } = await supabase.from("user_learning_stats").select("*").eq("user_id", session.user.id).maybeSingle();
+          if (fresh) setStats(fresh as LearningStats);
+        });
       } else {
         const initial: LearningStats = {
           user_id: session.user.id,
