@@ -1,4 +1,5 @@
 import { memo, type ReactNode } from "react";
+import type React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -42,32 +43,28 @@ export const BrandedEmptyState = memo(({
 }: BrandedEmptyStateProps) => {
   return (
     <div className={cn(
-      "flex flex-col items-center justify-center text-center px-8 py-12 animate-fade-in",
+      "flex flex-col items-center justify-center text-center px-6 py-10",
       className,
     )}>
-      {/* Mascot with glow */}
-      <div className="relative mb-6">
-        <div className="absolute inset-0 rounded-full bg-primary/10 blur-2xl scale-150" />
-        {illustration || <GuideArt name={MASCOT_IMAGES[mascot]} size={160} />}
+      {/* Character on a picture panel, the same way lessons show art */}
+      <div className="kit-panel kit-rise w-full max-w-[300px] h-[188px] mb-6">
+        {illustration || <GuideArt name={MASCOT_IMAGES[mascot]} size={168} />}
       </div>
 
-      {/* Headline */}
-      <h2 className="text-xl font-bold text-foreground mb-2 max-w-xs">
+      <h2 className="kit-rise text-xl font-extrabold text-foreground mb-2 max-w-xs [text-wrap:balance]" style={{ "--i": 1 } as React.CSSProperties}>
         {headline}
       </h2>
 
-      {/* Description */}
-      <p className="text-base text-muted-foreground mb-6 max-w-sm leading-relaxed">
+      <p className="kit-rise text-base text-muted-foreground mb-6 max-w-sm leading-relaxed [text-wrap:pretty]" style={{ "--i": 2 } as React.CSSProperties}>
         {description}
       </p>
 
-      {/* CTAs */}
-      <div className="flex flex-col items-center gap-3 w-full max-w-xs">
+      <div className="kit-rise flex flex-col items-center gap-3 w-full max-w-xs" style={{ "--i": 3 } as React.CSSProperties}>
         {ctaLabel && onCtaClick && (
           <Button
             onClick={onCtaClick}
             variant={ctaVariant}
-            className="w-full rounded-full"
+            className={cn("w-full", ctaVariant === "default" ? "kit-cta" : "min-h-[48px] rounded-2xl font-bold")}
           >
             {ctaLabel}
           </Button>
@@ -76,7 +73,7 @@ export const BrandedEmptyState = memo(({
           <Button
             onClick={onSecondaryClick}
             variant="ghost"
-            className="w-full rounded-full text-muted-foreground"
+            className="w-full min-h-[44px] rounded-2xl text-muted-foreground"
           >
             {secondaryLabel}
           </Button>

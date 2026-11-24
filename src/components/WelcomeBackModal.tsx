@@ -1,6 +1,7 @@
 import { GuideArt } from "@/components/mascot/GuideArt";
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import type { CSSProperties } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Heart, BookOpen, Gift, Flame } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -78,43 +79,43 @@ export const WelcomeBackModal = ({ previousChurnStatus }: WelcomeBackModalProps)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-sm text-center">
-        <div className="py-4 space-y-4">
-          <div className="mx-auto flex items-center justify-center">
-            <GuideArt name="guide-waving" size={96} />
+      <DialogContent className="sm:max-w-sm text-center kit-area-learn">
+        <div className="pt-2 space-y-4">
+          <div className="kit-panel kit-rise h-[168px]">
+            <GuideArt name="guide-waving" size={156} />
           </div>
 
-          <div>
-            <h2 className="text-2xl font-bold">Welcome Back! 💜</h2>
-            <p className="text-muted-foreground mt-1 text-sm">Here's what you missed:</p>
+          <div className="kit-rise" style={{ "--i": 1 } as CSSProperties}>
+            <DialogTitle className="text-2xl font-extrabold">Welcome Back! 💜</DialogTitle>
+            <DialogDescription className="text-muted-foreground mt-1 text-sm">Here's what you missed:</DialogDescription>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 text-center">
-            <div className="bg-muted rounded-lg p-3">
-              <Heart className="h-5 w-5 mx-auto text-secondary mb-1" />
-              <p className="text-lg font-bold">{stats.newMatches}</p>
-              <p className="text-sm text-muted-foreground">Matches</p>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="kit-stat kit-pop" style={{ "--i": 2 } as CSSProperties}>
+              <span className="kit-coin" data-tone="pink"><Heart aria-hidden="true" /></span>
+              <span className="kit-stat-value">{stats.newMatches}</span>
+              <span className="kit-stat-label">Matches</span>
             </div>
-            <div className="bg-muted rounded-lg p-3">
-              <BookOpen className="h-5 w-5 mx-auto text-primary mb-1" />
-              <p className="text-lg font-bold">{stats.newModules}</p>
-              <p className="text-sm text-muted-foreground">Courses</p>
+            <div className="kit-stat kit-pop" style={{ "--i": 3 } as CSSProperties}>
+              <span className="kit-coin" data-tone="info"><BookOpen aria-hidden="true" /></span>
+              <span className="kit-stat-value">{stats.newModules}</span>
+              <span className="kit-stat-label">Courses</span>
             </div>
-            <div className="bg-muted rounded-lg p-3">
-              <Flame className="h-5 w-5 mx-auto text-destructive mb-1" />
-              <p className="text-lg font-bold">{stats.streak}</p>
-              <p className="text-sm text-muted-foreground">Streak</p>
+            <div className="kit-stat kit-pop" style={{ "--i": 4 } as CSSProperties}>
+              <span className="kit-coin" data-tone="urgent"><Flame aria-hidden="true" /></span>
+              <span className="kit-stat-value">{stats.streak}</span>
+              <span className="kit-stat-label">Streak</span>
             </div>
           </div>
 
           {xpGranted && (
-            <div className="bg-primary/10 rounded-lg p-3 flex items-center gap-2 justify-center animate-slide-up">
-              <Gift className="h-5 w-5 text-primary" />
-              <span className="text-sm font-semibold text-primary">+50 XP Welcome Back Bonus!</span>
+            <div className="kit-row kit-pop justify-center !min-h-[48px]" style={{ "--i": 5 } as CSSProperties}>
+              <span className="kit-coin" data-tone="reward"><Gift aria-hidden="true" /></span>
+              <span className="font-extrabold">+50 XP Welcome Back Bonus!</span>
             </div>
           )}
 
-          <Button onClick={() => setOpen(false)} className="w-full">
+          <Button onClick={() => setOpen(false)} className="kit-cta w-full">
             Let's Go!
           </Button>
         </div>

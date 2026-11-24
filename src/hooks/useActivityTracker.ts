@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -10,7 +10,8 @@ import { useAuth } from "@/contexts/AuthContext";
 export function useActivityTracker() {
   const { user } = useAuth();
   const lastUpdate = useRef(0);
-  const previousChurnStatus = useRef<string | null>(null);
+  // State, not a ref: the welcome-back pop-up has to re-render when this arrives.
+  const [previousChurnStatus, setPreviousChurnStatus] = useState<string | null>(null);
   const checkedReturn = useRef(false);
 
   useEffect(() => {
@@ -32,7 +33,7 @@ export function useActivityTracker() {
           .maybeSingle();
 
         if (profile && (profile.churn_status === "inactive" || profile.churn_status === "churned")) {
-          previousChurnStatus.current = profile.churn_status;
+          setPreviousChurnStatus(profile.churn_status);
         }
       }
 
@@ -68,6 +69,6 @@ export function useActivityTracker() {
 
   return {
     /** Non-null if user was inactive/churned before this session */
-    previousChurnStatus: previousChurnStatus.current,
+    previousChurnStatus,
   };
 }

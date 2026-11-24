@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
+import { BookOpenText, ChevronRight } from "lucide-react";
 
 interface Chapter {
   id: string;
@@ -17,9 +18,12 @@ interface ChapterProfileViewProps {
   userId: string;
   compact?: boolean;
   maxChapters?: number;
+  /** Shown on your own profile: the empty line talks to you, not about you. */
+  isOwnProfile?: boolean;
+  onAddStory?: () => void;
 }
 
-export const ChapterProfileView = ({ userId, compact = false, maxChapters }: ChapterProfileViewProps) => {
+export const ChapterProfileView = ({ userId, compact = false, maxChapters, isOwnProfile = false, onAddStory }: ChapterProfileViewProps) => {
   const prefersReducedMotion = useReducedMotion();
 
   const { data: chapters = [] } = useQuery({
@@ -54,6 +58,18 @@ export const ChapterProfileView = ({ userId, compact = false, maxChapters }: Cha
 
   if (limited.length === 0) {
     if (compact) return null;
+    if (isOwnProfile) {
+      return (
+        <button type="button" onClick={onAddStory} className="kit-row">
+          <span className="kit-coin" data-tone="highlight"><BookOpenText aria-hidden="true" /></span>
+          <span className="flex-1 min-w-0">
+            <span className="block font-extrabold leading-snug">Tell your story</span>
+            <span className="block text-sm text-muted-foreground">You haven't shared your story yet.</span>
+          </span>
+          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+        </button>
+      );
+    }
     return (
       <div className="text-center py-6 text-muted-foreground">
         <span className="text-2xl block mb-2">📖</span>

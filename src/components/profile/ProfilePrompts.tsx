@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { ChevronRight, MessageSquarePlus } from "lucide-react";
 
 interface ProfilePromptsDisplayProps {
   userId: string;
@@ -26,15 +27,14 @@ export const ProfilePromptsDisplay = ({ userId, isOwnProfile, onAddPrompts }: Pr
   if (prompts.length === 0) {
     if (!isOwnProfile) return null;
     return (
-      <div className="bg-muted/30 rounded-xl p-4 text-center">
-        <p className="text-sm text-muted-foreground mb-2">Add prompts to let people know the real you</p>
-        <button
-          onClick={onAddPrompts}
-          className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-        >
-          + Add prompts
-        </button>
-      </div>
+      <button type="button" onClick={onAddPrompts} className="kit-row">
+        <span className="kit-coin" data-tone="info"><MessageSquarePlus aria-hidden="true" /></span>
+        <span className="flex-1 min-w-0">
+          <span className="block font-extrabold leading-snug">Add prompts</span>
+          <span className="block text-sm text-muted-foreground">Let people know the real you.</span>
+        </span>
+        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+      </button>
     );
   }
 

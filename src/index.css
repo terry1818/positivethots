@@ -947,10 +947,10 @@ body:has([role="dialog"]) [role="status"] > .inline-flex > .guide-art { visibili
 /* --- App-wide touch: the main (filled purple) button pushes down and lifts on hover.
    Uses translate/scale, not transform, so buttons positioned with Tailwind
    transforms keep their place. ------------------------------------------------- */
-:is(button, a)[class*="bg-primary text-primary-foreground"]:not(:disabled, .path-chunky-action, .path-guide-button, .lesson-cta) { transition: translate .12s ease-out, scale .12s ease-out, filter .2s ease-out, box-shadow .2s ease-out, background-color .15s ease-out, color .15s ease-out; }
-:is(button, a)[class*="bg-primary text-primary-foreground"]:not(:disabled, .path-chunky-action, .path-guide-button, .lesson-cta):active { translate: 0 2px; scale: .98; }
+:is(button, a)[class*="bg-primary text-primary-foreground"]:not(:disabled, .path-chunky-action, .path-guide-button, .lesson-cta, .kit-cta) { transition: translate .12s ease-out, scale .12s ease-out, filter .2s ease-out, box-shadow .2s ease-out, background-color .15s ease-out, color .15s ease-out; }
+:is(button, a)[class*="bg-primary text-primary-foreground"]:not(:disabled, .path-chunky-action, .path-guide-button, .lesson-cta, .kit-cta):active { translate: 0 2px; scale: .98; }
 @media (hover: hover) {
-  :is(button, a)[class*="bg-primary text-primary-foreground"]:not(:disabled, .path-chunky-action, .path-guide-button, .lesson-cta):hover:not(:active) { translate: 0 -1px; filter: brightness(1.08); box-shadow: 0 8px 22px hsl(var(--primary) / .45); }
+  :is(button, a)[class*="bg-primary text-primary-foreground"]:not(:disabled, .path-chunky-action, .path-guide-button, .lesson-cta, .kit-cta):hover:not(:active) { translate: 0 -1px; filter: brightness(1.08); box-shadow: 0 8px 22px hsl(var(--primary) / .45); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1081,3 +1081,141 @@ button.lesson-chip:not(:disabled):active { translate: 0 3px; box-shadow: 0 1px 0
 .glossary-sheet-close:focus-visible { outline: 2px solid hsl(var(--ring)); }
 @media (prefers-reduced-motion: reduce) { .lesson-plain, .glossary-sheet { animation: none; } }
 .glossary-sheet-floating { position: sticky; bottom: 12px; z-index: 30; margin: 12px 0 0; font-size: 1rem; }
+
+/* ───────── App kit: the Learn look for every screen. Rules: docs/app-kit.md ─────────
+   An area class sets the same --path-* colours Learn uses, so every kit piece below
+   (and anything borrowed from Learn) picks up the colour of the screen it sits on. */
+:root {
+  --kit-discover-top: 322 80% 46%; --kit-discover-bottom: 322 80% 37%; --kit-discover-lip: 322 80% 24%;
+  --kit-likes-top: 22 88% 40%; --kit-likes-bottom: 22 88% 33%; --kit-likes-lip: 22 88% 21%;
+  --kit-chat-top: 205 88% 38%; --kit-chat-bottom: 205 88% 31%; --kit-chat-lip: 205 88% 20%;
+  --kit-profile-top: 173 84% 26%; --kit-profile-bottom: 173 84% 21%; --kit-profile-lip: 173 84% 13%;
+  /* Text-safe tint of each area colour (4.5:1 on card and page backgrounds). */
+  --kit-discover-text: 322 80% 36%; --kit-likes-text: 22 88% 33%; --kit-learn-text: 263 83% 46%;
+  --kit-chat-text: 205 88% 34%; --kit-profile-text: 173 84% 22%;
+}
+.dark {
+  --kit-discover-text: 322 80% 70%; --kit-likes-text: 22 90% 66%; --kit-learn-text: 263 83% 76%;
+  --kit-chat-text: 205 88% 68%; --kit-profile-text: 173 84% 56%;
+}
+.kit-area-discover { --path-top: var(--kit-discover-top); --path-bottom: var(--kit-discover-bottom); --path-lip: var(--kit-discover-lip); --kit-text: var(--kit-discover-text); }
+.kit-area-likes { --path-top: var(--kit-likes-top); --path-bottom: var(--kit-likes-bottom); --path-lip: var(--kit-likes-lip); --kit-text: var(--kit-likes-text); }
+.kit-area-learn { --path-top: var(--path-foundation-top); --path-bottom: var(--path-foundation-bottom); --path-lip: var(--path-foundation-lip); --kit-text: var(--kit-learn-text); }
+.kit-area-chat { --path-top: var(--kit-chat-top); --path-bottom: var(--kit-chat-bottom); --path-lip: var(--kit-chat-lip); --kit-text: var(--kit-chat-text); }
+.kit-area-profile { --path-top: var(--kit-profile-top); --path-bottom: var(--kit-profile-bottom); --path-lip: var(--kit-profile-lip); --kit-text: var(--kit-profile-text); }
+.kit-text { color: hsl(var(--kit-text, var(--kit-learn-text))); }
+
+/* Outside any area class every kit piece falls back to brand purple (the var() fallbacks below). */
+/* Main action: the chunky button from lessons. One per screen. */
+.kit-cta, .kit-cta:hover { min-height: 48px; border: 0; border-radius: 16px; font-size: 1.05rem; font-weight: 800; letter-spacing: .01em; color: hsl(var(--path-enamel)); background: linear-gradient(hsl(var(--path-top, var(--path-foundation-top))), hsl(var(--path-bottom, var(--path-foundation-bottom)))); box-shadow: 0 5px 0 hsl(var(--path-lip, var(--path-foundation-lip))), inset 0 2px 0 hsl(var(--path-enamel) / .3); transition: translate .1s ease-out, box-shadow .1s ease-out, filter .2s ease-out; }
+.kit-cta:not(:disabled):active { translate: 0 4px; box-shadow: 0 1px 0 hsl(var(--path-lip, var(--path-foundation-lip))), inset 0 2px 0 hsl(var(--path-enamel) / .3); }
+.kit-cta:disabled { filter: saturate(.3); opacity: .6; }
+.kit-cta-sm, .kit-cta-sm:hover { min-height: 44px; border-radius: 14px; font-size: .95rem; box-shadow: 0 4px 0 hsl(var(--path-lip, var(--path-foundation-lip))), inset 0 2px 0 hsl(var(--path-enamel) / .3); }
+@media (hover: hover) { .kit-cta:not(:disabled):hover:not(:active) { translate: 0 -1px; filter: brightness(1.08); } }
+
+/* Picture panel: where a character stands. Same recipe as the lesson art panel. */
+.kit-panel { position: relative; display: grid; place-items: end center; overflow: hidden; border-radius: 28px; border: 1px solid hsl(var(--path-top, var(--path-foundation-top)) / .45); background: radial-gradient(circle at 50% 118%, hsl(var(--path-top, var(--path-foundation-top)) / .65), transparent 68%), linear-gradient(165deg, hsl(var(--path-top, var(--path-foundation-top)) / .3), hsl(var(--path-bottom, var(--path-foundation-bottom)) / .1)); }
+.kit-panel::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: .5; background-image: radial-gradient(hsl(var(--path-enamel) / .22) 1.5px, transparent 1.6px); background-size: 18px 18px; -webkit-mask-image: linear-gradient(to bottom, black, transparent 75%); mask-image: linear-gradient(to bottom, black, transparent 75%); }
+:root:not(.dark) .kit-panel::before { background-image: radial-gradient(hsl(var(--path-top, var(--path-foundation-top)) / .3) 1.5px, transparent 1.6px); }
+.kit-panel > * { position: relative; }
+.kit-panel .guide-art::before { display: none; }
+
+/* Card with a coloured edge and a lip, like a lesson option. */
+.kit-card { border-radius: 20px; background: hsl(var(--card)); border: 2px solid hsl(var(--path-top, var(--path-foundation-top)) / .4); box-shadow: 0 4px 0 hsl(var(--path-top, var(--path-foundation-top)) / .28); }
+.kit-row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 10px 14px; border-radius: 16px; text-align: left; color: hsl(var(--foreground)); background: hsl(var(--card)); border: 2px solid hsl(var(--border)); box-shadow: 0 3px 0 hsl(var(--border)); transition: translate .1s ease-out, box-shadow .1s ease-out, border-color .15s ease-out; }
+.kit-row:is(button, a):active { translate: 0 3px; box-shadow: 0 0 0 hsl(var(--border)); }
+.kit-row:focus-visible { outline: 3px solid hsl(var(--ring)); outline-offset: 2px; }
+.kit-row-next { border-color: hsl(var(--path-top, var(--path-foundation-top))); box-shadow: 0 4px 0 hsl(var(--path-lip, var(--path-foundation-lip))); background: linear-gradient(165deg, hsl(var(--path-top, var(--path-foundation-top)) / .2), hsl(var(--path-top, var(--path-foundation-top)) / .06)), hsl(var(--card)); }
+@media (hover: hover) { .kit-row:is(button, a):hover { border-color: hsl(var(--path-top, var(--path-foundation-top))); } }
+
+/* Icon coin. Bright tones carry dark ink; the area tone carries white. */
+.kit-coin { --tone: var(--path-top, var(--path-foundation-top)); --tone-ink: var(--path-enamel); display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 14px; color: hsl(var(--tone-ink)); background: linear-gradient(hsl(var(--tone)), hsl(var(--tone) / .82)); box-shadow: 0 3px 0 hsl(var(--tone) / .45), inset 0 2px 0 hsl(0 0% 100% / .3); }
+.kit-coin[data-tone="area"] { background: linear-gradient(hsl(var(--path-top, var(--path-foundation-top))), hsl(var(--path-bottom, var(--path-foundation-bottom)))); box-shadow: 0 3px 0 hsl(var(--path-lip, var(--path-foundation-lip))), inset 0 2px 0 hsl(0 0% 100% / .25); }
+.kit-coin[data-tone="reward"] { --tone: var(--art-reward); --tone-ink: var(--art-ink); }
+.kit-coin[data-tone="info"] { --tone: var(--art-info); --tone-ink: var(--art-ink); }
+.kit-coin[data-tone="correct"] { --tone: var(--art-correct); --tone-ink: var(--art-ink); }
+.kit-coin[data-tone="urgent"] { --tone: var(--art-urgent); --tone-ink: var(--art-ink); }
+.kit-coin[data-tone="highlight"] { --tone: var(--art-highlight); --tone-ink: var(--art-ink); }
+.kit-coin[data-tone="pink"] { --tone: 322 85% 62%; --tone-ink: var(--art-ink); }
+.kit-coin[data-tone="quiet"] { color: hsl(var(--muted-foreground)); background: hsl(var(--muted)); box-shadow: none; }
+.kit-coin-lg { width: 48px; height: 48px; border-radius: 16px; }
+.kit-coin-round { border-radius: 50%; }
+.kit-coin svg { width: 20px; height: 20px; }
+.kit-coin-lg svg { width: 24px; height: 24px; }
+
+/* Stat tile: one number, one label. */
+.kit-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; padding: 12px 6px 10px; border-radius: 18px; text-align: center; background: hsl(var(--card)); border: 2px solid hsl(var(--border)); box-shadow: 0 3px 0 hsl(var(--border)); }
+.kit-stat-value { font-size: 1.35rem; font-weight: 900; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kit-stat-label { font-size: .8125rem; font-weight: 700; line-height: 1.2; color: hsl(var(--muted-foreground)); text-wrap: balance; }
+
+/* Small label above a group. */
+.kit-eyebrow { font-size: .8125rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: hsl(var(--kit-text, var(--kit-learn-text))); }
+.kit-chip { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; padding: 2px 10px; border-radius: 999px; font-size: .8125rem; font-weight: 800; font-variant-numeric: tabular-nums; color: hsl(var(--art-ink)); background: hsl(var(--art-reward)); }
+.kit-chip[data-tone="area"] { color: hsl(var(--path-enamel)); background: hsl(var(--path-bottom, var(--path-foundation-bottom))); }
+.kit-chip[data-tone="quiet"] { color: hsl(var(--muted-foreground)); background: hsl(var(--muted)); }
+
+/* Progress: a filled track with a shine, plus one pip per step. */
+.kit-progress { display: block; height: 16px; border-radius: 999px; overflow: hidden; background: hsl(var(--muted)); box-shadow: inset 0 2px 0 hsl(var(--path-shadow) / .12); }
+.kit-progress > span { position: relative; display: block; height: 100%; min-width: 14px; border-radius: inherit; background: linear-gradient(hsl(var(--path-top, var(--path-foundation-top))), hsl(var(--path-bottom, var(--path-foundation-bottom)))); transition: width .7s cubic-bezier(.22, 1, .36, 1); }
+.kit-progress > span[style*="width: 0%"] { min-width: 0; }
+.kit-progress > span::after { content: ""; position: absolute; inset: 3px 6px auto; height: 3px; border-radius: 3px; background: hsl(var(--path-enamel) / .45); }
+.kit-pips { display: flex; gap: 5px; }
+.kit-pips i { flex: 1; height: 6px; border-radius: 6px; background: hsl(var(--muted)); }
+.kit-pips i[data-done="true"] { background: hsl(var(--art-reward)); }
+.kit-pips i[data-next="true"] { background: hsl(var(--path-top, var(--path-foundation-top))); animation: kit-pulse 1.8s ease-in-out infinite; }
+
+/* Page header strip in the area colour. */
+.kit-header { border-bottom: 2px solid hsl(var(--path-top, var(--path-foundation-top)) / .5); background: linear-gradient(hsl(var(--path-top, var(--path-foundation-top)) / .16), hsl(var(--path-top, var(--path-foundation-top)) / .04)), hsl(var(--card)); }
+
+/* Loading blocks take a hint of the area colour. */
+[class*="kit-area-"] .skeleton-shimmer { background-color: color-mix(in srgb, hsl(var(--muted)) 84%, hsl(var(--path-top, var(--path-foundation-top)))); }
+
+/* Motion: things arrive once, in order. Never loops unless it marks "this is next". */
+.kit-rise { animation: lesson-rise .4s ease-out both; animation-delay: calc(var(--i, 0) * 70ms); }
+.kit-pop { animation: lesson-pop .45s cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+@keyframes kit-pulse { 50% { opacity: .45; } }
+
+/* Bottom navigation: the tab you are on wears its area colour. */
+.kit-nav-item { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-width: 56px; min-height: 52px; padding: 4px 2px 2px; border-radius: 14px; color: hsl(var(--muted-foreground)); font-size: .8125rem; font-weight: 600; line-height: 1.1; -webkit-tap-highlight-color: transparent; }
+.kit-nav-item:focus-visible { outline: 3px solid hsl(var(--ring)); outline-offset: 1px; }
+.kit-nav-pill { position: relative; display: grid; place-items: center; width: 52px; height: 30px; border-radius: 12px; transition: translate .1s ease-out, background-color .2s ease-out, box-shadow .1s ease-out; }
+.kit-nav-pill svg { width: 22px; height: 22px; }
+.kit-nav-item[aria-current="page"] { color: hsl(var(--kit-text, var(--kit-learn-text))); font-weight: 800; }
+.kit-nav-item[aria-current="page"] .kit-nav-pill { color: hsl(var(--path-enamel)); background: linear-gradient(hsl(var(--path-top, var(--path-foundation-top))), hsl(var(--path-bottom, var(--path-foundation-bottom)))); box-shadow: 0 3px 0 hsl(var(--path-lip, var(--path-foundation-lip))), inset 0 2px 0 hsl(var(--path-enamel) / .28); animation: lesson-pop .35s cubic-bezier(.34, 1.56, .64, 1); }
+.kit-nav-item:active .kit-nav-pill { translate: 0 2px; }
+.kit-nav-item[aria-current="page"]:active .kit-nav-pill { translate: 0 3px; box-shadow: 0 0 0 hsl(var(--path-lip, var(--path-foundation-lip))), inset 0 2px 0 hsl(var(--path-enamel) / .28); }
+@media (hover: hover) { .kit-nav-item:not([aria-current="page"]):hover { color: hsl(var(--foreground)); } .kit-nav-item:not([aria-current="page"]):hover .kit-nav-pill { background: hsl(var(--muted)); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .kit-rise, .kit-pop, .kit-pips i, .kit-nav-item .kit-nav-pill { animation: none !important; }
+  .kit-cta, .kit-row, .kit-nav-pill, .kit-progress > span { transition: none !important; }
+  .kit-cta:not(:disabled):active, .kit-row:is(button, a):active, .kit-nav-item:active .kit-nav-pill { translate: none; }
+}
+
+/* Daily spin wheel (DailySpinWheel.tsx). The disc is turned from script so each wedge can click past the pointer. */
+.spin-stage { position: relative; display: grid; place-items: center; width: min(100%, 276px); aspect-ratio: 1; margin: 6px auto 0; }
+.spin-stage::before { content: ""; position: absolute; inset: -9%; border-radius: 50%; pointer-events: none; background: radial-gradient(circle, hsl(var(--art-reward) / .38), hsl(var(--kit-discover-top) / .16) 52%, transparent 70%); }
+.spin-stage[data-phase="spinning"]::before { animation: spin-glow .9s ease-in-out infinite; }
+.spin-stage[data-phase="won"]::before { animation: lesson-pop .5s cubic-bezier(.34, 1.56, .64, 1); }
+.spin-wheel-svg { position: relative; width: 100%; height: 100%; overflow: visible; font-family: inherit; filter: drop-shadow(0 7px 0 hsl(var(--path-gold-dark) / .7)) drop-shadow(0 16px 16px hsl(0 0% 0% / .32)); }
+.spin-disc { transform-box: view-box; transform-origin: 150px 150px; will-change: transform; }
+.spin-light { fill: hsl(48 100% 92%); animation: spin-light 1.4s ease-in-out infinite; }
+.spin-light:nth-child(even) { animation-delay: .7s; }
+.spin-stage[data-phase="spinning"] .spin-light { animation-duration: .36s; }
+.spin-stage[data-phase="spinning"] .spin-light:nth-child(even) { animation-delay: .18s; }
+.spin-wedge { transition: opacity .35s ease-out; }
+.spin-stage:is([data-phase="saving"], [data-phase="won"]) .spin-wedge:not([data-win="true"]) { opacity: .5; }
+.spin-wedge[data-win="true"] > path { stroke: #fff; stroke-width: 4; }
+.spin-pointer { transform-box: view-box; transform-origin: 150px 12px; transition: transform .16s cubic-bezier(.34, 1.56, .64, 1); }
+.spin-pointer[data-flick="true"] { transform: rotate(-22deg); transition-duration: .03s; }
+.spin-burst { position: absolute; inset: 0; pointer-events: none; }
+.spin-burst i { position: absolute; left: calc(50% - 5px); top: calc(50% - 5px); width: 10px; height: 10px; border-radius: 3px; opacity: 0; animation: spin-burst .9s cubic-bezier(.16, .84, .44, 1) both; }
+.spin-burst i:nth-child(3n) { border-radius: 50%; width: 8px; height: 8px; }
+@keyframes spin-light { 50% { opacity: .28; } }
+@keyframes spin-glow { 50% { opacity: .55; transform: scale(1.06); } }
+@keyframes spin-burst { 0% { opacity: 1; transform: rotate(var(--a)) translateY(-40px) scale(1); } 100% { opacity: 0; transform: rotate(var(--a)) translateY(calc(-1 * var(--d))) scale(.4) rotate(120deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .spin-light, .spin-stage::before, .spin-burst i { animation: none !important; }
+  .spin-burst { display: none; }
+  .spin-pointer { transition: none; }
+}

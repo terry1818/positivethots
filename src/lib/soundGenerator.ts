@@ -179,3 +179,56 @@ export function playLearningSound(name: keyof typeof learningSoundNotes | "combo
     osc.start(t); osc.stop(t + length + hold);
   });
 }
+
+// ── Daily spin ──────────────────────────────────────────────────────────────
+// A wooden click each time a wedge passes the pointer, a rising whoosh at the start,
+// and a win phrase that grows with how rare the prize is.
+let lastSpinTick = -Infinity;
+/** One peg click. `pace` is 0 (wheel at full speed) to 1 (almost stopped): slower clicks are lower and fuller. */
+export function playSpinTickSound(pace = 0) {
+  const now = performance.now();
+  if (now - lastSpinTick < 45) return;
+  lastSpinTick = now;
+  const c = getCtx(); if (!c) return;
+  const osc = c.createOscillator(), gain = c.createGain();
+  osc.connect(gain); gain.connect(c.destination);
+  osc.type = "triangle";
+  const t = c.currentTime, freq = 1500 - 600 * pace, length = .025 + .03 * pace;
+  osc.frequency.setValueAtTime(freq, t);
+  osc.frequency.exponentialRampToValueAtTime(freq * .5, t + length);
+  gain.gain.setValueAtTime(.001, t);
+  gain.gain.linearRampToValueAtTime(.03 + .03 * pace, t + .003);
+  gain.gain.exponentialRampToValueAtTime(.001, t + length);
+  osc.start(t); osc.stop(t + length);
+}
+/** Rising whoosh as the wheel is released. */
+export function playSpinStartSound() {
+  const c = getCtx(); if (!c) return;
+  const osc = c.createOscillator(), gain = c.createGain();
+  osc.connect(gain); gain.connect(c.destination);
+  osc.type = "sine";
+  const t = c.currentTime;
+  osc.frequency.setValueAtTime(220, t);
+  osc.frequency.exponentialRampToValueAtTime(880, t + .28);
+  gain.gain.setValueAtTime(.001, t);
+  gain.gain.linearRampToValueAtTime(.07, t + .05);
+  gain.gain.exponentialRampToValueAtTime(.001, t + .32);
+  osc.start(t); osc.stop(t + .32);
+}
+export type SpinRarity = "common" | "uncommon" | "rare" | "very_rare";
+export const spinWinNotes: Record<SpinRarity, readonly number[]> = {
+  common: [659.25, 880],
+  uncommon: [659.25, 783.99, 1046.5],
+  rare: [523.25, 659.25, 783.99, 1046.5, 1318.5],
+  very_rare: [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568, 2093],
+};
+/** Win phrase: two notes for a small prize, a full run with a held chord for the rarest. */
+export function playSpinWinSound(rarity: SpinRarity) {
+  const c = getCtx(); if (!c) return;
+  const notes = spinWinNotes[rarity];
+  notes.forEach((freq, i) => playNote(c, freq, i * .085, i === notes.length - 1 ? .45 : .18, "sine", .12));
+  if (rarity === "rare" || rarity === "very_rare") {
+    const end = notes.length * .085;
+    [523.25, 659.25, 783.99].forEach(freq => playNote(c, freq, end, .6, "triangle", .05));
+  }
+}

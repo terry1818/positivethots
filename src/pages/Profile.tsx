@@ -1,5 +1,6 @@
 import { GuideArt } from "@/components/mascot/GuideArt";
 import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
 import { useTutorialState } from "@/hooks/useTutorialState";
 import { SpotlightTour, type TourStep } from "@/components/SpotlightTour";
 import { BlurImage } from "@/components/BlurImage";
@@ -13,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { BottomNav } from "@/components/BottomNav";
 import { EducationBadge } from "@/components/EducationBadge";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
-import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock, Rocket, Crown, Award, Calendar, Pencil, Share2, ChevronRight, ExternalLink } from "lucide-react";
+import { MessageCircle, LogOut, Settings, MapPin, Users, Heart, Flame, Zap, ShieldCheck, BookOpen, CheckCircle, Lock, Rocket, Crown, Award, Calendar, Pencil, Share2, ChevronRight, ExternalLink, Camera, Trophy, NotebookPen, Microscope, Home, ClipboardList, FileText, LifeBuoy, type LucideIcon } from "lucide-react";
 import { FetLifeBadge } from "@/components/FetLifeBadge";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
@@ -46,17 +47,22 @@ const relationshipStyleLabels: Record<string, string> = {
   "hierarchical-poly": "Hierarchical Poly", "solo-poly": "Solo Poly",
 };
 
-const ProfileNavRow = ({ emoji, label, onClick, href, external }: {
-  emoji: string; label: string; onClick?: () => void; href?: string; external?: boolean;
+const TIER_AREA: Record<string, string> = {
+  foundation: "learn-tier-foundation", sexual_health: "learn-tier-sexual_health", identity: "learn-tier-identity",
+  relationships: "learn-tier-relationships", advanced: "learn-tier-advanced",
+};
+
+const ProfileNavRow = ({ icon: Icon, tone = "quiet", label, onClick, href, external }: {
+  icon: LucideIcon; tone?: string; label: string; onClick?: () => void; href?: string; external?: boolean;
 }) => {
   const content = (
-    <div className="flex items-center gap-3 px-4 py-3 min-h-[48px] hover:bg-muted/50 transition-colors border-b border-border last:border-b-0 cursor-pointer">
-      <span className="text-base">{emoji}</span>
-      <span className="text-sm flex-1">{label}</span>
+    <div className="flex items-center gap-3 px-3 py-2 min-h-[56px] hover:bg-muted/50 transition-colors border-b border-border last:border-b-0 cursor-pointer">
+      <span className="kit-coin" data-tone={tone}><Icon aria-hidden="true" /></span>
+      <span className="text-base font-semibold flex-1">{label}</span>
       {external ? (
-        <ExternalLink className="h-4 w-4 text-muted-foreground shrink-0" />
+        <ExternalLink className="h-4 w-4 text-muted-foreground shrink-0" aria-hidden="true" />
       ) : (
-        <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+        <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" aria-hidden="true" />
       )}
     </div>
   );
@@ -89,6 +95,7 @@ const Profile = () => {
   const { hasFeature, tier } = useSubscription();
   const { seen: profileTourSeen, markSeen: markProfileTourSeen } = useTutorialState("profile_tour");
   const [showProfileTour, setShowProfileTour] = useState(false);
+  const [showAllUnlocks, setShowAllUnlocks] = useState(false);
 
   const profileTourSteps: TourStep[] = [
     { target: "profile-completion", title: "Complete Your Profile", description: "Complete your profile to get more Connects! Profiles with photos get 9× more engagement.", position: "below" },
@@ -128,7 +135,7 @@ const Profile = () => {
     placeholderData: keepPreviousData,
   });
 
-  const { percentage, nudges } = useProfileCompletion({
+  const { percentage, nudges, steps } = useProfileCompletion({
     profile,
     userPhotos,
     badges,
@@ -262,16 +269,16 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="kit-area-profile min-h-screen bg-background flex flex-col">
       <SEO
         title="Your Profile — Positive Thots"
         description="Your Positive Thots profile, badges, prompts, and education progress."
         path="/profile"
       />
-      <header className="border-b border-border bg-card">
+      <header className="kit-header">
         <div className="container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Logo size="md" showText={false} />
-          <Button variant="ghost" size="icon" className="text-muted-foreground" onClick={() => navigate("/settings")} aria-label="Settings">
+          <Button variant="ghost" size="icon" className="h-11 w-11 text-muted-foreground" onClick={() => navigate("/settings")} aria-label="Settings">
             <Settings className="h-6 w-6" />
           </Button>
         </div>
@@ -280,7 +287,7 @@ const Profile = () => {
       <main className="flex-1 container max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6 pb-24 space-y-4">
         {/* Profile Completion Meter */}
         <div data-tour="profile-completion">
-          <ProfileCompletionMeter percentage={percentage} nudges={nudges} />
+          <ProfileCompletionMeter percentage={percentage} nudges={nudges} steps={steps} />
         </div>
 
         {/* Profile Card */}
@@ -299,8 +306,8 @@ const Profile = () => {
                   sizes="(max-width: 375px) 375px, 500px"
                 />
               ) : (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Heart className="h-16 w-16 text-primary/30" />
+                <div className="kit-panel !absolute inset-0 !rounded-none !border-0 pb-[72px]">
+                  <GuideArt name="guide-waving" size={164} alt="" />
                 </div>
               );
             })()}
@@ -346,7 +353,7 @@ const Profile = () => {
                   <Award className="h-3 w-3 mr-1" />Verified Educator
                 </Badge>
               )}
-              {badges.slice(0, 5).map((badge, idx) => (
+              {(userPhotos.length > 0 || profile?.profile_image) && badges.slice(0, 5).map((badge, idx) => (
                 <div key={badge.module_id} className="animate-stagger-fade" style={{ animationDelay: `${idx * 100}ms` }}>
                   <EducationBadge
                     moduleSlug={(badge.education_modules as any)?.slug || ''}
@@ -355,10 +362,19 @@ const Profile = () => {
                   />
                 </div>
               ))}
-              {badges.length > 5 && (
+              {(userPhotos.length > 0 || profile?.profile_image) && badges.length > 5 && (
                 <span className="text-sm font-semibold text-white bg-black/60 rounded-full px-2 py-1 min-w-[24px] text-center">+{badges.length - 5}</span>
               )}
             </div>
+
+            {userPhotos.length === 0 && !profile?.profile_image && !hasPendingPhotos && (
+              <Button
+                className="kit-cta kit-cta-sm absolute top-3 right-3 z-20 gap-2 px-4"
+                onClick={() => navigate("/profile/edit", { state: { focusSection: "photos" } })}
+              >
+                <Camera className="h-4 w-4" aria-hidden="true" />Add a photo
+              </Button>
+            )}
 
             {userPhotos.length > 1 && (
               <div className="absolute top-3 right-3 z-20 bg-black/60 text-white text-sm font-medium px-2.5 py-1 rounded-full">
@@ -392,28 +408,29 @@ const Profile = () => {
           )}
 
           {stats && (
-            <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-muted/50 rounded-lg">
-              <GuideArt name="guide-level-up" size={72} />
-              <div className="flex items-center gap-1">
-                <Zap className="h-4 w-4 text-accent" />
-                <span className="text-base font-bold"><AnimatedCounter end={stats.total_xp} suffix=" XP" /></span>
+            <div className="grid grid-cols-3 gap-2 px-3 pt-3" aria-label="Your learning progress">
+              <div className="kit-stat kit-pop">
+                <span className="kit-coin" data-tone="reward"><Zap aria-hidden="true" /></span>
+                <span className="kit-stat-value"><AnimatedCounter end={stats.total_xp} /></span>
+                <span className="kit-stat-label">XP</span>
               </div>
-              <div className="text-sm font-medium text-muted-foreground">
-                Lv.<AnimatedCounter end={stats.current_level} /> {getLevelName(stats.current_level)}
+              <div className="kit-stat kit-pop" style={{ "--i": 1 } as CSSProperties}>
+                <span className="kit-coin" data-tone="info"><Trophy aria-hidden="true" /></span>
+                <span className="kit-stat-value">Lv <AnimatedCounter end={stats.current_level} /></span>
+                <span className="kit-stat-label">{getLevelName(stats.current_level)}</span>
               </div>
-              {stats.current_streak > 0 && (
-                <div className="flex items-center gap-1 ml-auto">
-                  <Flame className="h-4 w-4 text-primary" />
-                  <span className="text-base font-bold"><AnimatedCounter end={stats.current_streak} suffix="d" /></span>
-                </div>
-              )}
+              <div className="kit-stat kit-pop" style={{ "--i": 2 } as CSSProperties}>
+                <span className="kit-coin" data-tone={stats.current_streak > 0 ? "urgent" : "quiet"}><Flame aria-hidden="true" /></span>
+                <span className="kit-stat-value"><AnimatedCounter end={stats.current_streak} /></span>
+                <span className="kit-stat-label">day streak</span>
+              </div>
             </div>
           )}
 
           <CardContent className="p-4 space-y-4">
             {/* Narrative Chapters */}
             {profile?.id && (
-              <ChapterProfileView userId={profile.id} />
+              <ChapterProfileView userId={profile.id} isOwnProfile onAddStory={() => navigate("/profile/edit", { state: { focusSection: "chapters" } })} />
             )}
 
             {/* Cross-App Links */}
@@ -490,82 +507,135 @@ const Profile = () => {
         </Card>
 
         {/* Quick Actions */}
-        <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1">
+        <div className="grid grid-flow-col auto-cols-fr gap-2">
           {[
-            { icon: Pencil, label: "Edit", onClick: () => navigate("/profile/edit") },
-            { icon: Settings, label: "Settings", onClick: () => navigate("/settings") },
-            { icon: Share2, label: "Share", onClick: () => {
+            { icon: Pencil, label: "Edit", tone: "area", onClick: () => navigate("/profile/edit") },
+            { icon: Settings, label: "Settings", tone: "quiet", onClick: () => navigate("/settings") },
+            { icon: Share2, label: "Share", tone: "quiet", onClick: () => {
               const url = `${window.location.origin}/profile`;
               navigator.clipboard?.writeText(url);
               toast.success("Profile link copied!");
             }},
-            ...(!profile?.is_verified ? [{ icon: ShieldCheck, label: "Verify", onClick: () => navigate("/profile/edit") }] : []),
+            ...(!profile?.is_verified ? [{ icon: ShieldCheck, label: "Verify", tone: "quiet", onClick: () => navigate("/profile/edit") }] : []),
           ].map((item) => (
             <button
               key={item.label}
+              type="button"
               onClick={item.onClick}
-              className="flex flex-col items-center gap-1.5 min-w-[60px] group"
+              className="flex flex-col items-center justify-center gap-1.5 min-h-[76px] rounded-2xl active:translate-y-0.5 transition-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
             >
-              <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                <item.icon className="h-5 w-5 text-foreground" />
-              </div>
-              <span className="text-sm text-muted-foreground">{item.label}</span>
+              <span className="kit-coin kit-coin-lg kit-coin-round" data-tone={item.tone}><item.icon aria-hidden="true" /></span>
+              <span className="text-sm font-semibold text-foreground">{item.label}</span>
             </button>
           ))}
         </div>
 
-        {/* Feature Unlocks */}
-        {tiers.length > 0 && (
-          <Card className="animate-fade-in">
-            <CardContent className="p-4">
-              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
-                🔓 Unlocked Features
-              </h3>
-              <div className="grid grid-cols-2 gap-2">
-                {tiers.flatMap((tier) =>
-                  tier.features.map((f) => (
-                    <div
-                      key={f.key}
-                      className={cn(
-                        "flex items-center gap-1.5 text-sm px-2.5 py-2 rounded-lg border transition-all min-h-[44px]",
-                        f.isUnlocked
-                          ? "bg-primary/5 border-primary/20 text-foreground"
-                          : "bg-muted/50 border-muted text-muted-foreground"
-                      )}
-                    >
-                      <span>{f.icon}</span>
-                      <span className="truncate">{f.label}</span>
-                      {f.isUnlocked ? (
-                        <CheckCircle className="h-3 w-3 text-success shrink-0 ml-auto" />
-                      ) : (
-                        <Lock className="h-3 w-3 shrink-0 ml-auto" />
-                      )}
-                    </div>
-                  ))
-                )}
+        {/* Badges */}
+        <section className="kit-card kit-area-learn p-4" aria-label="Your badges">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="kit-eyebrow">Badges</h2>
+            {total !== null && total > 0 && <span className="kit-chip">{badges.length} of {total}</span>}
+          </div>
+          {badges.length === 0 ? (
+            <div className="flex items-center gap-3 mt-2">
+              <GuideArt name="guide-lesson-reading" size={96} />
+              <div className="flex-1 min-w-0">
+                <p className="font-extrabold leading-snug">Earn your first badge</p>
+                <p className="text-sm text-muted-foreground">Badges show on your profile.</p>
+                <Button className="mt-2 min-h-[44px]" onClick={() => navigate("/learn")}>Start Learning</Button>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-wrap items-center gap-2 mt-3">
+                {badges.slice(0, 12).map((badge, idx) => (
+                  <span key={badge.module_id} className="kit-pop" style={{ "--i": idx } as CSSProperties}>
+                    <EducationBadge
+                      moduleSlug={badge.education_modules?.slug || ""}
+                      title={badge.education_modules?.title || ""}
+                      isEarned size="md"
+                    />
+                  </span>
+                ))}
+                {badges.length > 12 && <span className="kit-chip" data-tone="quiet">+{badges.length - 12}</span>}
+              </div>
+              {hasEveryBadge(badges.length, total) ? (
+                <div className="flex items-center gap-3 mt-2">
+                  <GuideArt name="guide-graduate" size={96} />
+                  <p className="font-extrabold">Every badge earned!</p>
+                </div>
+              ) : (
+                <Button variant="ghost" className="mt-2 -ml-2 min-h-[44px] gap-1 font-bold kit-text hover:bg-transparent" onClick={() => navigate("/learn")}>
+                  Keep learning<ChevronRight className="h-4 w-4" aria-hidden="true" />
+                </Button>
+              )}
+            </>
+          )}
+        </section>
 
-        {badges.length === 0 && <div className="flex items-center gap-4 px-4 py-3"><GuideArt name="guide-lesson-reading" size={96} /><div><p className="font-semibold">My Badges</p><Button variant="link" onClick={() => navigate("/learn")}>Start Learning</Button></div></div>}
-        {hasEveryBadge(badges.length, total) && <div className="flex items-center gap-4 px-4 py-3"><GuideArt name="guide-graduate" size={96} /><p className="font-semibold">Every badge earned!</p></div>}
+        {/* Feature Unlocks */}
+        {tiers.length > 0 && (() => {
+          const firstOpen = tiers.findIndex(t => !t.isComplete);
+          const shown = showAllUnlocks || firstOpen === -1 ? tiers : tiers.slice(0, firstOpen + 1);
+          return (
+            <section className="space-y-2.5" aria-label="What your badges unlock">
+              <h2 className="kit-eyebrow px-1">What your badges unlock</h2>
+              {shown.map((t) => (
+                <div key={t.tier} className={cn("kit-card p-3.5", TIER_AREA[t.tier])}>
+                  <div className="flex items-center gap-3">
+                    <span className="kit-coin" data-tone={t.isComplete ? "reward" : "area"}>
+                      {t.isComplete ? <CheckCircle aria-hidden="true" /> : <Lock aria-hidden="true" />}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-extrabold leading-snug">{t.label}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {t.isComplete ? "Unlocked" : `${t.earnedModules} of ${t.totalModules} badges earned`}
+                      </p>
+                    </div>
+                  </div>
+                  {!t.isComplete && t.totalModules > 0 && (
+                    <span className="kit-progress mt-2.5 !h-2.5" aria-hidden="true">
+                      <span style={{ width: `${Math.round((t.earnedModules / t.totalModules) * 100)}%` }} />
+                    </span>
+                  )}
+                  <ul className="mt-2.5 space-y-2">
+                    {t.features.map((f) => (
+                      <li key={f.key} className="flex items-start gap-2">
+                        {f.isUnlocked
+                          ? <CheckCircle className="h-4 w-4 mt-1 shrink-0 text-success" aria-label="Unlocked" />
+                          : <Lock className="h-4 w-4 mt-1 shrink-0 text-muted-foreground" aria-label="Locked" />}
+                        <span className="flex-1 min-w-0">
+                          <span className="block font-semibold leading-snug">{f.label}</span>
+                          <span className="block text-sm text-muted-foreground [text-wrap:pretty]">{f.description}</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              {shown.length < tiers.length && (
+                <Button variant="ghost" className="w-full min-h-[44px] font-bold text-muted-foreground" onClick={() => setShowAllUnlocks(true)}>
+                  Show all {tiers.length} levels
+                </Button>
+              )}
+            </section>
+          );
+        })()}
+
         {/* Premium Upsell — free tier only */}
         {tier === "free" && (
-          <Card className="animate-fade-in bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
+          <Card className="kit-card kit-area-learn">
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <Crown className="h-5 w-5 text-primary" />
-                </div>
+                <span className="kit-coin kit-coin-lg" data-tone="reward"><Crown aria-hidden="true" /></span>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-sm">Go Premium</h3>
+                  <h3 className="font-extrabold text-base">Go Premium</h3>
                   <ul className="mt-1.5 space-y-1 text-sm text-muted-foreground">
                     <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />See who likes you</li>
                     <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Unlimited Thots</li>
                     <li className="flex items-center gap-1.5"><CheckCircle className="h-3 w-3 text-primary" />Priority Visibility</li>
                   </ul>
-                  <Button size="sm" className="mt-3" onClick={() => navigate("/premium")}>
+                  <Button className="mt-3 min-h-[44px] px-5" onClick={() => navigate("/premium")}>
                     View Plans
                   </Button>
                 </div>
@@ -575,69 +645,68 @@ const Profile = () => {
         )}
 
         {/* Boost */}
-        <Card className="animate-fade-in">
+        <Card className="kit-card kit-area-discover">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-sm flex items-center gap-2">
-                  <Rocket className="h-4 w-4 text-accent" />
-                  Profile Boost
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">
+            <div className="flex items-start gap-3">
+              <span className="kit-coin kit-coin-lg" data-tone="pink"><Rocket aria-hidden="true" /></span>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-extrabold text-base">Profile Boost</h3>
+                <p className="text-sm text-muted-foreground mt-0.5 [text-wrap:pretty]">
                   {hasActiveBoost
                     ? "Your profile is currently boosted! 🔥"
                     : hasFeature("profile_boost")
                       ? "1 free boost/month with VIP"
                       : "Get 30 minutes of priority visibility in Discovery — $2.99"}
                 </p>
+                <Button
+                  variant="secondary"
+                  className="mt-3 min-h-[44px] px-5"
+                  disabled={hasActiveBoost || boostLoading}
+                  onClick={handleBoostProfile}
+                >
+                  {boostLoading ? "..." : hasActiveBoost ? "Active" : "Boost My Profile"}
+                </Button>
               </div>
-              <Button
-                size="sm"
-                disabled={hasActiveBoost || boostLoading}
-                onClick={handleBoostProfile}
-              >
-                {boostLoading ? "..." : hasActiveBoost ? "Active" : "Boost My Profile"}
-              </Button>
             </div>
           </CardContent>
         </Card>
 
         {/* EXPLORE section */}
         <div className="space-y-1.5" data-tour="profile-explore">
-          <h2 className="text-sm font-semibold text-muted-foreground tracking-wider uppercase px-1">Explore</h2>
-          <Card>
-            <ProfileNavRow emoji="🎪" label="Events & Workshops" onClick={() => navigate("/events")} />
-            <ProfileNavRow emoji="📚" label="Resources & Books" onClick={() => navigate("/resources")} />
-            <ProfileNavRow emoji="📓" label="Reflection Journal" onClick={() => navigate("/journal")} />
+          <h2 className="kit-eyebrow px-1">Explore</h2>
+          <Card className="overflow-hidden rounded-2xl">
+            <ProfileNavRow icon={Calendar} tone="pink" label="Events & Workshops" onClick={() => navigate("/events")} />
+            <ProfileNavRow icon={BookOpen} tone="info" label="Resources & Books" onClick={() => navigate("/resources")} />
+            <ProfileNavRow icon={NotebookPen} tone="highlight" label="Reflection Journal" onClick={() => navigate("/journal")} />
           </Card>
         </div>
 
         {/* HEALTH & SAFETY section */}
         <div className="space-y-1.5">
-          <h2 className="text-sm font-semibold text-muted-foreground tracking-wider uppercase px-1">Health & Safety</h2>
-          <Card>
-            <ProfileNavRow emoji="🔬" label="Find STD Testing" onClick={() => navigate("/testing-locations")} />
-            <ProfileNavRow emoji="🏠" label="Test From Home" onClick={() => navigate("/health-testing")} />
-            <ProfileNavRow emoji="📋" label="Community Guidelines" onClick={() => navigate("/community-guidelines")} />
-            <ProfileNavRow emoji="🛡️" label="Safety Resources" onClick={() => navigate("/resources?tab=advocacy")} />
+          <h2 className="kit-eyebrow px-1">Health & Safety</h2>
+          <Card className="overflow-hidden rounded-2xl">
+            <ProfileNavRow icon={Microscope} tone="correct" label="Find STD Testing" onClick={() => navigate("/testing-locations")} />
+            <ProfileNavRow icon={Home} tone="correct" label="Test From Home" onClick={() => navigate("/health-testing")} />
+            <ProfileNavRow icon={ClipboardList} label="Community Guidelines" onClick={() => navigate("/community-guidelines")} />
+            <ProfileNavRow icon={ShieldCheck} tone="urgent" label="Safety Resources" onClick={() => navigate("/resources?tab=advocacy")} />
           </Card>
         </div>
 
         {/* ACCOUNT section */}
         <div className="space-y-1.5">
-          <h2 className="text-sm font-semibold text-muted-foreground tracking-wider uppercase px-1">Account</h2>
-          <Card>
-            <ProfileNavRow emoji="👑" label="Manage Subscription" onClick={() => navigate("/premium")} />
-            <ProfileNavRow emoji="📄" label="Privacy Policy" onClick={() => navigate("/privacy")} />
-            <ProfileNavRow emoji="📄" label="Terms of Service" onClick={() => navigate("/terms")} />
-            <ProfileNavRow emoji="❓" label="Help & Support" href="mailto:support@positivethots.org" external />
+          <h2 className="kit-eyebrow px-1">Account</h2>
+          <Card className="overflow-hidden rounded-2xl">
+            <ProfileNavRow icon={Crown} tone="reward" label="Manage Subscription" onClick={() => navigate("/premium")} />
+            <ProfileNavRow icon={FileText} label="Privacy Policy" onClick={() => navigate("/privacy")} />
+            <ProfileNavRow icon={FileText} label="Terms of Service" onClick={() => navigate("/terms")} />
+            <ProfileNavRow icon={LifeBuoy} label="Help & Support" href="mailto:support@positivethots.org" external />
           </Card>
         </div>
 
         {/* Sign Out */}
         <Button
           variant="ghost"
-          className="w-full text-destructive hover:text-destructive"
+          className="w-full min-h-[48px] text-destructive hover:text-destructive"
           onClick={handleSignOut}
         >
           <LogOut className="mr-2 h-5 w-5" />Sign Out

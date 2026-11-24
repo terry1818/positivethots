@@ -15,7 +15,7 @@ const SkeletonHeader = ({ children }: { children?: React.ReactNode }) => (
 );
 
 const ProfileSkeleton = () => (
-  <div className="min-h-screen bg-background" aria-busy="true" aria-label="Loading profile">
+  <div className="kit-area-profile min-h-screen bg-background" aria-busy="true" aria-label="Loading profile">
     <SkeletonHeader>
       <Logo size="md" showText={false} />
       <Skeleton className="h-8 w-8 rounded-md" />
@@ -37,7 +37,7 @@ const ProfileSkeleton = () => (
 );
 
 const ChatSkeleton = () => (
-  <div className="min-h-screen bg-background flex flex-col" aria-busy="true" aria-label="Loading chat">
+  <div className="kit-area-chat min-h-screen bg-background flex flex-col" aria-busy="true" aria-label="Loading chat">
     <div className="border-b px-4 py-3 flex items-center gap-3">
       <Skeleton className="h-8 w-8 rounded-md" />
       <Skeleton className="h-10 w-10 rounded-full" />
@@ -60,7 +60,7 @@ const ChatSkeleton = () => (
 );
 
 const LearnSkeleton = () => (
-  <div className="min-h-screen bg-background pb-[calc(176px+env(safe-area-inset-bottom))]" aria-busy="true" aria-label="Loading learn">
+  <div className="kit-area-learn min-h-screen bg-background pb-[calc(176px+env(safe-area-inset-bottom))]" aria-busy="true" aria-label="Loading learn">
     <header className="sticky top-0 z-30 border-b border-border bg-card">
       <div className="container max-w-md mx-auto space-y-2 px-4 py-2.5">
         <div className="flex items-center justify-between"><Logo size="md" showText={false} /><Skeleton className="h-6 w-32" /></div>
@@ -84,7 +84,7 @@ const LearnSkeleton = () => (
 );
 
 const DiscoverySkeleton = () => (
-  <div className="min-h-screen bg-background pb-20" aria-busy="true" aria-label="Loading discovery">
+  <div className="kit-area-discover min-h-screen bg-background pb-20" aria-busy="true" aria-label="Loading discovery">
     <div className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
       <div className="container max-w-7xl mx-auto px-4 py-4">
         <Logo size="md" showText={false} />
@@ -113,7 +113,7 @@ const DiscoverySkeleton = () => (
 );
 
 const MessagesSkeleton = () => (
-  <div className="min-h-screen bg-background pb-20" aria-busy="true" aria-label="Loading messages">
+  <div className="kit-area-chat min-h-screen bg-background pb-20" aria-busy="true" aria-label="Loading messages">
     <header className="border-b border-border bg-card sticky top-0 z-10">
       <div className="container max-w-md mx-auto px-4 py-4 flex items-center justify-between">
         <Skeleton className="h-8 w-8 rounded-md" />
@@ -138,7 +138,7 @@ const MessagesSkeleton = () => (
 );
 
 const LikesSkeleton = () => (
-  <div className="min-h-screen bg-background pb-20" aria-busy="true" aria-label="Loading likes">
+  <div className="kit-area-likes min-h-screen bg-background pb-20" aria-busy="true" aria-label="Loading likes">
     <div className="container max-w-md mx-auto px-4 py-6">
       <div className="flex items-center gap-2 mb-4">
         <Skeleton className="h-6 w-6 rounded-md" />

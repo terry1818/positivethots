@@ -376,14 +376,14 @@ const Learn = () => {
           freezes={stats?.streak_freezes || 0} atRisk={isStreakAtRisk} hoursLeft={streakHoursLeft}
           hasSpunToday={hasSpunToday} bonusReady={dailyBonusReady} openBonus={() => setDailyBonusTrigger(n => n + 1)}
           onReward={async reward => {
-            setHasSpunToday(true);
+            // The wheel shows the prize itself, so there is no toast here.
             if (reward.type === "xp" && awardXP) {
               const result = await awardXP(reward.value, "daily_spin");
               if (result.newXP === 0) return false;
-              toast.success(`You won ${reward.emoji} +${result.newXP} XP! 🎉`);
-            } else {
-              toast.success(`You won ${reward.emoji} ${reward.label}! 🎉`);
+              setHasSpunToday(true);
+              return result.newXP;
             }
+            setHasSpunToday(true);
             return true;
           }}
         />

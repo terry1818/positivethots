@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, BookOpen, MessageCircle, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useCallback } from "react";
@@ -9,11 +8,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
-  { path: "/", icon: Heart, label: "Discover" },
-  { path: "/likes", icon: Sparkles, label: "Likes" },
-  { path: "/learn", icon: BookOpen, label: "Learn" },
-  { path: "/messages", icon: MessageCircle, label: "Chat" },
-  { path: "/profile", icon: User, label: "Profile" },
+  { path: "/", icon: Heart, label: "Discover", area: "kit-area-discover" },
+  { path: "/likes", icon: Sparkles, label: "Likes", area: "kit-area-likes" },
+  { path: "/learn", icon: BookOpen, label: "Learn", area: "kit-area-learn" },
+  { path: "/messages", icon: MessageCircle, label: "Chat", area: "kit-area-chat" },
+  { path: "/profile", icon: User, label: "Profile", area: "kit-area-profile" },
 ];
 
 
@@ -68,38 +67,30 @@ export const BottomNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card pb-[max(0.5rem,env(safe-area-inset-bottom))]" aria-label="Main navigation" role="navigation" data-walkthrough="bottom-nav" data-tour="bottom-nav">
-      <div className="container max-w-md mx-auto px-4 py-2 flex justify-around">
-        {navItems.map(({ path, icon: Icon, label }) => {
+      <div className="container max-w-md mx-auto px-2 pt-1.5 pb-0.5 flex justify-around">
+        {navItems.map(({ path, icon: Icon, label, area }) => {
           const isActive = location.pathname === path;
           const isTapped = tapped === path;
           const showBadge = path === "/messages" && unreadCount > 0;
           return (
-            <Button
+            <button
               key={path}
-              variant="ghost"
-              size="sm"
+              type="button"
               onClick={() => handleTap(path)}
               aria-label={label}
               aria-current={isActive ? "page" : undefined}
-              className={cn(
-                "flex flex-col items-center gap-0.5 h-auto min-h-[48px] min-w-[48px] py-2 px-2 relative transition-all duration-200",
-                isActive ? "text-primary" : "text-muted-foreground",
-                isTapped && !reducedMotion && "animate-tab-bounce"
-              )}
+              className={cn("kit-nav-item", area, isTapped && !reducedMotion && "animate-tab-bounce")}
             >
-              <div className="relative">
-                <Icon className={cn("h-5 w-5 transition-transform duration-200", isActive && "scale-110")} aria-hidden="true" />
+              <span className="kit-nav-pill">
+                <Icon aria-hidden="true" strokeWidth={isActive ? 2.5 : 2} />
                 {showBadge && (
-                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-sm font-bold flex items-center justify-center" aria-label={`${unreadCount} unread messages`}>
+                  <span className="absolute -top-1.5 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-xs font-bold flex items-center justify-center ring-2 ring-card" aria-label={`${unreadCount} unread messages`}>
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}
-              </div>
-              <span className="text-sm font-medium" aria-hidden="true">{label}</span>
-              {isActive && (
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-gradient-to-r from-primary to-secondary" aria-hidden="true" />
-              )}
-            </Button>
+              </span>
+              <span aria-hidden="true">{label}</span>
+            </button>
           );
         })}
       </div>
