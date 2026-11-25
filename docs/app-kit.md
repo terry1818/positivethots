@@ -14,7 +14,7 @@ up the area colour.
 | Class | Used for | Colour |
 |-------|----------|--------|
 | `kit-area-discover` | Discover | magenta |
-| `kit-area-likes` | Connects | burnt orange |
+| `kit-area-likes` | Connects | rose (#CA2159; chosen to fit the purple-pink brand) |
 | `kit-area-learn` | Learn-related cards outside Learn | brand purple |
 | `kit-area-chat` | Chat | blue |
 | `kit-area-profile` | Profile | teal |
