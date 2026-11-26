@@ -13,8 +13,8 @@ const Complaints = () => (
 
     <p className="mb-4 leading-relaxed text-muted-foreground">
       If you would like to make a complaint about content or services on Positive Thots, please contact us via email at{" "}
-      <a href="mailto:safety@positivethots.app" className="text-primary hover:underline">
-        safety@positivethots.app
+      <a href="mailto:safety@positivethots.org" className="text-primary hover:underline">
+        safety@positivethots.org
       </a>
       .
     </p>
@@ -50,8 +50,8 @@ const Complaints = () => (
     <ul className="list-disc list-inside space-y-1 mb-4 text-muted-foreground">
       <li>
         Email:{" "}
-        <a href="mailto:safety@positivethots.app" className="text-primary hover:underline">
-          safety@positivethots.app
+        <a href="mailto:safety@positivethots.org" className="text-primary hover:underline">
+          safety@positivethots.org
         </a>
       </li>
     </ul>

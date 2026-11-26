@@ -23,8 +23,8 @@ const Appeals = () => (
     <h2 className="text-lg font-bold mt-6 mb-3">How to submit an appeal</h2>
     <p className="mb-2 leading-relaxed text-muted-foreground">
       Send an email to{" "}
-      <a href="mailto:appeals@positivethots.app" className="text-primary hover:underline">
-        appeals@positivethots.app
+      <a href="mailto:appeals@positivethots.org" className="text-primary hover:underline">
+        appeals@positivethots.org
       </a>{" "}
       and include:
     </p>
@@ -52,8 +52,8 @@ const Appeals = () => (
     <ul className="list-disc list-inside space-y-1 mb-4 text-muted-foreground">
       <li>
         Email:{" "}
-        <a href="mailto:appeals@positivethots.app" className="text-primary hover:underline">
-          appeals@positivethots.app
+        <a href="mailto:appeals@positivethots.org" className="text-primary hover:underline">
+          appeals@positivethots.org
         </a>
       </li>
     </ul>

@@ -26,8 +26,8 @@ const Cancellation = () => (
       </li>
       <li>
         <strong>By email:</strong> Email{" "}
-        <a href="mailto:billing@positivethots.app" className="text-primary hover:underline">
-          billing@positivethots.app
+        <a href="mailto:billing@positivethots.org" className="text-primary hover:underline">
+          billing@positivethots.org
         </a>{" "}
         with the email address on your account and a request to cancel.
       </li>
@@ -56,8 +56,8 @@ const Cancellation = () => (
     <h2 className="text-lg font-bold mt-6 mb-3">Refunds</h2>
     <p className="mb-4 leading-relaxed text-muted-foreground">
       Refund requests are reviewed individually. Contact{" "}
-      <a href="mailto:billing@positivethots.app" className="text-primary hover:underline">
-        billing@positivethots.app
+      <a href="mailto:billing@positivethots.org" className="text-primary hover:underline">
+        billing@positivethots.org
       </a>{" "}
       with your request and we will respond.
     </p>
@@ -66,8 +66,8 @@ const Cancellation = () => (
     <ul className="list-disc list-inside space-y-1 mb-4 text-muted-foreground">
       <li>
         Email:{" "}
-        <a href="mailto:billing@positivethots.app" className="text-primary hover:underline">
-          billing@positivethots.app
+        <a href="mailto:billing@positivethots.org" className="text-primary hover:underline">
+          billing@positivethots.org
         </a>
       </li>
       <li>

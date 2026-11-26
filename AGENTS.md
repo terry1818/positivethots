@@ -71,3 +71,5 @@
 - Trademark: POSITIVE THOTS is a registered mark (U.S. Reg. No. 8,540,046, Class 45). Use ® after "Positive Thots" in UI copy; other brand terms (Send a Thot, You Both Said Yes, Thot Pack) keep ™.
 - Fonts are self-hosted from `public/fonts` (`fonts.css`); never add Google Fonts links.
 - Push delivery lives in `supabase/functions/_shared/push-delivery.ts` (FCM v1 for Android, APNs token auth for iOS). It does nothing until the FCM_* / APNS_* secrets exist.
+
+- Business email (Nov 26, 2026): all public role addresses (billing@, appeals@, safety@, legal@, support@, privacy@, hello@) use positivethots.org. They forward to the shared mailbox team@positivethots.org on the Namecheap Stellar hosting. demo@ and *.test@positivethots.app are login names only, not inboxes.

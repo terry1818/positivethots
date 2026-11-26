@@ -165,7 +165,7 @@ export const NpsModal = ({ triggerEvent, onClose }: NpsModalProps) => {
               We're sorry to hear that. Would you like to tell us more? Our support team is here to help.
             </p>
             <Button variant="outline" size="sm" className="gap-1.5" asChild>
-              <a href="mailto:support@positivethots.app">Contact Support</a>
+              <a href="mailto:support@positivethots.org">Contact Support</a>
             </Button>
             <Button variant="ghost" size="sm" onClick={onClose} className="mt-2 block mx-auto">Done</Button>
           </div>

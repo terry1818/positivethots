@@ -133,7 +133,7 @@ const PrivacyPolicy = () => (
       <li><strong>Objection:</strong> Object to certain processing of your data</li>
     </ul>
     <p id="do-not-sell" className="mb-4 leading-relaxed text-muted-foreground scroll-mt-24">
-      <strong>Do Not Sell or Share My Personal Information:</strong> Positive Thots does not sell your personal information and does not share it for advertising. To record an opt-out or make any privacy request, email privacy@positivethots.app.
+      <strong>Do Not Sell or Share My Personal Information:</strong> Positive Thots does not sell your personal information and does not share it for advertising. To record an opt-out or make any privacy request, email privacy@positivethots.org.
     </p>
 
     <h2 id="data-retention" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">9. Data Retention</h2>
@@ -200,7 +200,7 @@ const PrivacyPolicy = () => (
 
     <h2 id="contact" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">12. Contact Us</h2>
     <p className="mb-4 leading-relaxed text-muted-foreground">
-      If you have questions about this Privacy Policy or wish to exercise your data rights, please contact us at privacy@positivethots.app.
+      If you have questions about this Privacy Policy or wish to exercise your data rights, please contact us at privacy@positivethots.org.
     </p>
   </LegalPageShell>
   </>

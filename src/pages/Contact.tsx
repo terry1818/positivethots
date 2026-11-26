@@ -41,11 +41,11 @@ const Contact = () => (
 
     <h2 className="text-lg font-bold mt-6 mb-3">Email us</h2>
     <ul className="list-disc list-inside space-y-1 mb-6 text-muted-foreground">
-      <li>General support: <MailLink email="support@positivethots.app" /></li>
-      <li>Billing: <MailLink email="billing@positivethots.app" /></li>
-      <li>Safety / report content: <MailLink email="safety@positivethots.app" /></li>
-      <li>Appeals: <MailLink email="appeals@positivethots.app" /></li>
-      <li>Legal: <MailLink email="legal@positivethots.app" /></li>
+      <li>General support: <MailLink email="support@positivethots.org" /></li>
+      <li>Billing: <MailLink email="billing@positivethots.org" /></li>
+      <li>Safety / report content: <MailLink email="safety@positivethots.org" /></li>
+      <li>Appeals: <MailLink email="appeals@positivethots.org" /></li>
+      <li>Legal: <MailLink email="legal@positivethots.org" /></li>
     </ul>
 
 
