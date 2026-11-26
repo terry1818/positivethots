@@ -7,6 +7,7 @@ import {
   withinDailyLimit,
   type NotificationKind,
 } from "../_shared/notification-privacy.ts";
+import { deliverPush } from "../_shared/push-delivery.ts";
 
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
@@ -122,31 +123,33 @@ serve(async (req) => {
     const showPreviews = await getShowPreviewsPref(supabaseAdmin, user_id);
     const payload = buildSafePayload(kind, fullBody, showPreviews, { fullTitle });
 
-    // NOTE: Actual delivery requires FCM (Android) / APNs (iOS) credentials.
-    // When wired in, send BOTH versions:
-    //   • iOS: alert.title/alert.body = full content; the system applies
-    //     the user's "Show Previews" setting. Provide a UNNotificationCategory
-    //     with hiddenPreviewsBodyPlaceholder = lockScreenBody so iOS shows
-    //     the safe text when previews are hidden.
-    //   • Android: build a Notification with setVisibility(VISIBILITY_PRIVATE)
-    //     and a public version whose contentTitle/contentText come from
-    //     lockScreenTitle/lockScreenBody. Android shows the public version
-    //     on the lock screen and the private version after unlock.
-    console.log(
-      `Push (${kind}) → user=${user_id} devices=${tokens.length} previews=${showPreviews ? "on" : "off"}\n` +
-        `  lock: ${payload.lockScreenTitle} — ${payload.lockScreenBody}\n` +
-        `  full: ${payload.fullTitle} — ${payload.fullBody}`
-    );
+    // Lock-screen-safe text unless the member turned previews on (payload already reflects that).
+    const delivery = await deliverPush(tokens, {
+      title: payload.lockScreenTitle,
+      body: payload.lockScreenBody,
+      data: { type: kind },
+    });
+
+    if (delivery.invalidTokens.length > 0) {
+      await supabaseAdmin
+        .from("device_tokens")
+        .delete()
+        .eq("user_id", user_id)
+        .in("token", delivery.invalidTokens);
+    }
 
     await supabaseAdmin.from("analytics_events").insert({
       user_id,
       event_name: "push_notification_sent",
-      event_data: { type: kind, previews: showPreviews },
+      event_data: { type: kind, previews: showPreviews, delivered: delivery.delivered, failed: delivery.failed, not_configured: delivery.notConfigured },
     });
 
     return new Response(
       JSON.stringify({
-        sent: tokens.length,
+        sent: delivery.delivered,
+        skipped: delivery.skipped,
+        failed: delivery.failed,
+        not_configured: delivery.notConfigured,
         previews_enabled: showPreviews,
         lock_screen: { title: payload.lockScreenTitle, body: payload.lockScreenBody },
         full: { title: payload.fullTitle, body: payload.fullBody },

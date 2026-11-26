@@ -24,11 +24,11 @@ const PrivacyPolicy = () => (
       path="/privacy"
     />
   <LegalPageShell title="Privacy Policy" toc={TOC}>
-    <p className="text-muted-foreground text-sm mb-6">Last updated: November 24, 2026</p>
+    <p className="text-muted-foreground text-sm mb-6">Last updated: November 26, 2026</p>
 
     <h2 id="intro" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">1. Introduction</h2>
     <p className="mb-4 leading-relaxed text-muted-foreground">
-      Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our relationship education and community platform ("the App"). By using the App, you consent to the practices described in this policy.
+      Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">®</sup> ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our relationship education and community platform ("the App"). By using the App, you consent to the practices described in this policy.
     </p>
 
     <h2 id="info-collect" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">2. Information We Collect</h2>
@@ -50,6 +50,7 @@ const PrivacyPolicy = () => (
       <li>Usage patterns and interaction data</li>
       <li>Authentication session data</li>
       <li>Cookies and local storage: we use only essential cookies and browser storage to keep you signed in and remember choices such as your age confirmation and cookie notice. We do not use advertising or cross-site tracking cookies.</li>
+      <li>Visitor statistics: our hosting provider (Lovable) counts page visits without cookies. It records the page viewed, how you arrived (for example a search or social link), your country, browser, operating system and device type, time on page, page load speed and browser errors. It does not store your IP address, cannot recognize you on a return visit, and keeps visit details for 90 days and daily totals for 1 year.</li>
     </ul>
 
     <h2 id="biometric" className="text-lg font-bold mt-6 mb-3 scroll-mt-24">3. Biometric & Selfie Data</h2>
@@ -105,7 +106,7 @@ const PrivacyPolicy = () => (
       <li><strong>Other Users:</strong> Your profile information (as configured by your privacy settings) is visible to other authenticated users for matching purposes</li>
       <li><strong>Service Providers:</strong> Each one receives only what it needs:
         <ul className="list-disc list-inside ml-5 mt-1 space-y-1">
-          <li>Lovable Cloud / Supabase (database, authentication, and file storage)</li>
+          <li>Lovable Cloud / Supabase (hosting, database, authentication, file storage, and cookieless visitor statistics)</li>
           <li>Google Gemini (automated review of photos and messages for safety; content is sent for classification only)</li>
           <li>CCBill, our third-party payment processor (the information needed to process your payment, such as your email and the plan you chose; card details are entered on CCBill's secure payment form and we never see or store your card number)</li>
         </ul>

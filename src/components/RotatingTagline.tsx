@@ -70,7 +70,7 @@ export const RotatingTagline = ({
         return (
           <span key={i}>
             {part}
-            <sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup>
+            <sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>®</sup>
           </span>
         );
       }

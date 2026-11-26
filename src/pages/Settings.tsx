@@ -1196,13 +1196,13 @@ const Settings = () => {
 
         <div className="text-center py-6 space-y-2">
           <p className="text-sm text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-            Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup>
+            Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>®</sup>
           </p>
           <p className="text-sm text-muted-foreground">
             © 2026 Rhea &amp; Associates LLC
           </p>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto [text-wrap:pretty]">
-            Positive Thots<sup style={{ fontSize: "60%" }}>TM</sup>, Send a Thot<sup style={{ fontSize: "60%" }}>TM</sup>, You Both Said Yes<sup style={{ fontSize: "60%" }}>TM</sup>, Connect<sup style={{ fontSize: "60%" }}>TM</sup>, Pass<sup style={{ fontSize: "60%" }}>TM</sup>, and Thot Pack<sup style={{ fontSize: "60%" }}>TM</sup> are trademarks of Rhea &amp; Associates LLC, pending USPTO registration.
+            Positive Thots<sup style={{ fontSize: "60%" }}>®</sup> is a registered trademark (U.S. Reg. No. 8,540,046). Send a Thot<sup style={{ fontSize: "60%" }}>TM</sup>, You Both Said Yes<sup style={{ fontSize: "60%" }}>TM</sup>, and Thot Pack<sup style={{ fontSize: "60%" }}>TM</sup> are trademarks of Rhea &amp; Associates LLC.
           </p>
           <p className="text-xs text-muted-foreground">
             Positive Thots v1.0

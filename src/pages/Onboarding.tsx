@@ -470,7 +470,7 @@ const Onboarding = () => {
       }
 
       trackEvent('onboarding_completed', {});
-      toast.success("Welcome to Positive Thots™! 💕");
+      toast.success("Welcome to Positive Thots®! 💕");
       setShowValueProp(true);
     } catch (error: any) {
       console.error("Onboarding error:", error);

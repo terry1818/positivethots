@@ -60,7 +60,7 @@ export const AgeGate = () => {
         {!rejected ? (
           <>
             <h1 id="age-gate-title" className="text-2xl font-bold text-center mb-3">
-              Welcome to Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup>
+              Welcome to Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">®</sup>
             </h1>
             <p className="text-center text-muted-foreground mb-6 leading-relaxed">
               You must be 18 or older to use this app.
@@ -89,7 +89,7 @@ export const AgeGate = () => {
               Come back when you're old enough!
             </h1>
             <p className="text-center text-muted-foreground mb-6 leading-relaxed">
-              Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">TM</sup> is for adults 18 and older. We'll be here when you're ready.
+              Positive Thots<sup className="text-[0.5em] ml-0.5 align-super">®</sup> is for adults 18 and older. We'll be here when you're ready.
             </p>
             <Button
               onClick={handleClose}

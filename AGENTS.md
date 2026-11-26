@@ -68,3 +68,6 @@
 - Learn sections live in ONE registry, `src/lib/learnSections.ts` (order, names, colours, guide art, `plan` lock, unlock features). Never hard-code a list of tiers in a page. A section with no modules is hidden. Personal Growth (`growth`) and Advanced need a plan.
 - Each topic has one home lesson (`docs/curriculum-map.md`). Check it before writing a lesson; elsewhere, point to the home instead of teaching it again.
 - Lesson pictures stay at their original path (`src/assets/lessons/<original-slug>/…`) when a lesson moves module; `tests/learn_sections.test.ts` checks every path exists and every lesson lives in one file.
+- Trademark: POSITIVE THOTS is a registered mark (U.S. Reg. No. 8,540,046, Class 45). Use ® after "Positive Thots" in UI copy; other brand terms (Send a Thot, You Both Said Yes, Thot Pack) keep ™.
+- Fonts are self-hosted from `public/fonts` (`fonts.css`); never add Google Fonts links.
+- Push delivery lives in `supabase/functions/_shared/push-delivery.ts` (FCM v1 for Android, APNs token auth for iOS). It does nothing until the FCM_* / APNS_* secrets exist.

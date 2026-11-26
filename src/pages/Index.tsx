@@ -937,7 +937,7 @@ const Index = () => {
             </div>
 
             <p className="mt-6 text-center text-xs text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-              Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>TM</sup>
+              Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>®</sup>
             </p>
             {/* Discover does not scroll, so the policy links live at the end of this list. */}
             <AppFooter inline />
