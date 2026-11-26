@@ -120,6 +120,13 @@
       "when": 1795536714610,
       "tag": "0016_server_counted_challenges_and_coin_holes",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1795723494315,
+      "tag": "0017_scheduled_data_retention",
+      "breakpoints": true
     }
   ]
 }
