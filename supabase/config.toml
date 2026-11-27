@@ -5,10 +5,6 @@ project_id = "zcsnqvncqzpleqoctzfc"
     verify_jwt = false
   [functions.check-subscription]
     verify_jwt = false
-  [functions.create-checkout]
-    verify_jwt = false
-  [functions.customer-portal]
-    verify_jwt = false
   [functions.generate-section-quizzes]
     verify_jwt = false
   [functions.manage-account]
@@ -18,8 +14,6 @@ project_id = "zcsnqvncqzpleqoctzfc"
   [functions.moderate-photo]
     verify_jwt = false
   [functions.seed-test-users]
-    verify_jwt = false
-  [functions.stripe-webhook]
     verify_jwt = false
   [functions.send-push-notification]
     verify_jwt = false
@@ -48,4 +42,6 @@ project_id = "zcsnqvncqzpleqoctzfc"
   [functions.handle-email-events]
     verify_jwt = false
   [functions.purge-stale-selfies]
+    verify_jwt = false
+  [functions.ccbill-webhook]
     verify_jwt = false

@@ -12,9 +12,11 @@ export interface TemplateEntry {
 import { template as giftCode } from './gift-code.tsx'
 import { template as abandonedCheckout } from './abandoned-checkout.tsx'
 import { template as onboardingIncomplete } from './onboarding-incomplete.tsx'
+import { template as subscriptionCancelled } from './subscription-cancelled.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'gift-code': giftCode,
   'abandoned-checkout': abandonedCheckout,
   'onboarding-incomplete': onboardingIncomplete,
+  'subscription-cancelled': subscriptionCancelled,
 }

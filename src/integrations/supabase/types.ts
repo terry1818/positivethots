@@ -2070,6 +2070,12 @@ export type Database = {
           id: string
           plan: string
           status: string
+          billing_period: string | null
+          cancel_at_period_end: boolean
+          cancel_requested_at: string | null
+          cancelled_at: string | null
+          ccbill_subscription_id: string | null
+          source: string
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
           updated_at: string
@@ -2081,6 +2087,12 @@ export type Database = {
           id?: string
           plan?: string
           status?: string
+          billing_period?: string | null
+          cancel_at_period_end?: boolean
+          cancel_requested_at?: string | null
+          cancelled_at?: string | null
+          ccbill_subscription_id?: string | null
+          source?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           updated_at?: string
@@ -2092,6 +2104,12 @@ export type Database = {
           id?: string
           plan?: string
           status?: string
+          billing_period?: string | null
+          cancel_at_period_end?: boolean
+          cancel_requested_at?: string | null
+          cancelled_at?: string | null
+          ccbill_subscription_id?: string | null
+          source?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
           updated_at?: string

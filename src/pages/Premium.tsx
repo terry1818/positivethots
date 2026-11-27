@@ -6,6 +6,7 @@ import { useSessionStore } from "@/stores/sessionStore";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -43,10 +44,11 @@ const PageHeader = ({ title, onBack }: { title: string; onBack: () => void }) =>
 const Premium = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isPremium, tier: currentTier, loading: planLoading } = useSubscription();
+  const { isPremium, tier: currentTier, loading: planLoading, refetch } = useSubscription();
   const { user } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState(false);
+  const [renewalAgreed, setRenewalAgreed] = useState(false);
   const [promoCode, setPromoCode] = useState("");
   const [redeemingCode, setRedeemingCode] = useState(false);
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
@@ -76,15 +78,20 @@ const Premium = () => {
     if (searchParams.get("failed") === "true") setShowFailedNotice(true);
   }, [searchParams]);
 
-  const handleSubscribe = async (priceId: string) => {
-    if (!PAYMENTS_OPEN) return;
-    setLoading(priceId);
+  const handleSubscribe = async (productKey: string) => {
+    if (!PAYMENTS_OPEN || !renewalAgreed) return;
+    setLoading(productKey);
     setCheckoutError(false);
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", { body: { price_id: priceId } });
+      const { data, error } = await supabase.functions.invoke("ccbill-checkout", { body: { product: productKey } });
+      if (data?.error === "already_subscribed") {
+        toast("You already have a plan. Cancel it in Settings first, then pick a new one when it ends.");
+        return;
+      }
       if (error) throw error;
       if (!data?.url) throw new Error("No checkout address returned");
-      window.open(data.url, "_blank");
+      // Same tab: CCBill sends the member back to /premium when the payment form is done.
+      window.location.assign(data.url);
     } catch (err) {
       console.error("Checkout error:", err);
       setCheckoutError(true);
@@ -100,9 +107,11 @@ const Premium = () => {
       const { data, error } = await supabase.functions.invoke("redeem-promo-code", { body: { code: promoCode.trim() } });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      if (data?.url) {
-        toast.success("Code accepted. Opening checkout…");
-        window.open(data.url, "_blank");
+      if (data?.granted) {
+        const until = data.until ? new Date(data.until).toLocaleDateString(undefined, { month: "long", day: "numeric" }) : null;
+        toast.success(until ? `Code accepted. Enjoy your free plan until ${until}!` : "Code accepted. Enjoy your free plan!");
+        setPromoCode("");
+        await refetch?.();
       }
     } catch {
       toast.error("That code didn't work. Check it and try again.");
@@ -265,6 +274,21 @@ const Premium = () => {
           </button>
         </div>
 
+        {PAYMENTS_OPEN && !isPremium && (
+          <section className="kit-card space-y-2 p-4" aria-labelledby="renewal-terms">
+            <h3 id="renewal-terms" className="font-bold leading-tight">How plans renew</h3>
+            <p className="text-sm text-muted-foreground [text-wrap:pretty]">
+              Plans renew automatically at the price shown, every month or every year, until you cancel.
+              Cancel any time in Settings → Subscription with one tap. You keep your plan until the period you paid for ends.
+              Payments are handled securely by CCBill.
+            </p>
+            <label htmlFor="renewal-agree" className="flex min-h-11 cursor-pointer items-start gap-3 text-sm">
+              <Checkbox id="renewal-agree" checked={renewalAgreed} onCheckedChange={(v) => setRenewalAgreed(v === true)} className="mt-0.5 h-5 w-5" />
+              <span>I understand my plan renews automatically until I cancel, and I agree to the <Link to="/terms" className="text-primary underline">Terms</Link> and <Link to="/cancellation" className="text-primary underline">Cancellation Policy</Link>.</span>
+            </label>
+          </section>
+        )}
+
         {/* Free */}
         <section className="kit-row !items-start" aria-label="Free plan">
           <span className="kit-coin kit-coin-lg" data-tone="quiet"><Heart aria-hidden="true" /></span>
@@ -337,10 +361,10 @@ const Premium = () => {
                     <Button
                       variant={config.highlight ? "default" : "outline"}
                       className={config.highlight ? "kit-cta w-full" : "min-h-[48px] w-full font-bold"}
-                      onClick={() => handleSubscribe(config.priceId)}
-                      disabled={loading !== null}
+                      onClick={() => handleSubscribe(config.productKey)}
+                      disabled={loading !== null || !renewalAgreed}
                     >
-                      {loading === config.priceId ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Opening checkout" /> : `Start ${config.name}`}
+                      {loading === config.productKey ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Opening checkout" /> : `Start ${config.name}`}
                     </Button>
                   )}
                 </div>

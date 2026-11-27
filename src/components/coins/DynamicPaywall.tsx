@@ -13,6 +13,7 @@ import {
   FEATURE_LABELS,
 } from "@/lib/subscriptionTiers";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface PricingTier {
@@ -73,20 +74,13 @@ export const DynamicPaywall = () => {
     enabled: !!segment,
   });
 
-  const handleSubscribe = async (priceId: string) => {
-    setLoading(priceId);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { price_id: priceId },
-      });
-      if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
-    } catch {
-      toast.error("Something went wrong. Please try again.");
-    } finally {
-      setLoading(null);
-    }
+  // Plans are bought on /premium, which shows the renewal terms and asks for agreement first.
+  const navigate = useNavigate();
+  const handleSubscribe = (productKey: string) => {
+    setLoading(productKey);
+    navigate("/premium");
   };
+
 
   const recommendedPlan = pricing?.recommended_plan ?? "premium";
 
@@ -147,12 +141,12 @@ export const DynamicPaywall = () => {
                     </div>
                   </div>
                   <Button
-                    onClick={() => handleSubscribe(config.priceId)}
+                    onClick={() => handleSubscribe(config.productKey)}
                     disabled={loading !== null}
                     size="sm"
                     variant={isRecommended ? "default" : "outline"}
                   >
-                    {loading === config.priceId ? (
+                    {loading === config.productKey ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       `Get ${config.name}`

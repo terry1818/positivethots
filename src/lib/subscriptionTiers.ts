@@ -14,8 +14,8 @@ export type FeatureKey =
 interface TierConfig {
   name: string;
   tier: SubscriptionTier;
-  productId: string;
-  priceId: string;
+  /** Product key sent to the ccbill-checkout function; the server holds the real price (supabase/functions/_shared/ccbill-core.ts). */
+  productKey: string;
   price: number;
   billingPeriod: "monthly" | "annual";
   annualMonthlyEquivalent?: number;
@@ -28,8 +28,7 @@ export const SUBSCRIPTION_TIERS: TierConfig[] = [
   {
     name: "Plus",
     tier: "plus",
-    productId: "prod_UC8hgE8GHk3Jz2",
-    priceId: "price_1TDkQ9AEIVQtquY2C4kfHe4d",
+    productKey: "plus_monthly",
     price: 4.99,
     billingPeriod: "monthly",
     features: ["see_likes", "super_likes"],
@@ -37,8 +36,7 @@ export const SUBSCRIPTION_TIERS: TierConfig[] = [
   {
     name: "Premium",
     tier: "premium",
-    productId: "prod_TyazHeNgEAjKEg",
-    priceId: "price_1TDjjHQL8g2unk5Zfe9VvytG",
+    productKey: "premium_monthly",
     price: 9.99,
     billingPeriod: "monthly",
     features: ["see_likes", "super_likes", "priority_visibility", "advanced_filters"],
@@ -47,8 +45,7 @@ export const SUBSCRIPTION_TIERS: TierConfig[] = [
   {
     name: "VIP",
     tier: "vip",
-    productId: "prod_UC8igDQOTInDei",
-    priceId: "price_1TDkQpAEIVQtquY2s6feqEgV",
+    productKey: "vip_monthly",
     price: 19.99,
     billingPeriod: "monthly",
     features: [
@@ -65,8 +62,7 @@ export const SUBSCRIPTION_TIERS: TierConfig[] = [
   {
     name: "Plus",
     tier: "plus",
-    productId: "prod_ANNUAL_PLUS",
-    priceId: "ANNUAL_PLUS_PRICE_ID",
+    productKey: "plus_annual",
     price: 47.99,
     billingPeriod: "annual",
     annualMonthlyEquivalent: 4.00,
@@ -75,8 +71,7 @@ export const SUBSCRIPTION_TIERS: TierConfig[] = [
   {
     name: "Premium",
     tier: "premium",
-    productId: "prod_ANNUAL_PREMIUM",
-    priceId: "ANNUAL_PREMIUM_PRICE_ID",
+    productKey: "premium_annual",
     price: 95.99,
     billingPeriod: "annual",
     annualMonthlyEquivalent: 8.00,
@@ -86,8 +81,7 @@ export const SUBSCRIPTION_TIERS: TierConfig[] = [
   {
     name: "VIP",
     tier: "vip",
-    productId: "prod_ANNUAL_VIP",
-    priceId: "ANNUAL_VIP_PRICE_ID",
+    productKey: "vip_annual",
     price: 191.99,
     billingPeriod: "annual",
     annualMonthlyEquivalent: 16.00,
@@ -141,9 +135,8 @@ export function planAdds(tier: SubscriptionTier): { includes: string | null; add
   return { includes: below?.name ?? null, adds: own.filter((f) => !(below?.features ?? []).includes(f)) };
 }
 
-export function getTierByProductId(productId: string): SubscriptionTier {
-  const tier = SUBSCRIPTION_TIERS.find((t) => t.productId === productId);
-  return tier?.tier ?? "free";
+export function getTierByPlan(plan: string | null | undefined): SubscriptionTier {
+  return plan === "plus" || plan === "premium" || plan === "vip" ? plan : "free";
 }
 
 export function getTierConfig(tier: SubscriptionTier) {
@@ -159,21 +152,18 @@ export function tierHasFeature(tier: SubscriptionTier, feature: FeatureKey): boo
 // One-time purchase product IDs
 export const ONE_TIME_PRODUCTS = {
   profile_boost: {
-    productId: "prod_UC8rptUQyJjuTX",
-    priceId: "price_1TDkZwAEIVQtquY2bChArXyZ",
+    productKey: "profile_boost",
     price: 2.99,
     name: "Profile Boost",
   },
   super_like_pack_5: {
-    productId: "prod_SbSVkKVkIvYeSB",
-    priceId: "price_1TOGT3AEIVQtquY2Zxm1pWeN",
+    productKey: "thot_pack_5",
     price: 1.99,
     name: "Thot Pack (5)",
     packSize: 5,
   },
   super_like_pack_10: {
-    productId: "prod_UC8stYS4Xx9hot",
-    priceId: "price_1TDkaqAEIVQtquY2l8yO6Xf3",
+    productKey: "thot_pack_10",
     price: 3.99,
     name: "Thot Pack (10)",
     packSize: 10,

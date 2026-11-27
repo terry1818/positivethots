@@ -715,9 +715,9 @@ const Index = () => {
     // Buying a Boost is a checkout. While checkout is closed the button leads to Profile, where an earned Boost is used.
     if (!PAYMENTS_OPEN) { navigate("/profile"); return; }
     try {
-      const { data, error } = await supabase.functions.invoke("create-boost-payment");
+      const { data, error } = await supabase.functions.invoke("ccbill-checkout", { body: { product: "profile_boost" } });
       if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
+      if (data?.url) window.location.assign(data.url);
     } catch (err) {
       toast.error("Failed to start boost checkout");
     }

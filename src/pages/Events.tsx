@@ -97,12 +97,13 @@ const Events = () => {
   const handlePurchase = async (eventId: string) => {
     setPurchasing(eventId);
     try {
-      const { data, error } = await supabase.functions.invoke("create-event-checkout", {
-        body: { event_id: eventId },
+      const { data, error } = await supabase.functions.invoke("ccbill-checkout", {
+        body: { product: `event:${eventId}` },
       });
+      if (data?.error === "already_registered") { toast("You already have a ticket for this event."); return; }
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      if (data?.url) window.open(data.url, "_blank");
+      if (data?.url) window.location.assign(data.url);
     } catch (err: any) {
       toast.error("We couldn't open checkout. Please try again.");
     } finally {

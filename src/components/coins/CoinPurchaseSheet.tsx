@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { toast } from "sonner";
+import { PAYMENTS_OPEN } from "@/lib/payments";
 
 interface CoinPurchaseSheetProps {
   open: boolean;
@@ -20,17 +21,17 @@ export const CoinPurchaseSheet = ({ open, onOpenChange }: CoinPurchaseSheetProps
   const [loading, setLoading] = useState<string | null>(null);
 
   const handlePurchase = async (pkg: typeof packages[0]) => {
-    if (!pkg.stripe_price_id) {
-      toast.info("Coin purchases aren't available right now.");
+    if (!PAYMENTS_OPEN) {
+      toast.info("Coin purchases open soon.");
       return;
     }
     setLoading(pkg.id);
     try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { price_id: pkg.stripe_price_id },
+      const { data, error } = await supabase.functions.invoke("ccbill-checkout", {
+        body: { product: `coins:${pkg.id}` },
       });
       if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
+      if (data?.url) window.location.assign(data.url);
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {

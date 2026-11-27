@@ -222,7 +222,7 @@ const Profile = () => {
         const { error } = await supabase.rpc("activate_vip_boost");
         if (error) {
           if (error.message?.includes("already used")) {
-            // Fall through to Stripe payment
+            // Fall through to buying one through CCBill
           } else {
             throw error;
           }
@@ -243,9 +243,9 @@ const Profile = () => {
     if (!PAYMENTS_OPEN) { toast("You don't have a Boost yet. Win one on the daily spin or in the weekly sprint."); return; }
     setBoostLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("create-boost-payment");
+      const { data, error } = await supabase.functions.invoke("ccbill-checkout", { body: { product: "profile_boost" } });
       if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
+      if (data?.url) window.location.assign(data.url);
     } catch (err) {
       console.error("Boost payment error:", err);
       toast.error("Failed to start boost purchase");

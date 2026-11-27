@@ -1,13 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
-
-const TIER_PRICE_MAP: Record<string, string> = {
-  plus: "price_1TDkQ9AEIVQtquY2C4kfHe4d",
-  premium: "price_1TDjjHQL8g2unk5Zfe9VvytG",
-  vip: "price_1TDkQpAEIVQtquY2s6feqEgV",
-};
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : "";
@@ -65,76 +58,45 @@ serve(async (req) => {
       throw new Error("You have already redeemed a promo code");
     }
 
-    // Determine tier and trial days
-    let priceId: string;
-    let trialDays: number = promoCode.trial_days;
+    // Codes give free access straight away. No card and no checkout (the old Stripe trial checkout is gone).
+    const plan: string = promoCode.type === "gift" ? (promoCode.tier || "premium") : "premium";
+    if (!["plus", "premium", "vip"].includes(plan)) throw new Error("Invalid tier");
+    const trialDays: number = promoCode.trial_days || (promoCode.type === "gift" ? 14 : 14);
 
-    if (promoCode.type === "gift") {
-      const tier = promoCode.tier || "premium";
-      priceId = TIER_PRICE_MAP[tier];
-      if (!priceId) throw new Error("Invalid tier");
-    } else {
-      // Referral codes default to Premium with 14-day trial
-      priceId = TIER_PRICE_MAP["premium"];
-      trialDays = trialDays || 14;
+    const { data: current } = await supabase.from("subscriptions")
+      .select("status, current_period_end, source").eq("user_id", user.id).maybeSingle();
+    const live = current?.status === "active" && (!current.current_period_end || new Date(current.current_period_end) > new Date());
+    if (live) {
+      return new Response(JSON.stringify({ error: "You already have a plan. Save this code for later." }),
+        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Create Stripe checkout with trial
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("Server misconfigured");
-    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-
-    // Find or reference Stripe customer
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    let customerId: string | undefined;
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-    }
-
-    const ALLOWED_ORIGINS = [
-      "https://positivethots.lovable.app",
-      "https://positivethots.app",
-      "http://localhost:5173",
-      "http://localhost:8080",
-    ];
-    const rawOrigin = req.headers.get("origin");
-    const origin = rawOrigin && ALLOWED_ORIGINS.includes(rawOrigin)
-      ? rawOrigin
-      : "https://positivethots.lovable.app";
-    // Atomically mark code as redeemed BEFORE creating checkout (prevents race condition)
+    // Atomically mark the code as redeemed first, so two taps can't both win.
     const { error: updateError, data: updateResult } = await supabase
       .from("promo_codes")
-      .update({
-        redeemed_by: user.id,
-        redeemed_at: new Date().toISOString(),
-      })
+      .update({ redeemed_by: user.id, redeemed_at: new Date().toISOString() })
       .eq("id", promoCode.id)
       .is("redeemed_by", null)
       .select();
-
     if (updateError || !updateResult || updateResult.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "This promo code has already been redeemed" }),
-        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "This promo code has already been redeemed" }),
+        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      customer_email: customerId ? undefined : user.email,
-      line_items: [{ price: priceId, quantity: 1 }],
-      mode: "subscription",
-      subscription_data: {
-        trial_period_days: trialDays,
-        metadata: { promo_code_id: promoCode.id },
-      },
-      success_url: `${origin}/premium?redeemed=true`,
-      cancel_url: `${origin}/premium`,
-      metadata: { promo_code_id: promoCode.id, user_id: user.id },
-    });
+    const until = new Date(Date.now() + trialDays * 86_400_000).toISOString();
+    const { error: grantError } = await supabase.from("subscriptions").upsert({
+      user_id: user.id, plan, status: "active", source: "promo", current_period_end: until,
+      ccbill_subscription_id: null, billing_period: null, cancel_at_period_end: true,
+      cancelled_at: null, cancel_requested_at: null, updated_at: new Date().toISOString(),
+    }, { onConflict: "user_id" });
+    if (grantError) {
+      // Give the code back so the member can try again.
+      await supabase.from("promo_codes").update({ redeemed_by: null, redeemed_at: null }).eq("id", promoCode.id);
+      throw new Error("Could not start your plan");
+    }
 
-    logStep("Checkout session created", { sessionId: session.id, trialDays });
-    return new Response(JSON.stringify({ url: session.url }), {
+    logStep("Code redeemed", { plan, trialDays });
+    return new Response(JSON.stringify({ granted: true, plan, until }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });

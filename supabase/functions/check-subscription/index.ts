@@ -1,79 +1,37 @@
+// Reports the signed-in member's plan from the subscriptions table, which ccbill-webhook keeps current.
+// (It used to ask Stripe; Stripe is closed.)
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const reply = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-  const supabaseClient = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { auth: { persistSession: false } }
-  );
-
+  const db = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "", {
+    auth: { persistSession: false },
+  });
   try {
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    const token = (req.headers.get("Authorization") ?? "").replace("Bearer ", "");
+    const { data: auth } = await db.auth.getUser(token);
+    if (!auth?.user) return reply({ subscribed: false, fallback: true });
 
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError || !userData?.user?.email) {
-      // User token is invalid or user was deleted — return unsubscribed gracefully
-      console.warn("[check-subscription] auth failed:", userError?.message ?? "no user");
-      return new Response(JSON.stringify({ subscribed: false, fallback: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
-    }
-    const user = userData.user;
-
-    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-
-    if (customers.data.length === 0) {
-      return new Response(JSON.stringify({ subscribed: false }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
-    }
-
-    const customerId = customers.data[0].id;
-    const subscriptions = await stripe.subscriptions.list({
-      customer: customerId,
-      status: "active",
-      limit: 1,
+    const { data: sub } = await db.from("subscriptions")
+      .select("plan, status, current_period_end, cancel_at_period_end, billing_period, source")
+      .eq("user_id", auth.user.id).maybeSingle();
+    const live = sub?.status === "active" && (!sub.current_period_end || new Date(sub.current_period_end) > new Date());
+    return reply({
+      subscribed: !!live,
+      plan: live ? sub!.plan : null,
+      subscription_end: live ? sub!.current_period_end : null,
+      cancel_at_period_end: live ? !!sub!.cancel_at_period_end : false,
+      billing_period: live ? sub!.billing_period : null,
+      source: live ? sub!.source : null,
     });
-
-    const hasActiveSub = subscriptions.data.length > 0;
-    let subscriptionEnd = null;
-    let productId = null;
-
-    if (hasActiveSub) {
-      const subscription = subscriptions.data[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      productId = subscription.items.data[0].price.product;
-    }
-
-    return new Response(JSON.stringify({
-      subscribed: hasActiveSub,
-      product_id: productId,
-      subscription_end: subscriptionEnd,
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
-  } catch (error) {
-    console.error("[check-subscription] error:", error);
-    return new Response(JSON.stringify({ error: "An unexpected error occurred. Please try again." }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+  } catch (e) {
+    console.error("[check-subscription]", e);
+    return reply({ error: "unexpected" }, 500);
   }
 });

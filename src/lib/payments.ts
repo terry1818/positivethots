@@ -1,8 +1,9 @@
 // One place that says whether money can change hands in the app.
 //
-// PAYMENTS_OPEN is false until the new payment processor's checkout is wired in. While it is false,
-// screens show plans and prices but offer no button that would start a checkout, because every
-// checkout call would fail. Set it to true in the same change that replaces the checkout functions.
+// PAYMENTS_OPEN stays false until CCBill approves the account and the CCBILL_* secrets are set
+// (see docs/ccbill-go-live.md). The CCBill checkout, webhook and cancel functions are built and
+// deployed; while this is false, screens show plans and prices but no button starts a checkout.
+// Flip it to true as the last go-live step, after one real test purchase works.
 export const PAYMENTS_OPEN = false;
 
 // Thots Coins: nothing in the app grants coins and nothing a coin buys is delivered yet. While this

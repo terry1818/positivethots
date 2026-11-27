@@ -369,7 +369,7 @@ test("no screen offers a checkout while payments are closed, and plans still sho
   const plans = readFileSync("src/pages/Premium.tsx", "utf8");
   const card = readFileSync("src/components/events/EventCard.tsx", "utf8");
   expect(pay).toMatch(/export const PAYMENTS_OPEN = (true|false);/);
-  expect(plans).toContain("if (!PAYMENTS_OPEN) return;");
+  expect(plans).toMatch(/if \(!PAYMENTS_OPEN( \|\| !renewalAgreed)?\) return;/);
   expect(plans).toContain("{PAYMENTS_OPEN && (\n          <>");
   expect(card).toContain("PAYMENTS_OPEN ? (");
   expect(plans).toContain('to="/cancellation"');

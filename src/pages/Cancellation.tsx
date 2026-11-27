@@ -22,7 +22,7 @@ const Cancellation = () => (
     </p>
     <ol className="list-decimal list-inside space-y-2 mb-4 text-muted-foreground">
       <li>
-        <strong>In-app:</strong> Go to Settings → Subscription → Cancel Subscription. Follow the prompts.
+        <strong>In-app (fastest):</strong> Go to Settings → Subscription → Cancel Subscription, then tap "Cancel my plan." That's it: no extra screens and no call. You'll see a confirmation right away and get one by email.
       </li>
       <li>
         <strong>By email:</strong> Email{" "}

@@ -21,7 +21,8 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-  // Find checkout_abandoned events from 55-65 minutes ago
+  // CCBill doesn't report abandoned forms, so a plan checkout that was started 55-65 minutes ago
+  // with no plan active since counts as abandoned (ccbill-checkout logs checkout_started).
   const now = Date.now()
   const from = new Date(now - 65 * 60_000).toISOString()
   const to = new Date(now - 55 * 60_000).toISOString()
@@ -29,7 +30,7 @@ Deno.serve(async (req) => {
   const { data: abandonedEvents, error: fetchError } = await supabase
     .from('analytics_events')
     .select('user_id, event_data, created_at')
-    .eq('event_name', 'checkout_abandoned')
+    .eq('event_name', 'checkout_started')
     .gte('created_at', from)
     .lte('created_at', to)
 
@@ -43,6 +44,8 @@ Deno.serve(async (req) => {
 
   for (const event of abandonedEvents) {
     if (!event.user_id) continue
+    const product = String((event.event_data as Record<string, unknown> | null)?.product ?? '')
+    if (!/_(monthly|annual)$/.test(product)) continue // plan checkouts only
 
     // Check if recovery email already sent for this user
     const { data: alreadySent } = await supabase

@@ -120,7 +120,7 @@ const Settings = () => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
-  const { isPremium, tier, loading: subLoading, subscriptionEnd } = useSubscription();
+  const { isPremium, tier, loading: subLoading, subscriptionEnd, cancelAtPeriodEnd, refetch: refetchSubscription } = useSubscription();
   const { isUnlocked: locationUnlocked, isEventLocationUnlocked, isSharing, toggleSharing, error: locationError, loading: locationLoading } = useLocationSharing();
   const { isAdmin, userId: adminUserId } = useAdminRole();
   const [isOwner, setIsOwner] = useState(false);
@@ -144,7 +144,7 @@ const Settings = () => {
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
-  const [managingPortal, setManagingPortal] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
   const [textScale, setTextScale] = useState<"small" | "medium" | "large">("medium");
 
   // Load text scale from user preferences
@@ -377,18 +377,22 @@ const Settings = () => {
     }
   };
 
-  const handleManageSubscription = async () => {
-    setManagingPortal(true);
+  // One tap: no extra screens, no phone call. The plan stays until the period already paid for ends.
+  const handleCancelSubscription = async () => {
+    setCancelling(true);
     try {
-      const { data, error } = await supabase.functions.invoke("customer-portal");
+      const { data, error } = await supabase.functions.invoke("cancel-subscription");
       if (error) throw error;
-      if (data?.url) window.open(data.url, "_blank");
-    } catch (error: any) {
-      toast.error("Something went wrong. Please try again.");
+      const until = data?.access_until ? new Date(data.access_until).toLocaleDateString() : null;
+      toast.success(until ? `Cancelled. You keep your plan until ${until}, and you won't be charged again.` : "Cancelled. You won't be charged again.");
+      await refetchSubscription();
+    } catch {
+      toast.error("We couldn't cancel just now. Please try again, or email billing@positivethots.org and we'll cancel it for you.");
     } finally {
-      setManagingPortal(false);
+      setCancelling(false);
     }
   };
+
 
   return (
     <div className="kit-area-profile min-h-screen bg-background flex flex-col">
@@ -587,25 +591,34 @@ const Settings = () => {
                 </div>
                 {subscriptionEnd && (
                   <p className="text-sm text-muted-foreground">
-                    Renews on {new Date(subscriptionEnd).toLocaleDateString()}
+                    {cancelAtPeriodEnd
+                      ? `Cancelled. Your plan ends on ${new Date(subscriptionEnd).toLocaleDateString()} and won't renew.`
+                      : `Renews on ${new Date(subscriptionEnd).toLocaleDateString()}`}
                   </p>
                 )}
-                <Button
-                  variant="outline"
-                  className="w-full justify-start gap-2"
-                  onClick={handleManageSubscription}
-                  disabled={managingPortal}
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  {managingPortal ? "Opening…" : "Manage Subscription"}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full min-h-[44px]"
-                  onClick={() => navigate("/cancellation")}
-                >
-                  Cancel Subscription
-                </Button>
+                {!cancelAtPeriodEnd && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" className="w-full min-h-[44px]" disabled={cancelling}>
+                        {cancelling ? <Loader2 className="h-4 w-4 animate-spin" aria-label="Cancelling" /> : "Cancel Subscription"}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Cancel your {tier.charAt(0).toUpperCase() + tier.slice(1)} plan?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {subscriptionEnd
+                            ? `You won't be charged again. You keep everything in your plan until ${new Date(subscriptionEnd).toLocaleDateString()}, then you're on the free plan. Your learning progress and connections stay.`
+                            : "You won't be charged again. Your learning progress and connections stay."}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel className="min-h-[44px]">Keep my plan</AlertDialogCancel>
+                        <AlertDialogAction className="min-h-[44px]" onClick={handleCancelSubscription}>Cancel my plan</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
                 <Link to="/cancellation" className="inline-flex items-center min-h-[44px] text-sm text-primary hover:underline">Cancellation Policy</Link>
               </>
             ) : (
