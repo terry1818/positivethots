@@ -1,17 +1,17 @@
 // Deletes verification selfies older than 24 hours that were never cleaned up
 // (for example the app closed after upload, before the check ran).
 // The Privacy Policy promises selfies are never kept longer than 24 hours; this job enforces it.
-// Called once an hour by pg_cron with the service-role key. Anyone else gets 401.
+// Called once an hour by the managed scheduler (LOVABLE_CRON_SECRET). Anyone else gets 401.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { authenticateCronRequest } from "../_shared/cron-auth.ts";
 
 const BUCKET = "verification-selfies";
 
 serve(async (req) => {
+  const denied = authenticateCronRequest(req);
+  if (denied) return denied;
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-  if (req.headers.get("Authorization") !== `Bearer ${serviceKey}`) {
-    return new Response("Unauthorized", { status: 401 });
-  }
   const admin = createClient(Deno.env.get("SUPABASE_URL") ?? "", serviceKey, { auth: { persistSession: false } });
   const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   let removed = 0;
