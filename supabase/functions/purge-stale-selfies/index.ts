@@ -24,7 +24,9 @@ serve(async (req) => {
     if (!rows.length) return;
     const { error: rmErr } = await admin.storage.from(BUCKET).remove(rows.map((r) => r[col]));
     if (rmErr) { errors.push(`${table} storage: ${rmErr.message}`); return; }
-    const { error: upErr } = await admin.from(table).update({ [col]: col === "selfie_path" ? "" : null }) // selfie_path is NOT NULL.in("id", rows.map((r) => r.id));
+    // selfie_path is NOT NULL, so that column is blanked instead of nulled.
+    const cleared = col === "selfie_path" ? "" : null;
+    const { error: upErr } = await admin.from(table).update({ [col]: cleared }).in("id", rows.map((r) => r.id));
     if (upErr) errors.push(`${table} update: ${upErr.message}`);
     removed += rows.length;
   };
