@@ -134,6 +134,13 @@
       "when": 1795798462730,
       "tag": "0018_face_verification_consent_record",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1795803055203,
+      "tag": "0019_ccbill_payments",
+      "breakpoints": true
     }
   ]
 }

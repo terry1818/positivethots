@@ -1381,6 +1381,81 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_events: {
+        Row: {
+          ccbill_subscription_id: string | null
+          error: string | null
+          event_key: string
+          event_type: string
+          id: string
+          outcome: string | null
+          received_at: string
+          summary: Json
+          user_id: string | null
+        }
+        Insert: {
+          ccbill_subscription_id?: string | null
+          error?: string | null
+          event_key: string
+          event_type: string
+          id?: string
+          outcome?: string | null
+          received_at?: string
+          summary?: Json
+          user_id?: string | null
+        }
+        Update: {
+          ccbill_subscription_id?: string | null
+          error?: string | null
+          event_key?: string
+          event_type?: string
+          id?: string
+          outcome?: string | null
+          received_at?: string
+          summary?: Json
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      payment_purchases: {
+        Row: {
+          amount: number | null
+          ccbill_subscription_id: string
+          created_at: string
+          id: string
+          product_key: string
+          reference_id: string | null
+          status: string
+          transaction_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          ccbill_subscription_id: string
+          created_at?: string
+          id?: string
+          product_key: string
+          reference_id?: string | null
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          ccbill_subscription_id?: string
+          created_at?: string
+          id?: string
+          product_key?: string
+          reference_id?: string | null
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       photo_performance: {
         Row: {
           id: string
@@ -2065,10 +2140,16 @@ export type Database = {
       }
       subscriptions: {
         Row: {
+          billing_period: string | null
+          cancel_at_period_end: boolean
+          cancel_requested_at: string | null
+          cancelled_at: string | null
+          ccbill_subscription_id: string | null
           created_at: string
           current_period_end: string | null
           id: string
           plan: string
+          source: string
           status: string
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
@@ -2076,10 +2157,16 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          billing_period?: string | null
+          cancel_at_period_end?: boolean
+          cancel_requested_at?: string | null
+          cancelled_at?: string | null
+          ccbill_subscription_id?: string | null
           created_at?: string
           current_period_end?: string | null
           id?: string
           plan?: string
+          source?: string
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -2087,10 +2174,16 @@ export type Database = {
           user_id: string
         }
         Update: {
+          billing_period?: string | null
+          cancel_at_period_end?: boolean
+          cancel_requested_at?: string | null
+          cancelled_at?: string | null
+          ccbill_subscription_id?: string | null
           created_at?: string
           current_period_end?: string | null
           id?: string
           plan?: string
+          source?: string
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
