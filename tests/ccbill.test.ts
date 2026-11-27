@@ -77,18 +77,25 @@ describe("webhook security", () => {
 describe("webhook planning", () => {
   const now = new Date("2026-12-01T00:00:00Z");
   test("new subscription sale activates the plan until the next renewal", () => {
-    const a = planWebhook("NewSaleSuccess", { subscriptionId: "S1", "X-userId": "u1", "X-product": "vip_annual", nextRenewalDate: "2027-12-01" }, now);
+    const a = planWebhook("NewSaleSuccess", { subscriptionId: "S1", "X-userId": "u1", "X-product": "vip_annual", subscriptionInitialPrice: "191.99", recurringPeriod: "365", nextRenewalDate: "2027-12-01" }, now);
     expect(a).toEqual({ type: "activate_subscription", userId: "u1", plan: "vip", billing: "annual", subscriptionId: "S1", periodEnd: "2027-12-01T07:00:00.000Z" });
   });
   test("missing renewal date falls back to the plan period", () => {
-    const a = planWebhook("NewSaleSuccess", { subscriptionId: "S1", "X-userId": "u1", "X-product": "plus_monthly" }, now);
+    const a = planWebhook("NewSaleSuccess", { subscriptionId: "S1", "X-userId": "u1", "X-product": "plus_monthly", subscriptionInitialPrice: "4.99" }, now);
     expect(a.type === "activate_subscription" && a.periodEnd).toBe("2026-12-31T00:00:00.000Z");
   });
   test("one-time purchases are fulfilled", () => {
-    const a = planWebhook("NewSaleSuccess", { subscriptionId: "S2", transactionId: "T2", "X-userId": "u1", "X-product": "thot_pack_10", billedInitialPrice: "3.99" }, now);
+    const a = planWebhook("NewSaleSuccess", { subscriptionId: "S2", transactionId: "T2", "X-userId": "u1", "X-product": "thot_pack_10", billedInitialPrice: "3.99", billedCurrencyCode: "840", subscriptionInitialPrice: "3.99" }, now);
     expect(a).toMatchObject({ type: "fulfil_one_time", productKey: "thot_pack_10", amount: 3.99 });
     expect(planWebhook("NewSaleSuccess", { subscriptionId: "S3", "X-userId": "u1", "X-product": "event:e1", "X-referenceId": "e1" }, now))
       .toMatchObject({ type: "fulfil_one_time", referenceId: "e1" });
+  });
+  test("an edited product name can't buy a bigger plan for a smaller price", () => {
+    const a = planWebhook("NewSaleSuccess", { subscriptionId: "S9", "X-userId": "u1", "X-product": "vip_annual", subscriptionInitialPrice: "4.99" }, now);
+    expect(a.type).toBe("ignore");
+    expect(a.type === "ignore" && a.reason).toContain("price mismatch");
+    expect(planWebhook("NewSaleSuccess", { subscriptionId: "S9", "X-userId": "u1", "X-product": "plus_monthly" }, now).type).toBe("ignore");
+    expect(planWebhook("NewSaleSuccess", { subscriptionId: "S9", "X-userId": "u1", "X-product": "premium_monthly", subscriptionInitialPrice: "9.99", recurringPeriod: "365" }, now).type).toBe("ignore");
   });
   test("sales without our pass-through values are ignored, never guessed", () => {
     expect(planWebhook("NewSaleSuccess", { subscriptionId: "S1" }, now).type).toBe("ignore");

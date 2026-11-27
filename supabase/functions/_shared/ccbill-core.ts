@@ -159,6 +159,25 @@ export type WebhookAction =
 
 const num = (v: string | undefined): number | null => (v === undefined || v === "" || Number.isNaN(Number(v)) ? null : Number(v));
 
+/**
+ * The amount CCBill actually charged up front, in USD. The X-product pass-through is NOT covered by the
+ * formDigest, so a member could edit it in the link; access is only granted when this amount matches.
+ */
+export function chargedUsd(b: Record<string, string>): number | null {
+  if (b.subscriptionCurrencyCode === "840" || b.subscriptionCurrencyCode === undefined) {
+    const v = num(b.subscriptionInitialPrice);
+    if (v !== null) return v;
+  }
+  if (b.billedCurrencyCode === "840") {
+    const v = num(b.billedInitialPrice);
+    if (v !== null) return v;
+  }
+  if (b.accountingCurrencyCode === "840" || b.accountingCurrencyCode === undefined) return num(b.accountingInitialPrice);
+  return null;
+}
+
+export const samePrice = (a: number | null, b: number): boolean => a !== null && Math.abs(a - b) < 0.005;
+
 /** Turns one webhook into exactly one database action. Pure: no I/O. */
 export function planWebhook(eventType: string, b: Record<string, string>, now = new Date()): WebhookAction {
   const subscriptionId = b.subscriptionId ?? "";
@@ -170,7 +189,14 @@ export function planWebhook(eventType: string, b: Record<string, string>, now = 
     case "NewSaleSuccess": {
       if (!userId || !productKey) return { type: "ignore", reason: "missing X-userId or X-product pass-through" };
       const product = CATALOG[productKey];
+      const charged = chargedUsd(b);
+      if (product && !samePrice(charged, product.price)) {
+        return { type: "ignore", reason: `price mismatch for ${productKey}: charged ${charged ?? "unknown"}, expected ${product.price}` };
+      }
       if (product?.kind === "subscription") {
+        if (b.recurringPeriod && Number(b.recurringPeriod) !== product.periodDays) {
+          return { type: "ignore", reason: `period mismatch for ${productKey}: ${b.recurringPeriod} days` };
+        }
         const periodEnd = ccbillDate(b.nextRenewalDate) ??
           new Date(now.getTime() + product.periodDays * 86_400_000).toISOString();
         return { type: "activate_subscription", userId, plan: product.plan, billing: product.billing, subscriptionId, periodEnd };
@@ -179,7 +205,7 @@ export function planWebhook(eventType: string, b: Record<string, string>, now = 
         return {
           type: "fulfil_one_time", userId, productKey, subscriptionId,
           transactionId: b.transactionId ?? null, referenceId: b["X-referenceId"] ?? null,
-          amount: num(b.billedInitialPrice ?? b.accountingInitialPrice ?? b.initialPrice),
+          amount: charged, // coins and tickets are priced in the database; ccbill-webhook checks those
         };
       }
       return { type: "ignore", reason: `unknown product ${productKey}` };

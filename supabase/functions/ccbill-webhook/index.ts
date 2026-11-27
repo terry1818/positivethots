@@ -12,7 +12,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.57.2";
 import {
-  CATALOG, COIN_PREFIX, EVENT_PREFIX, eventKey, isCCBillIp, parseWebhookBody, planWebhook, safeEqual,
+  CATALOG, COIN_PREFIX, EVENT_PREFIX, eventKey, isCCBillIp, parseWebhookBody, planWebhook, safeEqual, samePrice,
   type WebhookAction,
 } from "../_shared/ccbill-core.ts";
 
@@ -20,7 +20,7 @@ const text = (status: number, body: string) => new Response(body, { status, head
 
 // Fields kept in payment_events. Never names, addresses, emails or card details.
 const SUMMARY_FIELDS = [
-  "subscriptionId", "transactionId", "timestamp", "nextRenewalDate", "renewalDate", "billedInitialPrice",
+  "subscriptionId", "transactionId", "subscriptionInitialPrice", "accountingInitialPrice", "initialPeriod", "recurringPeriod", "timestamp", "nextRenewalDate", "renewalDate", "billedInitialPrice",
   "billedRecurringPrice", "billedAmount", "amount", "failureCode", "failureReason", "reason", "X-product", "X-referenceId",
 ];
 
@@ -70,6 +70,10 @@ serve(async (req) => {
 
   try {
     const outcome = await apply(admin, action);
+    if (action.type === "ignore" && action.reason.includes("mismatch")) {
+      await admin.from("error_logs").insert({ user_id: body["X-userId"] ?? null, error_message: `ccbill-webhook: ${action.reason} (subscription ${body.subscriptionId}). Refund or void it in CCBill.`, page_url: "edge:ccbill-webhook" })
+        .then(() => {}, () => {});
+    }
     await admin.from("payment_events").update({ outcome, error: null }).eq("event_key", key);
     return text(200, "ok");
   } catch (e) {
@@ -108,6 +112,17 @@ async function apply(db: SupabaseClient, a: WebhookAction): Promise<string> {
       if (ins.error) {
         if (String(ins.error.message).includes("duplicate")) return "already fulfilled";
         throw new Error(ins.error.message);
+      }
+      // Coins and tickets: the price lives in the database, so check what was charged here.
+      if (a.productKey.startsWith(COIN_PREFIX) || a.productKey.startsWith(EVENT_PREFIX)) {
+        const expected = a.productKey.startsWith(COIN_PREFIX)
+          ? Number((await db.from("coin_packages").select("price_usd").eq("id", a.referenceId).maybeSingle()).data?.price_usd ?? NaN)
+          : Number((await db.from("events").select("price_cents").eq("id", a.referenceId).maybeSingle()).data?.price_cents ?? NaN) / 100;
+        if (!samePrice(a.amount, expected)) {
+          await db.from("payment_purchases").update({ status: "void" }).eq("ccbill_subscription_id", a.subscriptionId);
+          await audit(db, "price_mismatch", { user_id: a.userId, product: a.productKey, charged: a.amount, expected });
+          return `not fulfilled: charged ${a.amount ?? "unknown"}, expected ${expected}`;
+        }
       }
       const product = CATALOG[a.productKey];
       if (product?.kind === "boost") {
