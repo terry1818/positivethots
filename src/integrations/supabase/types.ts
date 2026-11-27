@@ -838,8 +838,6 @@ export type Database = {
       face_verifications: {
         Row: {
           attempt_count: number
-          consented_at: string | null
-          consent_version: string | null
           created_at: string
           expires_at: string | null
           id: string
@@ -851,8 +849,6 @@ export type Database = {
         }
         Insert: {
           attempt_count?: number
-          consented_at?: string | null
-          consent_version?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string
@@ -864,8 +860,6 @@ export type Database = {
         }
         Update: {
           attempt_count?: number
-          consented_at?: string | null
-          consent_version?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string
@@ -3325,6 +3319,7 @@ export type Database = {
       }
       level_for_xp: { Args: { _xp: number }; Returns: number }
       practice_eligible: { Args: { _module_id: string }; Returns: boolean }
+      purge_expired_data: { Args: never; Returns: Json }
       purge_old_verification_selfies: { Args: never; Returns: number }
       record_pass: {
         Args: { _swiped_id: string; _swiper_id: string }
