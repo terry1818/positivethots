@@ -127,6 +127,13 @@
       "when": 1795723494315,
       "tag": "0017_scheduled_data_retention",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1795798462730,
+      "tag": "0018_face_verification_consent_record",
+      "breakpoints": true
     }
   ]
 }
