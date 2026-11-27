@@ -140,10 +140,10 @@ const CommunityGuidelines = () => (
       <p className="text-sm text-muted-foreground mb-3">Your profile displays a Community Standing badge reflecting your account status:</p>
       <div className="grid gap-2">
         {[
-          { status: "Good Standing", color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20", desc: "No violations — full access to all features" },
-          { status: "Warning", color: "bg-amber-500/10 text-amber-600 border-amber-500/20", desc: "Minor violation — still active, on notice" },
-          { status: "Restricted", color: "bg-orange-500/10 text-orange-600 border-orange-500/20", desc: "Limited features pending review" },
-          { status: "Banned", color: "bg-destructive/10 text-destructive border-destructive/20", desc: "Permanent removal from the platform" },
+          { status: "Good Standing", color: "bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border-emerald-500/20", desc: "No violations — full access to all features" },
+          { status: "Warning", color: "bg-amber-500/10 text-amber-800 dark:text-amber-400 border-amber-500/20", desc: "Minor violation — still active, on notice" },
+          { status: "Restricted", color: "bg-orange-500/10 text-orange-800 dark:text-orange-400 border-orange-500/20", desc: "Limited features pending review" },
+          { status: "Banned", color: "bg-destructive/10 text-red-800 dark:text-red-400 border-destructive/20", desc: "Permanent removal from the platform" },
         ].map((s) => (
           <div key={s.status} className={`flex items-center gap-3 rounded-lg border p-3 ${s.color}`}>
             <Badge variant="outline" className={`shrink-0 text-sm ${s.color}`}>{s.status}</Badge>

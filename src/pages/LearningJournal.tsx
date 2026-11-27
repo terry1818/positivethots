@@ -123,7 +123,7 @@ const LearningJournal = () => {
       <div className="max-w-md md:max-w-2xl lg:max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/settings")}>
+          <Button aria-label="Back to Settings" variant="ghost" size="icon" onClick={() => navigate("/settings")}>
             <ChevronLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-xl font-bold">My Learning Journal</h1>

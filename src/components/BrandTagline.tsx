@@ -29,7 +29,7 @@ export const BrandTagline = ({
       style={{ fontFamily: "Inter, system-ui, sans-serif" }}
     >
       {text}{withPeriod ? "." : ""}
-      <sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>
+      <sup style={{ fontSize: "60%", verticalAlign: "super" }}>
         TM
       </sup>
     </p>

@@ -95,10 +95,10 @@ export const ModerationTab = () => {
                   <TableCell>
                     {msg.status === "pending" && (
                       <div className="flex gap-1">
-                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => updateStatus(msg.id, "dismissed")}>
+                        <Button aria-label="Dismiss flag" size="icon" variant="ghost" className="h-6 w-6" onClick={() => updateStatus(msg.id, "dismissed")}>
                           <Check className="h-3 w-3 text-success" />
                         </Button>
-                        <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => updateStatus(msg.id, "confirmed")}>
+                        <Button aria-label="Confirm violation" size="icon" variant="ghost" className="h-6 w-6" onClick={() => updateStatus(msg.id, "confirmed")}>
                           <X className="h-3 w-3 text-destructive" />
                         </Button>
                       </div>

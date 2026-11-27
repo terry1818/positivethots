@@ -175,7 +175,7 @@ export const MatchModal = ({
           )}
 
           <p className="mt-5 text-xs text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-            Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>®</sup>
+            Think Positive Thots.<sup style={{ fontSize: "60%", verticalAlign: "super" }}>®</sup>
           </p>
         </div>
       </DialogContent>

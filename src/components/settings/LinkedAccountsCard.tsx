@@ -198,7 +198,7 @@ export const LinkedAccountsCard = () => {
                   <code className="text-base font-mono font-bold text-primary flex-1">
                     {verificationCode}
                   </code>
-                  <Button variant="ghost" size="icon" className="h-9 w-9" onClick={copyCode}>
+                  <Button aria-label="Copy code" variant="ghost" size="icon" className="h-9 w-9" onClick={copyCode}>
                     {codeCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   </Button>
                 </div>

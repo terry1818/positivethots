@@ -33,11 +33,11 @@
     --primary-foreground: 0 0% 100%;
 
     /* Hot magenta secondary */
-    --secondary: 320 70% 55%;
+    --secondary: 320 70% 46%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 270 10% 94%;
-    --muted-foreground: 270 10% 46%;
+    --muted-foreground: 270 10% 40%;
 
     /* Electric violet accent */
     --accent: 280 80% 65%;
@@ -46,7 +46,7 @@
     --success: 160 70% 40%;
     --success-foreground: 0 0% 100%;
 
-    --destructive: 0 70% 55%;
+    --destructive: 0 70% 48%;
     --destructive-foreground: 0 0% 100%;
 
     /* Badge colors for education modules */
@@ -91,10 +91,10 @@
     --popover-foreground: 270 15% 95%;
 
     /* Lightened for 4.5:1 contrast on dark bg */
-    --primary: 270 55% 62%;
+    --primary: 270 55% 56%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 320 65% 60%;
+    --secondary: 320 65% 50%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 270 15% 20%;
@@ -1397,3 +1397,8 @@ p.plan-soon { display: flex; width: 100%; }
    reaches 4.5:1 on the page background (1.4.3). */
 .legal-page p a, .legal-page li a, .legal-page td a { text-decoration: underline; text-underline-offset: 2px; }
 .dark .legal-page .text-primary { color: hsl(270 75% 78%); }
+
+/* WCAG AA (Nov 2026): primary-coloured text needs a lighter shade on dark surfaces than primary buttons do. */
+@layer utilities {
+  .dark .text-primary { color: hsl(270 60% 72%); }
+}

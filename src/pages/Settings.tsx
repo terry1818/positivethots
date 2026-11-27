@@ -543,7 +543,7 @@ const Settings = () => {
                           )}
                         </div>
                         {rh.user_id !== user?.id && (isOwner || rh.role !== "admin") && (
-                          <Button
+                          <Button aria-label={`Revoke ${rh.role} role`}
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7 text-destructive"
@@ -862,7 +862,7 @@ const Settings = () => {
                             {code.referred_subscribed ? "🎉 Subscribed" : "✅ Used"}
                           </Badge>
                         ) : (
-                          <Button
+                          <Button aria-label="Copy invite code"
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7"
@@ -1196,7 +1196,7 @@ const Settings = () => {
 
         <div className="text-center py-6 space-y-2">
           <p className="text-sm text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-            Think Positive Thots.<sup className="opacity-70" style={{ fontSize: "60%", verticalAlign: "super" }}>®</sup>
+            Think Positive Thots.<sup style={{ fontSize: "60%", verticalAlign: "super" }}>®</sup>
           </p>
           <p className="text-sm text-muted-foreground">
             © 2026 Rhea &amp; Associates LLC

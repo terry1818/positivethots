@@ -96,7 +96,7 @@ export const BdsmTestSection = ({
               className={urlError ? "border-destructive focus-glow" : "focus-glow"}
             />
             {bdsmTestUrl && BDSM_URL_REGEX.test(bdsmTestUrl) && (
-              <Button variant="outline" size="icon" asChild>
+              <Button aria-label="Open your BDSMtest.org results in a new tab" variant="outline" size="icon" asChild>
                 <a href={bdsmTestUrl} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="h-4 w-4" />
                 </a>
@@ -131,7 +131,7 @@ export const BdsmTestSection = ({
                 alt="BDSM test results"
                 className="w-full max-h-64 object-contain bg-muted"
               />
-              <Button
+              <Button aria-label="Remove screenshot"
                 variant="destructive"
                 size="icon"
                 className="absolute top-2 right-2 h-7 w-7"

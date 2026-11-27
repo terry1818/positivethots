@@ -251,7 +251,7 @@ export const TwoFactorSetup = () => {
                   <code className="flex-1 text-xs font-mono bg-muted p-2 rounded break-all select-all">
                     {secret}
                   </code>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copySecret}>
+                  <Button aria-label="Copy secret key" variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={copySecret}>
                     {copiedSecret ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                   </Button>
                 </div>
