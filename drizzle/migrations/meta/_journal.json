@@ -148,6 +148,13 @@
       "when": 1795803149125,
       "tag": "0020_ccbill_payment_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1795803230398,
+      "tag": "0021_ccbill_narrow_privileges",
+      "breakpoints": true
     }
   ]
 }
