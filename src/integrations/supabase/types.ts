@@ -838,6 +838,8 @@ export type Database = {
       face_verifications: {
         Row: {
           attempt_count: number
+          consented_at: string | null
+          consent_version: string | null
           created_at: string
           expires_at: string | null
           id: string
@@ -849,6 +851,8 @@ export type Database = {
         }
         Insert: {
           attempt_count?: number
+          consented_at?: string | null
+          consent_version?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string
@@ -860,6 +864,8 @@ export type Database = {
         }
         Update: {
           attempt_count?: number
+          consented_at?: string | null
+          consent_version?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string

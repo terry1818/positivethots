@@ -73,3 +73,4 @@
 - Push delivery lives in `supabase/functions/_shared/push-delivery.ts` (FCM v1 for Android, APNs token auth for iOS). It does nothing until the FCM_* / APNS_* secrets exist.
 
 - Business email (Nov 26, 2026): all public role addresses (billing@, appeals@, safety@, legal@, support@, privacy@, hello@) use positivethots.org. They forward to the shared mailbox team@positivethots.org on the Namecheap Stellar hosting. demo@ and *.test@positivethots.app are login names only, not inboxes.
+- Biometric consent (Nov 27, 2026): face verification requires a consent checkbox before the camera opens; each face_verifications row stores consented_at and consent_version. purge-stale-selfies (hourly, service-role only) deletes any verification selfie older than 24 hours to enforce the Privacy Policy promise.

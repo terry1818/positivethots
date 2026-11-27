@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Link } from "react-router-dom";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Loader2, Camera, Check, X, ShieldCheck, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
@@ -13,6 +15,9 @@ interface FaceVerificationFlowProps {
   onOpenChange: (open: boolean) => void;
 }
 
+// Bump when the consent wording below changes, so each record shows which text the person agreed to.
+const CONSENT_VERSION = "2026-11-27";
+
 const POSES = ["Smile", "Look left", "Look right", "Neutral expression", "Thumbs up"];
 
 type Step = "intro" | "camera" | "processing" | "success" | "failure";
@@ -23,6 +28,7 @@ export const FaceVerificationFlow = ({ open, onOpenChange }: FaceVerificationFlo
   const [step, setStep] = useState<Step>("intro");
   const [pose] = useState(() => POSES[Math.floor(Math.random() * POSES.length)]);
   const [attempts, setAttempts] = useState(0);
+  const [consented, setConsented] = useState(false);
 
   const handleCapture = async () => {
     setStep("processing");
@@ -61,6 +67,8 @@ export const FaceVerificationFlow = ({ open, onOpenChange }: FaceVerificationFlo
           pose_requested: pose,
           selfie_url: path,
           attempt_count: attempts + 1,
+          consented_at: new Date().toISOString(),
+          consent_version: CONSENT_VERSION,
           expires_at: new Date(Date.now() + 6 * 30 * 24 * 60 * 60 * 1000).toISOString(),
         })
         .select()
@@ -127,7 +135,16 @@ export const FaceVerificationFlow = ({ open, onOpenChange }: FaceVerificationFlo
               <li className="flex gap-2"><Check className="h-4 w-4 text-green-500 shrink-0 mt-0.5" /> Build trust with matches</li>
             </ul>
             <div className="space-y-2">
-              <Button className="w-full" onClick={() => setStep("camera")}>
+              <label htmlFor="face-consent" className="flex gap-3 items-start text-left text-sm text-muted-foreground max-w-xs mx-auto min-h-11 cursor-pointer">
+                <Checkbox id="face-consent" checked={consented} onCheckedChange={(v) => setConsented(v === true)} className="mt-0.5 h-5 w-5" />
+                <span>
+                  I agree that Positive Thots may compare my selfie with my profile photos to confirm they show me.
+                  Our AI provider (Google Gemini) does the comparison. The selfie is deleted as soon as the check finishes,
+                  never later than 24 hours, and only the result is kept.{" "}
+                  <Link to="/privacy#biometric" className="text-primary underline">Privacy Policy</Link>
+                </span>
+              </label>
+              <Button className="w-full" disabled={!consented} onClick={() => setStep("camera")}>
                 <Camera className="h-4 w-4 mr-2" /> Start Verification
               </Button>
               <Button variant="ghost" className="w-full" onClick={() => onOpenChange(false)}>

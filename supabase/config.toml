@@ -47,3 +47,5 @@ project_id = "zcsnqvncqzpleqoctzfc"
     verify_jwt = false
   [functions.handle-email-events]
     verify_jwt = false
+  [functions.purge-stale-selfies]
+    verify_jwt = false
